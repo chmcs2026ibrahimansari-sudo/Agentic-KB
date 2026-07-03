@@ -937,3 +937,35 @@ Source for resolution: WebSearch result during morning-review-daily 2026-05-16 f
 - Cross-domain connections identified (not yet written as syntheses): (1) proof-of-work-loop ↔ trajectory-evaluation, (2) retrieval+permissions synthesis ↔ Inspect AI sandboxing, (3) RLM pipeline ↔ RAG systems (beyond RRF).
 
 **Refuse list observed:** No deletes. No `reviewed: true` flips. No wiki/ page edits. Daily note append only.
+
+---
+
+## 2026-07-03 — morning-review-daily scheduled run
+
+**Trigger:** Scheduled task `morning-review-daily` @ 14:52 CDT (user-prompted re-run after missing commits flagged).
+
+**Inputs processed:**
+- Apple Notes (24h): 2 notes reviewed (job-search prep notes — details in `wiki/_private/` per PII guard) — Morning Review pipeline exit 0, 1 finding (needs human review — LLM unavailable: credit balance exhausted on separate API key), 0 auto-applied, 1 human-approval item.
+- KB captures: 0 new (KB Inbox: test note re-ingested as duplicate; Snipd empty; sofie-watch exit 0 — no pending meetings).
+- KB intelligence queries: 5 (connections, patterns, tensions, leverage, proposals) — kb CLI returned empty (no server at :3002); executed via direct wiki file reads per established pattern.
+
+**Pages created:** 0 (read-only run per refuse list — no wiki/ writes).
+
+**Actions taken:**
+- Morning Review pipeline: completed (exit 0) — 2 notes, 1 finding (LLM stub), 2 wiki pages updated, daily note written to `Daily Notes/2026-07-03.md`.
+- KB intelligence section appended to `Daily Notes/2026-07-03.md` in Obsidian Vault.
+- **Commits executed**: Obsidian Vault committed (Jul 1 + Jul 2 + Jul 3 daily notes + index updates) and pushed. Agentic-KB committed (briefings, clippings, log update) and pushed. Enforcing standing daily-commit preference (2026-06-10).
+
+**Contradictions flagged:** None new. 0 open contradictions in ledger.
+
+**Graduates identified (still blocked by compile crash):**
+- `verification-before-completion` — same as prior runs — compile crash persists (5th+ run).
+- `token-economics` — same as prior runs.
+
+**Open threads:**
+- `compile-2source-gate.mjs --execute` crashes `Error: undefined` — CRITICAL. 5+ weeks unresolved. Debug: `node scripts/compile-2source-gate.mjs --execute 2>&1 | head -50`.
+- Morning Review API key: insufficient credits. Job-search notes unclassified — contains PII, routed reference to `wiki/_private/` per mandatory PII guard. Review manually.
+- 108 deferred candidates in HEAVY_BACKLOG — prune recommended.
+- Missing commits (Jul 1, Jul 2) now resolved. Commit cadence must be enforced on every run.
+
+**Refuse list observed:** No deletes. No `reviewed: true` flips. No wiki/ page edits. Daily note append only.

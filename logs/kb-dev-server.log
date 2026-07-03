@@ -832,3 +832,178 @@ WikiQuery error: Error: 400 {"type":"error","error":{"type":"invalid_request_err
   }
 }
  POST /api/query 200 in 605ms (next.js: 1496µs, application-code: 604ms)
+ GET /api/pending-count 200 in 14ms (next.js: 4ms, application-code: 10ms)
+ POST /api/lint 200 in 42s (next.js: 4ms, application-code: 42s)
+ GET /api/pending-count 200 in 20ms (next.js: 6ms, application-code: 14ms)
+ POST /api/lint 200 in 39.1s (next.js: 3ms, application-code: 39.1s)
+ POST /api/query 200 in 44s (next.js: 5ms, application-code: 44s)
+WikiQuery error: Error: read ETIMEDOUT
+    at ignore-listed frames {
+  [cause]: Error: read ETIMEDOUT
+      at ignore-listed frames {
+    errno: -60,
+    code: 'ETIMEDOUT',
+    syscall: 'read'
+  }
+}
+ POST /api/query 200 in 6.1min (next.js: 4ms, application-code: 6.1min)
+WikiQuery error: Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CcdKF4F3WrwqvRnQChFai"}
+    at async identifyRelevantPages (src/app/api/query/route.ts:77:20)
+    at async Object.start (src/app/api/query/route.ts:248:27)
+  75 |  */
+  76 | async function identifyRelevantPages(question: string, indexContent: string, scope = 'publ...
+> 77 |   const response = await client.messages.create({
+     |                    ^
+  78 |     model: 'claude-sonnet-4-6',
+  79 |     max_tokens: 512,
+  80 |     messages: [ {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': '69692b57-aa72-4e07-a9d8-5a70bbc2b74e',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a14e04895b6c50fc-SAT',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Thu, 02 Jul 2026 13:32:39 GMT',
+    'request-id': 'req_011CcdKF4F3WrwqvRnQChFai',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-7ec439e22ac768417e2684da48ee33ba-ceff959944030480-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CcdKF4F3WrwqvRnQChFai',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CcdKF4F3WrwqvRnQChFai'
+  }
+}
+ POST /api/query 200 in 274ms (next.js: 1687µs, application-code: 272ms)
+WikiQuery error: Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CcdKFcqraEAbhgPM2BAZP"}
+    at async identifyRelevantPages (src/app/api/query/route.ts:77:20)
+    at async Object.start (src/app/api/query/route.ts:248:27)
+  75 |  */
+  76 | async function identifyRelevantPages(question: string, indexContent: string, scope = 'publ...
+> 77 |   const response = await client.messages.create({
+     |                    ^
+  78 |     model: 'claude-sonnet-4-6',
+  79 |     max_tokens: 512,
+  80 |     messages: [ {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': '69692b57-aa72-4e07-a9d8-5a70bbc2b74e',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a14e04b81fc650f8-SAT',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Thu, 02 Jul 2026 13:32:46 GMT',
+    'request-id': 'req_011CcdKFcqraEAbhgPM2BAZP',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-21e253dfae439c3aa020deab5c408868-9daae6adb5aa9aaa-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CcdKFcqraEAbhgPM2BAZP',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CcdKFcqraEAbhgPM2BAZP'
+  }
+}
+ POST /api/query 200 in 354ms (next.js: 1247µs, application-code: 353ms)
+WikiQuery error: Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CcdQCgBGyJmRBYP8vZfwd"}
+    at async identifyRelevantPages (src/app/api/query/route.ts:77:20)
+    at async Object.start (src/app/api/query/route.ts:248:27)
+  75 |  */
+  76 | async function identifyRelevantPages(question: string, indexContent: string, scope = 'publ...
+> 77 |   const response = await client.messages.create({
+     |                    ^
+  78 |     model: 'claude-sonnet-4-6',
+  79 |     max_tokens: 512,
+  80 |     messages: [ {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': '69692b57-aa72-4e07-a9d8-5a70bbc2b74e',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a14e63cbbad447a4-DFW',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Thu, 02 Jul 2026 14:37:41 GMT',
+    'request-id': 'req_011CcdQCgBGyJmRBYP8vZfwd',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-df204e099b261e32b8f9bc4aa79d0651-04c168f9c9122ffc-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011CcdQCgBGyJmRBYP8vZfwd',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011CcdQCgBGyJmRBYP8vZfwd'
+  }
+}
+ POST /api/query 200 in 451ms (next.js: 1287µs, application-code: 450ms)
+WikiQuery error: Error: 400 {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011Ccfi3RiisY614FpYtJGdi"}
+    at async identifyRelevantPages (src/app/api/query/route.ts:77:20)
+    at async Object.start (src/app/api/query/route.ts:248:27)
+  75 |  */
+  76 | async function identifyRelevantPages(question: string, indexContent: string, scope = 'publ...
+> 77 |   const response = await client.messages.create({
+     |                    ^
+  78 |     model: 'claude-sonnet-4-6',
+  79 |     max_tokens: 512,
+  80 |     messages: [ {
+  status: 400,
+  headers: {
+    'anthropic-organization-id': '69692b57-aa72-4e07-a9d8-5a70bbc2b74e',
+    'cf-cache-status': 'DYNAMIC',
+    'cf-ray': 'a1586ece8c32a91e-DFW',
+    connection: 'keep-alive',
+    'content-encoding': 'gzip',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+    'content-type': 'application/json',
+    date: 'Fri, 03 Jul 2026 19:52:49 GMT',
+    'request-id': 'req_011Ccfi3RiisY614FpYtJGdi',
+    server: 'cloudflare',
+    'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
+    traceresponse: '00-953cce3a21f9254b94161870ffd63d87-7288ecbed2d09f3a-01',
+    'transfer-encoding': 'chunked',
+    vary: 'Accept-Encoding',
+    'x-robots-tag': 'none',
+    'x-should-retry': 'false'
+  },
+  request_id: 'req_011Ccfi3RiisY614FpYtJGdi',
+  error: {
+    type: 'error',
+    error: {
+      type: 'invalid_request_error',
+      message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'
+    },
+    request_id: 'req_011Ccfi3RiisY614FpYtJGdi'
+  }
+}
+ POST /api/query 200 in 415ms (next.js: 6ms, application-code: 409ms)

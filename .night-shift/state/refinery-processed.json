@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "job": "agentic-kb-refinery-run",
-  "updated_at": "2026-06-25T03:22:44-07:00",
+  "updated_at": "2026-07-01T06:05:27-05:00",
   "processed": {
     "raw/framework-docs/mgechev-skills-best-practices.md": {
       "sha256": "18ada3a8eab879c132eeefafa0ea6fc23bba7258400cf50902f61add5a1a9210",
@@ -78,20 +78,26 @@
     }
   },
   "last_run": {
-    "timestamp": "2026-06-25T03:22:44-07:00",
-    "result": "processed",
+    "timestamp": "2026-07-01T06:05:27-05:00",
+    "result": "noop",
     "scanned": {
       "raw_inbox_files": [
         "raw/inbox/README.md"
       ],
       "status_unprocessed_files": [
+        "raw/framework-docs/ar9av-obsidian-wiki.md",
+        "raw/framework-docs/chopratejas-headroom.md",
+        "raw/framework-docs/langchain-ai-rag-from-scratch.md",
         "raw/framework-docs/mgechev-skills-best-practices.md",
         "raw/framework-docs/microsoft-skillopt.md",
-        "raw/framework-docs/x-twitter-2066530299467706495.md",
-        "raw/framework-docs/chopratejas-headroom.md",
-        "raw/framework-docs/ar9av-obsidian-wiki.md",
-        "raw/framework-docs/langchain-ai-rag-from-scratch.md",
-        "raw/framework-docs/rohitg00-ai-engineering-from-scratch.md"
+        "raw/framework-docs/rohitg00-ai-engineering-from-scratch.md",
+        "raw/framework-docs/x-twitter-2066530299467706495.md"
+      ],
+      "ignored_content_matches": [
+        {
+          "path": "raw/framework-docs/vault-3tier-architecture.md",
+          "reason": "Contains the phrase `status: unprocessed` only as documentation text; frontmatter status is production."
+        }
       ]
     },
     "skipped": [
@@ -99,8 +105,43 @@
         "path": "raw/inbox/README.md",
         "reason": "operational README, not source material",
         "sha256": "a393bcb302e6eb1f9a222fb837b07583e96e5d401f5022cf2909e4297ca36f87"
+      },
+      {
+        "path": "raw/framework-docs/ar9av-obsidian-wiki.md",
+        "reason": "unchanged hash already processed",
+        "sha256": "e64e9f9c4950193d54464554c2ac84678ff49edba6d3a4978752aa811cbf0701"
+      },
+      {
+        "path": "raw/framework-docs/chopratejas-headroom.md",
+        "reason": "unchanged hash already processed",
+        "sha256": "34659f236ad4404eee7a311e167ef2fad22c08f9ad12e6bb463f1257e8374718"
+      },
+      {
+        "path": "raw/framework-docs/langchain-ai-rag-from-scratch.md",
+        "reason": "unchanged hash already processed",
+        "sha256": "851a3959847c78d3d763b80222508f7ebe6db94bdfbd4850c88b10a548cb606f"
+      },
+      {
+        "path": "raw/framework-docs/mgechev-skills-best-practices.md",
+        "reason": "unchanged hash already processed",
+        "sha256": "18ada3a8eab879c132eeefafa0ea6fc23bba7258400cf50902f61add5a1a9210"
+      },
+      {
+        "path": "raw/framework-docs/microsoft-skillopt.md",
+        "reason": "unchanged hash already processed",
+        "sha256": "8df4fa35072154d8b6014b5f1c0f0b1bef696921e4ae6f4695385b2a4fb8bbd7"
+      },
+      {
+        "path": "raw/framework-docs/rohitg00-ai-engineering-from-scratch.md",
+        "reason": "unchanged hash already processed",
+        "sha256": "70250db8a5afe44e21f0c9c69ef79b92bc79cca0b814f7400e7578fffbf5db32"
+      },
+      {
+        "path": "raw/framework-docs/x-twitter-2066530299467706495.md",
+        "reason": "unchanged hash already processed",
+        "sha256": "e88682da5f1b98bef99ba6fa4cc5d7a53c106b9deaf61030caafac53a329dfeb"
       }
     ],
-    "processed_count": 7
+    "processed_count": 0
   }
 }

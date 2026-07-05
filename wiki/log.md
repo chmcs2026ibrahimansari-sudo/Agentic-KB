@@ -969,3 +969,35 @@ Source for resolution: WebSearch result during morning-review-daily 2026-05-16 f
 - Missing commits (Jul 1, Jul 2) now resolved. Commit cadence must be enforced on every run.
 
 **Refuse list observed:** No deletes. No `reviewed: true` flips. No wiki/ page edits. Daily note append only.
+
+---
+
+## 2026-07-05 — morning-review-daily scheduled run
+
+**Trigger:** Scheduled task `morning-review-daily` @ 17:46 CDT.
+
+**Inputs processed:**
+- Apple Notes (24h): 1 note ("Final prep") + 1 link crawled — Morning Review pipeline exit 0, 1 finding (stub — LLM unavailable: credit balance exhausted on separate API key), 0 auto-applied, 1 human-approval item.
+- KB captures: 0 new (KB Inbox: test note deduped; Snipd empty; sofie-watch exit 0 — no pending meetings).
+- KB intelligence queries: 5 (connections, patterns, tensions, leverage, proposals) — kb CLI returned empty bodies; executed via direct wiki file reads per established pattern.
+
+**Pages created:** 0 (read-only run per refuse list — no wiki/ page edits; this log entry is append-only audit trail per Rule 10).
+
+**Actions taken:**
+- Morning Review pipeline: completed (exit 0) — 1 note, 1 finding (stub), 159 stale lifecycle alerts (61 action-required), daily note written to `Daily Notes/2026-07-05.md`.
+- KB intelligence section appended to `Daily Notes/2026-07-05.md` in Obsidian Vault (only personal-vault write — Rule 13 preserved).
+- Obsidian Vault + Agentic-KB: committing and pushing per standing daily-commit preference (2026-06-10).
+
+**Contradictions flagged:** None new. 0 open contradictions in ledger.
+
+**Graduates identified (still blocked by compile crash):**
+- `verification-before-completion` — same as prior runs — compile crash persists (6th+ run).
+- `token-economics` — same as prior runs.
+
+**Open threads:**
+- `compile-2source-gate.mjs --execute` crashes `Error: undefined` — CRITICAL, 6+ weeks unresolved. Blocking 2 confirmed graduates + promote candidates.
+- Morning Review API key: insufficient credits — pipeline classifier AND kb CLI queries both degraded. Restore credits or repoint key.
+- 108 deferred candidates in HEAVY_BACKLOG — prune recommended.
+- Stale lifecycle alerts climbing: 138 → 159 (61 action-required).
+
+**Refuse list observed:** No deletes. No `reviewed: true` flips. No wiki/ page edits. Daily note append only.

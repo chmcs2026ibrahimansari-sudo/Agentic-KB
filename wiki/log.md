@@ -1001,3 +1001,35 @@ Source for resolution: WebSearch result during morning-review-daily 2026-05-16 f
 - Stale lifecycle alerts climbing: 138 → 159 (61 action-required).
 
 **Refuse list observed:** No deletes. No `reviewed: true` flips. No wiki/ page edits. Daily note append only.
+
+---
+
+## 2026-07-07 — morning-review-daily scheduled run
+
+**Trigger:** Scheduled task `morning-review-daily` @ 04:04 CDT.
+
+**Inputs processed:**
+- Apple Notes (24h): 5 notes + 1 link crawled (YouTube short — see daily note) — Morning Review pipeline exit 0, 1 finding (stub — LLM unavailable: credit balance exhausted on separate API key), 0 auto-applied, 1 human-approval item (review 5 unclassified notes).
+- KB captures: 0 new (KB Inbox: only the 2026-05-16 test note, already deduped; Snipd empty; sofie-watch exit 1 with no error output — no pending meetings staged).
+- KB intelligence queries: 5 (connections, patterns, tensions, leverage, proposals) — kb CLI returned empty bodies (API credits); executed via direct wiki file reads per established pattern. foundry-propose ran clean: 0 new proposals (109 detectors fired, all already proposed).
+
+**Pages created:** 0 (read-only run per refuse list — no wiki/ page edits; this log entry is append-only audit trail per Rule 10).
+
+**Actions taken:**
+- Morning Review pipeline: completed (exit 0) — 5 notes, 1 finding (stub), 169 stale lifecycle alerts (63 action-required), daily note written to `Daily Notes/2026-07-07.md`.
+- KB intelligence section appended to `Daily Notes/2026-07-07.md` in Obsidian Vault (only personal-vault write — Rule 13 preserved).
+- Obsidian Vault + Agentic-KB: committing and pushing per standing daily-commit preference (2026-06-10).
+
+**Contradictions flagged:** None new. 0 open contradictions in ledger.
+
+**Graduates identified (still blocked by compile crash):**
+- `verification-before-completion` — same as prior runs — compile crash persists (7th+ run).
+- `token-economics` — same as prior runs.
+
+**Open threads:**
+- `compile-2source-gate.mjs --execute` crashes `Error: undefined` — CRITICAL, 7+ weeks unresolved. Blocking 2 confirmed graduates + promote candidates.
+- Anthropic API credits exhausted — degrades BOTH the pipeline classifier and kb CLI queries. Restore credits or repoint key.
+- 108 deferred candidates in HEAVY_BACKLOG — prune recommended.
+- Stale lifecycle alerts climbing: 138 → 159 → 169 (63 action-required).
+
+**Refuse list observed:** No deletes. No `reviewed: true` flips. No wiki/ page edits. Daily note append only.

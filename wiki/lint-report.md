@@ -1,13 +1,13 @@
 # Wiki Lint Report
 
-> Generated: 2026-07-02 12:23 | Vault: Agentic-KB | Pages scanned: 617
+> Generated: 2026-07-08 14:28 | Vault: Agentic-KB | Pages scanned: 618
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 24 | 🟡 Medium |
+| Orphaned pages | 25 | 🟡 Medium |
 | Stale pages | 256 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
@@ -30,6 +30,7 @@
 - `recipes/readwise-to-wikiwise-ingest.md` — Readwise Reader → Wikiwise Ingest
 - `recipes/recipe-prd-generator.md` — PRD Generator Skill
 - `reports/2026-06-18-nightly-ci-analysis.md` — 2026-06-18-nightly-ci-analysis
+- `reports/2026-07-02-nightly-ci-analysis.md` — 2026-07-02-nightly-ci-analysis
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18
 - `syntheses/synthesis-repo-aware-system-implementation.md` — Repo-Aware Knowledge & Agent Memory System — Implementation Summary

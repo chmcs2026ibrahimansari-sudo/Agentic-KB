@@ -1,14 +1,14 @@
 # Wiki Lint Report
 
-> Generated: 2026-07-09 14:07 | Vault: Agentic-KB | Pages scanned: 619
+> Generated: 2026-07-10 14:07 | Vault: Agentic-KB | Pages scanned: 621
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 26 | 🟡 Medium |
-| Stale pages | 256 | 🟡 Medium |
+| Orphaned pages | 28 | 🟡 Medium |
+| Stale pages | 259 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
 ## 🟡 Orphaned Pages (no inbound links)
@@ -32,6 +32,8 @@
 - `reports/2026-06-18-nightly-ci-analysis.md` — 2026-06-18-nightly-ci-analysis
 - `reports/2026-07-02-nightly-ci-analysis.md` — 2026-07-02-nightly-ci-analysis
 - `reports/2026-07-07-nightly-ci-analysis.md` — 2026-07-07-nightly-ci-analysis
+- `reports/2026-07-08-nightly-ci-analysis.md` — 2026-07-08-nightly-ci-analysis
+- `reports/2026-07-09-nightly-ci-analysis.md` — 2026-07-09-nightly-ci-analysis
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18
 - `syntheses/synthesis-repo-aware-system-implementation.md` — Repo-Aware Knowledge & Agent Memory System — Implementation Summary
@@ -117,6 +119,7 @@
 - `concepts/query-pipeline.md` — last updated: Tue Apr 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/rag-systems.md` — last updated: Thu Apr 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/react-nextjs-performance.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/reciprocal-rank-fusion.md` — last updated: Tue Jun 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/rlm-pipeline.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/sandboxed-execution.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/self-critique.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -195,6 +198,7 @@
 - `patterns/pattern-minimal-permissions.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-mistake-log.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-parallel-subagent-ingest.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `patterns/pattern-per-claim-confidence.md` — last updated: Tue Jun 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-pipeline.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-plan-execute-verify.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-playwright-e2e.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -292,6 +296,7 @@
 - `syntheses/synthesis-rag-eval-to-llm-judge.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `syntheses/synthesis-repo-aware-system-implementation.md` — last updated: Wed Apr 08 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `syntheses/synthesis-retrieval-and-tool-permissions-as-co-enforced-boundary.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `syntheses/synthesis-rrf-as-rlm-fusion-stage.md` — last updated: Tue Jun 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `system/policies/contradiction-policy.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `system/policies/freshness-policy.md` — last updated: Thu Apr 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `system/policies/promotion-rules.md` — last updated: Thu Apr 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)

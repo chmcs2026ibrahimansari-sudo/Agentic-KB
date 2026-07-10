@@ -220,7 +220,7 @@ async function readArticle(slug) {
   const res = await fetch(`${API_URL}/wiki/${cleanSlug}`)
   // Fall back to reading the raw file directly
   const fs = await import('fs')
-  const KB_ROOT = new URL('..', import.meta.url).pathname
+  const KB_ROOT = AGENT_KB_ROOT
   let filePath
   try {
     filePath = safeJoin(KB_ROOT, 'wiki', cleanSlug + '.md')
@@ -239,7 +239,7 @@ async function readArticle(slug) {
 
 async function listSection(section, opts = {}) {
   const fs = await import('fs')
-  const KB_ROOT = new URL('..', import.meta.url).pathname
+  const KB_ROOT = AGENT_KB_ROOT
   let sectionDir
   try {
     const safeSection = validateSlug(String(section || ''), 'section')
@@ -475,7 +475,7 @@ async function ingestYoutube(url) {
     }
 
     // Write to raw/transcripts/
-    const KB_ROOT = new URL('..', import.meta.url).pathname
+    const KB_ROOT = AGENT_KB_ROOT
     const outDir = path.join(KB_ROOT, 'raw', 'transcripts')
     fs.mkdirSync(outDir, { recursive: true })
 
@@ -553,7 +553,7 @@ async function ingestTwitterArchive(archivePath) {
     ? path.join(archiveDir, 'data')
     : archiveDir
 
-  const KB_ROOT = new URL('..', import.meta.url).pathname
+  const KB_ROOT = AGENT_KB_ROOT
   const outDir = path.join(KB_ROOT, 'raw', 'twitter')
   fs.mkdirSync(outDir, { recursive: true })
 
@@ -705,7 +705,7 @@ async function ingestFile(filePath, opts) {
 
   // Determine output subdirectory
   const subdir = opts.dir || inferRawSubdir(resolved)
-  const KB_ROOT = new URL('..', import.meta.url).pathname
+  const KB_ROOT = AGENT_KB_ROOT
   const outDir = path.join(KB_ROOT, 'raw', subdir)
   fs.mkdirSync(outDir, { recursive: true })
 
@@ -771,7 +771,7 @@ async function reindex(pin) {
 async function reindexLocal() {
   const fs = await import('fs')
   const path = await import('path')
-  const KB_ROOT = new URL('..', import.meta.url).pathname
+  const KB_ROOT = AGENT_KB_ROOT
   const wikiDir = path.join(KB_ROOT, 'wiki')
 
   const sections = ['concepts', 'patterns', 'frameworks', 'entities', 'recipes', 'evaluations', 'summaries', 'syntheses', 'personal']

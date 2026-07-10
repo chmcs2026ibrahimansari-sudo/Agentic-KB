@@ -19,11 +19,12 @@ import {
 } from '@modelcontextprotocol/sdk/types.js'
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import * as agentRuntime from '../lib/agent-runtime/index.mjs'
 import * as repoRuntime from '../lib/repo-runtime/index.mjs'
 import { safeJoin, validateSlug } from '../lib/agent-runtime/safe-path.mjs'
 
-const KB_ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..')
+const KB_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const WIKI_ROOT = path.join(KB_ROOT, 'wiki')
 const API_URL = process.env.KB_API_URL || 'http://localhost:3002'
 const PRIVATE_PIN = process.env.PRIVATE_PIN || ''

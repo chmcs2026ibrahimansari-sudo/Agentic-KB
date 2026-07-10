@@ -188,12 +188,15 @@ async function query(question, scope = 'public', pin = '') {
 
   const reader = res.body.getReader()
   const decoder = new TextDecoder()
+  let sseBuf = ''
 
   while (true) {
     const { done, value } = await reader.read()
     if (done) break
-    const text = decoder.decode(value)
-    for (const line of text.split('\n')) {
+    sseBuf += decoder.decode(value, { stream: true })
+    const lines = sseBuf.split('\n')
+    sseBuf = lines.pop() || ''
+    for (const line of lines) {
       if (!line.startsWith('data: ')) continue
       try {
         const data = JSON.parse(line.slice(6))

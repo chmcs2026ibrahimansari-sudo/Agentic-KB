@@ -702,8 +702,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     if (name === 'list_articles') {
-      const section = String(args.section || '')
-      const sectionDir = path.join(WIKI_ROOT, section)
+      let section, sectionDir
+      try {
+        section = validateSlug(String(args.section || ''), 'section')
+        sectionDir = safeJoin(WIKI_ROOT, section)
+      } catch (e) {
+        return { content: [{ type: 'text', text: `Invalid section: ${e.message}` }], isError: true }
+      }
       if (!fs.existsSync(sectionDir)) {
         return { content: [{ type: 'text', text: `Section not found: ${section}` }] }
       }

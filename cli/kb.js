@@ -217,8 +217,6 @@ async function readArticle(slug) {
     console.error(`❌ Invalid slug: ${e.message}`)
     process.exit(1)
   }
-  const res = await fetch(`${API_URL}/wiki/${cleanSlug}`)
-  // Fall back to reading the raw file directly
   const fs = await import('fs')
   const KB_ROOT = AGENT_KB_ROOT
   let filePath

@@ -134,7 +134,11 @@ function parseArgs(args) {
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--scope') opts.scope = args[++i]
     else if (args[i] === '--mode') opts.mode = args[++i]
-    else if (args[i] === '--limit') opts.limit = parseInt(args[++i], 10)
+    else if (args[i] === '--limit') {
+      const n = parseInt(args[++i], 10)
+      if (Number.isFinite(n) && n > 0) opts.limit = n
+      else console.error('⚠ Invalid --limit value, using default 10')
+    }
     else if (args[i] === '--pin') opts.pin = args[++i]
     else positional.push(args[i])
   }

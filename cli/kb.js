@@ -959,7 +959,12 @@ async function agentCmd(sub, rest) {
   if (sub === 'status') {
     const id = rest[0]
     const limitIdx = rest.indexOf('--last')
-    const traceLimit = limitIdx >= 0 ? parseInt(rest[limitIdx + 1], 10) : 5
+    let traceLimit = 5
+    if (limitIdx >= 0) {
+      const n = parseInt(rest[limitIdx + 1], 10)
+      if (Number.isFinite(n) && n > 0) traceLimit = n
+      else console.error('⚠ Invalid --last value, using default 5')
+    }
     if (!id) throw new Error('Usage: kb agent status <agent-id> [--last <n>]')
     const c = rt.loadContract(AGENT_KB_ROOT, id)
     const status = rt.getAgentStatus(AGENT_KB_ROOT, c, { traceLimit })
@@ -1082,7 +1087,12 @@ async function agentCmd(sub, rest) {
   if (sub === 'trace') {
     const id = rest[0]
     const limitIdx = rest.indexOf('--last')
-    const limit = limitIdx >= 0 ? parseInt(rest[limitIdx + 1], 10) : 10
+    let limit = 10
+    if (limitIdx >= 0) {
+      const n = parseInt(rest[limitIdx + 1], 10)
+      if (Number.isFinite(n) && n > 0) limit = n
+      else console.error('⚠ Invalid --last value, using default 10')
+    }
     const traces = rt.readRuntimeTraces(AGENT_KB_ROOT, limit, id ? { agent_id: id } : {})
     for (const t of traces) {
       console.log(`[${t.ts}] ${t.type} ${t.agent_id || ''} ${t.project || ''}`)

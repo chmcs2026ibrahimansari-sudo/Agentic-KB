@@ -1445,3 +1445,16 @@ test('promotion-scorer: checkContradictions detects sibling with overlapping tag
   assert.ok(r.conflictingPages.includes('wiki/concepts/existing.md'),
     `expected sibling conflict, got ${JSON.stringify(r.conflictingPages)}`)
 })
+
+// ─── Audit: tail-read lastLine handles oversized entries ─────────────────────
+
+test('audit: hash chain stays intact when an entry exceeds the tail-read window', () => {
+  const root = makeFixture()
+  rt.appendAudit(root, { op: 'test-small', agent_id: 'w1' })
+  // Entry larger than the initial 8KB tail window — forces window doubling
+  rt.appendAudit(root, { op: 'test-big', agent_id: 'w1', blob: 'x'.repeat(20000) })
+  rt.appendAudit(root, { op: 'test-after-big', agent_id: 'w1' })
+  const res = rt.verifyAuditChain(root)
+  assert.equal(res.ok, true, `chain broken: ${JSON.stringify(res)}`)
+  assert.ok(res.signed >= 3)
+})

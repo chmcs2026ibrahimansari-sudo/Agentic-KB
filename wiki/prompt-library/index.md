@@ -19,6 +19,7 @@ Reusable prompts, thinking tools, and slash commands for working with Claude acr
 - [[prompt-library/note-processing|Note Processing Prompts]] — Ingest, summarize, extract, link, and synthesize notes
 - [[prompt-library/idea-generation|Idea Generation]] — Brainstorming, divergent thinking, constraint removal
 - [[prompt-library/reflection-synthesis|Reflection & Synthesis]] — Session debrief, cross-note synthesis, pattern extraction
+- [[prompt-library/graph-maintenance|Graph Maintenance]] — Daily living-graph scan, link suggestions, Sofie writeback queue
 - [[prompt-library/custom-slash-commands|Custom Slash Commands]] — Jay's `.claude/commands/` library with usage notes
 
 ---

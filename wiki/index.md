@@ -82,7 +82,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Patterns (61)
+## Patterns (64)
 
 | Page | Category | Problem | Confidence |
 |------|----------|---------|------------|
@@ -96,6 +96,9 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[patterns/pattern-typed-knowledge-graph]] | memory | Wiki link graphs track connection existence but not semantics — can't distinguish "A caused B" from "A implements B" | medium |
 | [[patterns/pattern-grounded-generation]] | evaluation | LLM outputs that cite retrieved content often hallucinate citations or make claims not supported by source chunks | high |
 | [[patterns/pattern-react]] | orchestration | Agents that reason only from parametric memory hallucinate and cannot update beliefs from new information mid-task | high |
+| [[patterns/pattern-navigator-driver-agentic-coding]] | orchestration | Developers use agents as autocomplete or isolated chat assistants, leaving the human to still perform coordination, review, and artifact assembly | medium |
+| [[patterns/pattern-agent-as-ui-system-of-record-backend]] | orchestration | Agent systems create duplicate plans, duplicated state, and split-brain workflows when they store work outside the tools where the organization already operates | medium |
+| [[patterns/pattern-outcome-metrics-for-agent-adoption]] | evaluation | Agent programs optimize for easy activity metrics without proving that work got faster, better, safer, or less burdensome | medium |
 
 ---
 
@@ -239,6 +242,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[prompt-library/note-processing|Note Processing]] | Summarize source, extract concepts, update pages, generate cross-links, contradiction check |
 | [[prompt-library/idea-generation|Idea Generation]] | Diverge first, constraint removal, analogical reasoning, pre-mortem, SCAMPER, 10x thinking |
 | [[prompt-library/reflection-synthesis|Reflection & Synthesis]] | Session debrief, war story extraction, cross-note synthesis, pattern extraction, weekly reflection |
+| [[prompt-library/graph-maintenance|Graph Maintenance]] | Daily living-graph scan, link suggestions, orphan flags, Sofie writeback queue |
 | [[prompt-library/custom-slash-commands|Custom Slash Commands]] | /ingest, /lint, /brief, /explore, /hot-update, /query, /hermes |
 
 ---
@@ -254,7 +258,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (16)
+## Syntheses (17)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -274,6 +278,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-deepeval-metrics-as-trajectory-vocabulary]] | Can DeepEval's named agent metrics (PlanQuality, ToolCalling, ArgumentCorrectness) serve as the operational vocabulary that turns trajectory evaluation into a measurable CI/CD gate? | 2026-05-25 |
 | [[syntheses/synthesis-rrf-as-rlm-fusion-stage]] | What algorithm fills the score-merging slot in the RLM Pipeline's multi-source retrieval stages (4–9), and why is it Reciprocal Rank Fusion? | 2026-05-27 |
 | [[syntheses/synthesis-skills-as-evaluable-artifacts]] | When should an agent skill be treated as a tested software artifact instead of a prose instruction file? | 2026-06-25 |
+| [[syntheses/synthesis-agentic-engineering-operating-model]] | What operating model makes agentic engineering useful instead of performative? | 2026-07-10 |
 
 ---
 

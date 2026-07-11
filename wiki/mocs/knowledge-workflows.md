@@ -44,6 +44,7 @@ After ingesting, make the new knowledge discoverable:
 - Add to `wiki/recently-added.md`
 - Update relevant MoC pages
 - Verify 2-click reachability from `wiki/home.md`
+- Run daily graph maintenance on the personal vault via [[prompt-library/graph-maintenance|Graph Maintenance Prompt]] (Hermes suggests, Sofie writeback)
 
 Full workflow spec in [[CLAUDE.md]].
 

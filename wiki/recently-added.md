@@ -9,6 +9,15 @@ type: meta
 
 ---
 
+## 2026-06-01 (Obsidian living graph alignment)
+
+- [[wiki/personal/decision-defer-smart-connections-2026-06-01|Defer Smart Connections]] — Decision: use Hermes/MCP link suggestions + Sofie writeback instead of in-vault Smart Connections
+- [[wiki/prompt-library/graph-maintenance|Graph Maintenance Prompt]] — Daily living-graph scan prompt with Sofie writeback queue format
+- `playbooks/graph-maintenance-run.md` — Daily graph maintenance job definition
+- `scripts/graph-maintenance-scan.mjs` — Read-only vault scan with receipt verification
+
+---
+
 ## 2026-06-10 (agentmemory provenance gap — RESOLVED)
 - [[wiki/concepts/reciprocal-rank-fusion|Reciprocal Rank Fusion]] — UPDATED: `[UNVERIFIED PROVENANCE]` replaced with `[PROVENANCE RESOLVED]`; closed via corroboration (Cormack et al. 2009 + siagian roadmap); confidence medium→high.
 - [[wiki/patterns/pattern-per-claim-confidence|Per-Claim Confidence]] — UPDATED: provenance loop closed as won't-fix; still single-source, retained at `medium`, not promoted to canonical.

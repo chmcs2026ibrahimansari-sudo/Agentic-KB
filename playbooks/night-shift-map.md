@@ -19,7 +19,8 @@ Purpose: adapt the "second brain night shift" pattern to Jay's existing Agentic-
 1. Scout Run: pull URLs from `raw/reading-list.md` into `raw/framework-docs/` or the appropriate raw source folder.
 2. Refinery Run: process unhandled `raw/inbox/` and raw source files into summaries and atomic wiki updates.
 3. Editor Run: update synthesis threads and write the daily briefing.
-4. Audit Run: report integrity problems weekly without modifying wiki pages.
+4. Graph Maintenance Run: read-only scan of personal vault + Hermes link suggestions; Sofie writeback for approved items. See `playbooks/graph-maintenance-run.md`.
+5. Audit Run: report integrity problems weekly without modifying wiki pages.
 
 ## Safety posture
 This is Hermes-native, not Kimi-specific. The workflow uses Hermes cron jobs and the existing Agentic-KB schema. Scheduled jobs must be idempotent, source-grounded, and conservative about writes.

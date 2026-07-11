@@ -44,3 +44,5 @@ wiki/_private/*
 # Known noisy web server logs (exact files only; do not ignore all logs)
 logs/web-server-error.log
 logs/web-server.log
+logs/audit.log
+logs/kb-dev-server.log

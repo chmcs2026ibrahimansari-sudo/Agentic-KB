@@ -32,6 +32,9 @@ updated: 2026-04-10
 - [[patterns/pattern-hosted-agent-infrastructure]] — Hosted agent infra: long-running runtime, queues, observability
 - [[patterns/pattern-staged-llm-pipeline]] — Multi-stage LLM pipeline with explicit handoffs
 - [[patterns/pattern-agent-proof-of-work-loop]] — Verification + receipts + exception review loop for agent work before completion claims
+- [[patterns/pattern-navigator-driver-agentic-coding]] — Human/orchestrator as navigator; agents as artifact-producing drivers
+- [[patterns/pattern-agent-as-ui-system-of-record-backend]] — Agent as cross-system UI while GitHub/tasks/docs/vaults remain authoritative backends
+- [[patterns/pattern-outcome-metrics-for-agent-adoption]] — Separate adoption telemetry from artifact, quality, flow, and business outcome movement
 
 ---
 
@@ -66,6 +69,7 @@ updated: 2026-04-10
 ## Syntheses
 
 - [[syntheses/oss-agent-ecosystem-map]] — Ecosystem map of 19 OSS agent repos
+- [[syntheses/synthesis-agentic-engineering-operating-model]] — Operating model for one visible orchestrator, backend agent lanes, artifact-native completion, system-of-record backends, and outcome metrics
 - [[summaries/2026-04-08-what-is-the-best-pattern-for-multi-agent-orchestration-in-cl]] — [[pattern-fan-out-worker]] Orchestrator-Worker as default; token multiplier; failure modes
 
 ---

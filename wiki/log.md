@@ -4,6 +4,33 @@ id: 01KNNVX2QX9QG2KH6FCT2ARV5Y
 
 # Wiki Compile Log
 
+## 2026-07-10 — Apple Notes agentic engineering synthesis
+
+**Trigger:** Jay asked Hermes to review recent Apple Notes and apply Hermes/Pi/agentic-engineering lessons.
+
+**Raw sources captured by manual Scout:**
+- `raw/framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md`
+- `raw/framework-docs/www-linkedin-com-jobs-view-4438558062.md`
+- `raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md`
+- `raw/framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md`
+- `raw/framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md`
+
+**Synthesis created:**
+- `[[syntheses/synthesis-agentic-engineering-operating-model]]` — one visible orchestrator, backend agent lanes, artifact-native completion, system-of-record backends, permissioned context, and outcome metrics.
+
+**Patterns created:**
+- `[[patterns/pattern-navigator-driver-agentic-coding]]`
+- `[[patterns/pattern-agent-as-ui-system-of-record-backend]]`
+- `[[patterns/pattern-outcome-metrics-for-agent-adoption]]`
+
+**Backlinks / index:**
+- Updated `[[mocs/orchestration]]` with new patterns and synthesis.
+- Updated `[[wiki/index]]` patterns count 61→64 and syntheses count 16→17.
+
+**Operational note:** Hermes cron `run` scheduled Scout but did not advance `last_run_at` immediately; manual Scout preserved the sources and wrote `briefings/scout-2026-07-10.md` plus `.night-shift/state/scout-processed.json` entries.
+
+---
+
 ## 2026-06-25 — Agentic-KB Refinery Run
 
 **Trigger:** Scheduled `agentic-kb-refinery-run`.
@@ -1033,3 +1060,5 @@ Source for resolution: WebSearch result during morning-review-daily 2026-05-16 f
 - Stale lifecycle alerts climbing: 138 → 159 → 169 (63 action-required).
 
 **Refuse list observed:** No deletes. No `reviewed: true` flips. No wiki/ page edits. Daily note append only.
+
+[2026-06-01] LIVING GRAPH ALIGNMENT | Enabled Dataview in personal vault; enhanced `00 - Dashboards/Graph Health.md`. Deferred Smart Connections → `wiki/personal/decision-defer-smart-connections-2026-06-01.md`. Added graph-maintenance playbook, prompt, scan script + receipt verification. Updated night-shift-map. Gitignore audit/kb-dev logs.

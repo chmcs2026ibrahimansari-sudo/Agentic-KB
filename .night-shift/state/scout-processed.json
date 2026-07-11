@@ -48,6 +48,41 @@
       "captured_at": "2026-06-18T12:00:00.042098-07:00",
       "sha256": "e0b451647029ceef958148bc3fa24c3915c7775225ae12372f2a1bb4f38d18dc",
       "source_note": "Apple Notes 2026-06-15: LEANN lightweight local RAG claim; resolve source repo/paper and evaluate for local personal-data retrieval."
+    },
+    {
+      "url": "https://sierra.ai/blog/ai-pilling-our-company-lessons-learned",
+      "destination": "raw/framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md",
+      "captured_at": "2026-07-10T11:14:36.445298-07:00",
+      "sha256": "126a4fc0b3fc1a763fb9cb9c9bcc784db77e381e347b5b3e7f57947d3151fe42",
+      "source_note": "Apple Notes 2026-07-10: single-agent front door, proactive/persistent agent work, MCP gateway/context layer, systems-of-record-as-backend, outcome metrics."
+    },
+    {
+      "url": "https://www.linkedin.com/jobs/view/4438558062/",
+      "destination": "raw/framework-docs/www-linkedin-com-jobs-view-4438558062.md",
+      "captured_at": "2026-07-10T11:14:36.445298-07:00",
+      "sha256": "985db79ca7490a4e78adc9e4945ba19f6d6fa6c3c2b348d1b77114f3a6ae738c",
+      "source_note": "Apple Notes 2026-07-10: Salesforce Director Human-AI Collaboration role; mine work-model, workforce transformation, HCI, and human-agent collaboration patterns."
+    },
+    {
+      "url": "https://www.linkedin.com/posts/linasbeliunas_these-are-2-senior-staff-engineers-at-airbnb-ugcPost-7481062194848227329-YH7Y/",
+      "destination": "raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md",
+      "captured_at": "2026-07-10T11:14:36.445298-07:00",
+      "sha256": "1d432e6b2e0d70ef3e26c1ce8951ca302a46a95ae57b9eeb4f765923f6cf6f74",
+      "source_note": "Apple Notes 2026-07-10: Airbnb agentic coding talk; extract navigator/driver model, multiple agentic sessions, routines, adoption framing."
+    },
+    {
+      "url": "https://www.linkedin.com/posts/eordax_ai-claude-ugcPost-7480733978405109760--4xi/",
+      "destination": "raw/framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md",
+      "captured_at": "2026-07-10T11:14:36.445298-07:00",
+      "sha256": "93550aed10046d0d1b04917b3cdf0fc199fe481760fecc25a019a5b6cce48ac8",
+      "source_note": "Apple Notes 2026-07-09: Claude/Fable prompting lesson; evaluate prompt-minimization with stronger external verification/error handling."
+    },
+    {
+      "url": "https://www.linkedin.com/pulse/copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozcfc/",
+      "destination": "raw/framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md",
+      "captured_at": "2026-07-10T11:14:36.445298-07:00",
+      "sha256": "4385b3e30ba3295f06312fadbca15e4afadd32fb385d7a2bce4421b89a16f97c",
+      "source_note": "Apple Notes 2026-07-08: Netflix NTech SRE reliability-at-scale reference; mine only if useful for governed agent/platform reliability patterns."
     }
   ]
 }

@@ -1,0 +1,341 @@
+{
+  "last_run": "2026-07-11T18:22:23.759Z",
+  "last_briefing": "briefings/graph-maintenance-2026-07-11.md",
+  "receipt": {
+    "vault_root": "/Users/jaywest/Documents/Obsidian Vault",
+    "scanned_at": "2026-07-11T18:22:23.759Z",
+    "notes_scanned": 2146,
+    "created_this_week": 26,
+    "modified_this_week": 26,
+    "orphan_count": 602,
+    "dead_end_count": 57,
+    "orphans": [
+      "01 - Clients/BOOTSTRAP-HERMES-20260425-091234.md",
+      "01 - Clients/Bootstrap E2E Test Client 20260425-090048.md",
+      "01 - Clients/Bootstrap Hermes Acceptance 20260425-090856.md",
+      "04 - Sessions/2026-04-25-bootstrap-e2e-test-20260425-090048.md",
+      "04 - Sessions/2026-04-25-bootstrap-hermes-20260425-090856-session.md",
+      "04 - Sessions/2026-04-25-bootstrap-hermes-20260425-091234-session.md",
+      "06 - Decisions/2026-04-25 - bootstrap-e2e-test-20260425-090048-verify-sofie-vault-writeb.md",
+      "06 - Decisions/2026-04-25 - bootstrap-hermes-20260425-090856-decision.md",
+      "06 - Decisions/2026-04-25 - bootstrap-hermes-20260425-091234-decision.md",
+      "07 - Tasks/Action Tracker.md",
+      "2026-02-26.md",
+      "Brainstorming/README.md",
+      "CLAUDE.md",
+      "IMPROVEMENTS-COMPLETED.md",
+      "Prompts/Claude Vault Prompts.md",
+      "Specs/README.md",
+      "Test west.md",
+      "Tools/Claude Code Setup.md",
+      "Untitled.md",
+      "Video.md",
+      "Wiki/Captured Prompt - World Class Expert.md",
+      "beliefs.md",
+      "daily-notes/2026-03-22.md",
+      "multi-agent team orchestration/Videos/Videos.md",
+      "projects/AI_CEO/web/CLAUDE.md",
+      "projects/AMS/agent-resources-platform/PII_QUICK_REFERENCE.md",
+      "projects/AMS/agent-resources-platform/_quarantine/fastapi/control-plane/venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+      "projects/AMS/agent-resources-platform/docs/PHASE_4.0_PROGRESS.md",
+      "projects/AMS/agent-resources-platform/services/control-plane/venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md",
+      "projects/AMS/agent-resources-platform/services/control-plane/venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+      "projects/Agent_Management_System/Open-SWE-With-Agents/orchestration/agent-organizer.md",
+      "projects/Agent_Management_System/claude-code-templates/CODE_OF_CONDUCT.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/TESTING.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/ai-specialists/hackathon-ai-strategist.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/business-marketing/content-marketer.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/business-marketing/payment-integration.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/data-ai/quant-analyst.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/database/database-optimization.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/development-tools/code-reviewer.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/development-tools/context-manager.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/development-tools/debugger.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/expert-advisors/architect-review.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/ffmpeg-clip-team/audio-quality-controller.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/ffmpeg-clip-team/podcast-content-analyzer.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/ffmpeg-clip-team/podcast-metadata-specialist.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/ffmpeg-clip-team/podcast-transcriber.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/ffmpeg-clip-team/social-media-clip-creator.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/game-development/unreal-engine-developer.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/obsidian-ops-team/metadata-agent.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/ocr-extraction-team/markdown-syntax-formatter.md"
+    ],
+    "dead_ends": [
+      "00 - Zettelkasten/Daily Notes/2026-05-20.md",
+      "ideas.md",
+      "projects/AMS/agent-resources-platform/_quarantine/fastapi/control-plane/venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/business-marketing/sales-automator.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/database/database-admin.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/database/database-optimizer.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/development-team/backend-architect.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/development-tools/dx-optimizer.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/devops-infrastructure/network-engineer.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/modernization/legacy-modernizer.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/programming-languages/c-pro.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/programming-languages/cpp-pro.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/programming-languages/golang-pro.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/programming-languages/javascript-pro.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/programming-languages/python-pro.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/programming-languages/rust-pro.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/programming-languages/sql-pro.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/agents/security/incident-responder.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/commands/security/security-audit.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/commands/utilities/clean.md",
+      "projects/Agent_Management_System/claude-code-templates/cli-tool/components/commands/utilities/code-review.md",
+      "projects/Agent_Management_System/claude-code-templates/docu/docs/support.md",
+      "projects/Claude_sub_agents/agents/design/whimsy-injector.md",
+      "projects/Claude_sub_agents/agents/development/backend-developer.md",
+      "projects/Claude_sub_agents/agents/devops/laravel-eloquent-expert.md",
+      "projects/Claude_sub_agents/agents/marketing/app-store-optimizer.md",
+      "projects/Claude_sub_agents/agents/operations/analytics-reporter.md",
+      "projects/Claude_sub_agents/agents/operations/finance-tracker.md",
+      "projects/Claude_sub_agents/agents/operations/legal-compliance-checker.md",
+      "projects/Claude_sub_agents/agents/product/experiment-tracker.md"
+    ],
+    "hubs": [
+      {
+        "path": "04 - Concepts/SellerFi.md",
+        "inlinks": 423
+      },
+      {
+        "path": "04 - Concepts/Vercel.md",
+        "inlinks": 300
+      },
+      {
+        "path": "04 - Concepts/Prisma.md",
+        "inlinks": 252
+      },
+      {
+        "path": "04 - Concepts/Next.js.md",
+        "inlinks": 229
+      },
+      {
+        "path": "04 - Concepts/Claude.md",
+        "inlinks": 181
+      },
+      {
+        "path": "04 - Concepts/orchestration.md",
+        "inlinks": 162
+      },
+      {
+        "path": "04 - Concepts/MCP.md",
+        "inlinks": 161
+      },
+      {
+        "path": "04 - Concepts/Convex.md",
+        "inlinks": 150
+      },
+      {
+        "path": "04 - Concepts/Claude Code.md",
+        "inlinks": 144
+      },
+      {
+        "path": "04 - Concepts/MissionControl.md",
+        "inlinks": 136
+      },
+      {
+        "path": "04 - Concepts/Telegram.md",
+        "inlinks": 99
+      },
+      {
+        "path": "04 - Concepts/SBA.md",
+        "inlinks": 90
+      },
+      {
+        "path": "04 - Concepts/Sofie.md",
+        "inlinks": 68
+      },
+      {
+        "path": "04 - Concepts/Agent Resources Platform.md",
+        "inlinks": 60
+      },
+      {
+        "path": "04 - Concepts/Obsidian.md",
+        "inlinks": 53
+      },
+      {
+        "path": "04 - Concepts/Twinz.md",
+        "inlinks": 53
+      },
+      {
+        "path": "04 - Concepts/policy engine.md",
+        "inlinks": 45
+      },
+      {
+        "path": "04 - Concepts/Even G2.md",
+        "inlinks": 42
+      },
+      {
+        "path": "04 - Concepts/AssuranceAgents.md",
+        "inlinks": 36
+      },
+      {
+        "path": "04 - Concepts/Knowledge Graph.md",
+        "inlinks": 34
+      }
+    ],
+    "created_this_week_paths": [
+      "Indexes/Systems Index.md",
+      "Daily Notes/2026-07-11.md",
+      "Indexes/Morning Reviews Index.md",
+      "Wiki/Pi-Agent.md",
+      "Wiki/Morning-Review-System.md",
+      "Wiki/Obsidian-Vault.md",
+      "Wiki/Local-Machine.md",
+      "Wiki/Hermes.md",
+      "Wiki/GitHub-Projects.md",
+      "Wiki/Claude-Cowork.md",
+      "Wiki/Claude-Code.md",
+      "projects/claude_code-review-filing-automation.md",
+      "projects/claude_cowork-automated-secrets-detection.md",
+      "projects/github-audit-hermes-memory.md",
+      "projects/hermes-investigate-openclaw-obsidian.md",
+      "projects/Projects Index.md",
+      "Indexes/Decisions Index.md",
+      "Wiki/Architecture-Decisions.md",
+      "projects/claude_code-implement-proper-secrets.md",
+      "Daily Notes/2026-07-10.md",
+      "Daily Notes/2026-07-09.md",
+      "projects/claude_cowork-capture-insights-from.md",
+      "Daily Notes/2026-07-08.md",
+      "Daily Notes/2026-07-07.md",
+      "Daily Notes/2026-07-06.md",
+      "Daily Notes/2026-07-05.md"
+    ],
+    "modified_this_week_paths": [
+      "Indexes/Systems Index.md",
+      "Daily Notes/2026-07-11.md",
+      "Indexes/Morning Reviews Index.md",
+      "Wiki/Morning-Review-System.md",
+      "Wiki/Pi-Agent.md",
+      "Wiki/Obsidian-Vault.md",
+      "Wiki/Local-Machine.md",
+      "Wiki/Hermes.md",
+      "Wiki/GitHub-Projects.md",
+      "Wiki/Claude-Cowork.md",
+      "Wiki/Claude-Code.md",
+      "projects/Projects Index.md",
+      "projects/claude_cowork-automated-secrets-detection.md",
+      "projects/claude_code-review-filing-automation.md",
+      "projects/github-audit-hermes-memory.md",
+      "projects/hermes-investigate-openclaw-obsidian.md",
+      "Indexes/Decisions Index.md",
+      "projects/claude_code-implement-proper-secrets.md",
+      "Wiki/Architecture-Decisions.md",
+      "Daily Notes/2026-07-10.md",
+      "Daily Notes/2026-07-09.md",
+      "projects/claude_cowork-capture-insights-from.md",
+      "Daily Notes/2026-07-08.md",
+      "Daily Notes/2026-07-07.md",
+      "Daily Notes/2026-07-06.md",
+      "Daily Notes/2026-07-05.md"
+    ],
+    "top_tags": [
+      {
+        "tag": "created:",
+        "count": 24
+      },
+      {
+        "tag": "2026-03-24",
+        "count": 24
+      },
+      {
+        "tag": "hermes",
+        "count": 9
+      },
+      {
+        "tag": "concept",
+        "count": 7
+      },
+      {
+        "tag": "-",
+        "count": 6
+      },
+      {
+        "tag": "agents",
+        "count": 5
+      },
+      {
+        "tag": "moc",
+        "count": 4
+      },
+      {
+        "tag": "ai",
+        "count": 4
+      },
+      {
+        "tag": "project",
+        "count": 4
+      },
+      {
+        "tag": "dataview",
+        "count": 3
+      },
+      {
+        "tag": "maintenance",
+        "count": 2
+      },
+      {
+        "tag": "claude",
+        "count": 2
+      },
+      {
+        "tag": "infrastructure",
+        "count": 2
+      },
+      {
+        "tag": "bootstrap-test",
+        "count": 2
+      },
+      {
+        "tag": "sofie",
+        "count": 2
+      },
+      {
+        "tag": "plugins",
+        "count": 2
+      },
+      {
+        "tag": "canvas",
+        "count": 2
+      },
+      {
+        "tag": "skills",
+        "count": 2
+      },
+      {
+        "tag": "daily",
+        "count": 2
+      },
+      {
+        "tag": "check-in",
+        "count": 2
+      },
+      {
+        "tag": "strategy",
+        "count": 2
+      },
+      {
+        "tag": "roadmap",
+        "count": 2
+      },
+      {
+        "tag": "auth",
+        "count": 2
+      },
+      {
+        "tag": "reliability",
+        "count": 2
+      },
+      {
+        "tag": "graph-health",
+        "count": 1
+      }
+    ],
+    "link_suggestions": [],
+    "writes_performed": [],
+    "writes_deferred": []
+  },
+  "status": "ok"
+}

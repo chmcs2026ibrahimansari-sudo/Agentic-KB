@@ -33,6 +33,14 @@ const PRIVATE_PIN = process.env.PRIVATE_PIN || ''
 // Returns an MCP error response when the PIN check fails, or null when the
 // caller is permitted to proceed. An empty PRIVATE_PIN disables private access
 // entirely rather than silently allowing it (previous bug).
+// Coerce a client-supplied numeric arg to a positive integer, else default.
+// NaN must never reach slice()/Math.min: slice(-NaN) dumps everything and
+// slice(0, NaN) returns nothing, both silently.
+function intOr(value, fallback, max = Infinity) {
+  const n = Number(value)
+  return Number.isFinite(n) && n > 0 ? Math.min(Math.floor(n), max) : fallback
+}
+
 function requirePin(scope, providedPin, opName = 'this operation') {
   if (scope === 'public') return null
   if (!PRIVATE_PIN) {
@@ -647,7 +655,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (name === 'search_wiki') {
       const query = String(args.query || '')
       const scope = (args.scope === 'private' || args.scope === 'all') ? args.scope : 'public'
-      const limit = Number(args.limit || 10)
+      const limit = intOr(args.limit, 10)
 
       // Validate PIN for private scopes
       const pinErr = requirePin(scope, args.pin, 'search_wiki')
@@ -881,7 +889,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     if (name === 'agent_trace') {
-      const limit = Math.min(Number(args.limit || 20), 200)
+      const limit = intOr(args.limit, 20, 200)
       const filter = { agent_id: String(args.agent_id) }
       if (args.type) filter.type = String(args.type)
       const traces = agentRuntime.readRuntimeTraces(KB_ROOT, limit, filter)
@@ -926,7 +934,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       try { repo = validateSlug(String(args.repo || ''), 'repo') }
       catch (e) { return { content: [{ type: 'text', text: `Invalid repo: ${e.message}` }], isError: true } }
       const query = String(args.query || '')
-      const limit = Math.min(Number(args.limit || 20), 100)
+      const limit = intOr(args.limit, 20, 100)
       let repoDocsDir
       try { repoDocsDir = safeJoin(KB_ROOT, 'wiki', 'repos', repo) }
       catch (e) { return { content: [{ type: 'text', text: `Invalid repo path: ${e.message}` }], isError: true } }
@@ -960,7 +968,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const repo = String(args.repo)
       const result = repoRuntime.loadRepoContext(KB_ROOT, repo, {
         agent_id: args.agent_id ? String(args.agent_id) : null,
-        budget_bytes: Number(args.budget_bytes || 50000),
+        budget_bytes: intOr(args.budget_bytes, 50000),
       })
       return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
     }
@@ -1069,7 +1077,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (name === 'list_repo_bus_items') {
       const repo = String(args.repo)
       const channel = String(args.channel)
-      const limit = Number(args.limit || 50)
+      const limit = intOr(args.limit, 50)
       const items = repoRuntime.listRepoBusItems(KB_ROOT, repo, channel, { status: args.status ? String(args.status) : null, limit })
       return { content: [{ type: 'text', text: JSON.stringify(items, null, 2) }] }
     }
@@ -1108,7 +1116,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (name === 'agent_status') {
       const contract = agentRuntime.loadContract(KB_ROOT, String(args.agent_id))
       if (!contract) return { content: [{ type: 'text', text: `Agent not found: ${args.agent_id}` }], isError: true }
-      const status = agentRuntime.getAgentStatus(KB_ROOT, contract, { traceLimit: Number(args.limit || 5) })
+      const status = agentRuntime.getAgentStatus(KB_ROOT, contract, { traceLimit: intOr(args.limit, 5) })
       return { content: [{ type: 'text', text: JSON.stringify(status, null, 2) }] }
     }
 

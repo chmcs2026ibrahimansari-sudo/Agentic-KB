@@ -66,3 +66,18 @@ sudo ln -sf /Users/jaywest/Agentic-KB/cli/kb.js /usr/local/bin/kb
 ```
 
 Then just: `kb search "tool use"` from anywhere.
+
+## Spec compatibility
+
+This server targets the stable MCP spec via `@modelcontextprotocol/sdk` ^1.x.
+
+The 2026-07-28 release candidate is the largest revision since launch:
+stateless core (protocol version + client info carried in `_meta` on every
+request), a new `server/discover` method, MCP Apps (server-rendered UIs),
+a Tasks extension for long-running work (a natural fit for `compile_wiki`
+runs), OAuth-aligned authorization, and a formal deprecation policy.
+
+No migration should happen until the spec and SDK are GA; the SDK is
+expected to handle the negotiation details. When upgrading, revisit:
+- long-running tools (`compile_wiki`, `query_wiki`) → Tasks extension
+- `PRIVATE_PIN` gating → OAuth-aligned authorization

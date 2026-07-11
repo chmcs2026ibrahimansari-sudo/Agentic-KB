@@ -1402,3 +1402,46 @@ test('publishReviewItem creates review bus item with candidate and conflict refs
   assert.match(content, /contradiction_status: suspected/)
   assert.match(content, /candidate_path/)
 })
+
+// ─── Freshness: long frontmatter regression ──────────────────────────────────
+
+test('freshness: updated date is honored even when frontmatter exceeds 512 bytes', () => {
+  const root = makeFixture()
+  const rel = 'wiki/concepts/long-frontmatter.md'
+  const full = path.join(root, rel)
+  fs.mkdirSync(path.dirname(full), { recursive: true })
+  // Long tags line pushes updated: past the 512-byte window the old code read.
+  const tags = Array.from({ length: 40 }, (_, i) => `tag-number-${i}-padding-padding`)
+  fs.writeFileSync(full, [
+    '---',
+    'title: Long FM',
+    `tags: [${tags.join(', ')}]`,
+    'updated: 2020-01-01T00:00:00Z',
+    '---',
+    '',
+    'body',
+  ].join('\n'))
+  // mtime is "now"; before the fix the truncated read dropped the updated:
+  // field and freshness silently fell back to mtime, scoring the page fresh.
+  const r = rt.scoreFreshness(root, rel)
+  assert.ok(r.ageDays > 365 * 5, `expected age from updated: field, got ${r.ageDays}`)
+  assert.notEqual(r.label, 'fresh')
+})
+
+// ─── Promotion scorer: sibling conflict detection regression ─────────────────
+
+test('promotion-scorer: checkContradictions detects sibling with overlapping tags', () => {
+  const root = makeFixture()
+  const dir = path.join(root, 'wiki/concepts')
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(path.join(dir, 'existing.md'),
+    '---\ntitle: Routing\ntags: [orchestration, routing]\n---\n\nSupervisor routing pattern for complex agents.\n')
+  const candidate = {
+    title: 'supervisor routing pattern considered harmful',
+    tags: ['orchestration', 'routing'],
+    body: 'never use supervisor routing',
+  }
+  const r = rt.checkContradictions(root, candidate, { targetPath: 'wiki/concepts/new-page.md' })
+  assert.ok(r.conflictingPages.includes('wiki/concepts/existing.md'),
+    `expected sibling conflict, got ${JSON.stringify(r.conflictingPages)}`)
+})

@@ -24,7 +24,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
       "args": ["/Users/jaywest/Agentic-KB/mcp/server.js"],
       "env": {
         "KB_API_URL": "http://localhost:3002",
-        "PRIVATE_PIN": "jay1234"
+        "PRIVATE_PIN": "<your-private-pin>"
       }
     }
   }
@@ -44,7 +44,7 @@ node /Users/jaywest/Agentic-KB/mcp/server.js
 node /Users/jaywest/Agentic-KB/cli/kb.js search "multi-agent orchestration"
 
 # Search including private
-PRIVATE_PIN=jay1234 node /Users/jaywest/Agentic-KB/cli/kb.js search "tool design" --scope all
+PRIVATE_PIN=<your-private-pin> node /Users/jaywest/Agentic-KB/cli/kb.js search "tool design" --scope all
 
 # Ask a question
 node /Users/jaywest/Agentic-KB/cli/kb.js query "What is the best pattern for supervisor-worker agents?"

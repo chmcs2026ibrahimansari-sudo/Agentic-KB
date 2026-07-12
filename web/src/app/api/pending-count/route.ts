@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
+import { DEFAULT_KB_ROOT } from '@/lib/articles'
 
 export const dynamic = 'force-dynamic'
 
-const KB_ROOT = '/Users/jaywest/Agentic-KB'
+const KB_ROOT = DEFAULT_KB_ROOT
 
 function getIngestedPaths(): Set<string> {
   const logPath = path.join(KB_ROOT, 'wiki', 'log.md')

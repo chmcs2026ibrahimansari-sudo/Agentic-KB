@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-export const DEFAULT_KB_ROOT = '/Users/jaywest/Agentic-KB'
+export const DEFAULT_KB_ROOT = process.env.KB_ROOT || '/Users/jaywest/Agentic-KB'
 export const KB_ROOT = DEFAULT_KB_ROOT  // keep for backward compat
 export const WIKI_ROOT = path.join(KB_ROOT, 'wiki')
 

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
+import { DEFAULT_KB_ROOT } from '@/lib/articles'
 
-const KB_ROOT = '/Users/jaywest/Agentic-KB'
+const KB_ROOT = DEFAULT_KB_ROOT
 
 interface PendingFile {
   path: string        // relative to KB_ROOT e.g. "raw/transcript/foo.md"

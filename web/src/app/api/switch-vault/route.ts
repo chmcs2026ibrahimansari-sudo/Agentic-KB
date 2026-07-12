@@ -4,7 +4,7 @@ import path from 'path'
 
 export const dynamic = 'force-dynamic'
 
-export const DEFAULT_VAULT = '/Users/jaywest/Agentic-KB'
+export const DEFAULT_VAULT = process.env.KB_ROOT || '/Users/jaywest/Agentic-KB'
 export const VAULT_COOKIE = 'active_vault_path'
 
 export async function POST(request: NextRequest) {

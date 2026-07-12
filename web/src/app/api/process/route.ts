@@ -3,8 +3,9 @@ import fs from 'fs'
 import path from 'path'
 import Anthropic from '@anthropic-ai/sdk'
 import { KB_MODEL } from '@/lib/model'
+import { DEFAULT_KB_ROOT } from '@/lib/articles'
 
-const KB_ROOT = '/Users/jaywest/Agentic-KB'
+const KB_ROOT = DEFAULT_KB_ROOT
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 function send(controller: ReadableStreamDefaultController, data: object): void {

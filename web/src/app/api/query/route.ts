@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs'
 import path from 'path'
 import { readIndex, readIndexInVault, readKBFile, resolveContentRoot, DEFAULT_KB_ROOT } from '@/lib/articles'
+import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
 
 // ── RLM Stage 7: Contradiction filter ────────────────────────────────────────
@@ -75,7 +76,7 @@ function encodeSSE(data: object): string {
  */
 async function identifyRelevantPages(question: string, indexContent: string, scope = 'public'): Promise<string[]> {
   const response = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: KB_MODEL,
     max_tokens: 512,
     messages: [
       {
@@ -133,7 +134,7 @@ async function* synthesizeAnswer(
     .join('\n\n')
 
   const stream = await client.messages.stream({
-    model: 'claude-sonnet-4-6',
+    model: KB_MODEL,
     max_tokens: 2048,
     messages: [
       {

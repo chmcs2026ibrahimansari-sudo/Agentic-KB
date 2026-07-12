@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 import Anthropic from '@anthropic-ai/sdk'
+import { KB_MODEL } from '@/lib/model'
 
 const KB_ROOT = '/Users/jaywest/Agentic-KB'
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -120,7 +121,7 @@ Rules:
         // Call Claude
         let jsonResponse = ''
         const stream = await client.messages.stream({
-          model: 'claude-sonnet-4-6',
+          model: KB_MODEL,
           max_tokens: 4096,
           messages: [{ role: 'user', content: prompt }],
         })

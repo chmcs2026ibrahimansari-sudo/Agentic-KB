@@ -15,6 +15,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { DEFAULT_KB_ROOT, resolveContentRoot } from '@/lib/articles'
+import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
 import { buildInboundLinkMap, isOrphanCandidate, isStalePage } from '../../../../../lib/wiki-lint.mjs'
 
@@ -122,7 +123,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   // Ask Claude for contradiction + gap analysis
   const aiResponse = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: KB_MODEL,
     max_tokens: 2048,
     messages: [{
       role: 'user',

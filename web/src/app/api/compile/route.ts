@@ -22,6 +22,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs'
 import path from 'path'
 import { DEFAULT_KB_ROOT, resolveContentRoot } from '@/lib/articles'
+import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
 import { ensureId, invalidateIdIndex } from '@/lib/ids'
 
@@ -249,7 +250,7 @@ Rules:
 
           try {
             const analysisResponse = await client.messages.create({
-              model: 'claude-sonnet-4-6',
+              model: KB_MODEL,
               max_tokens: 2048,
               messages: [{ role: 'user', content: analysisPrompt }],
             })
@@ -318,7 +319,7 @@ Rules:
           let responseText = ''
           try {
             const genResponse = await client.messages.create({
-              model: 'claude-sonnet-4-6',
+              model: KB_MODEL,
               max_tokens: 4096,
               system: systemPrompt,
               messages: [{ role: 'user', content: genPrompt }],

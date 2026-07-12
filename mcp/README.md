@@ -67,6 +67,22 @@ sudo ln -sf /Users/jaywest/Agentic-KB/cli/kb.js /usr/local/bin/kb
 
 Then just: `kb search "tool use"` from anywhere.
 
+## Input validation
+
+All path-forming tool arguments are validated before any filesystem access:
+
+- `slug` / `section` / `repo` args go through `validateSlug` + `safeJoin`
+  (no `..`, no absolute paths, resolved path must stay inside the vault).
+- Bus `channel` args must match the known channel lists; bus `id` and
+  `task_id` args reject path separators and dot-dot segments.
+- Promotion / merge targets (`target`, `rewrite_path`, `canonical_path`,
+  `supersedes`) are checked in `lib/agent-runtime/promotion.mjs` before
+  any write.
+
+If you add a tool that turns a client-supplied string into a path, route
+it through `validateSlug`/`safeJoin` (or the equivalent lib-level guard)
+— the guards live in the libraries, so CLI and web callers inherit them.
+
 ## Spec compatibility
 
 This server targets the stable MCP spec via `@modelcontextprotocol/sdk` ^1.x.

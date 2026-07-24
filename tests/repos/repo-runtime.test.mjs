@@ -458,3 +458,37 @@ test('loadRepoContext accepts MCP-style opts and includes targeted repo bus item
   assert.ok(paths.some(p => p.includes('/bus/escalation/') && p.endsWith('.md')))
   assert.equal(result.trace.budget_bytes, 50000)
 })
+
+// ─── Sync: archive + commit sha provenance ────────────────────────────────
+
+test('archiveRemovedDoc moves the doc out of repo-docs (no live copy left behind)', () => {
+  const root = makeFixture()
+  const relPath = 'wiki/repos/test-repo/repo-docs/removed-upstream.md'
+  fs.writeFileSync(path.join(root, relPath), '---\nrepo_name: test-repo\n---\n\nGone upstream\n')
+
+  const archivePath = repoRt.archiveRemovedDoc(root, 'test-repo', relPath)
+  assert.ok(archivePath, 'should return the archive path')
+  assert.ok(fs.existsSync(path.join(root, archivePath)), 'archive copy should exist')
+  assert.ok(!fs.existsSync(path.join(root, relPath)), 'original must be removed from repo-docs')
+  const archived = fs.readFileSync(path.join(root, archivePath), 'utf8')
+  assert.match(archived, /archived_at/)
+})
+
+test('fetchCommitSha resolves the branch commit sha and tolerates failures', async () => {
+  const origFetch = globalThis.fetch
+  try {
+    globalThis.fetch = async (url) => {
+      assert.match(String(url), /\/repos\/owner1\/repo1\/commits\/dev$/)
+      return { ok: true, json: async () => ({ sha: 'deadbeefcafe' }) }
+    }
+    assert.equal(await repoRt.fetchCommitSha('repo1', 'owner1', { branch: 'dev' }), 'deadbeefcafe')
+
+    globalThis.fetch = async () => ({ ok: false, status: 404 })
+    assert.equal(await repoRt.fetchCommitSha('repo1', 'owner1', {}), null)
+
+    globalThis.fetch = async () => { throw new Error('network down') }
+    assert.equal(await repoRt.fetchCommitSha('repo1', 'owner1', {}), null)
+  } finally {
+    globalThis.fetch = origFetch
+  }
+})

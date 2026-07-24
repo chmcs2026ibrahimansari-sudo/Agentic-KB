@@ -1,13 +1,13 @@
 # Wiki Lint Report
 
-> Generated: 2026-07-24 04:01 | Vault: Agentic-KB | Pages scanned: 649
+> Generated: 2026-07-24 14:06 | Vault: Agentic-KB | Pages scanned: 648
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 39 | 🟡 Medium |
+| Orphaned pages | 41 | 🟡 Medium |
 | Stale pages | 273 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
@@ -42,6 +42,8 @@
 - `reports/2026-07-07-nightly-ci-analysis.md` — 2026-07-07-nightly-ci-analysis
 - `reports/2026-07-08-nightly-ci-analysis.md` — 2026-07-08-nightly-ci-analysis
 - `reports/2026-07-09-nightly-ci-analysis.md` — 2026-07-09-nightly-ci-analysis
+- `reports/2026-07-10-nightly-ci-analysis.md` — 2026-07-10-nightly-ci-analysis
+- `reports/2026-07-23-nightly-ci-analysis.md` — 2026-07-23-nightly-ci-analysis
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18
 - `syntheses/synthesis-compression-vs-trajectory-eval.md` — Reversible Compression Is a Prerequisite for Trustworthy Trajectory Evaluation

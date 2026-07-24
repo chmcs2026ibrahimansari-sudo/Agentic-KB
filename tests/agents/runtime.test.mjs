@@ -1525,3 +1525,20 @@ test('audit: hash chain stays intact when an entry exceeds the tail-read window'
   assert.equal(res.ok, true, `chain broken: ${JSON.stringify(res)}`)
   assert.ok(res.signed >= 3)
 })
+
+test('correction-capture: metadata survives frontmatter longer than 1KB (many sources)', () => {
+  const root = makeFixture()
+  const contract = rt.loadContract(root, 'w1')
+  const sources = Array.from({ length: 40 }, (_, i) => `wiki/concepts/some-fairly-long-page-name-${i}.md`)
+  const { correctionId } = rt.captureCorrection(root, contract, {
+    type: 'factual-correction',
+    original: 'wrong',
+    correctedTo: 'right',
+    sources,
+  })
+  const listed = rt.listCorrections(root, contract, { type: 'factual-correction' })
+  assert.ok(listed.some(c => c.correctionId === correctionId), 'correction should still be listed by type')
+  const single = rt.getCorrection(root, contract, correctionId)
+  assert.equal(single.meta.type, 'factual-correction')
+  assert.equal(single.meta.correctionId, correctionId)
+})

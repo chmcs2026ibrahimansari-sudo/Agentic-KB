@@ -1,6 +1,6 @@
 # Wiki Lint Report
 
-> Generated: 2026-07-13 14:46 | Vault: Agentic-KB | Pages scanned: 649
+> Generated: 2026-07-24 04:01 | Vault: Agentic-KB | Pages scanned: 649
 
 ## Summary
 
@@ -8,7 +8,7 @@
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
 | Orphaned pages | 39 | 🟡 Medium |
-| Stale pages | 270 | 🟡 Medium |
+| Stale pages | 273 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
 ## 🟡 Orphaned Pages (no inbound links)
@@ -91,6 +91,7 @@
 - `concepts/benchmark-design.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/capture-pipeline.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/chain-of-thought.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/compile-once-knowledge.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/context-management.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/contradiction-handling-in-knowledge-bases.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/cross-linking-and-orphan-prevention.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -174,7 +175,9 @@
 - `frameworks/framework-deepeval.md` — last updated: Fri Apr 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/framework-gsd.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/framework-langgraph.md` — last updated: Sat Apr 04 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `frameworks/framework-obsidian-wiki.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/gbrain.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `frameworks/headroom.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/inspect-ai.md` — last updated: Fri Apr 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/promptfoo.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `home.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time)

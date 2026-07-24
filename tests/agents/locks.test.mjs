@@ -1,0 +1,76 @@
+// Tests for the per-agent file lock: acquire/release, staleness clearing,
+// and the grace window that protects freshly-created (not-yet-written) locks.
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import fs from 'fs'
+import path from 'path'
+import os from 'os'
+
+import { acquireLock, withLock } from '../../lib/agent-runtime/locks.mjs'
+
+function makeRoot() {
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'locks-'))
+}
+
+function lockFile(root, key) {
+  return path.join(root, '.locks', `${key}.lock`)
+}
+
+test('acquireLock creates and release removes the lock file', () => {
+  const root = makeRoot()
+  const lock = acquireLock(root, 'agent-a')
+  assert.ok(fs.existsSync(lockFile(root, 'agent-a')))
+  const rec = JSON.parse(fs.readFileSync(lockFile(root, 'agent-a'), 'utf8'))
+  assert.equal(rec.pid, process.pid)
+  lock.release()
+  assert.ok(!fs.existsSync(lockFile(root, 'agent-a')))
+})
+
+test('withLock runs fn under lock and always releases', () => {
+  const root = makeRoot()
+  const result = withLock(root, 'agent-b', () => {
+    assert.ok(fs.existsSync(lockFile(root, 'agent-b')))
+    return 42
+  })
+  assert.equal(result, 42)
+  assert.ok(!fs.existsSync(lockFile(root, 'agent-b')))
+
+  assert.throws(() => withLock(root, 'agent-b', () => { throw new Error('boom') }), /boom/)
+  assert.ok(!fs.existsSync(lockFile(root, 'agent-b')))
+})
+
+test('lock held by a dead pid is cleared and re-acquired', () => {
+  const root = makeRoot()
+  fs.mkdirSync(path.join(root, '.locks'), { recursive: true })
+  // PID 2^30 is far above any real pid space — process.kill throws ESRCH.
+  fs.writeFileSync(lockFile(root, 'agent-c'), JSON.stringify({ pid: 2 ** 30, ts: Date.now(), key: 'agent-c' }))
+  const lock = acquireLock(root, 'agent-c', { retries: 2, retryDelayMs: 10 })
+  assert.ok(lock)
+  lock.release()
+})
+
+test('freshly-created unreadable lock is NOT stolen (grace window)', () => {
+  const root = makeRoot()
+  fs.mkdirSync(path.join(root, '.locks'), { recursive: true })
+  // Simulate a holder caught between openSync('wx') and writeSync: the lock
+  // file exists but is empty (JSON.parse fails). It must not be cleared.
+  fs.writeFileSync(lockFile(root, 'agent-d'), '')
+  assert.throws(
+    () => acquireLock(root, 'agent-d', { retries: 2, retryDelayMs: 10 }),
+    /lock busy/,
+  )
+  assert.ok(fs.existsSync(lockFile(root, 'agent-d')), 'live lock must survive the failed acquire')
+})
+
+test('old unreadable lock IS cleared once past the grace window', () => {
+  const root = makeRoot()
+  fs.mkdirSync(path.join(root, '.locks'), { recursive: true })
+  const file = lockFile(root, 'agent-e')
+  fs.writeFileSync(file, 'not json')
+  // Age the file well past the grace window (and past maxAgeMs).
+  const past = (Date.now() - 10_000) / 1000
+  fs.utimesSync(file, past, past)
+  const lock = acquireLock(root, 'agent-e', { maxAgeMs: 500, retries: 2, retryDelayMs: 10 })
+  assert.ok(lock)
+  lock.release()
+})

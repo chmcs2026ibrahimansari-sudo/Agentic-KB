@@ -1008,6 +1008,24 @@ test('archiveCompletedTaskMemory skips files completed within olderThanDays wind
   assert.ok(fs.existsSync(path.join(wmDir, 'recent-task.md')), 'file should still be present')
 })
 
+test('archiveCompletedTaskMemory skips completed files with no parseable date', () => {
+  const root = makeFixture()
+  const wmDir = path.join(root, 'wiki/agents/workers/w1/working-memory')
+  fs.mkdirSync(wmDir, { recursive: true })
+
+  // Regression: completed files with missing/garbage dates were archived
+  // immediately — age is unknowable, so they must be skipped instead.
+  fs.writeFileSync(path.join(wmDir, 'undated-task.md'),
+    '---\nmemory_class: working\nstatus: completed\n---\nDone, but undated.\n')
+  fs.writeFileSync(path.join(wmDir, 'garbage-date-task.md'),
+    '---\nmemory_class: working\nstatus: completed\ncompleted_at: not-a-date\n---\nDone.\n')
+
+  const result = rt.archiveCompletedTaskMemory(root, 'w1', 'worker', { olderThanDays: 7 })
+  assert.equal(result.archived.length, 0, 'undated files must not be archived')
+  assert.ok(fs.existsSync(path.join(wmDir, 'undated-task.md')))
+  assert.ok(fs.existsSync(path.join(wmDir, 'garbage-date-task.md')))
+})
+
 test('archiveAbandonedTaskMemory archives abandoned files older than olderThanDays', () => {
   const root = makeFixture()
   const wmDir = path.join(root, 'wiki/agents/workers/w1/working-memory')

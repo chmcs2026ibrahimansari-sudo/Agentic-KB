@@ -8,7 +8,20 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — April 25, 2026 (Latest)
+## What's New — July 24, 2026 (Latest)
+
+Nightly correctness pass — **276 tests passing** (was 269):
+
+- 🔁 **Task-state repair convergence** — `repairTaskState` no longer clears the active-task pointer it just rebuilt (stale-metadata read between repair blocks).
+- 🚫 **No silent task orphaning** — `startTask` now refuses when another task is active (pass `force: true` to orphan deliberately); previously it stranded the old working-memory file in the non-repairable `multiple-active-working-files` state.
+- 📃 **CRLF frontmatter** — shared parser and the MCP server's visibility gate both normalize `\r\n`; a CRLF article with `visibility: private` was previously served publicly, and CRLF files lost all metadata.
+- 📦 **Repo sync** — `archiveRemovedDoc` actually moves docs out of `repo-docs/` (was copy-only, re-archived every sync); provenance now records the real branch commit SHA instead of an arbitrary blob SHA.
+- 🚌 **Bus integrity** — publishes use exclusive create with id-retry, so concurrent publishers can't overwrite each other's items; `promote_repo_learning` / `promote_learning` MCP tools now honor `target_path` / `target` and record `reviewed_by` + `promoted_to`.
+- 🧹 **Dedup** — retention and corrections use the shared frontmatter parser (corrections previously truncated reads at 1KB, dropping metadata for items with long source lists).
+
+---
+
+## What's New — April 25, 2026
 
 Foundation lift + Phase 1–5 punch list — **108/108 agent tests passing** (was 86):
 

@@ -1092,7 +1092,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const id = String(args.id)
       const targetPath = args.target_path ? String(args.target_path) : null
       const approver = String(args.approver)
-      const result = repoRuntime.transitionRepoBusItem(KB_ROOT, repo, channel, id, 'promoted', { targetPath, approver })
+      // actor must be the approver string — an object here corrupted
+      // status_history and dropped target_path provenance entirely.
+      const result = repoRuntime.transitionRepoBusItem(KB_ROOT, repo, channel, id, 'promoted', approver, {
+        reviewed_by: approver,
+        ...(targetPath ? { promoted_to: targetPath } : {}),
+      })
       return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
     }
 

@@ -492,3 +492,24 @@ test('fetchCommitSha resolves the branch commit sha and tolerates failures', asy
     globalThis.fetch = origFetch
   }
 })
+
+test('transitionRepoBusItem records string actor and optional promotion provenance', () => {
+  const root = makeFixture()
+  const { id } = repoRt.publishRepoBusItem(root, 'test-repo', {
+    channel: 'discovery',
+    from: 'w1',
+    body: 'promote me',
+  })
+  const result = repoRt.transitionRepoBusItem(root, 'test-repo', 'discovery', id, 'promoted', 'l1', {
+    reviewed_by: 'l1',
+    promoted_to: 'wiki/repos/test-repo/canonical/learning.md',
+  })
+  assert.equal(result.status, 'promoted')
+  const item = repoRt.readRepoBusItem(root, 'test-repo', 'discovery', id)
+  assert.equal(item.meta.status, 'promoted')
+  assert.equal(item.meta.reviewed_by, 'l1')
+  assert.equal(item.meta.promoted_to, 'wiki/repos/test-repo/canonical/learning.md')
+  const last = item.meta.status_history[item.meta.status_history.length - 1]
+  assert.equal(last.actor, 'l1', 'actor must be the approver string, not an object')
+  assert.equal(last.to, 'promoted')
+})

@@ -1070,6 +1070,31 @@ test('verifyTaskState detects orphan active working memory and repairTaskState r
   assert.equal(rt.getActiveTask(root, c)?.taskId, started.taskId)
 })
 
+test('repairTaskState does not clear a pointer it just rebuilt (stale-target + surviving active file)', () => {
+  const root = makeFixture()
+  const c = rt.loadContract(root, 'w1')
+  c.allowed_writes = [...c.allowed_writes, 'wiki/agents/workers/w1/working-memory/**', 'wiki/agents/workers/w1/active-task.md']
+
+  const started = rt.startTask(root, c, { project: 'p1', description: 'rebuild me' })
+  // Simulate a crash-rename: the pointer's working-memory target vanishes but an
+  // equivalent active working file survives under a different task id.
+  const wmFull = path.join(root, started.workingMemoryPath)
+  const survivorRel = started.workingMemoryPath.replace(/[^/]+\.md$/, 'task-survivor.md')
+  fs.writeFileSync(path.join(root, survivorRel),
+    fs.readFileSync(wmFull, 'utf8').replaceAll(started.taskId, 'task-survivor'))
+  fs.unlinkSync(wmFull)
+
+  const before = rt.verifyTaskState(root, c)
+  assert.ok(before.issues.some(issue => issue.code === 'active-pointer-target-missing'))
+
+  const repair = rt.repairTaskState(root, c)
+  assert.equal(repair.ok, true, `repair should converge, got issues: ${JSON.stringify(repair.verification.issues)}`)
+  assert.ok(repair.actions.some(a => a.op === 'rebuild-active-task-pointer'))
+  assert.ok(!repair.actions.some(a => a.op === 'clear-invalid-active-task-pointer'),
+    'must not clear the pointer rebuilt in the same repair pass')
+  assert.equal(rt.getActiveTask(root, c)?.taskId, 'task-survivor')
+})
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // V2 TESTS (53–76)
 // ═══════════════════════════════════════════════════════════════════════════════

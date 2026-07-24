@@ -499,6 +499,21 @@ test('getActiveTask returns null when no active task exists', () => {
   assert.equal(active, null)
 })
 
+test('startTask refuses to orphan an existing active task unless forced', () => {
+  const root = makeFixture()
+  const c = rt.loadContract(root, 'w1')
+  const first = rt.startTask(root, c, { project: 'p1', description: 'first' })
+  assert.throws(
+    () => rt.startTask(root, c, { project: 'p1', description: 'second' }),
+    new RegExp(`already has active task ${first.taskId}`),
+  )
+  // Still the first task
+  assert.equal(rt.getActiveTask(root, c)?.taskId, first.taskId)
+  // force: true is the deliberate escape hatch
+  const second = rt.startTask(root, c, { project: 'p1', description: 'second', force: true })
+  assert.equal(rt.getActiveTask(root, c)?.taskId, second.taskId)
+})
+
 test('getActiveTask returns task metadata after startTask', () => {
   const root = makeFixture()
   const c = rt.loadContract(root, 'w1')

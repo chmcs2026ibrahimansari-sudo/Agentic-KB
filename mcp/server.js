@@ -78,6 +78,10 @@ function listWikiFiles(section) {
 }
 
 function parseFrontmatter(content) {
+  // Normalize CRLF first: visibility gating below reads meta.visibility, and a
+  // \r\n-formatted private article would otherwise parse as having no
+  // frontmatter at all — i.e. default to public.
+  if (content.startsWith('---\r\n')) content = content.replace(/\r\n/g, '\n')
   const match = content.match(/^---\n([\s\S]*?)\n---/)
   if (!match) return {}
   const meta = {}

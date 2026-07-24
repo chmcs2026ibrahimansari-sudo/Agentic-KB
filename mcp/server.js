@@ -875,7 +875,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     if (name === 'promote_learning') {
-      const result = agentRuntime.promoteLearning(KB_ROOT, args)
+      // Map the advertised 'target' arg to the lib's targetPath — passing raw
+      // args meant a caller-supplied target was silently ignored and the item
+      // always landed at the default standards/ path.
+      const target = args.target || args.target_path
+      const result = agentRuntime.promoteLearning(KB_ROOT, {
+        channel: String(args.channel),
+        id: String(args.id),
+        approver: String(args.approver),
+        targetPath: target ? String(target) : undefined,
+      })
       return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }
     }
 

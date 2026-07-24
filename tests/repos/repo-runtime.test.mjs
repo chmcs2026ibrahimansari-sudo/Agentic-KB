@@ -104,6 +104,27 @@ test('importedDocPath maps source to repo-docs', () => {
   assert.match(result, /wiki\/repos\/test-repo\/repo-docs\/src/)
 })
 
+test('importedDocPath rejects traversal and absolute source paths', () => {
+  const bad = [
+    'docs/../../evil.md',
+    '../outside.md',
+    '/etc/passwd.md',
+    'docs//double.md',
+    'docs/./dot.md',
+    'docs/nul\0l.md',
+    '..\\win\\style.md',
+    '',
+  ]
+  for (const p of bad) {
+    assert.throws(() => repoRt.importedDocPath('test-repo', p), /invalid source path/, `should reject: ${JSON.stringify(p)}`)
+  }
+  // Legitimate nested paths still map through
+  assert.equal(
+    repoRt.importedDocPath('test-repo', 'docs/guide/setup.md'),
+    'wiki/repos/test-repo/repo-docs/docs/guide/setup.md',
+  )
+})
+
 test('isImportedDoc detects imported paths correctly', () => {
   assert.equal(repoRt.isImportedDoc('wiki/repos/test-repo/repo-docs/src/index.md'), true)
   assert.equal(repoRt.isImportedDoc('wiki/repos/test-repo/canonical/PRD.md'), false)

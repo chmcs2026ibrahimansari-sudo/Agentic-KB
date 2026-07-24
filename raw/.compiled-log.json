@@ -685,5 +685,123 @@
       "entities/seller-fi.md",
       "concepts/agent-resources-platform.md"
     ]
+  },
+  "articles/2026-05-16T08-40-32__apple-notes__test-capture-2026-05-16__2009bf0b.md": {
+    "compiledAt": "2026-07-11T18:43:10.475Z",
+    "pagesAffected": [
+      "concepts/capture-pipeline.md"
+    ]
+  },
+  "articles/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__1d440d77.md": {
+    "compiledAt": "2026-07-11T18:43:49.612Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md",
+      "patterns/pattern-morning-review.md"
+    ]
+  },
+  "articles/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__697339fa.md": {
+    "compiledAt": "2026-07-11T18:44:17.491Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md"
+    ]
+  },
+  "articles/cyrilxbt-5-employees-agent.md": {
+    "compiledAt": "2026-07-11T18:45:35.045Z",
+    "pagesAffected": [
+      "patterns/pattern-specialist-agent-team.md",
+      "recipes/five-agent-business-ops.md"
+    ]
+  },
+  "articles/cyrilxbt-claude-code-solo-founders.md": {
+    "compiledAt": "2026-07-11T18:46:30.617Z",
+    "pagesAffected": [
+      "concepts/solo-founder-ai-leverage.md",
+      "_meta/compile-log.md"
+    ]
+  },
+  "articles/cyrilxbt-obsidian-smart-vault.md": {
+    "compiledAt": "2026-07-11T18:47:38.068Z",
+    "pagesAffected": [
+      "concepts/knowledge-vault-feedback-loop.md",
+      "recipes/obsidian-smart-vault-setup.md",
+      "_meta/compile-log.md"
+    ]
+  },
+  "clippings/2026-05-16T08-40-32__apple-notes__test-capture-2026-05-16__323f37fc.md": {
+    "compiledAt": "2026-07-11T18:50:17.258Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md"
+    ]
+  },
+  "clippings/2026-05-16T08-40-32__apple-notes__test-capture-2026-05-16__89fd0950.md": {
+    "compiledAt": "2026-07-11T18:50:54.504Z",
+    "pagesAffected": [
+      "concepts/capture-pipeline.md",
+      "concepts/kb-inbox.md"
+    ]
+  },
+  "clippings/2026-05-16T08-40-32__apple-notes__test-capture-2026-05-16__9680bdbb.md": {
+    "compiledAt": "2026-07-11T18:51:27.358Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md"
+    ]
+  },
+  "clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__1c894f4d.md": {
+    "compiledAt": "2026-07-11T18:52:05.780Z",
+    "pagesAffected": [
+      "concepts/capture-pipeline.md",
+      "concepts/kb-inbox.md"
+    ]
+  },
+  "clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__71249b22.md": {
+    "compiledAt": "2026-07-11T18:52:49.090Z",
+    "pagesAffected": [
+      "concepts/kb-inbox.md",
+      "concepts/morning-review-pipeline.md"
+    ]
+  },
+  "clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__ff2752c5.md": {
+    "compiledAt": "2026-07-11T18:53:26.396Z",
+    "pagesAffected": [
+      "concepts/kb-inbox-workflow.md",
+      "concepts/morning-review-pipeline.md"
+    ]
+  },
+  "clippings/2026-05-23T09-33-00__x-twitter__garrytan-gbrain-v0-40-0-ships-voice-for-openclaw-hermes__56d4ac60.md": {
+    "compiledAt": "2026-07-11T18:55:26.829Z",
+    "pagesAffected": [
+      "frameworks/gbrain.md",
+      "entities/garry-tan.md"
+    ]
+  },
+  "clippings/2026-05-23T11-54-00__x-twitter__voxyz-ai-12-layer-agent-map__28631b30.md": {
+    "compiledAt": "2026-07-11T18:56:56.885Z",
+    "pagesAffected": [
+      "frameworks/12-layer-agent-map.md",
+      "concepts/agent-layer-architecture.md",
+      "patterns/layer-evidence-verification.md"
+    ]
+  },
+  "clippings/2026-05-23T16-30-00__x-twitter__external-hermes-agent-mentions-cluster-2026-05-23__f902b021.md": {
+    "compiledAt": "2026-07-11T18:58:43.446Z",
+    "pagesAffected": [
+      "entities/hermes-agent.md",
+      "_meta/compile-log.md"
+    ]
+  },
+  "framework-docs/ar9av-obsidian-wiki.md": {
+    "compiledAt": "2026-07-11T18:59:53.197Z",
+    "pagesAffected": [
+      "frameworks/framework-obsidian-wiki.md",
+      "concepts/compile-once-knowledge.md",
+      "_meta/compile-log.md"
+    ]
+  },
+  "framework-docs/chopratejas-headroom.md": {
+    "compiledAt": "2026-07-11T19:00:42.829Z",
+    "pagesAffected": [
+      "frameworks/headroom.md",
+      "_meta/compile-log.md"
+    ]
   }
 }

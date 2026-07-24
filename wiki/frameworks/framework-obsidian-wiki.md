@@ -1,86 +1,71 @@
 ---
-title: obsidian-wiki
+id: 01KX98SS7A9AAK56ZK1FXPGED3
+title: "obsidian-wiki (Ar9av)"
 type: framework
-vendor: Ar9av / obsidian-wiki contributors
-version: rolling
-language: any
-license: open-source
-github: https://github.com/Ar9av/obsidian-wiki
-tags: [llm-wiki, obsidian, memory, skills, agentic, hermes]
-last_checked: 2026-06-25
-jay_experience: limited
+tags: [agents, memory, knowledge-base, obsidian, tools]
+created: 2026-06-18
+updated: 2026-06-18
+visibility: public
+confidence: high
+source: "https://github.com/Ar9av/obsidian-wiki"
+related: [concepts/agent-memory-runtime, concepts/agent-loops]
 ---
 
-## Overview
+# obsidian-wiki (Ar9av)
 
-obsidian-wiki is an installable implementation of the [[patterns/llm-wiki-pattern|LLM Wiki pattern]] for Obsidian-backed agent memory. It packages wiki setup, ingest, query, history-mining, cross-linking, linting, graph export, and daily maintenance into agent skills that can be installed across many AI coding agents.
+A framework for turning an [Obsidian](https://obsidian.md) vault into a persistent, agent-maintained knowledge base — a "digital brain" that any AI coding agent can read, update, and query.
 
-The project is relevant to Agentic-KB because it solves the same broad problem — durable, source-grounded markdown memory — but with a more general multi-agent skill distribution model.
+> "A digital brain you grow with your AI agent. It remembers what you figure out, connects it to what you already know, and answers when you ask."
 
-## Core Concepts
+The project is directly inspired by Andrej Karpathy's [LLM Wiki gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): compile knowledge once into interconnected markdown files and keep them current, rather than repeatedly querying an LLM or running RAG on every question.
 
-- **Agent-owned wiki:** the AI agent reads raw sources and writes interlinked markdown pages.
-- **Four-stage ingest:** ingest → pull information → merge → schema evolution.
-- **Manifest/delta tracking:** `.manifest.json` records processed sources and produced pages.
-- **Multi-agent history ingest:** mines histories from Claude, Codex, Hermes, OpenClaw, Pi, Copilot, and others.
-- **Cross-agent targeted search:** topic-first extraction from a specific agent's session history.
-- **Provenance tagging:** page claims can be marked extracted, inferred, or ambiguous.
-- **Tiered retrieval:** query reads cheap metadata first, then page bodies only when needed.
-- **Optional QMD semantic search:** lex/vector search over wiki or source collections, degrading to grep/glob when absent.
+## What It Does
 
-## Architecture
+- Installs **skills** (markdown files encoding reusable agent behaviours) into AI coding agents (Claude Code, Cursor, Windsurf, Codex, Gemini CLI, Kiro, Pi, and others)
+- Points those agents at an Obsidian vault as the backing store
+- The agent reads skills, writes/updates vault pages on request, and answers questions from accumulated knowledge
+- Skills are symlinked to the installed package so `pip install -U obsidian-wiki` upgrades them everywhere
 
-```text
-raw source / history / transcript
-  → wiki-ingest skill
-  → extract concepts, claims, relationships, questions
-  → merge into existing wiki or create new page
-  → update manifest, index, links, graph, status
-```
+## Key Concepts
 
-## Strengths
+| Concept | Description |
+|---|---|
+| **Vault** | Any directory (or existing Obsidian vault) that acts as the persistent brain |
+| **Skill** | A markdown file that describes a reusable agent capability; read directly by supported agents |
+| **`obsidian-wiki setup`** | CLI command that writes config, installs skills, and wires up all detected agents |
+| **AGENTS.md** | Project-local file dropped by `setup --project` to describe wiki skills to the agent |
 
-- **Packaged operational surface:** skills cover setup, ingest, query, status, rebuild, lint, export, cross-linking, taxonomy, daily update, and history ingest.
-- **Cross-agent portability:** README lists setup conventions for Claude Code, Cursor, Windsurf, Codex, Gemini, Hermes, OpenClaw, Pi, and others.
-- **Delta tracking:** avoids full re-ingest when sources have not changed.
-- **Provenance awareness:** explicitly distinguishes extracted vs inferred vs ambiguous knowledge.
-- **Query cost control:** tiered retrieval keeps page-body loading demand-driven.
-
-## Weaknesses
-
-- **High setup blast radius:** default setup writes or symlinks skills into global agent directories. That is unsafe for Jay's primary environment without a pilot.
-- **Schema mismatch risk:** Agentic-KB already has a native schema, Night Shift state, and raw immutability rules. Installing another taxonomy could create competing conventions.
-- **License not verified in captured README:** the repo is public, but the captured source did not include explicit license text.
-- **Auto-removal conflict:** the README's `_raw/` promotion behavior removes promoted raw files; Agentic-KB scheduled jobs must never delete or move raw originals.
-
-## Minimal Working Example
+## Installation
 
 ```bash
+# via pip (recommended)
 pip install obsidian-wiki
-obsidian-wiki setup --vault /path/to/your/digital/brain
-obsidian-wiki list
-obsidian-wiki info
+obsidian-wiki setup --vault /path/to/vault
+
+# via Skills CLI
+npx skills add Ar9av/obsidian-wiki
+
+# via git
+git clone https://github.com/Ar9av/obsidian-wiki.git && bash setup.sh
 ```
 
-For Agentic-KB, use the safe-pilot pattern instead: disposable local vault, local-only install, no global agent config mutation, and compare generated artifacts before adopting any convention.
+After setup, open your agent and say **"set up my wiki"** to initialise.
 
-## Integration Points
+## When to Use It
 
-- **Agentic-KB Night Shift:** manifest/delta/provenance ideas map to `.night-shift/state/`, source summaries, and claim confidence.
-- **[[patterns/llm-wiki-pattern]]:** obsidian-wiki is a packaged implementation and extension.
-- **[[concepts/memory-systems]]:** provides a durable compiled memory layer across agents.
-- **Hermes skills:** compatible in principle, but global symlink setup must be avoided unless explicitly approved.
+- You want a **persistent, human-readable memory layer** across agent sessions without a vector database
+- You already use Obsidian and want agents to contribute to the same vault
+- You prefer **compile-once** knowledge over repeated RAG lookups for stable facts
+- You work across multiple AI coding environments and want a single skill/config source of truth
 
-## Jay's Experience
+## Limitations
 
-Limited — this has been reviewed as a candidate/pilot source, not adopted into Agentic-KB.
+- Relies on agents faithfully reading and writing markdown — no built-in validation or conflict resolution
+- Obsidian-specific graph features (canvas, plugins) are not leveraged by the agent layer
+- Skill quality depends on how well each skill file is authored; there is no automated quality gate
+- Not designed for high-frequency, low-latency retrieval at scale (RAG may still be preferable for large corpora)
 
-## Version Notes
+## See Also
 
-- Captured README reports pip install, skills CLI install, git clone setup, many agent integrations, QMD semantic search, graph export, and browser capture extension.
-
-## Sources
-
-- [[summaries/ar9av-obsidian-wiki]]
-- Raw source: `raw/framework-docs/ar9av-obsidian-wiki.md`
-- GitHub: https://github.com/Ar9av/obsidian-wiki
+- [Agent Memory at Runtime](../concepts/agent-memory-runtime.md) — broader concept of how agents manage memory across sessions
+- [Agent Loops](../concepts/agent-loops.md) — the underlying read-act-write loop that skills plug into

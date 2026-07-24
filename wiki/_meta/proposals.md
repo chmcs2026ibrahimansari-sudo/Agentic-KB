@@ -798,3 +798,215 @@ purpose: Append-only ledger of actionable proposals surfaced by /foundry-propose
 - run: 2026-05-27T13:09:34.423Z
 - recommendation: Latest compile deferred 108 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
 
+
+## 2026-07-11T18:44:41.297Z
+
+### PROP-113 [STUCK_CANDIDATE] agent-evaluation
+
+- theme: `agent-evaluation`
+- single source: `microsoft-skillopt`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[agent-evaluation]] or remove it from candidates.md as out-of-scope.
+
+### PROP-114 [STUCK_CANDIDATE] agent-workbench
+
+- theme: `agent-workbench`
+- single source: `rohitg00-ai-engineering-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[agent-workbench]] or remove it from candidates.md as out-of-scope.
+
+### PROP-115 [STUCK_CANDIDATE] artifact-based-learning
+
+- theme: `artifact-based-learning`
+- single source: `rohitg00-ai-engineering-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[artifact-based-learning]] or remove it from candidates.md as out-of-scope.
+
+### PROP-116 [STUCK_CANDIDATE] context-compression
+
+- theme: `context-compression`
+- single source: `chopratejas-headroom`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[context-compression]] or remove it from candidates.md as out-of-scope.
+
+### PROP-117 [STUCK_CANDIDATE] cross-agent-memory
+
+- theme: `cross-agent-memory`
+- single source: `chopratejas-headroom`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[cross-agent-memory]] or remove it from candidates.md as out-of-scope.
+
+### PROP-118 [STUCK_CANDIDATE] delta-tracking
+
+- theme: `delta-tracking`
+- single source: `ar9av-obsidian-wiki`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[delta-tracking]] or remove it from candidates.md as out-of-scope.
+
+### PROP-119 [STUCK_CANDIDATE] deterministic-scripts
+
+- theme: `deterministic-scripts`
+- single source: `mgechev-skills-best-practices`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[deterministic-scripts]] or remove it from candidates.md as out-of-scope.
+
+### PROP-120 [STUCK_CANDIDATE] graph-pruning
+
+- theme: `graph-pruning`
+- single source: `x-twitter-2066530299467706495`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[graph-pruning]] or remove it from candidates.md as out-of-scope.
+
+### PROP-121 [STUCK_CANDIDATE] grounded-generation
+
+- theme: `grounded-generation`
+- single source: `langchain-ai-rag-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[grounded-generation]] or remove it from candidates.md as out-of-scope.
+
+### PROP-122 [STUCK_CANDIDATE] indexing
+
+- theme: `indexing`
+- single source: `langchain-ai-rag-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[indexing]] or remove it from candidates.md as out-of-scope.
+
+### PROP-123 [STUCK_CANDIDATE] local-rag
+
+- theme: `local-rag`
+- single source: `x-twitter-2066530299467706495`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[local-rag]] or remove it from candidates.md as out-of-scope.
+
+### PROP-124 [STUCK_CANDIDATE] mcp
+
+- theme: `mcp`
+- single source: `rohitg00-ai-engineering-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[mcp]] or remove it from candidates.md as out-of-scope.
+
+### PROP-125 [STUCK_CANDIDATE] multi-agent-ingest
+
+- theme: `multi-agent-ingest`
+- single source: `ar9av-obsidian-wiki`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[multi-agent-ingest]] or remove it from candidates.md as out-of-scope.
+
+### PROP-126 [STUCK_CANDIDATE] offline-agent-sleep
+
+- theme: `offline-agent-sleep`
+- single source: `microsoft-skillopt`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[offline-agent-sleep]] or remove it from candidates.md as out-of-scope.
+
+### PROP-127 [STUCK_CANDIDATE] production-agents
+
+- theme: `production-agents`
+- single source: `rohitg00-ai-engineering-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[production-agents]] or remove it from candidates.md as out-of-scope.
+
+### PROP-128 [STUCK_CANDIDATE] progressive-disclosure
+
+- theme: `progressive-disclosure`
+- single source: `mgechev-skills-best-practices`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[progressive-disclosure]] or remove it from candidates.md as out-of-scope.
+
+### PROP-129 [STUCK_CANDIDATE] provenance
+
+- theme: `provenance`
+- single source: `ar9av-obsidian-wiki`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[provenance]] or remove it from candidates.md as out-of-scope.
+
+### PROP-130 [STUCK_CANDIDATE] rag-evaluation
+
+- theme: `rag-evaluation`
+- single source: `rohitg00-ai-engineering-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[rag-evaluation]] or remove it from candidates.md as out-of-scope.
+
+### PROP-131 [STUCK_CANDIDATE] retrieval
+
+- theme: `retrieval`
+- single source: `langchain-ai-rag-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[retrieval]] or remove it from candidates.md as out-of-scope.
+
+### PROP-132 [STUCK_CANDIDATE] retrieval-augmented-generation
+
+- theme: `retrieval-augmented-generation`
+- single source: `langchain-ai-rag-from-scratch`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[retrieval-augmented-generation]] or remove it from candidates.md as out-of-scope.
+
+### PROP-133 [STUCK_CANDIDATE] reversible-compression
+
+- theme: `reversible-compression`
+- single source: `chopratejas-headroom`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[reversible-compression]] or remove it from candidates.md as out-of-scope.
+
+### PROP-134 [STUCK_CANDIDATE] selective-recomputation
+
+- theme: `selective-recomputation`
+- single source: `x-twitter-2066530299467706495`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[selective-recomputation]] or remove it from candidates.md as out-of-scope.
+
+### PROP-135 [STUCK_CANDIDATE] skill-evaluation
+
+- theme: `skill-evaluation`
+- single source: `mgechev-skills-best-practices`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[skill-evaluation]] or remove it from candidates.md as out-of-scope.
+
+### PROP-136 [STUCK_CANDIDATE] skill-optimization
+
+- theme: `skill-optimization`
+- single source: `microsoft-skillopt`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[skill-optimization]] or remove it from candidates.md as out-of-scope.
+
+### PROP-137 [STUCK_CANDIDATE] skills
+
+- theme: `skills`
+- single source: `mgechev-skills-best-practices`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[skills]] or remove it from candidates.md as out-of-scope.
+
+### PROP-138 [STUCK_CANDIDATE] storage-efficiency
+
+- theme: `storage-efficiency`
+- single source: `x-twitter-2066530299467706495`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[storage-efficiency]] or remove it from candidates.md as out-of-scope.
+
+### PROP-139 [STUCK_CANDIDATE] tiered-retrieval
+
+- theme: `tiered-retrieval`
+- single source: `ar9av-obsidian-wiki`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[tiered-retrieval]] or remove it from candidates.md as out-of-scope.
+
+### PROP-140 [STUCK_CANDIDATE] tool-output-compression
+
+- theme: `tool-output-compression`
+- single source: `chopratejas-headroom`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[tool-output-compression]] or remove it from candidates.md as out-of-scope.
+
+### PROP-141 [STUCK_CANDIDATE] validation-gated-edits
+
+- theme: `validation-gated-edits`
+- single source: `microsoft-skillopt`
+- age: 77 days (since gate started or earliest run)
+- recommendation: Find a 2nd source for [[validation-gated-edits]] or remove it from candidates.md as out-of-scope.
+
+### PROP-142 [HEAVY_BACKLOG] backlog:2026-07-11T18:41:19.592Z
+
+- defer count: 137 (threshold 50)
+- run: 2026-07-11T18:41:19.592Z
+- recommendation: Latest compile deferred 137 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
+

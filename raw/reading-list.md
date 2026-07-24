@@ -16,4 +16,7 @@ Add URLs here, one per unchecked list item. Scout Run will preserve source text 
 - [ ] https://www.linkedin.com/posts/linasbeliunas_these-are-2-senior-staff-engineers-at-airbnb-ugcPost-7481062194848227329-YH7Y/ — Apple Notes 2026-07-10: Airbnb agentic coding talk; extract navigator/driver model, multiple agentic sessions, routines, adoption framing.
 - [ ] https://www.linkedin.com/posts/eordax_ai-claude-ugcPost-7480733978405109760--4xi/ — Apple Notes 2026-07-09: Claude/Fable prompting lesson; evaluate prompt-minimization with stronger external verification/error handling.
 - [ ] https://www.linkedin.com/pulse/copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozcfc/ — Apple Notes 2026-07-08: Netflix NTech SRE reliability-at-scale reference; mine only if useful for governed agent/platform reliability patterns.
+- [ ] https://x.com/OomolStudio/status/2075854920738021682 — Apple Notes 2026-07-12: OpenConnector/OOMOL pattern for scoped credential gateway for AI agents; evaluate against Hermes MCP/tool credential isolation and MissionControl approval boundaries.
+- [ ] https://x.com/ericosiu/status/2076018000570785847 — Apple Notes 2026-07-12: Hermes desktop/context-management article; mine resolver, prioritized workspace, searchable skills, and prep-cron patterns for agent work compounding.
+- [ ] https://x.com/Jason/status/2076231055443440105 — Apple Notes 2026-07-12: PODMEME personalized podcast topic-stream automation; evaluate for Pi/media-ingest and briefing workflows before building anything.
 

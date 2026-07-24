@@ -1062,3 +1062,71 @@ Source for resolution: WebSearch result during morning-review-daily 2026-05-16 f
 **Refuse list observed:** No deletes. No `reviewed: true` flips. No wiki/ page edits. Daily note append only.
 
 [2026-06-01] LIVING GRAPH ALIGNMENT | Enabled Dataview in personal vault; enhanced `00 - Dashboards/Graph Health.md`. Deferred Smart Connections → `wiki/personal/decision-defer-smart-connections-2026-06-01.md`. Added graph-maintenance playbook, prompt, scan script + receipt verification. Updated night-shift-map. Gitignore audit/kb-dev logs.
+
+## 2026-07-11 — Compiled `articles/2026-05-16T08-40-32__apple-notes__test-capture-2026-05-16__2009bf0b.md`
+
+Pages affected: `concepts/capture-pipeline.md`
+
+## 2026-07-11 — Compiled `articles/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__1d440d77.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`, `patterns/pattern-morning-review.md`
+
+## 2026-07-11 — Compiled `articles/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__697339fa.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`
+
+## 2026-07-11 — Compiled `articles/cyrilxbt-5-employees-agent.md`
+
+Pages affected: `patterns/pattern-specialist-agent-team.md`, `recipes/five-agent-business-ops.md`
+
+## 2026-07-11 — Compiled `articles/cyrilxbt-claude-code-solo-founders.md`
+
+Pages affected: `concepts/solo-founder-ai-leverage.md`, `_meta/compile-log.md`
+
+## 2026-07-11 — Compiled `articles/cyrilxbt-obsidian-smart-vault.md`
+
+Pages affected: `concepts/knowledge-vault-feedback-loop.md`, `recipes/obsidian-smart-vault-setup.md`, `_meta/compile-log.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-16T08-40-32__apple-notes__test-capture-2026-05-16__323f37fc.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-16T08-40-32__apple-notes__test-capture-2026-05-16__89fd0950.md`
+
+Pages affected: `concepts/capture-pipeline.md`, `concepts/kb-inbox.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-16T08-40-32__apple-notes__test-capture-2026-05-16__9680bdbb.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__1c894f4d.md`
+
+Pages affected: `concepts/capture-pipeline.md`, `concepts/kb-inbox.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__71249b22.md`
+
+Pages affected: `concepts/kb-inbox.md`, `concepts/morning-review-pipeline.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__ff2752c5.md`
+
+Pages affected: `concepts/kb-inbox-workflow.md`, `concepts/morning-review-pipeline.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-23T09-33-00__x-twitter__garrytan-gbrain-v0-40-0-ships-voice-for-openclaw-hermes__56d4ac60.md`
+
+Pages affected: `frameworks/gbrain.md`, `entities/garry-tan.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-23T11-54-00__x-twitter__voxyz-ai-12-layer-agent-map__28631b30.md`
+
+Pages affected: `frameworks/12-layer-agent-map.md`, `concepts/agent-layer-architecture.md`, `patterns/layer-evidence-verification.md`
+
+## 2026-07-11 — Compiled `clippings/2026-05-23T16-30-00__x-twitter__external-hermes-agent-mentions-cluster-2026-05-23__f902b021.md`
+
+Pages affected: `entities/hermes-agent.md`, `_meta/compile-log.md`
+
+## 2026-07-11 — Compiled `framework-docs/ar9av-obsidian-wiki.md`
+
+Pages affected: `frameworks/framework-obsidian-wiki.md`, `concepts/compile-once-knowledge.md`, `_meta/compile-log.md`
+
+## 2026-07-11 — Compiled `framework-docs/chopratejas-headroom.md`
+
+Pages affected: `frameworks/headroom.md`, `_meta/compile-log.md`

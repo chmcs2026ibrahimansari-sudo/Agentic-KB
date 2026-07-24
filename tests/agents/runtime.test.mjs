@@ -241,6 +241,15 @@ test('frontmatter round-trips inline arrays of objects used by bus status histor
   ])
 })
 
+test('frontmatter parses CRLF (Windows/synced) files instead of dropping all metadata', () => {
+  const crlf = '---\r\nmemory_class: learned\r\ntitle: CRLF Test\r\ntags:\r\n  - one\r\n  - two\r\n---\r\n\r\nBody here\r\n'
+  const parsed = rt.parseFrontmatter(crlf)
+  assert.equal(parsed.data.memory_class, 'learned')
+  assert.equal(parsed.data.title, 'CRLF Test')
+  assert.deepEqual(parsed.data.tags, ['one', 'two'])
+  assert.match(parsed.content, /Body here/)
+})
+
 test('bus state machine rejects illegal transitions', () => {
   const root = makeFixture()
   const { id } = rt.publishBusItem(root, { channel: 'discovery', from: 'w1', body: 'x' })

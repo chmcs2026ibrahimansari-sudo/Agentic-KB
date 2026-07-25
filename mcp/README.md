@@ -97,3 +97,10 @@ No migration should happen until the spec and SDK are GA; the SDK is
 expected to handle the negotiation details. When upgrading, revisit:
 - long-running tools (`compile_wiki`, `query_wiki`) → Tasks extension
 - `PRIVATE_PIN` gating → OAuth-aligned authorization
+
+Already implemented ahead of the RC: W3C Trace Context passthrough. If a
+client sends `traceparent` (and optionally `tracestate`) in `_meta` on a
+tool call, the server records it in `logs/agent-runtime.log` as a
+`type: mcp-tool-call` entry, so KB operations can be correlated with the
+caller's distributed trace. Clients that send no trace context see no
+change.

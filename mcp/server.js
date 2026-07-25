@@ -655,6 +655,23 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params
 
+  // W3C Trace Context passthrough (MCP 2026-07-28 RC carries trace metadata in
+  // _meta). When the client sends a traceparent, record it against the tool
+  // call in the runtime trace log so KB reads/writes can be correlated with
+  // the caller's distributed trace. No-op for clients that don't send one.
+  const meta = request.params._meta || {}
+  if (typeof meta.traceparent === 'string' && meta.traceparent) {
+    agentRuntime.appendRuntimeTrace(KB_ROOT, {
+      type: 'mcp-tool-call',
+      tool: name,
+      agent_id: args && args.agent_id ? String(args.agent_id) : undefined,
+      traceparent: meta.traceparent.slice(0, 128),
+      // tracestate is spec-capped at 512 chars; enforce so a bad client
+      // cannot bloat the log.
+      tracestate: typeof meta.tracestate === 'string' ? meta.tracestate.slice(0, 512) : undefined,
+    })
+  }
+
   try {
     if (name === 'search_wiki') {
       const query = String(args.query || '')

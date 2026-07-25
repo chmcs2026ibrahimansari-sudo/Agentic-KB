@@ -1213,6 +1213,17 @@ test('source-trust: resolveConfidence maps strings and passes numbers', () => {
   assert.ok(rt.resolveConfidence(undefined) < 0.50, 'undefined should be unverified')
 })
 
+test('source-trust: confidence survives frontmatter longer than 1KB (many tags)', () => {
+  const root = makeFixture()
+  const relPath = 'raw/qa/long-frontmatter.md'
+  fs.mkdirSync(path.join(root, 'raw/qa'), { recursive: true })
+  const tags = Array.from({ length: 60 }, (_, i) => `  - some-fairly-long-tag-name-${i}`).join('\n')
+  fs.writeFileSync(path.join(root, relPath), `---\ntags:\n${tags}\nconfidence: high\nverified: true\n---\n\nContent`)
+  const result = rt.scoreTrust(root, relPath)
+  assert.equal(result.confidenceMultiplier, 1.00, 'high confidence must not degrade to unverified')
+  assert.equal(result.verified, true)
+})
+
 // ─── V2.3: promotion-scorer.mjs ──────────────────────────────────────────────
 
 test('promotion-scorer: rejects candidate with missing provenance', () => {

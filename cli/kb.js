@@ -931,6 +931,7 @@ async function agentCmd(sub, rest) {
     const description = descIdx >= 0 ? rest[descIdx + 1] : ''
     const taskId = taskIdIdx >= 0 ? rest[taskIdIdx + 1] : undefined
     const c = rt.loadContract(AGENT_KB_ROOT, id)
+    if (!c) throw new Error(`Agent not found: ${id}`)
     const result = rt.startTask(AGENT_KB_ROOT, c, { project, description, taskId })
     console.log(`✅ Task started: ${result.taskId}`)
     console.log(`   working-memory: ${result.workingMemoryPath}`)
@@ -943,6 +944,7 @@ async function agentCmd(sub, rest) {
     const id = rest[0]
     if (!id) throw new Error('Usage: kb agent active-task <agent-id>')
     const c = rt.loadContract(AGENT_KB_ROOT, id)
+    if (!c) throw new Error(`Agent not found: ${id}`)
     const active = rt.getActiveTask(AGENT_KB_ROOT, c)
     if (!active) {
       console.log(`No active task for ${id}`)
@@ -967,6 +969,7 @@ async function agentCmd(sub, rest) {
     }
     if (!id) throw new Error('Usage: kb agent status <agent-id> [--last <n>]')
     const c = rt.loadContract(AGENT_KB_ROOT, id)
+    if (!c) throw new Error(`Agent not found: ${id}`)
     const status = rt.getAgentStatus(AGENT_KB_ROOT, c, { traceLimit })
     console.log(`\n=== Agent Status: ${id} (${status.tier}) ===`)
     console.log(`Domain: ${status.domain || '—'}`)
@@ -1001,6 +1004,7 @@ async function agentCmd(sub, rest) {
     const entry = rest[2]
     if (!id || !taskId || !entry) throw new Error('Usage: kb agent append-state <agent-id> <task-id> "<entry>"')
     const c = rt.loadContract(AGENT_KB_ROOT, id)
+    if (!c) throw new Error(`Agent not found: ${id}`)
     const result = rt.appendTaskState(AGENT_KB_ROOT, c, taskId, entry)
     console.log(`✅ State appended to ${result.path}`)
     return
@@ -1014,6 +1018,7 @@ async function agentCmd(sub, rest) {
     const reason = reasonIdx >= 0 ? rest[reasonIdx + 1] : ''
     if (!id || !taskId) throw new Error('Usage: kb agent abandon-task <agent-id> <task-id> [--reason <r>]')
     const c = rt.loadContract(AGENT_KB_ROOT, id)
+    if (!c) throw new Error(`Agent not found: ${id}`)
     const result = rt.abandonTask(AGENT_KB_ROOT, c, taskId, reason)
     console.log(`✅ Task abandoned: ${result.workingMemoryPath}`)
     return
@@ -1023,6 +1028,7 @@ async function agentCmd(sub, rest) {
     const id = rest[0]
     if (!id) throw new Error('Usage: kb agent verify-state <agent-id>')
     const c = rt.loadContract(AGENT_KB_ROOT, id)
+    if (!c) throw new Error(`Agent not found: ${id}`)
     const verification = rt.verifyTaskState(AGENT_KB_ROOT, c)
     console.log(JSON.stringify(verification, null, 2))
     if (!verification.ok) process.exitCode = 2
@@ -1033,6 +1039,7 @@ async function agentCmd(sub, rest) {
     const id = rest[0]
     if (!id) throw new Error('Usage: kb agent repair-state <agent-id>')
     const c = rt.loadContract(AGENT_KB_ROOT, id)
+    if (!c) throw new Error(`Agent not found: ${id}`)
     const result = rt.repairTaskState(AGENT_KB_ROOT, c)
     console.log(JSON.stringify(result, null, 2))
     if (!result.ok) process.exitCode = 2
@@ -1050,6 +1057,7 @@ async function agentCmd(sub, rest) {
       ? JSON.parse(fs.readFileSync(rest[payloadIdx + 1], 'utf8'))
       : {}
     const c = rt.loadContract(AGENT_KB_ROOT, id)
+    if (!c) throw new Error(`Agent not found: ${id}`)
     if (dryRun) {
       const plan = rt.dryRunCloseTask(AGENT_KB_ROOT, c, payload)
       console.log(`\n--- Dry run for ${id} close-task ---`)

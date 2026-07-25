@@ -2,6 +2,10 @@
 // Loads each real contract, computes the scoped context bundle against the live
 // wiki tree, and compares the included file list to a committed snapshot.
 // Any contract or context_policy edit that changes scope becomes visible in diff.
+// Snapshot loads are read-only inspection: keep them from appending
+// context-load entries to the repo's tracked logs/agent-runtime.log.
+process.env.AGENTIC_KB_SUPPRESS_RUNTIME_TRACE = '1'
+
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'fs'

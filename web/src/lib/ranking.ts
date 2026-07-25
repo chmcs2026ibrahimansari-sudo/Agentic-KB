@@ -113,7 +113,12 @@ export function verifiedBoost(absPath: string): number {
     fs.readSync(fd, buf, 0, 1024, 0)
     fs.closeSync(fd)
     const head = buf.toString('utf8')
-    const fmMatch = head.match(/^---\n([\s\S]*?)\n---/)
+    let fmMatch = head.match(/^---\n([\s\S]*?)\n---/)
+    if (!fmMatch && head.startsWith('---\n')) {
+      // Closing '---' fell outside the head window (long sources: list) —
+      // read the whole file rather than silently dropping the boost.
+      fmMatch = fs.readFileSync(absPath, 'utf8').match(/^---\n([\s\S]*?)\n---/)
+    }
     const verified = fmMatch ? /^verified:\s*true\s*$/m.test(fmMatch[1]) : false
     _verifiedCache.set(absPath, { verified, mtimeMs: stat.mtimeMs })
     return verified ? VERIFIED_BOOST : 1.0
@@ -149,7 +154,10 @@ export function confidenceBoost(absPath: string): number {
     fs.readSync(fd, buf, 0, 512, 0)
     fs.closeSync(fd)
     const head = buf.toString('utf8')
-    const fmMatch = head.match(/^---\n([\s\S]*?)\n---/)
+    let fmMatch = head.match(/^---\n([\s\S]*?)\n---/)
+    if (!fmMatch && head.startsWith('---\n')) {
+      fmMatch = fs.readFileSync(absPath, 'utf8').match(/^---\n([\s\S]*?)\n---/)
+    }
     const confidenceMatch = fmMatch ? fmMatch[1].match(/^confidence:\s*(\w+)\s*$/m) : null
     const confidence = confidenceMatch ? confidenceMatch[1].toLowerCase() : 'medium'
     _confidenceCache.set(absPath, { confidence, mtimeMs: stat.mtimeMs })

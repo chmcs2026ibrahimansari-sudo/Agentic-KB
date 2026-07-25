@@ -118,7 +118,12 @@ function extractId(absPath: string): string | null {
     fs.readSync(fd, buf, 0, 1024, 0)
     fs.closeSync(fd)
     const head = buf.toString('utf8')
-    const m = head.match(/^---\n([\s\S]*?)\n---/)
+    let m = head.match(/^---\n([\s\S]*?)\n---/)
+    if (!m && head.startsWith('---\n')) {
+      // Long frontmatter: the closing '---' fell outside the 1KB window.
+      // Fall back to a full read so the file keeps its place in the ID index.
+      m = fs.readFileSync(absPath, 'utf8').match(/^---\n([\s\S]*?)\n---/)
+    }
     if (!m) return null
     const idLine = m[1].match(/^id:\s*(.+)$/m)
     if (!idLine) return null

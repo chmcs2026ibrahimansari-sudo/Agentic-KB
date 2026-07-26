@@ -8,7 +8,20 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — July 24, 2026 (Latest)
+## What's New — July 26, 2026 (Latest)
+
+Nightly security + correctness pass — **286 tests passing** (was 277):
+
+- 🔒 **`/api/article` locked down** — the one API route with no PIN gating served private articles (including `wiki/personal/`) to anyone, and its `?path=` param accepted any extension, exposing `.env`, `namespaces.json` RBAC tokens, and logs. Now `.md`/`.mdx` only, private requires the same PIN as `/api/search`.
+- ⏱️ **Constant-time PIN checks** — all five PIN-gated routes (search, article, query, lint, compile) now compare via sha256 + `timingSafeEqual` (`web/src/lib/pin.ts`) instead of `!==`, which leaked correct-prefix length through response timing.
+- 🧭 **Repo context traversal guard** — `loadRepoContext` `source_files` entries like `../../../personal/secret.md` could pull files from outside the repo namespace into the context bundle; now validated with the same rule as `importedDocPath` (regression test added).
+- 🔑 **Web repo sync actually authenticates** — the sync route passed the GitHub token as `opts.githubToken` but `syncRepo` reads `opts.token`; private-repo syncs from the UI ran unauthenticated. Also: a failed fetch no longer stamps `last_sync_at` / wipes `last_synced_commit`.
+- 🖥️ **CLI honesty** — `kb search` now honors `--pin` (was silently ignored) and surfaces 403 auth errors instead of printing "No results"; `search_repo_docs` (MCP) skips unreadable files instead of aborting the whole search.
+- 🧪 **memory-classes covered** — the last untested agent-runtime module (drives append-only semantics in both writeback engines) now has 8 direct tests; MCP README documents all 37 tools, not the original 5.
+
+---
+
+## What's New — July 24, 2026
 
 Nightly correctness pass — **276 tests passing** (was 269):
 

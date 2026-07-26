@@ -42,7 +42,12 @@ export async function POST(
     const { token } = body
 
     const opts: Record<string, unknown> = {}
-    if (token) opts.githubToken = token
+    // syncRepo reads opts.token (see lib/repo-runtime/sync.mjs) — the previous
+    // opts.githubToken key was silently ignored, so a token supplied through
+    // this route never reached the GitHub API. Fall back to env GITHUB_PAT,
+    // matching the MCP sync_repo_markdown handler.
+    const effectiveToken = token || process.env.GITHUB_PAT
+    if (effectiveToken) opts.token = effectiveToken
 
     // Trigger sync - syncRepo takes the record object
     const trace = await syncRepo(DEFAULT_KB_ROOT, record, opts)

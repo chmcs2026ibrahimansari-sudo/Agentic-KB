@@ -52,6 +52,17 @@ export async function POST(
     // Trigger sync - syncRepo takes the record object
     const trace = await syncRepo(DEFAULT_KB_ROOT, record, opts)
 
+    // syncRepo reports fetch failures via trace.errors instead of throwing.
+    // Don't mark the repo synced on a failed fetch — that stamped
+    // last_sync_at and overwrote last_synced_commit with '' even though
+    // nothing was fetched.
+    const fetchFailed = Array.isArray(trace.errors) && trace.errors.some(
+      (e: { type?: string }) => e.type === 'fetch'
+    )
+    if (fetchFailed) {
+      return NextResponse.json({ synced: false, repo, trace }, { status: 502 })
+    }
+
     // Mark as synced with trace metadata
     markSynced(DEFAULT_KB_ROOT, repo, {
       commit_sha: trace.commit_sha || '',

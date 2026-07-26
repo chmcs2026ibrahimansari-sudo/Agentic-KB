@@ -145,16 +145,18 @@ function parseArgs(args) {
   return { opts, positional }
 }
 
-async function search(query, scope, limit) {
+async function search(query, scope, limit, pin = PRIVATE_PIN) {
   const params = new URLSearchParams({ q: query, scope, limit: String(limit) })
-  if (scope !== 'public' && PRIVATE_PIN) params.set('pin', PRIVATE_PIN)
+  if (scope !== 'public' && pin) params.set('pin', pin)
 
   const res = await fetch(`${API_URL}/api/search?${params}`)
-  if (res.status === 401) {
-    console.error('❌ Invalid PIN. Set PRIVATE_PIN env var to access private content.')
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    // The API returns 403 for a missing/invalid PIN — surface it instead of
+    // falling through and printing a misleading "No results".
+    console.error(`❌ Search failed (${res.status}): ${data.error || 'unknown error'}`)
     process.exit(1)
   }
-  const data = await res.json()
   const results = data.results || []
 
   if (results.length === 0) {
@@ -1649,7 +1651,7 @@ const { opts, positional } = parseArgs(args.slice(1))
 try {
   if (command === 'search') {
     if (!positional[0]) { console.error('Usage: kb search <query>'); process.exit(1) }
-    await search(positional.join(' '), opts.scope, opts.limit)
+    await search(positional.join(' '), opts.scope, opts.limit, opts.pin)
   } else if (command === 'query') {
     if (!positional[0]) { console.error('Usage: kb query <question>'); process.exit(1) }
     await query(positional.join(' '), opts.scope, opts.pin)

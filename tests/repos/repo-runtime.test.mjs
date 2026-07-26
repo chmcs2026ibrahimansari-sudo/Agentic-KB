@@ -459,6 +459,24 @@ test('loadRepoContext accepts MCP-style opts and includes targeted repo bus item
   assert.equal(result.trace.budget_bytes, 50000)
 })
 
+test('loadRepoContext source_files rejects traversal segments but keeps clean paths', () => {
+  const root = makeFixture()
+  fs.mkdirSync(path.join(root, 'wiki/repos/test-repo/repo-docs'), { recursive: true })
+  fs.writeFileSync(path.join(root, 'wiki/repos/test-repo/repo-docs/README.md'), '---\ntitle: R\n---\nDoc\n')
+  fs.mkdirSync(path.join(root, 'wiki/personal'), { recursive: true })
+  fs.writeFileSync(path.join(root, 'wiki/personal/secret.md'), '---\nvisibility: private\n---\nSecret\n')
+
+  const result = repoRt.loadRepoContext(root, 'test-repo', {
+    agent_id: 'w1',
+    budget_bytes: 50000,
+    source_files: ['README.md', '../../../personal/secret.md', '/etc/passwd', ''],
+  })
+  const paths = result.files.map(file => file.path)
+
+  assert.ok(paths.includes('wiki/repos/test-repo/repo-docs/README.md'))
+  assert.ok(!paths.some(p => p.includes('secret') || p.includes('passwd')))
+})
+
 // ─── Sync: archive + commit sha provenance ────────────────────────────────
 
 test('archiveRemovedDoc moves the doc out of repo-docs (no live copy left behind)', () => {

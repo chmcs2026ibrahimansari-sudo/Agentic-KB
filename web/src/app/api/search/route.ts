@@ -7,6 +7,7 @@ import {
   type SearchResult,
 } from '@/lib/articles'
 import { searchGraph, graphAvailable } from '@/lib/graph-search'
+import { pinMatches } from '@/lib/pin'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       )
     }
     const pin = searchParams.get('pin') || request.headers.get('x-private-pin') || ''
-    if (pin !== PRIVATE_PIN) {
+    if (!pinMatches(pin, PRIVATE_PIN)) {
       return NextResponse.json(
         { error: 'Invalid PIN', code: 'FORBIDDEN' },
         { status: 403 }

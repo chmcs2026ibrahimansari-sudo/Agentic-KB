@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { findArticleBySlug, getBacklinks, KB_ROOT } from '@/lib/articles'
 import { safeJoin } from '@/lib/safe-path'
+import { pinMatches } from '@/lib/pin'
 import fs from 'fs'
 
 export const dynamic = 'force-dynamic'
@@ -70,7 +71,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         )
       }
       const pin = searchParams.get('pin') || request.headers.get('x-private-pin') || ''
-      if (pin !== PRIVATE_PIN) {
+      if (!pinMatches(pin, PRIVATE_PIN)) {
         return NextResponse.json(
           { error: 'Invalid PIN', code: 'FORBIDDEN' },
           { status: 403 }

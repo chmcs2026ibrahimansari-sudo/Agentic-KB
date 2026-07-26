@@ -5,6 +5,7 @@ import path from 'path'
 import { readIndex, readIndexInVault, readKBFile, resolveContentRoot, DEFAULT_KB_ROOT } from '@/lib/articles'
 import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
+import { pinMatches } from '@/lib/pin'
 
 // ── RLM Stage 7: Contradiction filter ────────────────────────────────────────
 // Pages flagged as contradictory in the latest lint report are deprioritised:
@@ -212,7 +213,7 @@ export async function POST(request: NextRequest): Promise<Response> {
         { status: 403, headers: { 'Content-Type': 'text/event-stream' } }
       )
     }
-    if (queryPin !== PRIVATE_PIN) {
+    if (!pinMatches(queryPin, PRIVATE_PIN)) {
       return new Response(
         encodeSSE({ type: 'error', content: '🔒 Invalid PIN for private content access.' }),
         { status: 403, headers: { 'Content-Type': 'text/event-stream' } }

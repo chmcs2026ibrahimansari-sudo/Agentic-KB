@@ -25,6 +25,7 @@ import { DEFAULT_KB_ROOT, resolveContentRoot } from '@/lib/articles'
 import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
 import { ensureId, invalidateIdIndex } from '@/lib/ids'
+import { pinMatches } from '@/lib/pin'
 
 export const dynamic = 'force-dynamic'
 
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     vault = body.vault
   } catch { /* defaults */ }
 
-  if (PRIVATE_PIN && pin !== PRIVATE_PIN) {
+  if (PRIVATE_PIN && !pinMatches(pin, PRIVATE_PIN)) {
     return new Response(
       encodeSSE({ type: 'error', content: '🔒 Compile requires a valid PIN.' }),
       { status: 401, headers: { 'Content-Type': 'text/event-stream' } }

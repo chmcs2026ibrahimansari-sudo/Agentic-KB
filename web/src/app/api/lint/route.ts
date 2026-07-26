@@ -18,6 +18,7 @@ import { DEFAULT_KB_ROOT, resolveContentRoot } from '@/lib/articles'
 import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
 import { buildInboundLinkMap, isOrphanCandidate, isStalePage } from '../../../../../lib/wiki-lint.mjs'
+import { pinMatches } from '@/lib/pin'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     pin = body.pin || request.headers.get('x-private-pin') || ''
   } catch { /* defaults */ }
 
-  if (PRIVATE_PIN && pin !== PRIVATE_PIN) {
+  if (PRIVATE_PIN && !pinMatches(pin, PRIVATE_PIN)) {
     return NextResponse.json({ error: '🔒 Lint requires a valid PIN.' }, { status: 401 })
   }
 

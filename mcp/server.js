@@ -978,13 +978,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           const full = path.join(d, entry.name)
           if (entry.isDirectory()) walkDir(full)
           else if (entry.name.endsWith('.md')) {
-            const content = fs.readFileSync(full, 'utf8')
-            let score = 0
-            for (const term of terms) if (content.toLowerCase().includes(term)) score++
-            if (score > 0) {
-              const snippet = content.slice(0, 200)
-              results.push({ path: path.relative(repoDocsDir, full), snippet, score })
-            }
+            // Per-file try/catch (same as simpleSearch): one unreadable file
+            // must not abort the whole search with an MCP error.
+            try {
+              const content = fs.readFileSync(full, 'utf8')
+              let score = 0
+              for (const term of terms) if (content.toLowerCase().includes(term)) score++
+              if (score > 0) {
+                const snippet = content.slice(0, 200)
+                results.push({ path: path.relative(repoDocsDir, full), snippet, score })
+              }
+            } catch { /* skip unreadable file */ }
           }
         }
       }

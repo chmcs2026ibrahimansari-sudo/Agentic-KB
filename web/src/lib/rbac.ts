@@ -5,7 +5,8 @@
  * namespace. One KB, many tenants (teams, projects, agents).
  *
  * Resolution order:
- *   1. X-KB-Namespace header (explicit)
+ *   1. X-KB-Namespace header (explicit — only honored while no tokens are
+ *      configured; with tokens present the header alone is not a credential)
  *   2. Bearer token → namespaces.json lookup
  *   3. "default" (back-compat — existing behavior)
  *
@@ -56,6 +57,10 @@ function loadConfig(): RBACConfig {
     const raw = fs.readFileSync(p, 'utf8')
     _cfgCache = JSON.parse(raw) as RBACConfig
     _cfgMtime = stat.mtimeMs
+    // Tolerate a namespaces.json without "tokens"/"namespaces" keys — any
+    // Bearer request would otherwise crash on cfg.tokens[token].
+    if (!_cfgCache.tokens) _cfgCache.tokens = {}
+    if (!_cfgCache.namespaces) _cfgCache.namespaces = { ...DEFAULT_CONFIG.namespaces }
     // Ensure default namespace always exists
     if (!_cfgCache.namespaces.default) {
       _cfgCache.namespaces.default = DEFAULT_CONFIG.namespaces.default
@@ -77,9 +82,15 @@ export interface ResolvedIdentity {
 export function resolveIdentity(request: NextRequest): ResolvedIdentity {
   const cfg = loadConfig()
 
-  // 1. Explicit header
+  // 1. Explicit header — honored only when no tokens are configured.
+  // Once tokens exist, RBAC is actively enforced: an unauthenticated caller
+  // must not be able to claim an arbitrary namespace (and inherit its ACL,
+  // including write) just by sending X-KB-Namespace. That also bypassed
+  // WEBHOOK_SECRET on /api/ingest/webhook, which only checks the legacy
+  // secret when identity.source === 'default'.
   const headerNs = request.headers.get('x-kb-namespace')
-  if (headerNs && cfg.namespaces[headerNs]) {
+  const tokensConfigured = Object.keys(cfg.tokens).length > 0
+  if (headerNs && !tokensConfigured && cfg.namespaces[headerNs]) {
     return { namespace: headerNs, acl: cfg.namespaces[headerNs], source: 'header' }
   }
 

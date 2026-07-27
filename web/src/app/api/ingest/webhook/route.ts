@@ -20,6 +20,7 @@ import path from 'path'
 import { DEFAULT_KB_ROOT } from '@/lib/articles'
 import { appendAuditLog } from '@/lib/audit'
 import { resolveIdentity, canWrite } from '@/lib/rbac'
+import { pinMatches } from '@/lib/pin'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +33,10 @@ const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || ''
 function legacySecretOk(request: NextRequest): boolean {
   if (!WEBHOOK_SECRET) return true
   const auth = request.headers.get('authorization') || ''
-  return auth === `Bearer ${WEBHOOK_SECRET}`
+  // Constant-time comparison — same rationale as the PIN routes: a plain
+  // string compare short-circuits on the first differing character and
+  // leaks secret prefixes to a caller measuring response timing.
+  return auth.startsWith('Bearer ') && pinMatches(auth.slice(7), WEBHOOK_SECRET)
 }
 
 // ── Adapters ─────────────────────────────────────────────────────────────────

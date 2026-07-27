@@ -8,7 +8,20 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — July 26, 2026 (Latest)
+## What's New — July 27, 2026 (Latest)
+
+Nightly security + integrity pass — **296 tests passing** (was 286):
+
+- 🎭 **`X-KB-Namespace` header is no longer a credential** — once RBAC tokens are configured, an unauthenticated caller could still claim any namespace (and its write ACL) with one header, which also bypassed `WEBHOOK_SECRET` on the ingest webhook. The header now only works while no tokens exist (dev mode). A `namespaces.json` without a `tokens` key also no longer 500s every Bearer request.
+- ⏱️ **Timing-safe secrets, everywhere** — the webhook's legacy Bearer secret and the MCP server's `requirePin` were the two remaining plain `===`/`!==` secret comparisons after the July 26 PIN pass; both now use the same sha256 + `timingSafeEqual` construction.
+- 📝 **Webhook ingest keeps both docs** — two same-day ingests whose titles slugify identically (e.g. two closed issues titled "Fix build") silently overwrote each other; filenames now get `-2`, `-3`… suffixes.
+- 🔄 **Frontmatter round-trips are lossless** — the zero-dep codec (under repo sync, writeback, bus persistence) left literal `\"`/`\n` escapes in quoted strings on re-parse, turned string `"true"`/`"42"` into boolean/number, and turned the empty string into an empty *list*. All fixed, with a round-trip test suite.
+- 📦 **Repo sync skips vendored markdown at any depth** — `docs/node_modules/pkg/README.md` was syncable (exclusions only matched at the repo root); truncated GitHub tree listings are now warned about instead of silently syncing a partial doc set.
+- 📋 **MCP spec 2026-07-28** — README spec-compat section updated for the finalized revision (stateless core, `_meta` per-request, `Mcp-Session-Id` removed, Tasks → extension) and what it means for this stdio server: nothing until the SDK ships support.
+
+---
+
+## What's New — July 26, 2026
 
 Nightly security + correctness pass — **286 tests passing** (was 277):
 

@@ -144,14 +144,21 @@ it through `validateSlug`/`safeJoin` (or the equivalent lib-level guard)
 
 This server targets the stable MCP spec via `@modelcontextprotocol/sdk` ^1.x.
 
-The 2026-07-28 release candidate is the largest revision since launch:
-stateless core (protocol version + client info carried in `_meta` on every
-request), a new `server/discover` method, MCP Apps (server-rendered UIs),
-a Tasks extension for long-running work (a natural fit for `compile_wiki`
-runs), OAuth-aligned authorization, and a formal deprecation policy.
+The 2026-07-28 revision (finalized July 2026) is the largest since
+launch. What matters for this server:
 
-No migration should happen until the spec and SDK are GA; the SDK is
-expected to handle the negotiation details. When upgrading, revisit:
+- **Stateless protocol core** — the initialization handshake is removed;
+  protocol version, `clientInfo`, and capabilities travel in `_meta` on
+  every request instead of being negotiated once per session.
+- **`Mcp-Session-Id` header removed** — no session identity to hold onto;
+  irrelevant for this stdio server, which never depended on it.
+- **Tasks moved to an extension** — long-running work (a natural fit for
+  `compile_wiki` runs) is opt-in rather than core.
+
+No migration is needed until `@modelcontextprotocol/sdk` ships support —
+the SDK is expected to handle the `_meta` negotiation details, and this
+server keeps no per-session state of its own, so the stateless core is a
+non-event here. When upgrading the SDK, revisit:
 - long-running tools (`compile_wiki`, `query_wiki`) → Tasks extension
 - `PRIVATE_PIN` gating → OAuth-aligned authorization
 

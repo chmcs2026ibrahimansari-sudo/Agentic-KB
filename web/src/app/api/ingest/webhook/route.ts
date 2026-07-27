@@ -150,8 +150,12 @@ function writeRawDoc(vaultRoot: string, doc: NormalizedDoc, namespace = 'default
 
   const date = new Date().toISOString().slice(0, 10)
   const slug = slugify(doc.title)
-  const filename = `${date}-${slug}.md`
-  const filePath = path.join(rawDir, filename)
+  // Two same-day docs that slugify identically (e.g. two closed issues with
+  // the same title) must not overwrite each other — suffix until unique.
+  let filePath = path.join(rawDir, `${date}-${slug}.md`)
+  for (let n = 2; fs.existsSync(filePath); n++) {
+    filePath = path.join(rawDir, `${date}-${slug}-${n}.md`)
+  }
 
   const frontmatter = [
     '---',

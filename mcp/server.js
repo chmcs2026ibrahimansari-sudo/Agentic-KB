@@ -17,6 +17,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js'
+import crypto from 'crypto'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -41,12 +42,22 @@ function intOr(value, fallback, max = Infinity) {
   return Number.isFinite(n) && n > 0 ? Math.min(Math.floor(n), max) : fallback
 }
 
+// Constant-time PIN comparison (same construction as web/src/lib/pin.ts):
+// hash both sides to fixed length so timingSafeEqual accepts unequal-length
+// inputs and a plain !== cannot leak prefix length through timing.
+function pinMatches(provided, expected) {
+  if (!expected) return false
+  const a = crypto.createHash('sha256').update(String(provided), 'utf8').digest()
+  const b = crypto.createHash('sha256').update(String(expected), 'utf8').digest()
+  return crypto.timingSafeEqual(a, b)
+}
+
 function requirePin(scope, providedPin, opName = 'this operation') {
   if (scope === 'public') return null
   if (!PRIVATE_PIN) {
     return { content: [{ type: 'text', text: `🔒 Private scope disabled: PRIVATE_PIN is not set for ${opName}.` }], isError: true }
   }
-  if (String(providedPin || '') !== PRIVATE_PIN) {
+  if (!pinMatches(String(providedPin || ''), PRIVATE_PIN)) {
     return { content: [{ type: 'text', text: `🔒 Invalid PIN for ${opName}.` }], isError: true }
   }
   return null

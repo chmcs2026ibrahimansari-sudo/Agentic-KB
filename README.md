@@ -8,7 +8,20 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — July 27, 2026 (Latest)
+## What's New — July 28, 2026 (Latest)
+
+Nightly security pass — **304 tests passing** (was 296):
+
+- 🍪 **The active-vault cookie is no longer a filesystem passport** — `active_vault_path` is client-controlled, but eight routes used it directly as a serving root: `Cookie: active_vault_path=/` read every `.md` on disk through `/api/search` and `/wiki` (no PIN — articles without `visibility: private` are public) and wrote files under arbitrary directories via `/api/query/save`. New `web/src/lib/vault.ts` resolves the cookie against an allowlist (default KB root + vaults registered in the Obsidian config), and `/api/switch-vault` rejects unregistered paths.
+- 🧨 **`/api/process` hardened both ways** — the client's `filePath` traversed out of the KB (any file on disk got read and summarized back through Claude), and the *model's* JSON response chose the write paths, so a prompt-injected raw source could steer output to `../../.ssh/...`. Input is now restricted to `raw/**/*.md`; writes to `wiki/**.md`, both via `safeJoin`.
+- 🪪 **Agent ids are validated at the chokepoint** — `loadContract` interpolated caller-supplied ids into `config/agents/<id>.yaml`, so `..%2F..%2F` ids from `/api/agents/[id]/*` or MCP tool args loaded any `.yaml` on disk as a contract. Ids now must match the same shape the diff route enforced; `isSafeAgentId` exported, regression tests added.
+- 📝 **UI ingest keeps both docs** — `/api/ingest` had the collision bug the webhook route was fixed for on July 27, minus the date prefix: any two materials whose titles slugify identically overwrote each other, across days. Now suffixed `-2`, `-3`…; titles with quotes/newlines can no longer inject frontmatter keys, and all-punctuation titles no longer produce the filename `.md`.
+- 🗄️ **Retention finally has direct tests** — the module that archives bus items and working memory and truncates task logs had zero coverage; six tests pin the rules (pinned/fresh items survive TTL, unparseable dates never archive, snapshot-before-truncate).
+- 🤖 **Default model → `claude-sonnet-5`** — released July 24; `KB_MODEL` env override unchanged, cost meter already prices the family correctly.
+
+---
+
+## What's New — July 27, 2026
 
 Nightly security + integrity pass — **296 tests passing** (was 286):
 

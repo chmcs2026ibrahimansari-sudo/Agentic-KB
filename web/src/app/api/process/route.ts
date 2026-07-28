@@ -4,6 +4,7 @@ import path from 'path'
 import Anthropic from '@anthropic-ai/sdk'
 import { KB_MODEL } from '@/lib/model'
 import { DEFAULT_KB_ROOT } from '@/lib/articles'
+import { safeJoin } from '@/lib/safe-path'
 
 const KB_ROOT = DEFAULT_KB_ROOT
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -52,14 +53,40 @@ function appendToIndex(entry: string, section: string): void {
   }
 }
 
+// Claude's response includes the wiki paths to write. The raw file being
+// processed is untrusted content, so a prompt-injected source could steer the
+// model into emitting paths like ../../.ssh/... — only wiki/*.md is writable.
+function resolveWikiPagePath(rel: string): string {
+  const normalized = String(rel).replace(/\\/g, '/')
+  if (!normalized.startsWith('wiki/') || !/\.(md|mdx)$/.test(normalized)) {
+    throw new Error(`Refusing to write outside wiki/: ${normalized}`)
+  }
+  return safeJoin(KB_ROOT, normalized)
+}
+
 export async function POST(req: NextRequest): Promise<Response> {
   const { filePath } = await req.json() as { filePath: string }
+
+  // Only raw/**/*.md may be processed — filePath previously went straight
+  // into path.join(KB_ROOT, ...), so ../../ read (and then summarized back
+  // out) any file on disk.
+  let fullPath: string
+  try {
+    if (typeof filePath !== 'string' || !/^raw\/.+\.md$/.test(filePath.replace(/\\/g, '/'))) {
+      throw new Error('filePath must be a raw/**/*.md path')
+    }
+    fullPath = safeJoin(KB_ROOT, filePath)
+  } catch (e) {
+    return new Response(JSON.stringify({ error: (e as Error).message, code: 'BAD_REQUEST' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
 
   const stream = new ReadableStream({
     async start(controller) {
       try {
         // Read the raw file
-        const fullPath = path.join(KB_ROOT, filePath)
         if (!fs.existsSync(fullPath)) {
           send(controller, { type: 'error', message: `File not found: ${filePath}` })
           controller.close()
@@ -155,7 +182,7 @@ Rules:
         }
 
         // Write summary page
-        const summaryPath = path.join(KB_ROOT, result.summaryPage.path)
+        const summaryPath = resolveWikiPagePath(result.summaryPage.path)
         fs.mkdirSync(path.dirname(summaryPath), { recursive: true })
         fs.writeFileSync(summaryPath, result.summaryPage.content)
         send(controller, { type: 'wrote', path: result.summaryPage.path })
@@ -163,7 +190,7 @@ Rules:
         // Write new pages
         const newPagePaths: string[] = []
         for (const page of (result.newPages || [])) {
-          const pagePath = path.join(KB_ROOT, page.path)
+          const pagePath = resolveWikiPagePath(page.path)
           fs.mkdirSync(path.dirname(pagePath), { recursive: true })
           if (!fs.existsSync(pagePath)) {
             fs.writeFileSync(pagePath, page.content)

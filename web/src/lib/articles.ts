@@ -349,6 +349,7 @@ export function writeRawMaterial(material: RawMaterial): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'untitled'
 
   const now = new Date().toISOString().split('T')[0]
   const typeDir = path.join(KB_ROOT, 'raw', material.type)
@@ -358,23 +359,34 @@ export function writeRawMaterial(material: RawMaterial): string {
     fs.mkdirSync(typeDir, { recursive: true })
   }
 
+  // Frontmatter values are quoted scalars — a title/url containing `"` or a
+  // newline would otherwise break out of the value and inject its own keys.
+  const safeTitle = material.title.replace(/\s+/g, ' ').replace(/"/g, "'")
+  const safeUrl = material.sourceUrl?.replace(/\s+/g, '').replace(/"/g, '')
+
   const frontmatter = [
     '---',
-    `title: "${material.title}"`,
+    `title: "${safeTitle}"`,
     `type: ${material.type}`,
     `date_ingested: ${now}`,
-    material.sourceUrl ? `source_url: "${material.sourceUrl}"` : null,
+    safeUrl ? `source_url: "${safeUrl}"` : null,
     'status: raw',
     '---',
     '',
   ].filter(Boolean).join('\n')
 
   const fileContent = frontmatter + material.content
-  const filePath = path.join(typeDir, slug + '.md')
+
+  // Two materials whose titles slugify identically must not overwrite each
+  // other — suffix until unique (same rule as the webhook ingest route).
+  let filePath = path.join(typeDir, slug + '.md')
+  for (let n = 2; fs.existsSync(filePath); n++) {
+    filePath = path.join(typeDir, `${slug}-${n}.md`)
+  }
 
   fs.writeFileSync(filePath, fileContent, 'utf8')
 
-  return `raw/${material.type}/${slug}.md`
+  return `raw/${material.type}/${path.basename(filePath)}`
 }
 
 export { WIKI_SECTIONS }

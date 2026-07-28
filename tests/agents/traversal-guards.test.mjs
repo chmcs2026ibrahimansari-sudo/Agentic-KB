@@ -7,6 +7,7 @@ import path from 'path'
 import os from 'os'
 
 import { readBusItem, listBusItems } from '../../lib/agent-runtime/bus.mjs'
+import { loadContract, isSafeAgentId } from '../../lib/agent-runtime/contracts.mjs'
 import { promoteLearning, mergeRewrite } from '../../lib/agent-runtime/promotion.mjs'
 import { workingMemoryPath } from '../../lib/agent-runtime/task-lifecycle.mjs'
 import {
@@ -131,4 +132,36 @@ test('appendRepoProgress rejects traversal repo name, works for valid', () => {
   const rel = appendRepoProgress(root, 'ok-repo', 'first entry', 'w1')
   assert.equal(rel, path.join('wiki', 'repos', 'ok-repo', 'progress.md'))
   assert.ok(fs.readFileSync(path.join(root, rel), 'utf8').includes('first entry'))
+})
+
+// ─── contract loading ───────────────────────────────────────────────────
+
+test('loadContract rejects agent ids that escape config/agents/', () => {
+  const root = makeRoot()
+  // Plant a yaml outside config/agents/ that a traversal id would reach.
+  fs.writeFileSync(path.join(root, 'evil.yaml'), 'tier: orchestrator\n')
+  fs.mkdirSync(path.join(root, 'config', 'agents'), { recursive: true })
+  assert.equal(loadContract(root, '../../evil'), null)
+  assert.equal(loadContract(root, '../evil'), null)
+  assert.equal(loadContract(root, 'a/b'), null)
+  assert.equal(loadContract(root, 'a\\b'), null)
+  assert.equal(loadContract(root, '.hidden'), null)
+  assert.equal(loadContract(root, ''), null)
+  assert.equal(loadContract(root, undefined), null)
+})
+
+test('loadContract still loads well-formed agent ids', () => {
+  const root = makeRoot()
+  const dir = path.join(root, 'config', 'agents')
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(path.join(dir, 'w1.yaml'), [
+    'agent_id: w1',
+    'tier: worker',
+    'domain: eng',
+  ].join('\n') + '\n')
+  const contract = loadContract(root, 'w1')
+  assert.ok(contract)
+  assert.equal(contract.agent_id, 'w1')
+  assert.equal(isSafeAgentId('architecture-agent'), true)
+  assert.equal(isSafeAgentId('../evil'), false)
 })

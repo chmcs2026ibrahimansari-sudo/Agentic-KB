@@ -1,6 +1,7 @@
 // Ambient type declarations for the shared agent runtime.
 // All runtime methods are typed loosely as `any` for now; tighten in a follow-up.
 
+export function isSafeAgentId(agentId: string): boolean
 export function loadContract(kbRoot: string, agentId: string): any
 export function listContracts(kbRoot: string): any[]
 export function validateContract(c: any): any

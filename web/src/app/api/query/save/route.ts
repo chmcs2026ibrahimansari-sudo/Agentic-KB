@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
-import { DEFAULT_KB_ROOT } from '@/lib/articles'
+import { resolveVaultRoot } from '@/lib/vault'
 import { appendAuditLog } from '@/lib/audit'
 import { ulid, invalidateIdIndex } from '@/lib/ids'
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   const tags = Array.isArray(body.tags) && body.tags.length > 0 ? body.tags : ['qa', 'user-question']
   const verified = body.verified === true
 
-  const vaultRoot = request.cookies.get('active_vault_path')?.value || DEFAULT_KB_ROOT
+  const vaultRoot = resolveVaultRoot(request.cookies.get('active_vault_path')?.value)
   const now = new Date()
   const dateStr = now.toISOString().slice(0, 10)
   const slug = slugify(question)

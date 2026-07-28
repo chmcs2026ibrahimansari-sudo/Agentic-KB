@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import path from 'path'
 import { findArticleBySlug, findArticleInVault, getBacklinks, type ArticleMeta, DEFAULT_KB_ROOT } from '@/lib/articles'
+import { resolveVaultRoot } from '@/lib/vault'
 import WikiLayout from '@/components/WikiLayout'
 import ArticleRenderer from '@/components/ArticleRenderer'
 import TableOfContents from '@/components/TableOfContents'
@@ -79,7 +80,7 @@ export default async function ArticlePage({ params }: ArticlePageProps): Promise
   const { slug: slugParts } = await params
   const slug = slugParts.join('/')
   const cookieStore = await cookies()
-  const vaultRoot = cookieStore.get('active_vault_path')?.value || DEFAULT_KB_ROOT
+  const vaultRoot = resolveVaultRoot(cookieStore.get('active_vault_path')?.value)
   const isDefault = vaultRoot === DEFAULT_KB_ROOT
   const vaultName = path.basename(vaultRoot)
   const article = isDefault ? findArticleBySlug(slug) : findArticleInVault(slug, vaultRoot)

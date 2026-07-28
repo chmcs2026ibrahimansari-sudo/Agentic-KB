@@ -6,6 +6,7 @@ import {
   DEFAULT_KB_ROOT,
   type SearchResult,
 } from '@/lib/articles'
+import { resolveVaultRoot } from '@/lib/vault'
 import { searchGraph, graphAvailable } from '@/lib/graph-search'
 import { pinMatches } from '@/lib/pin'
 
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const vaultRoot = request.cookies.get('active_vault_path')?.value || DEFAULT_KB_ROOT
+    const vaultRoot = resolveVaultRoot(request.cookies.get('active_vault_path')?.value)
     const isDefault = vaultRoot === DEFAULT_KB_ROOT
 
     // ── Step 1: Keyword search (existing behaviour, unchanged) ───────────────

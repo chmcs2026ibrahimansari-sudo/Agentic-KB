@@ -14,7 +14,8 @@ import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { DEFAULT_KB_ROOT, resolveContentRoot } from '@/lib/articles'
+import { resolveContentRoot } from '@/lib/articles'
+import { resolveVaultRoot } from '@/lib/vault'
 import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
 import { buildInboundLinkMap, isOrphanCandidate, isStalePage } from '../../../../../lib/wiki-lint.mjs'
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: '🔒 Lint requires a valid PIN.' }, { status: 401 })
   }
 
-  const vaultRoot = request.cookies.get('active_vault_path')?.value || DEFAULT_KB_ROOT
+  const vaultRoot = resolveVaultRoot(request.cookies.get('active_vault_path')?.value)
   const wikiRoot = resolveContentRoot(vaultRoot)
 
   // Collect wiki page summaries

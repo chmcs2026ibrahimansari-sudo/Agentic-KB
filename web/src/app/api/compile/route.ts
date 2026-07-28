@@ -21,7 +21,8 @@ import { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs'
 import path from 'path'
-import { DEFAULT_KB_ROOT, resolveContentRoot } from '@/lib/articles'
+import { resolveContentRoot } from '@/lib/articles'
+import { resolveVaultRoot } from '@/lib/vault'
 import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
 import { ensureId, invalidateIdIndex } from '@/lib/ids'
@@ -157,7 +158,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     )
   }
 
-  const vaultRoot = request.cookies.get('active_vault_path')?.value || DEFAULT_KB_ROOT
+  const vaultRoot = resolveVaultRoot(request.cookies.get('active_vault_path')?.value)
   const wikiRoot = resolveContentRoot(vaultRoot)
   const rawRoot = path.join(/* turbopackIgnore: true */ vaultRoot, 'raw')
   const encoder = new TextEncoder()

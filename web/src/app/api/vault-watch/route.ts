@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import fs from 'fs'
 import path from 'path'
-import { DEFAULT_KB_ROOT } from '@/lib/articles'
+import { resolveVaultRoot } from '@/lib/vault'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,7 +29,7 @@ function initSeenRaw(rawRoot: string) {
 }
 
 export async function GET(request: NextRequest): Promise<Response> {
-  const vaultRoot = request.cookies.get('active_vault_path')?.value || DEFAULT_KB_ROOT
+  const vaultRoot = resolveVaultRoot(request.cookies.get('active_vault_path')?.value)
   const rawRoot = path.join(vaultRoot, 'raw')
 
   const encoder = new TextEncoder()

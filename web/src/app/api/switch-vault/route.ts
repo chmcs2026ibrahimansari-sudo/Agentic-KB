@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import fs from 'fs'
 import path from 'path'
+import fs from 'fs'
+import { VAULT_COOKIE, isAllowedVault, resolveVaultRoot } from '@/lib/vault'
 
 export const dynamic = 'force-dynamic'
-
-export const DEFAULT_VAULT = process.env.KB_ROOT || '/Users/jaywest/Agentic-KB'
-export const VAULT_COOKIE = 'active_vault_path'
 
 export async function POST(request: NextRequest) {
   const { vaultPath } = await request.json() as { vaultPath: string }
 
-  if (!vaultPath || !fs.existsSync(vaultPath)) {
+  // Only vaults registered in the Obsidian config (or the default KB root)
+  // may be activated — the cookie is client-controlled, so consumers validate
+  // it again via resolveVaultRoot, but rejecting here gives the UI a clear error.
+  if (!vaultPath || !isAllowedVault(vaultPath) || !fs.existsSync(vaultPath)) {
     return NextResponse.json({ error: 'Vault path not found' }, { status: 400 })
   }
 
@@ -26,7 +27,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const vaultPath = request.cookies.get(VAULT_COOKIE)?.value || DEFAULT_VAULT
+  const vaultPath = resolveVaultRoot(request.cookies.get(VAULT_COOKIE)?.value)
   const name = path.basename(vaultPath)
   return NextResponse.json({ name, path: vaultPath })
 }
+

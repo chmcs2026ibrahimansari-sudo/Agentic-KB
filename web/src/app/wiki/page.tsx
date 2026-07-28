@@ -8,6 +8,7 @@ import {
   resolveContentRoot,
   WIKI_ROOT, DEFAULT_KB_ROOT,
 } from '@/lib/articles'
+import { resolveVaultRoot } from '@/lib/vault'
 import WikiLayout from '@/components/WikiLayout'
 import ArticleRenderer from '@/components/ArticleRenderer'
 import TableOfContents from '@/components/TableOfContents'
@@ -404,7 +405,7 @@ function GenericVaultIndex({ vaultRoot }: { vaultRoot: string }): React.ReactEle
 
 export default async function WikiIndexPage(): Promise<React.ReactElement> {
   const cookieStore = await cookies()
-  const vaultRoot = cookieStore.get('active_vault_path')?.value || DEFAULT_KB_ROOT
+  const vaultRoot = resolveVaultRoot(cookieStore.get('active_vault_path')?.value)
   const isDefault = vaultRoot === DEFAULT_KB_ROOT
 
   // Non-default vault — show rich generic vault index

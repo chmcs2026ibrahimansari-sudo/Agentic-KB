@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
-import os from 'os'
 import path from 'path'
+import { DEFAULT_KB_ROOT } from '@/lib/articles'
+import { VAULT_COOKIE, resolveVaultRoot } from '@/lib/vault'
 
 export const dynamic = 'force-dynamic'
 
-const VAULT_COOKIE = 'active_vault_path'
-const DEFAULT_VAULT = process.env.DEFAULT_KB_ROOT || path.join(os.homedir(), 'Agentic-KB')
 const SKIP_DIRS = new Set(['.obsidian', '.git', 'node_modules', '.next', '.DS_Store'])
 const MAX_LINKS_PER_SECTION = 40  // cap to keep sidebar usable
 
@@ -110,12 +109,12 @@ function countFiles(root: string): number {
 }
 
 export async function GET(request: NextRequest) {
-  const vaultPath = request.cookies.get(VAULT_COOKIE)?.value || DEFAULT_VAULT
+  const vaultPath = resolveVaultRoot(request.cookies.get(VAULT_COOKIE)?.value)
   const wikiDir = path.join(vaultPath, 'wiki')
   const contentRoot = fs.existsSync(wikiDir) ? wikiDir : vaultPath
   const sections = buildSections(contentRoot)
   const vaultName = path.basename(vaultPath)
-  const isAgenticKB = vaultPath === DEFAULT_VAULT
+  const isAgenticKB = vaultPath === DEFAULT_KB_ROOT
   const totalFiles = countFiles(contentRoot)
 
   return NextResponse.json({ vaultName, vaultPath, contentRoot, isAgenticKB, sections, totalFiles })

@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs'
 import path from 'path'
 import { readIndex, readIndexInVault, readKBFile, resolveContentRoot, DEFAULT_KB_ROOT } from '@/lib/articles'
+import { resolveVaultRoot } from '@/lib/vault'
 import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
 import { pinMatches } from '@/lib/pin'
@@ -231,7 +232,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
       try {
         // Resolve active vault from cookie
-        const vaultRoot = request.cookies.get('active_vault_path')?.value || DEFAULT_KB_ROOT
+        const vaultRoot = resolveVaultRoot(request.cookies.get('active_vault_path')?.value)
         const isDefault = vaultRoot === DEFAULT_KB_ROOT
         const contentRoot = resolveContentRoot(vaultRoot)
 

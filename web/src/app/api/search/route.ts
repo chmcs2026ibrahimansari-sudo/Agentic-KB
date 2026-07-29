@@ -17,8 +17,10 @@ const PRIVATE_PIN = process.env.PRIVATE_PIN || ''
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(request.url)
   const query = searchParams.get('q') || ''
-  const limitParam = searchParams.get('limit')
-  const limit = limitParam ? parseInt(limitParam, 10) : 20
+  // A non-numeric or non-positive limit must not reach .slice(): slice(0, NaN)
+  // returns [] and the search silently reports "no results".
+  const limitParam = parseInt(searchParams.get('limit') || '', 10)
+  const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 100) : 20
   const scopeParam = searchParams.get('scope') || 'public'
   const scope = (scopeParam === 'private' || scopeParam === 'all') ? scopeParam : 'public'
 

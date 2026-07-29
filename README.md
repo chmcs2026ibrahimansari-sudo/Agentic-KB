@@ -8,7 +8,20 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — July 28, 2026 (Latest)
+## What's New — July 29, 2026 (Latest)
+
+Nightly security pass — **319 tests passing** (was 304):
+
+- 🕳️ **`/api/query` no longer answers public questions with private pages** — the PIN gate only checked the *requested* scope; the pages actually read were chosen by Claude and fetched with a raw `path.join`, so an unauthenticated public-scope query could synthesize `wiki/personal/**` and `visibility: private` articles into its streamed answer, and a prompt-injected wiki page could steer reads to any `.md` under the KB root via `wiki/../…`. Model-emitted paths now reject dot-segments, resolve through `safeJoin`, must stay under `wiki/`, and public-scope reads skip private articles (same CRLF-normalized rules as `/api/search`).
+- 📇 **`/api/articles` metadata leak closed** — the unauthenticated listing returned titles, descriptions, and slugs for every article including `wiki/personal/`; it now returns public-visibility metadata only.
+- 🔓 **Private-mode unlock actually verifies the PIN** — `unlock()` tested `res.ok || res.status !== 401`, but the API rejects a bad PIN with **403**, so any PIN "unlocked" the private UI (reads still failed server-side, surfacing as confusing 403s). Only `res.ok` counts now.
+- 🧬 **Prototype-key hardening in two lookups** — `X-KB-Namespace: constructor` (dev mode) resolved `Object.prototype` members into a truthy non-ACL identity that 500'd every `canRead`/`canWrite`; a bus item whose frontmatter carried `status: constructor` made `canTransition` throw a TypeError instead of rejecting the transition. Both are `Object.hasOwn`-gated, with the state-machine module getting its first direct test suite.
+- 🔎 **Search inputs behave** — `/api/search?limit=abc` reached `.slice(0, NaN)` and silently returned zero results (now defaults to 20, caps at 100); repo search compiled the raw query as a regex, so `c++` or `foo[` threw per-file and always returned nothing (occurrences are counted literally now).
+- 🧪 **hot-learned covered** — the hot → learned digest hook (runs after every closeTask that touched `hot.md`) gets direct tests: skip thresholds, snapshot provenance, the 60-line cap, and custom-summarizer edge cases.
+
+---
+
+## What's New — July 28, 2026
 
 Nightly security pass — **304 tests passing** (was 296):
 

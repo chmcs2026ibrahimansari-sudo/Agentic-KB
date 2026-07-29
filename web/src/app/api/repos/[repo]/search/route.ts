@@ -36,6 +36,20 @@ function walkDir(dir: string, prefix = ''): string[] {
   return files
 }
 
+// Count non-overlapping literal occurrences. The query used to be compiled
+// straight into `new RegExp(query)`: metachar queries like "c++" or "foo["
+// threw per-file (silently zeroing every result) and others mis-scored.
+function countOccurrences(haystack: string, needle: string): number {
+  if (!needle) return 0
+  let count = 0
+  let idx = haystack.indexOf(needle)
+  while (idx !== -1) {
+    count++
+    idx = haystack.indexOf(needle, idx + needle.length)
+  }
+  return count
+}
+
 function scoreMatch(content: string, query: string, title: string): number {
   const lowerQuery = query.toLowerCase()
   const lowerContent = content.toLowerCase()
@@ -47,8 +61,7 @@ function scoreMatch(content: string, query: string, title: string): number {
   if (lowerTitle.includes(lowerQuery)) score += 5
 
   // Multiple word matches
-  const matches = (lowerContent.match(new RegExp(lowerQuery, 'g')) || []).length
-  score += matches * 0.5
+  score += countOccurrences(lowerContent, lowerQuery) * 0.5
 
   return score
 }

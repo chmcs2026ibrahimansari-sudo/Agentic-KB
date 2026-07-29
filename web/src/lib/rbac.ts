@@ -88,9 +88,13 @@ export function resolveIdentity(request: NextRequest): ResolvedIdentity {
   // including write) just by sending X-KB-Namespace. That also bypassed
   // WEBHOOK_SECRET on /api/ingest/webhook, which only checks the legacy
   // secret when identity.source === 'default'.
+  // Object.hasOwn: cfg comes from JSON.parse, so a bare index lookup with a
+  // key like "constructor" or "toString" resolves to inherited
+  // Object.prototype members — a truthy non-ACL that then 500s every
+  // canRead/canWrite call with `acl.read is undefined`.
   const headerNs = request.headers.get('x-kb-namespace')
   const tokensConfigured = Object.keys(cfg.tokens).length > 0
-  if (headerNs && !tokensConfigured && cfg.namespaces[headerNs]) {
+  if (headerNs && !tokensConfigured && Object.hasOwn(cfg.namespaces, headerNs)) {
     return { namespace: headerNs, acl: cfg.namespaces[headerNs], source: 'header' }
   }
 
@@ -99,8 +103,8 @@ export function resolveIdentity(request: NextRequest): ResolvedIdentity {
   const m = auth.match(/^Bearer\s+(.+)$/i)
   if (m) {
     const token = m[1]
-    const ns = cfg.tokens[token]
-    if (ns && cfg.namespaces[ns]) {
+    const ns = Object.hasOwn(cfg.tokens, token) ? cfg.tokens[token] : undefined
+    if (ns && Object.hasOwn(cfg.namespaces, ns)) {
       return { namespace: ns, acl: cfg.namespaces[ns], token, source: 'token' }
     }
   }

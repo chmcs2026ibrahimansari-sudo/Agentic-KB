@@ -30,11 +30,13 @@ export function PrivateModeProvider({ children }: { children: React.ReactNode })
   }, [])
 
   const unlock = useCallback(async (enteredPin: string): Promise<boolean> => {
-    // Verify PIN against the server (scope=private search will return 401 if wrong)
+    // Verify PIN against the server — /api/search returns 403 for a missing
+    // or invalid PIN. The old check (`res.ok || res.status !== 401`) treated
+    // that 403 as success, so any PIN "unlocked" private mode in the UI.
     const res = await fetch(
       `/api/search?q=test&scope=private&pin=${encodeURIComponent(enteredPin)}&limit=1`
     )
-    if (res.ok || res.status !== 401) {
+    if (res.ok) {
       setIsPrivate(true)
       setPin(enteredPin)
       sessionStorage.setItem('private_pin', enteredPin)

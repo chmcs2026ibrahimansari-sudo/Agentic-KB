@@ -2,10 +2,11 @@ import { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs'
 import path from 'path'
-import { readIndex, readIndexInVault, readKBFile, resolveContentRoot, DEFAULT_KB_ROOT } from '@/lib/articles'
+import { readIndex, readIndexInVault, resolveContentRoot, DEFAULT_KB_ROOT } from '@/lib/articles'
 import { resolveVaultRoot } from '@/lib/vault'
 import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
+import { safeJoin } from '@/lib/safe-path'
 import { pinMatches } from '@/lib/pin'
 
 // ── RLM Stage 7: Contradiction filter ────────────────────────────────────────
@@ -59,6 +60,28 @@ function packArticles(
     remaining -= packed.length
     return { path: a.path, content: packed }
   })
+}
+
+// ── Untrusted-path + visibility guards ───────────────────────────────────────
+// Page paths come out of a Claude response whose prompt embeds wiki content,
+// so they are prompt-injectable. Only wiki/**.md with no dot-segments may be
+// read, and the resolved path must stay inside the given root.
+function resolveWikiReadPath(root: string, rel: string): string | null {
+  const normalized = String(rel).replace(/\\/g, '/')
+  if (!normalized.startsWith('wiki/') || !normalized.endsWith('.md')) return null
+  if (normalized.split('/').some(seg => seg === '' || seg === '.' || seg === '..')) return null
+  try { return safeJoin(root, normalized) } catch { return null }
+}
+
+// Same private rules as /api/search: wiki/personal/** is always private,
+// otherwise frontmatter `visibility: private` decides. CRLF-normalized so a
+// \r\n-formatted private article does not parse as "no frontmatter" = public.
+function isPrivateArticle(relPath: string, content: string): boolean {
+  if (relPath.replace(/\\/g, '/').startsWith('wiki/personal/')) return true
+  const normalized = content.startsWith('---\r\n') ? content.replace(/\r\n/g, '\n') : content
+  const fm = normalized.match(/^---\n([\s\S]*?)\n---/)
+  if (!fm) return false
+  return /^visibility:\s*["']?private["']?\s*$/m.test(fm[1])
 }
 
 export const dynamic = 'force-dynamic'
@@ -263,18 +286,28 @@ export async function POST(request: NextRequest): Promise<Response> {
           send({ type: 'reading', path: pagePath })
           let content = ''
           if (isDefault) {
-            content = readKBFile(pagePath)
+            const full = resolveWikiReadPath(DEFAULT_KB_ROOT, pagePath)
+            if (!full) continue
+            try { content = fs.readFileSync(full, 'utf8') } catch { continue }
           } else {
+            const stripped = pagePath.replace(/^wiki\//, '')
             const candidates = [
-              path.join(vaultRoot, pagePath),
-              path.join(contentRoot, pagePath),
-              path.join(contentRoot, pagePath.replace(/^wiki\//, '')),
+              resolveWikiReadPath(vaultRoot, pagePath),
+              resolveWikiReadPath(contentRoot, pagePath),
+              stripped.split('/').some(seg => seg === '' || seg === '.' || seg === '..')
+                ? null
+                : (() => { try { return safeJoin(contentRoot, stripped) } catch { return null } })(),
             ]
             for (const c of candidates) {
+              if (!c) continue
               try { content = fs.readFileSync(c, 'utf8'); break } catch { /* try next */ }
             }
           }
           if (!content) continue
+          // Public-scope queries must not synthesize from private articles —
+          // the PIN gate above only covers the *requested* scope, not what the
+          // model chose to read. Same rule as /api/search and /api/article.
+          if (queryScope === 'public' && isPrivateArticle(pagePath, content)) continue
           // Contradicted pages go last so synthesis leads with consistent sources
           if (contradicted.has(pagePath)) {
             contradictedArticles.push({ path: pagePath, content })

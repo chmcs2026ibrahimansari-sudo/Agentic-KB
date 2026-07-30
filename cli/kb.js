@@ -54,6 +54,23 @@ function expandHome(p) {
   if (!home) throw new Error('Cannot expand ~: HOME and os.homedir() are both empty')
   return p.replace(/^~/, home)
 }
+// Exclusive-create with numeric suffixes: two ingests whose titles slugify to
+// the same filename must not silently overwrite each other (same rule the web
+// ingest routes follow). Returns the path actually written.
+function writeUniqueFileSync(fsLib, dir, stem, content) {
+  let target = pathMod.join(dir, `${stem}.md`)
+  for (let i = 2; i < 1000; i++) {
+    try {
+      fsLib.writeFileSync(target, content, { encoding: 'utf8', flag: 'wx' })
+      return target
+    } catch (err) {
+      if (err.code !== 'EEXIST') throw err
+      target = pathMod.join(dir, `${stem}-${i}.md`)
+    }
+  }
+  throw new Error(`could not allocate a unique filename for ${stem}.md`)
+}
+
 const AGENT_RUNTIME_PATH = pathMod.join(AGENT_KB_ROOT, 'lib/agent-runtime/index.mjs')
 const REPO_RUNTIME_PATH = pathMod.join(AGENT_KB_ROOT, 'lib/repo-runtime/index.mjs')
 
@@ -486,10 +503,8 @@ async function ingestYoutube(url) {
     const outDir = path.join(KB_ROOT, 'raw', 'transcripts')
     fs.mkdirSync(outDir, { recursive: true })
 
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60)
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'video'
     const date = uploadDate ? uploadDate.slice(0, 4) + '-' + uploadDate.slice(4, 6) + '-' + uploadDate.slice(6, 8) : new Date().toISOString().slice(0, 10)
-    const filename = date + '-' + slug + '.md'
-    const outPath = path.join(outDir, filename)
 
     const frontmatter = [
       '---',
@@ -514,8 +529,8 @@ async function ingestYoutube(url) {
       transcript,
     ].join('\n')
 
-    fs.writeFileSync(outPath, frontmatter, 'utf8')
-    console.log('\n✅ Saved to raw/transcripts/' + filename)
+    const outPath = writeUniqueFileSync(fs, outDir, date + '-' + slug, frontmatter)
+    console.log('\n✅ Saved to raw/transcripts/' + path.basename(outPath))
     console.log('   Run: kb compile  to ingest it into the wiki')
 
   } finally {
@@ -718,10 +733,8 @@ async function ingestFile(filePath, opts) {
 
   // Generate output filename
   const basename = path.basename(resolved, path.extname(resolved))
-  const slug = basename.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60)
+  const slug = basename.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'document'
   const date = new Date().toISOString().slice(0, 10)
-  const outFilename = `${date}-${slug}.md`
-  const outPath = path.join(outDir, outFilename)
 
   // Prepend minimal frontmatter
   const frontmatter = [
@@ -734,9 +747,9 @@ async function ingestFile(filePath, opts) {
     '',
   ].join('\n')
 
-  fs.writeFileSync(outPath, frontmatter + markdown, 'utf8')
+  const outPath = writeUniqueFileSync(fs, outDir, `${date}-${slug}`, frontmatter + markdown)
 
-  console.log(`✅ Saved to raw/${subdir}/${outFilename}`)
+  console.log(`✅ Saved to raw/${subdir}/${path.basename(outPath)}`)
   console.log(`   Words: ~${Math.round(markdown.length / 5)}`)
   console.log(`   Run: kb compile  to ingest into the wiki`)
 }

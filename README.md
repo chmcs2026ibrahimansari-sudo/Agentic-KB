@@ -8,7 +8,17 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — July 29, 2026 (Latest)
+## What's New — July 30, 2026 (Latest)
+
+Nightly correctness + coverage pass — **359 tests passing** (was 319):
+
+- 📄 **CLI ingest keeps both docs** — `kb ingest-file` and `kb ingest-youtube` had the same slug-collision bug fixed in the web ingest routes on July 27/28: two documents (or videos) whose titles slugify identically silently overwrote each other in `raw/`. Filenames now get `-2`, `-3`… suffixes via exclusive create, and all-punctuation titles fall back to `video`/`document` instead of producing a bare `date-.md`.
+- 🏛️ **ADR frontmatter can't be broken or injected by decision titles** — `planAdrOpsForDecisions` interpolated close-task decision fields straight into single-line frontmatter keys, so a title with a newline terminated the value and injected arbitrary keys (`visibility:` …) into the generated ADR, and a title ending in a backslash escaped its own closing quote. Title/status/author/confidence are flattened to one line and the title is JSON-escaped; module gets its first test suite.
+- 🧪 **Four scoring/learning modules get first direct coverage** — `freshness` (decay curve, floors, exempt classes, frontmatter-date-over-mtime, `staleDays` gate), `source-trust` (weight × multiplier math, verified-bonus clamp, contract overrides, mtime cache invalidation), `promotion-scorer` (provenance hard-reject, evidence asymptote, canonical/learned/review/working-only routing, hard gates demoting to review, contradiction pre-check), and `correction-capture` (validation, file layout, durability defaults, list/get filters). These drive context ranking and every promotion decision; they were previously only exercised indirectly.
+
+---
+
+## What's New — July 29, 2026
 
 Nightly security pass — **319 tests passing** (was 304):
 

@@ -1,0 +1,8 @@
+{
+  "execution_id": "exec_cmd_center_qa_20260725152355",
+  "status": "completed",
+  "summary": "Runtime validation blocked by terminal safety guard before inspecting localhost:5199. Static read-only review found missing CommandCenterView-specific unit/E2E coverage and Playwright config not targeting /v2/command-center or EOS preview flags.",
+  "artifacts": [],
+  "error": "Terminal safety guard blocked the local port probe: BLOCKED: User denied this command. The user has NOT consented to this action. Do NOT retry this command, do NOT rephrase it, and do NOT attempt the same outcome via a different command. Stop the current workflow and wait for the user to respond before taking any further destructive or irreversible action.",
+  "structured_output": true
+}

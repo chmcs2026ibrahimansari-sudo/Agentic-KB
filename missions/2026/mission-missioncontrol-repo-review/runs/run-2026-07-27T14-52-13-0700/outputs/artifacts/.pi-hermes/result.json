@@ -1,0 +1,8 @@
+{
+  "execution_id": "exec_97a84af78a85",
+  "status": "completed",
+  "summary": "Repo review could not complete because a read-only inspection command was blocked by the safety guard; no artifact was created and no repo files were modified.",
+  "artifacts": [],
+  "error": "Safety guard blocked read-only Python inspection command and instructed not to retry or route around it in the same turn.",
+  "structured_output": true
+}

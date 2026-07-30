@@ -1,0 +1,21 @@
+{
+  "request_id": "req_mc_factory_e2e_review_4",
+  "session_id": "sess_9ab31676565e",
+  "objective": "Read-only review: inspect the MissionControl factory project UI/API changes in this repo and write a concise validation report to the output dir. Do not modify repo files. Focus on whether the end-to-end factory project flow is coherent with Pi as runtime lane.",
+  "workdir": "/Users/jaywest/hermes-harness-missioncontrol",
+  "allowed_tools": [
+    "bash",
+    "git"
+  ],
+  "allowed_actions": [
+    "read",
+    "write"
+  ],
+  "timeout_seconds": 180,
+  "output_dir": "/Users/jaywest/Agentic-KB/missions/2026/mission-missioncontrol-factory-e2e/runs/run-pi-review/outputs",
+  "metadata": {
+    "mission_id": "mis_mc_factory_e2e",
+    "run_id": "run_mc_factory_e2e",
+    "step_id": "pi_review"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "request_id": "cmd_center_qa_20260725152355",
+  "session_id": "sess_c511327772d1",
+  "execution_id": "exec_cmd_center_qa_20260725152355",
+  "objective": "You are Pi runtime validation partner for Jay. Validate http://localhost:5199/v2/command-center from /Users/jaywest/MissionControl. Do not modify files. Inspect the running app, run relevant read-only checks/tests if safe, identify concrete broken flows, console errors, data issues, and missing E2E coverage. Return concise findings with commands run and exact failures. Focus on all Command Center functionality needing to work, not Radar.",
+  "workdir": "/Users/jaywest/MissionControl",
+  "allowed_tools": [
+    "bash",
+    "git",
+    "python"
+  ],
+  "allowed_actions": [
+    "read",
+    "test"
+  ],
+  "timeout_seconds": 900,
+  "output_dir": "/Users/jaywest/Agentic-KB/missions/2026/mission-command-center-validation/runs/run-20260725152355/outputs/artifacts",
+  "metadata": {
+    "mission_id": "mission-command-center-validation",
+    "run_id": "run-20260725152355",
+    "step_id": "pi-command-center-qa"
+  }
+}

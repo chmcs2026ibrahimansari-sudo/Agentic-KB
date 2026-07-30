@@ -83,6 +83,27 @@
       "captured_at": "2026-07-10T11:14:36.445298-07:00",
       "sha256": "4385b3e30ba3295f06312fadbca15e4afadd32fb385d7a2bce4421b89a16f97c",
       "source_note": "Apple Notes 2026-07-08: Netflix NTech SRE reliability-at-scale reference; mine only if useful for governed agent/platform reliability patterns."
+    },
+    {
+      "url": "https://x.com/OomolStudio/status/2075854920738021682",
+      "destination": "raw/framework-docs/x-twitter-2075854920738021682.md",
+      "captured_at": "2026-07-23T23:07:10-07:00",
+      "sha256": "2a86ea085daf1e17dc4102299b8a6c8242ca622c2ff506c79b85cccfc6d1d3a0",
+      "source_note": "Apple Notes 2026-07-12: OpenConnector/OOMOL pattern for scoped credential gateway for AI agents; evaluate against Hermes MCP/tool credential isolation and MissionControl approval boundaries."
+    },
+    {
+      "url": "https://x.com/ericosiu/status/2076018000570785847",
+      "destination": "raw/framework-docs/x-twitter-2076018000570785847.md",
+      "captured_at": "2026-07-23T23:07:10-07:00",
+      "sha256": "11adf6d2430545a520d2d016dec13457ddac7793729fbad0797137a1e06a04ec",
+      "source_note": "Apple Notes 2026-07-12: Hermes desktop/context-management article; mine resolver, prioritized workspace, searchable skills, and prep-cron patterns for agent work compounding."
+    },
+    {
+      "url": "https://x.com/Jason/status/2076231055443440105",
+      "destination": "raw/framework-docs/x-twitter-2076231055443440105.md",
+      "captured_at": "2026-07-23T23:07:10-07:00",
+      "sha256": "11424580313522973b8c3c704c424f0353a678fda30e45c24ef6a2d0e7a0ff42",
+      "source_note": "Apple Notes 2026-07-12: PODMEME personalized podcast topic-stream automation; evaluate for Pi/media-ingest and briefing workflows before building anything."
     }
   ]
 }

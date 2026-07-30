@@ -1,0 +1,22 @@
+{
+  "request_id": "missioncontrol_repo_review_20260727_145213",
+  "session_id": "sess_5325f5bcd8c0",
+  "objective": "Review /Users/jaywest/MissionControl as Pi, independently from Hermes. Do not modify the repo. Goal: determine what is needed to make the main happy paths work as expected. Inspect project structure, package scripts, existing tests, likely key routes, and obvious UI/UX/product gaps. If safe, run read-only or test/build commands that do not mutate source. Write a concise report to output_dir/pi-review.md with: (1) current repo/app mental model, (2) blocking failures or risks, (3) happy paths to verify, (4) prioritized fixes/enhancements, (5) specific UI/UX improvements. End with a PI_TASK_RESULT_JSON block listing the report artifact.",
+  "workdir": "/Users/jaywest/MissionControl",
+  "allowed_tools": [
+    "bash",
+    "git",
+    "python"
+  ],
+  "allowed_actions": [
+    "read",
+    "test"
+  ],
+  "timeout_seconds": 900,
+  "output_dir": "/Users/jaywest/Agentic-KB/missions/2026/mission-missioncontrol-repo-review/runs/run-2026-07-27T14-52-13-0700/outputs/artifacts",
+  "metadata": {
+    "mission_id": "missioncontrol_repo_review",
+    "run_id": "run-2026-07-27T14-52-13-0700",
+    "step_id": "pi-review"
+  }
+}

@@ -1,0 +1,125 @@
+^D]11;?\[0m[?7h[0m  ┊ review diff
+[0m[0m[?7h[0;38;5;178ma//Users/jaywest/Agentic-KB/missions/2026/mission-missioncontrol-factory-e2e/runs/run-pi-review/outputs/pi_review_validation_report.md → b//Users/jaywest/Agentic-KB/missions/2026/mission-missioncontrol-factory-e2e/runs/run-pi-review/outputs/pi_review_validation_report.md[0m
+[0m[0m[?7h[0;38;5;102m@@ -0,0 +1,136 @@[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+# MissionControl Factory E2E Pi-Lane Validation[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Request: req_mc_factory_e2e_review_4[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Session: sess_9ab31676565e[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Execution: exec_5c02eda67970[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Mission/run/step: mis_mc_factory_e2e / run_mc_factory_e2e / pi_review[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Branch reviewed: feat/factory-v0.1-contract-foundation[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Partially coherent, not end-to-end Pi-runtime coherent yet.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Repo: /Users/jaywest/hermes-harness-missioncontrol[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+## Verdict[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+The UI/API changes create a coherent fixture-backed MissionControl factory project flow: a Factory tab can create a demo project from WAID-42, the API creates a MissionControl project/mission/run/binding, attaches a context-packet artifact, persists state, and exposes updated factory and mission read models.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+But Pi is currently represented as a health/status lane only. The create-project flow does not dispatch an execution envelope to Pi, does not record Pi as execution source, and does not consume a Pi result/receipt. This is acceptable for a dry-run/system-of-record slice, but it should not be called true factory E2E with Pi as runtime lane until the dispatch/result boundary is wired.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+## Flow reviewed[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+1. Console Factory tab reads:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - `GET /api/read-models/factory/overview`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - `GET /api/read-models/factory/throughput?team=WAID`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - `GET /api/read-models/factory/work-items?team=WAID`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - `GET /api/read-models/factory/pi-bridge`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+2. Console action posts:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - `POST /api/factory/projects/demo`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - payload hardcodes `work_item_key: WAID-42`, repo path `/Users/jaywest/hermes-harness-missioncontrol`, and `preferred_model: mock`.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+3. API creates:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - `FactoryProject`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - started `WorkflowRun`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - context-packet artifact[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - `Mission`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - events: mission.created, run.started, step.started, artifact.created, run status[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - `FactoryMissionBinding`[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+4. Read models surface:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - active factory projects[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - mission/run linkage[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - Pi bridge status metadata when token is configured[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+## Findings[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+   - bindings per work item[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+### Blocking for true Pi E2E[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+1. No Pi dispatch/result loop exists in the factory project path.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Evidence:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+- `packages/contracts/docs/factory-v0.1.md:28-33` defines Pi as the governed execution supervisor/runtime, but `packages/contracts/docs/factory-v0.1.md:127-134` says Pi runtime consumption is intentionally deferred.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+- `apps/orchestrator-api/src/index.ts:1647-1686` creates the project/mission/run/binding and context packet, then persists and returns. It does not call the Pi bridge or dispatch an execution envelope.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+- `apps/orchestrator-api/src/index.ts:695-728` only builds a Pi bridge read model from `/healthz` and `/meta`.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+MissionControl remains the system of record, but Pi is not yet the runtime lane in this flow. The UI copy says Pi is the governed runtime lane; the implementation only verifies bridge visibility.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Recommendation:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Impact:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Keep this as “factory project dry-run with Pi bridge visibility,” or add the next slice: dispatch the current run step through the Pi bridge, persist Pi-origin execution events, ingest artifacts/result, and link the receipt packet to the returned Pi result.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Confidence: high.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+2. The console hardcoded repo path is outside the API default allowed repo root, so follow-on execution can fail envelope validation.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Evidence:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+- Execution envelope validation requires `workspace_root` and `repo_scope.root_path` to be inside `ALLOWED_REPO_ROOT` at `apps/orchestrator-api/src/index.ts:225-240`.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+- UI posts `repo_path: /Users/jaywest/hermes-harness-missioncontrol` at `apps/harness-console/src/App.tsx:201-209`.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+- API default `ALLOWED_REPO_ROOT` is `/Users/jaywest/projects` at `apps/orchestrator-api/src/index.ts:23`.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+- The repo reviewed is `/Users/jaywest/hermes-harness-missioncontrol`, not under `/Users/jaywest/projects`.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Impact:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+The create-project button succeeds, but a later `execute-current` for that run can fail with `path escapes allowed root` unless the environment overrides `ALLOWED_REPO_ROOT`. That breaks the perceived end-to-end path.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Recommendation:[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Confidence: high.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+Either make the demo repo path configurable from the API/env and aligned with `ALLOWED_REPO_ROOT`, or validate/reject the repo path at project creation time so the UI does not create a run that cannot execute.[0m
+[0m[0m[?7h[0;38;5;231;48;5;22m+[0m
+[0m[0m[?7h[0;38;5;102m… omitted 58 diff line(s) across 1 additional file(s)/section(s)[0m
+[0mReport written and verified.
+
+Artifact:
+ /Users/jaywest/Agentic-KB/missions/2026/mission-missioncontrol-factory-e2e/runs/run-pi-review/outputs/pi_review_validation_report.md
+
+Validation result:
+ Partially coherent. The flow is solid as a MissionControl fixture-backed factory dry-run/read-model slice, but not true Pi-runtime E2E yet. Main blockers: no Pi dispatch/result loop, and the UI hardcoded repo path can fail later execution envelope validation because it sits outside the API default allowed repo root.
+
+Verification run:
+ orchestrator-api typecheck: passed
+ harness-console typecheck: passed
+ orchestrator-api tests: passed, 34 tests
+ repo status unchanged except pre-existing modified/untracked files
+
+<<PI_TASK_RESULT_JSON
+{"summary":"Wrote concise read-only validation report; factory flow is coherent as a MissionControl dry-run but not yet true Pi runtime E2E.","artifacts":[{"type":"report","path":"/Users/jaywest/Agentic-KB/missions/2026/mission-missioncontrol-factory-e2e/runs/run-pi-review/outputs/pi_review_validation_report.md"}],"error":null}
+PI_TASK_RESULT_JSON>>
+
+session_id: 20260725_144950_07a32b
+Exception ignored in: <coroutine object MCPServerTask.run at 0x10b578f60>
+Traceback (most recent call last):
+  File "/Users/jaywest/.hermes/hermes-agent/tools/mcp_tool.py", line 3276, in run
+    parked = await self._wait_for_reconnect_or_shutdown(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jaywest/.hermes/hermes-agent/tools/mcp_tool.py", line 2341, in _wait_for_reconnect_or_shutdown
+    t.cancel()
+  File "/Users/jaywest/.hermes/hermes-agent/.hermes-runtime/python/generation-1785014945-46919-d02024b3/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 762, in call_soon
+    self._check_closed()
+  File "/Users/jaywest/.hermes/hermes-agent/.hermes-runtime/python/generation-1785014945-46919-d02024b3/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 520, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object MCPServerTask.run at 0x10b578e00>
+Traceback (most recent call last):
+  File "/Users/jaywest/.hermes/hermes-agent/tools/mcp_tool.py", line 3276, in run
+    parked = await self._wait_for_reconnect_or_shutdown(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jaywest/.hermes/hermes-agent/tools/mcp_tool.py", line 2341, in _wait_for_reconnect_or_shutdown
+    t.cancel()
+  File "/Users/jaywest/.hermes/hermes-agent/.hermes-runtime/python/generation-1785014945-46919-d02024b3/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 762, in call_soon
+    self._check_closed()
+  File "/Users/jaywest/.hermes/hermes-agent/.hermes-runtime/python/generation-1785014945-46919-d02024b3/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 520, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed

@@ -6,10 +6,16 @@ sources:
   - raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md
   - raw/framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md
   - raw/framework-docs/www-linkedin-com-jobs-view-4438558062.md
+  - wiki/daily-systems/logs/2026-07-28.md
+  - wiki/daily-systems/logs/2026-07-29.md
+  - wiki/reports/2026-07-24-nightly-ci-analysis.md
+  - wiki/reports/2026-07-27-nightly-ci-analysis.md
+  - wiki/reports/2026-07-28-nightly-ci-analysis.md
+  - wiki/reports/2026-07-29-nightly-ci-analysis.md
 question: What operating model makes agentic engineering useful instead of performative?
-tags: [agentic, orchestration, multi-agent, human-in-the-loop, evaluation, context-management]
+tags: [agentic, orchestration, multi-agent, human-in-the-loop, evaluation, context-management, observability]
 created: 2026-07-10
-updated: 2026-07-10
+updated: 2026-07-30
 confidence: medium
 ---
 
@@ -107,6 +113,12 @@ Sessions, tool calls, tokens, and PR counts can show adoption, but they do not p
 - fewer manual handoffs;
 - more completed artifacts per operator hour;
 - user/customer/deal outcome changed.
+
+### 7. Failure signals must escape the failing system
+
+Scheduled agents need a failure path that is outside the repo, vault, or service they are blocked on. The July 28 and July 29 daily system logs show the Agentic-KB Night Shift had been blocked at the dirty-worktree gate for five to six consecutive days, with the signal degrading from repo-local error briefings to no visible 07-29 briefing at all (`[[daily-systems/logs/2026-07-28]]`, `[[daily-systems/logs/2026-07-29]]`). In parallel, the SellerFi Vercel Environment Check reports show a non-auto-fixable secret rotation failure recurring across multiple scheduled CI runs while remaining report-only because the nightly job correctly cannot handle secrets (`[[reports/2026-07-24-nightly-ci-analysis]]`, `[[reports/2026-07-27-nightly-ci-analysis]]`, `[[reports/2026-07-28-nightly-ci-analysis]]`, `[[reports/2026-07-29-nightly-ci-analysis]]`).
+
+The operating-model implication: a governed automation is not complete when it writes an audit artifact; it is complete when the right human sees the blocked state on a reliable surface with a bounded next action. Dirty-worktree gates, credential failures, and human-approval blocks should emit durable in-repo receipts *and* out-of-band alerts. Otherwise the system can be formally safe while operationally dead.
 
 ## Jay Stack Implications
 

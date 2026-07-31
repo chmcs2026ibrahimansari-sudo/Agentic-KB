@@ -160,7 +160,9 @@ async function* synthesizeAnswer(
 
   const stream = await client.messages.stream({
     model: KB_MODEL,
-    max_tokens: 2048,
+    // Models with extended thinking spend budget on reasoning before any text —
+    // 2048 produced empty/mid-sentence answers. 8192 leaves room for both.
+    max_tokens: 8192,
     messages: [
       {
         role: 'user',
@@ -250,7 +252,9 @@ export async function POST(request: NextRequest): Promise<Response> {
   const stream = new ReadableStream({
     async start(controller) {
       const send = (data: object): void => {
-        controller.enqueue(encoder.encode(encodeSSE(data)))
+        // Guard against enqueue-after-close (client disconnects mid-stream) —
+        // otherwise we crash with ERR_INVALID_STATE and the CLI sees nothing.
+        try { controller.enqueue(encoder.encode(encodeSSE(data))) } catch { /* stream closed */ }
       }
 
       try {
@@ -271,7 +275,14 @@ export async function POST(request: NextRequest): Promise<Response> {
 
         // Step 2: Identify relevant pages
         send({ type: 'thinking', content: 'Identifying relevant articles...' })
-        const pagePaths = await identifyRelevantPages(question, indexContent)
+        // Paths the question names explicitly (e.g. "see wiki/candidates.md") are
+        // read directly — meta files like candidates.md / log.md / recently-added.md
+        // are not in index.md, so the index-scoped picker can never select them.
+        const explicitPaths = [...question.matchAll(/wiki\/[\w./-]+\.md/g)]
+          .map(m => m[0])
+          .filter(p => !p.includes('..'))
+        const pickedPaths = await identifyRelevantPages(question, indexContent)
+        const pagePaths = [...new Set([...explicitPaths, ...pickedPaths])]
 
         if (pagePaths.length === 0) {
           send({ type: 'thinking', content: 'No specific pages identified, using general knowledge...' })

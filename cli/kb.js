@@ -224,9 +224,18 @@ async function query(question, scope = 'public', pin = '') {
       try {
         const data = JSON.parse(line.slice(6))
         if ((data.type === 'token' || data.type === 'answer') && data.content) process.stdout.write(data.content)
-        if (data.type === 'sources' && data.sources?.length) {
-          console.log('\n\n📚 Sources:')
-          for (const s of data.sources) console.log(`  → ${s}`)
+        if (data.type === 'error') {
+          // Surface server-side errors instead of exiting silently with empty output
+          console.error(`\n❌ Query error: ${data.content || 'unknown error'}`)
+          process.exitCode = 1
+        }
+        if (data.type === 'sources') {
+          // Server sends { paths, contradicted }; older builds sent { sources }
+          const srcs = data.paths || data.sources || []
+          if (srcs.length) {
+            console.log('\n\n📚 Sources:')
+            for (const s of srcs) console.log(`  → ${s}`)
+          }
         }
         if (data.type === 'done') break
       } catch { /* skip */ }

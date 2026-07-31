@@ -1,5 +1,5 @@
 {
-  "last_run_timestamp": "2026-07-01T08:30:39-0500",
+  "last_run_timestamp": "2026-07-30T06:26:24-0700",
   "files_considered": [
     "AGENTS.md",
     "house-rules.md",
@@ -7,19 +7,35 @@
     "playbooks/editor-run.md",
     "wiki/log.md",
     ".night-shift/state/editor-state.json",
-    "briefings/scout-2026-07-01.md",
-    "briefings/refinery-2026-07-01.md"
+    "wiki/daily-systems/logs/2026-07-29.md",
+    "wiki/daily-systems/logs/2026-07-28.md",
+    "wiki/lint-report.md",
+    "wiki/reports/2026-07-29-nightly-ci-analysis.md",
+    "wiki/reports/2026-07-28-nightly-ci-analysis.md",
+    "wiki/reports/2026-07-27-nightly-ci-analysis.md",
+    "wiki/reports/2026-07-24-nightly-ci-analysis.md",
+    "wiki/syntheses/synthesis-agentic-engineering-operating-model.md"
   ],
   "wiki_pages_changed_last_24h": [
-    "wiki/log.md"
+    "wiki/daily-systems/logs/2026-07-29.md",
+    "wiki/daily-systems/logs/2026-07-28.md",
+    "wiki/lint-report.md",
+    "wiki/reports/2026-07-29-nightly-ci-analysis.md",
+    "wiki/reports/2026-07-28-nightly-ci-analysis.md",
+    "wiki/reports/2026-07-27-nightly-ci-analysis.md",
+    "wiki/reports/2026-07-24-nightly-ci-analysis.md"
   ],
   "outputs_written": [
-    "briefings/2026-07-01.md",
+    "wiki/syntheses/synthesis-agentic-engineering-operating-model.md",
+    "wiki/log.md",
+    "briefings/2026-07-30.md",
     ".night-shift/state/editor-state.json"
   ],
-  "status": "noop",
-  "briefing_path": "briefings/2026-07-01.md",
+  "status": "updated",
+  "briefing_path": "briefings/2026-07-30.md",
   "synthesis_created": [],
-  "synthesis_updated": [],
-  "notes": "Editor Run found no substantive wiki page changes in the last 24 hours beyond wiki/log.md from the prior morning-review entry. Scout and Refinery were both no-op on 2026-07-01, so no multi-source synthesis thread was created or updated. Dirty-worktree gate observed only allowed paths: .night-shift/state/refinery-processed.json and Scout/Refinery briefings. No raw files modified."
+  "synthesis_updated": [
+    "wiki/syntheses/synthesis-agentic-engineering-operating-model.md"
+  ],
+  "notes": "Editor Run found a real multi-source operational thread across daily-system logs and nightly CI reports: governed automations can be technically safe yet operationally dead if blocked/failing signals remain inside the failing system. Applied a targeted update to the existing operating-model synthesis rather than creating a duplicate page. No raw files modified."
 }

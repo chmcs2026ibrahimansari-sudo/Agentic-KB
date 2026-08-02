@@ -54,6 +54,19 @@ export async function GET(request: NextRequest): Promise<Response> {
       // Keep-alive ping every 15 seconds
       const pingInterval = setInterval(() => send({ type: 'ping' }), 15_000)
 
+      // Shared teardown: watcher errors and client aborts must both release
+      // everything. The old watcher error path only closed the controller —
+      // the ping interval and the raw/ watcher leaked for the life of the
+      // process on every errored connection.
+      const cleanup = () => {
+        if (closed) return
+        closed = true
+        clearInterval(pingInterval)
+        wikiWatcher?.close()
+        rawWatcher?.close()
+        try { controller.close() } catch { /* already closed */ }
+      }
+
       // Watch wiki/ for .md changes → live reload
       try {
         wikiWatcher = fs.watch(vaultRoot, { recursive: true }, (event, filename) => {
@@ -62,7 +75,7 @@ export async function GET(request: NextRequest): Promise<Response> {
           if (filename.startsWith('raw/') || filename.startsWith('raw\\')) return
           if (filename.endsWith('.md')) send({ type: 'change', event, filename })
         })
-        wikiWatcher.on('error', () => { if (!closed) controller.close() })
+        wikiWatcher.on('error', cleanup)
       } catch {
         send({ type: 'error', message: 'Could not watch vault directory' })
       }
@@ -83,13 +96,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       }
 
       // Cleanup when client disconnects
-      request.signal.addEventListener('abort', () => {
-        closed = true
-        clearInterval(pingInterval)
-        wikiWatcher?.close()
-        rawWatcher?.close()
-        try { controller.close() } catch { /* already closed */ }
-      })
+      request.signal.addEventListener('abort', cleanup)
     },
   })
 

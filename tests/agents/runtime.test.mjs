@@ -589,6 +589,35 @@ test('abandonTask marks working-memory as abandoned and clears active-task point
   assert.equal(rt.getActiveTask(root, c), null)
 })
 
+test('abandonTask refuses to re-abandon or abandon a non-active task', () => {
+  const root = makeFixture()
+  const c = rt.loadContract(root, 'w1')
+  c.allowed_writes = [...c.allowed_writes, 'wiki/agents/workers/w1/working-memory/**', 'wiki/agents/workers/w1/active-task.md']
+
+  const { taskId } = rt.startTask(root, c, { project: 'p1' })
+  rt.abandonTask(root, c, taskId, 'first abandonment')
+
+  // Second abandon must not silently rewrite the sealed status/reason
+  assert.throws(() => rt.abandonTask(root, c, taskId, 'second'), /not active/)
+})
+
+test('abandonTask of an orphaned task keeps the current active-task pointer', () => {
+  const root = makeFixture()
+  const c = rt.loadContract(root, 'w1')
+  c.allowed_writes = [...c.allowed_writes, 'wiki/agents/workers/w1/working-memory/**', 'wiki/agents/workers/w1/active-task.md']
+
+  const first = rt.startTask(root, c, { project: 'p1', description: 'orphaned' })
+  const second = rt.startTask(root, c, { project: 'p1', description: 'current', force: true })
+
+  // Cleaning up the orphaned first task must not clear the pointer for the
+  // second (current) task — previously this orphaned the active task too.
+  rt.abandonTask(root, c, first.taskId, 'cleanup orphan')
+
+  assert.equal(rt.getActiveTask(root, c)?.taskId, second.taskId)
+  const wm = fs.readFileSync(path.join(root, first.workingMemoryPath), 'utf8')
+  assert.match(wm, /status: abandoned/)
+})
+
 test('dryRunCloseTask returns write plan without executing anything', () => {
   const root = makeFixture()
   const c = rt.loadContract(root, 'w1')

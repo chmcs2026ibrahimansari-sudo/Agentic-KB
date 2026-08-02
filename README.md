@@ -8,7 +8,19 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — July 30, 2026 (Latest)
+## What's New — August 2, 2026 (Latest)
+
+Nightly correctness + ops pass — **361 tests passing** (was 359):
+
+- 🧹 **Fresh `npm ci` works again in `web/`** — package.json pinned `eslint ^8` while the lockfile carried `eslint-config-next` 16.2.2 (peer range `eslint >=9`), so every fresh clone/deploy failed with ERESOLVE unless `--legacy-peer-deps` was passed. eslint bumped to ^9 (dev-only; `web/` has no eslint config, so nothing to migrate), lockfile regenerated, all resolved URLs verified against registry.npmjs.org. Verified end-to-end: clean `npm ci`, `tsc --noEmit`, and a full `next build` all pass.
+- ⏱️ **Wiki lint no longer dies on long generations** — the 2026-08-01 nightly lint was skipped because `/api/lint` failed with `ERR_SOCKET_TIMEOUT`: it was the last route still using a non-streaming `messages.create()`, which sits silent while the whole answer generates. It now streams like `/api/process` and `/api/query`, and an Anthropic-side failure returns a clean 502 JSON body instead of an unhandled 500.
+- 🧷 **`abandonTask` can't clobber other tasks anymore** — it accepted any task id with a working-memory file: abandoning a completed/abandoned task silently rewrote its sealed status, and the active-task pointer was cleared unconditionally — so cleaning up an orphaned task (left behind by `startTask({ force: true })`) stranded the *current* task as exactly the orphan `verifyTaskState` flags. Only active tasks can be abandoned now, and the pointer is cleared only when it points at the task being abandoned. Two regression tests added.
+- 🔁 **Review-channel publishes survive id races** — `publishReviewItem` (used by the promotion scorer to route blocked promotions to review) threw a raw EEXIST when two concurrent publishers computed the same next id; it now uses the same bounded rescan-retry loop `publishBusItem` already had.
+- 📡 **`/api/vault-watch` stops leaking on watcher errors** — the SSE route's wiki-watcher error path only closed the stream controller, leaving the 15s keep-alive interval and the raw/ watcher alive for the life of the server process on every errored connection. Both teardown paths now share one idempotent cleanup.
+
+---
+
+## What's New — July 30, 2026
 
 Nightly correctness + coverage pass — **359 tests passing** (was 319):
 

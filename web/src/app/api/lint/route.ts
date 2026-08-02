@@ -123,8 +123,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch { return '' }
   }).filter(Boolean).join('\n---\n')
 
-  // Ask Claude for contradiction + gap analysis
-  const aiResponse = await client.messages.create({
+  // Ask Claude for contradiction + gap analysis. Streamed: a non-streaming
+  // create() sits silent while the whole answer generates, and long
+  // generations trip the HTTP socket timeout (the 2026-08-01 nightly lint
+  // failed with ERR_SOCKET_TIMEOUT). Same pattern as /api/process and
+  // /api/query.
+  const aiStream = client.messages.stream({
     model: KB_MODEL,
     max_tokens: 2048,
     messages: [{
@@ -154,13 +158,27 @@ Be specific. Return ONLY the JSON object.`,
     }],
   })
 
+  let aiText = ''
+  try {
+    for await (const chunk of aiStream) {
+      if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+        aiText += chunk.delta.text
+      }
+    }
+  } catch (err) {
+    // Surface the failure as a clean JSON error instead of an unhandled 500 —
+    // the CLI/MCP callers print this body.
+    return NextResponse.json(
+      { error: `Claude analysis failed: ${(err as Error).message}` },
+      { status: 502 }
+    )
+  }
+
   let contradictions: Array<{ pages: string[]; description: string }> = []
   let gaps: Array<{ topic: string; description: string }> = []
   let suggestions: string[] = []
 
   try {
-    const firstBlock = aiResponse.content?.[0]
-    const aiText = firstBlock && firstBlock.type === 'text' ? firstBlock.text : '{}'
     const jsonMatch = aiText.match(/\{[\s\S]*\}/)
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]) as {

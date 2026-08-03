@@ -303,6 +303,45 @@ test('dryRunCloseRepoTask allows repo-scoped writes for live-style contracts wit
   assert.ok(result.planned.some(item => item.path?.includes('/bus/discovery/')))
 })
 
+test('repo-scoped writes work for contracts with no global allowed_writes at all', () => {
+  const root = makeFixture()
+  // Repo-only agent: contract carries an empty allowlist. The global guard
+  // answers 'no allowed_writes configured', which used to bypass the
+  // repo-scoped fallback and reject every write outright.
+  const contract = agentRt.validateContract({
+    agent_id: 'w1',
+    tier: 'worker',
+    domain: 'eng',
+    task_end_actions: ['append_task_log'],
+    forbidden_paths: [],
+  })
+
+  const result = repoRt.closeRepoTask(root, 'test-repo', contract, {
+    taskLogEntry: 'Repo-only agent close',
+    discoveries: [{ body: 'Repo bus item' }],
+  })
+
+  assert.equal(result.ok, true)
+  assert.ok(fs.readFileSync(path.join(root, 'wiki/repos/test-repo/progress.md'), 'utf8').includes('Repo-only agent close'))
+  assert.equal(repoRt.listRepoBusItems(root, 'test-repo', 'discovery').length, 1)
+})
+
+test('repo-scoped fallback still rejects unsafe and forbidden paths', () => {
+  const root = makeFixture()
+  const contract = agentRt.validateContract({
+    agent_id: 'w1',
+    tier: 'worker',
+    domain: 'eng',
+    task_end_actions: [],
+    forbidden_paths: ['wiki/repos/test-repo/progress.md'],
+  })
+  const result = repoRt.closeRepoTask(root, 'test-repo', contract, {
+    taskLogEntry: 'should be forbidden',
+  })
+  assert.equal(result.ok, false)
+  assert.ok(result.rejected.some(r => r.path === 'wiki/repos/test-repo/progress.md'))
+})
+
 // ─── 5. Bus tests ────────────────────────────────────────────────────────
 
 test('publishRepoBusItem creates file with correct frontmatter', () => {

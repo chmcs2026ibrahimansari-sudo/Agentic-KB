@@ -248,6 +248,20 @@ test('bus publish + list + read', () => {
   assert.match(read.body, /hello bus/)
 })
 
+test('bus id sequence survives the 999 -> 1000 rollover', () => {
+  const root = makeFixture()
+  // Simulate a day that already produced item 999: the next scan must see it
+  // (and any 4-digit successor) or every later publish EEXIST-loops and throws.
+  const day = new Date().toISOString().slice(0, 10)
+  const dir = path.join(root, 'wiki/system/bus/discovery')
+  fs.writeFileSync(path.join(dir, `disc-x.md`), '---\nid: junk\n---\n') // non-matching noise
+  fs.writeFileSync(path.join(dir, `discovery-${day}-999.md`), '---\nid: x\n---\n')
+  const first = rt.publishBusItem(root, { channel: 'discovery', from: 'w1', body: 'a' })
+  assert.equal(first.id, `discovery-${day}-1000`)
+  const second = rt.publishBusItem(root, { channel: 'discovery', from: 'w1', body: 'b' })
+  assert.equal(second.id, `discovery-${day}-1001`)
+})
+
 test('frontmatter round-trips inline arrays of objects used by bus status history', () => {
   const raw = rt.serializeFrontmatter({
     status_history: [{ from: 'draft', to: 'open', actor: 'w1', at: '2026-04-10T00:00:00Z' }],

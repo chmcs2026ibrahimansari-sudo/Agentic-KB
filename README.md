@@ -8,7 +8,20 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 2, 2026 (Latest)
+## What's New — August 3, 2026 (Latest)
+
+Nightly correctness + coverage pass — **372 tests passing** (was 361):
+
+- 🔢 **Bus id allocation no longer wedges after 999 items in a day** — `nextBusId` (and the repo-bus twin) scanned existing filenames with an exact three-digit regex, so once a channel produced item 999 the four-digit successor ("1000") became invisible: every later publish recomputed id 1000, hit the EEXIST guard, exhausted its 20 retries, and threw for the rest of the day despite free ids. The scan now accepts 3+ digits; rollover test added.
+- 📄 **`.yml` contracts are loadable** — `listContracts` accepted `config/agents/*.yml`, but `loadContract` only ever tried `.yaml`, so a `.yml` contract passed the directory filter, loaded as null, and silently vanished from the agent list (every `/api/agents/[id]/*` route 404'd it). `loadContract` now falls back to the `.yml` extension.
+- 🗂️ **Repo-only agents can close repo tasks** — `planRepoWrites` fell back to the repo-scoped write rules only when the global guard answered `not in allowed_writes`; a contract with an *empty* allowlist gets `no allowed_writes configured` instead, which skipped the fallback and rejected the agent's own `progress.md`, agent-memory, rewrites, and bus paths. Both not-in-allowlist answers fall through now — unsafe-path and `forbidden_paths` rejections stay final.
+- 🔑 **`kb search` sends the PIN as a header** — it was the last CLI command putting the PIN in the URL query string, where it lands in server access logs and any proxy in between; it now uses `x-private-pin` like `kb query`/`compile`/`lint`.
+- ✍️ **Torn-write parity** — `transitionRepoBusItem` and `abandonTask` still rewrote files in place while their siblings had already moved to tmp+rename; both now use the same atomic pattern.
+- 🔗 **Audit chain gets direct tests** — the hash-chained audit log (tamper-evidence under every runtime operation) had zero direct coverage; seven tests pin chain linkage, tamper detection (edited body, deleted middle entry), legacy-entry tolerance, the >8KB tail-read path, and `readRecentAudit` filters.
+
+---
+
+## What's New — August 2, 2026
 
 Nightly correctness + ops pass — **361 tests passing** (was 359):
 

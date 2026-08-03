@@ -164,9 +164,12 @@ function parseArgs(args) {
 
 async function search(query, scope, limit, pin = PRIVATE_PIN) {
   const params = new URLSearchParams({ q: query, scope, limit: String(limit) })
-  if (scope !== 'public' && pin) params.set('pin', pin)
 
-  const res = await fetch(`${API_URL}/api/search?${params}`)
+  // Send the PIN as a header, not a query parameter: query strings land in
+  // server access logs, shell history via curl repro lines, and any proxy in
+  // between. The API accepts x-private-pin (same as kb query/compile/lint).
+  const headers = scope !== 'public' && pin ? { 'x-private-pin': pin } : {}
+  const res = await fetch(`${API_URL}/api/search?${params}`, { headers })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
     // The API returns 403 for a missing/invalid PIN — surface it instead of

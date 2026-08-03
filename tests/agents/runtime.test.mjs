@@ -78,6 +78,24 @@ test('listContracts returns all contracts', () => {
   assert.equal(all.length, 1)
 })
 
+test('loadContract loads .yml contracts too (listContracts accepts both extensions)', () => {
+  const root = makeFixture()
+  fs.writeFileSync(path.join(root, 'config/agents/w2.yml'), `
+agent_id: w2
+tier: worker
+domain: eng
+allowed_writes:
+  - wiki/agents/workers/w2/**
+`.trim())
+  const c = rt.loadContract(root, 'w2')
+  assert.ok(c, 'a .yml contract must be loadable, not silently null')
+  assert.equal(c.agent_id, 'w2')
+  // And it shows up in listContracts instead of being filtered out as null
+  const all = rt.listContracts(root)
+  assert.equal(all.length, 2)
+  assert.ok(all.some(x => x.agent_id === 'w2'))
+})
+
 test('validateContract derives close_policy from task_end_actions when not explicitly configured', () => {
   const contract = rt.validateContract({
     agent_id: 'derived-worker',

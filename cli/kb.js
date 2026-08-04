@@ -324,7 +324,11 @@ async function listSection(section, opts = {}) {
 
 async function pending() {
   const res = await fetch(`${API_URL}/api/pending-count`)
-  const data = await res.json()
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    console.error(`❌ Pending check failed (${res.status}): ${data.error || 'unknown error'}`)
+    process.exit(1)
+  }
   const count = data.count || 0
 
   if (count === 0) {
@@ -419,7 +423,13 @@ async function lint(pin) {
     headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
     body: JSON.stringify({ pin }),
   })
-  const data = await res.json()
+  // Guard the parse: a proxy/framework 500 page is HTML, and an unhandled
+  // JSON parse rejection here crashed the CLI with a bare stack trace.
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    console.error(`Error: lint API returned ${res.status}: ${data.error || 'unknown error'}`)
+    process.exit(1)
+  }
   if (data.ok) {
     console.log('  Pages scanned:  ' + data.pagesScanned)
     console.log('  Contradictions: ' + data.contradictions)

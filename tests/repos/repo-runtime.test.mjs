@@ -581,6 +581,46 @@ test('syncRepo records sync state in the registry (CLI/MCP parity with web)', as
   }
 })
 
+test('fetchRepoMarkdown fetches blobs concurrently, preserves tree order, skips failures', async () => {
+  const N = 20
+  const tree = Array.from({ length: N }, (_, i) => ({ type: 'blob', path: `docs/f${i}.md`, sha: `sha${i}` }))
+  let inflight = 0
+  let maxInflight = 0
+
+  const origFetch = globalThis.fetch
+  try {
+    globalThis.fetch = async (url) => {
+      const u = String(url)
+      if (u.includes('/git/trees/')) {
+        return { ok: true, json: async () => ({ tree }) }
+      }
+      const m = u.match(/git\/blobs\/sha(\d+)$/)
+      if (m) {
+        inflight++
+        maxInflight = Math.max(maxInflight, inflight)
+        await new Promise(r => setTimeout(r, 2))
+        inflight--
+        const i = Number(m[1])
+        if (i === 7) return { ok: false, status: 500 } // one failed blob must not abort the rest
+        return { ok: true, json: async () => ({ content: Buffer.from(`doc ${i}`).toString('base64') }) }
+      }
+      throw new Error('unexpected fetch: ' + u)
+    }
+
+    const results = await repoRt.fetchRepoMarkdown('repo1', 'owner1', {})
+    assert.equal(results.length, N - 1)
+    assert.ok(maxInflight > 1, 'blob fetches should overlap')
+    assert.ok(maxInflight <= 8, 'concurrency must stay bounded')
+    // Order follows the tree listing even though fetches complete out of order
+    const paths = results.map(r => r.path)
+    const sorted = tree.map(t => t.path).filter(p2 => p2 !== 'docs/f7.md')
+    assert.deepEqual(paths, sorted)
+    assert.equal(results[0].content, 'doc 0')
+  } finally {
+    globalThis.fetch = origFetch
+  }
+})
+
 test('fetchCommitSha resolves the branch commit sha and tolerates failures', async () => {
   const origFetch = globalThis.fetch
   try {

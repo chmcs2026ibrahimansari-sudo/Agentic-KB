@@ -531,6 +531,23 @@ test('archiveRemovedDoc moves the doc out of repo-docs (no live copy left behind
   assert.match(archived, /archived_at/)
 })
 
+test('archiveRemovedDoc keeps subpaths so same-named docs do not clobber each other', () => {
+  const root = makeFixture()
+  const relA = 'wiki/repos/test-repo/repo-docs/docs/a/README.md'
+  const relB = 'wiki/repos/test-repo/repo-docs/docs/b/README.md'
+  fs.mkdirSync(path.join(root, 'wiki/repos/test-repo/repo-docs/docs/a'), { recursive: true })
+  fs.mkdirSync(path.join(root, 'wiki/repos/test-repo/repo-docs/docs/b'), { recursive: true })
+  fs.writeFileSync(path.join(root, relA), '---\nrepo_name: test-repo\n---\n\nDoc A\n')
+  fs.writeFileSync(path.join(root, relB), '---\nrepo_name: test-repo\n---\n\nDoc B\n')
+
+  const archiveA = repoRt.archiveRemovedDoc(root, 'test-repo', relA)
+  const archiveB = repoRt.archiveRemovedDoc(root, 'test-repo', relB)
+
+  assert.notEqual(archiveA, archiveB, 'archive paths must not collide')
+  assert.match(fs.readFileSync(path.join(root, archiveA), 'utf8'), /Doc A/)
+  assert.match(fs.readFileSync(path.join(root, archiveB), 'utf8'), /Doc B/)
+})
+
 test('fetchCommitSha resolves the branch commit sha and tolerates failures', async () => {
   const origFetch = globalThis.fetch
   try {

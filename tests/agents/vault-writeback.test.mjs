@@ -107,6 +107,30 @@ test('vault: runSofieVaultFanout commits decisions/actions atomically', () => {
   assert.match(actions, /Run sofie-kb-digest/)
 })
 
+test('vault: duplicate same-day decision titles get a unique suffix instead of aborting the fanout', () => {
+  const vault = makeFakeVault()
+  const kb = makeFakeKb()
+  const first = runSofieVaultFanout(kb, sofieContract, {
+    decisions: [{ title: 'Adopt bounded concurrency', body: 'First.' }],
+  })
+  assert.equal(first.ok, true, JSON.stringify(first))
+
+  const second = runSofieVaultFanout(kb, sofieContract, {
+    decisions: [{ title: 'Adopt bounded concurrency', body: 'Second.' }],
+    actions: [{ task: 'Follow up', owner: 'sofie' }],
+  })
+  assert.equal(second.ok, true, JSON.stringify(second))
+  assert.equal(second.committed, 2)
+
+  const decisionFiles = fs.readdirSync(path.join(vault, '06 - Decisions'))
+  assert.equal(decisionFiles.length, 2)
+  const suffixed = decisionFiles.find(f => /-2\.md$/.test(f))
+  const original = decisionFiles.find(f => !/-2\.md$/.test(f))
+  assert.ok(suffixed, 'second write should land at a -2 suffixed path')
+  assert.match(fs.readFileSync(path.join(vault, '06 - Decisions', original), 'utf8'), /First\./)
+  assert.match(fs.readFileSync(path.join(vault, '06 - Decisions', suffixed), 'utf8'), /Second\./)
+})
+
 test('vault: fanout vault_path matches contract vault_writes only', () => {
   const vault = makeFakeVault()
   const kb = makeFakeKb()

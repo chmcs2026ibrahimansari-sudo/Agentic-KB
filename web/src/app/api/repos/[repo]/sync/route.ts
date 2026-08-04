@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { DEFAULT_KB_ROOT } from '@/lib/articles'
-import { getRepo, syncRepo, markSynced } from '../../../../../../../lib/repo-runtime/index.mjs'
+import { getRepo, syncRepo } from '../../../../../../../lib/repo-runtime/index.mjs'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,12 +63,8 @@ export async function POST(
       return NextResponse.json({ synced: false, repo, trace }, { status: 502 })
     }
 
-    // Mark as synced with trace metadata
-    markSynced(DEFAULT_KB_ROOT, repo, {
-      commit_sha: trace.commit_sha || '',
-      file_count: trace.created.length + trace.updated.length,
-    })
-
+    // Registry sync state (last_sync_at, commit, file count) is recorded by
+    // syncRepo itself so CLI/MCP/web all stay consistent.
     return NextResponse.json({
       synced: true,
       repo,

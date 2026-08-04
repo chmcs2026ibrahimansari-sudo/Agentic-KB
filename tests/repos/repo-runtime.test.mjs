@@ -548,6 +548,39 @@ test('archiveRemovedDoc keeps subpaths so same-named docs do not clobber each ot
   assert.match(fs.readFileSync(path.join(root, archiveB), 'utf8'), /Doc B/)
 })
 
+test('syncRepo records sync state in the registry (CLI/MCP parity with web)', async () => {
+  const root = makeFixture()
+  repoRt.upsertRepo(root, { repo_name: 'test-repo', owner: 'owner1', status: 'active', visibility: 'private' })
+
+  const origFetch = globalThis.fetch
+  try {
+    globalThis.fetch = async (url) => {
+      const u = String(url)
+      if (u.includes('/git/trees/')) {
+        return { ok: true, json: async () => ({ tree: [{ type: 'blob', path: 'README.md', sha: 'blob1' }] }) }
+      }
+      if (u.includes('/git/blobs/')) {
+        return { ok: true, json: async () => ({ content: Buffer.from('# Hello\n').toString('base64') }) }
+      }
+      if (u.includes('/commits/')) {
+        return { ok: true, json: async () => ({ sha: 'commit-sha-1' }) }
+      }
+      throw new Error('unexpected fetch: ' + u)
+    }
+
+    const trace = await repoRt.syncRepo(root, 'test-repo', {})
+    assert.equal(trace.errors.length, 0)
+    assert.equal(trace.commit_sha, 'commit-sha-1')
+
+    const record = repoRt.getRepo(root, 'test-repo')
+    assert.ok(record.last_sync_at, 'last_sync_at must be stamped')
+    assert.equal(record.last_synced_commit, 'commit-sha-1')
+    assert.equal(record.markdown_file_count, 1)
+  } finally {
+    globalThis.fetch = origFetch
+  }
+})
+
 test('fetchCommitSha resolves the branch commit sha and tolerates failures', async () => {
   const origFetch = globalThis.fetch
   try {

@@ -8,7 +8,20 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 3, 2026 (Latest)
+## What's New — August 4, 2026 (Latest)
+
+Nightly correctness + sync-pipeline pass — **377 tests passing** (was 372):
+
+- 🗃️ **Removed repo docs archive without clobbering each other** — `archiveRemovedDoc` flattened every removed doc to its basename inside the dated archive dir, so removing `docs/a/README.md` and `docs/b/README.md` on the same day silently overwrote the first archive with the second. The archive now preserves the path relative to `repo-docs/`.
+- 🔄 **CLI and MCP syncs update the registry** — only the web sync route called `markSynced`, so `kb repo sync`, `kb repo sync-all`, and the MCP `sync_repo_markdown` tool never stamped `last_sync_at`/`last_synced_commit`/file counts — `kb repo list` said "never" after successful syncs. `syncRepo` records sync state itself now (still skipped on fetch failure).
+- 💾 **registry.json writes are atomic** — a crash mid-write left a truncated registry that `loadRegistry` parsed as empty, and the next upsert then persisted a registry missing every prior record. tmp+rename, same as bus/task-lifecycle writes.
+- ⚡ **Repo sync fetches blobs 8-wide** — the blob loop was serial (one round-trip per file); a few hundred markdown files took minutes. Bounded worker pool keeps tree-order determinism and per-file failure isolation.
+- 🗓️ **Duplicate same-day titles no longer abort Sofie's vault fanout** — decision/session filenames are date+slug; a second decision with the same slug hit the create-exists guard and rolled back the *entire* fanout, losing the unrelated action items and client updates in the same payload. Create ops now allocate a `-2`/`-3` suffix on collision (re-guarded against `vault_writes`), and the audit records the path actually written.
+- 🖥️ **`kb lint` / `kb pending` fail readably** — both crashed with a raw `Unexpected token '<'` stack when the API returned a non-JSON error page; they now surface the HTTP status and error like `kb search` does.
+
+---
+
+## What's New — August 3, 2026
 
 Nightly correctness + coverage pass — **372 tests passing** (was 361):
 

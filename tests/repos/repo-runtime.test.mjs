@@ -87,6 +87,23 @@ test('markSynced updates last_sync_at and sets status', () => {
   assert.ok(updated.last_sync_at)
 })
 
+test('saveRegistry writes atomically and preserves wrapper metadata', () => {
+  const root = makeFixture()
+  const regPath = path.join(root, 'config/repos/registry.json')
+  fs.writeFileSync(regPath, JSON.stringify({ version: '2.3', custom_note: 'keep-me', repos: [] }, null, 2))
+
+  repoRt.upsertRepo(root, { repo_name: 'r1', status: 'active', owner: 'jay' })
+
+  const wrapper = JSON.parse(fs.readFileSync(regPath, 'utf8'))
+  assert.equal(wrapper.version, '2.3', 'wrapper version survives saves')
+  assert.equal(wrapper.custom_note, 'keep-me', 'unknown wrapper fields survive saves')
+  assert.equal(wrapper.repos.length, 1)
+  assert.ok(wrapper.updated_at)
+
+  const leftovers = fs.readdirSync(path.dirname(regPath)).filter(f => f.includes('.tmp-'))
+  assert.deepEqual(leftovers, [], 'no tmp files left behind by the atomic write')
+})
+
 // ─── 2. Paths tests ──────────────────────────────────────────────────────
 
 test('repoWikiRoot returns correct path', () => {

@@ -8,7 +8,23 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 4, 2026 (Latest)
+## What's New — August 5, 2026 (Latest)
+
+Nightly correctness + hardening pass — **380 tests passing** (was 377):
+
+- 🔒 **`closeRepoTask` commits under the per-repo lock** — the agent-runtime `closeTask` has committed under an exclusive lock since Phase 3, but the repo twin committed bare: two agents closing tasks on the same repo could interleave the read-modify-write appends to `progress.md` and silently drop one side's entry. A held lock now fails the close cleanly through the existing rollback path; regression test covers the blocked and post-release retry paths.
+- 💾 **Torn-write parity finished** — `commitRepoWrite`, `appendRepoProgress`, and `writeRepoTaskLog` still rewrote files in place (a crash mid-write could truncate a repo's whole progress history), as did `abandonTask`'s active-task pointer clear — the very file `getActiveTask` parses. All four now use the same tmp+rename pattern as everything else.
+- 🛡️ **Sofie's vault fanout can't be frontmatter-injected** — `planSofieVaultOps` interpolated `decided_by`, `related`, and session tags raw into hand-built YAML headers, so a newline in any of them injected arbitrary frontmatter (e.g. `visibility:`) into the written vault note; a non-array `tags` value also threw and aborted the whole fanout. Fields are flattened to one line (same `oneLine` helper as the ADR emitter), tags emitted only for non-empty arrays.
+- 🛡️ **Webhook ingestion, same class** — `/api/ingest/webhook` builds raw-doc frontmatter from external payloads (GitHub issue titles/labels, Slack text); newlines injected keys and the title quote-swap left backslashes free to escape the closing quote. One-lined + JSON-escaped now.
+- 📝 **`write_rewrite_artifact` stops clobbering same-day drafts** — the MCP tool wrote `<project>-<date>.md` with a plain `writeFileSync`, so a second same-day artifact for the same project silently replaced the first. Exclusive create with `-2`/`-3`… suffixes; the tool returns the path actually written.
+- 🖥️ **`kb repo sync` / `sync-all` report honestly** — `sync` treated any non-fatal per-file error as total failure (exit 1, no counts, even though the sync landed); only fetch errors are fatal now, partial errors print as warnings. `sync-all` had the inverse bug — `syncRepo` reports fetch failures in `trace.errors` rather than throwing, so it printed "All N repos synced" even when every fetch failed; it now reports per-repo outcomes and exits non-zero on any failure.
+- 📚 **`sync_repo_markdown` tool description matches reality** — it claimed `.md/.mjs/.ts/.json`; the sync imports markdown/MDX docs only. Tool descriptions steer the calling model.
+
+Also audited all three lockfiles against the July 2026 npm supply-chain compromises (`@asyncapi/specs`, `jscrambler` + plugins) — no hits.
+
+---
+
+## What's New — August 4, 2026
 
 Nightly correctness + sync-pipeline pass — **377 tests passing** (was 372):
 

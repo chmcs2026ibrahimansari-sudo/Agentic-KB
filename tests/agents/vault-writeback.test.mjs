@@ -175,6 +175,43 @@ test('vault: empty memoryUpdate produces no op', () => {
   assert.equal(ops2.length, 0)
 })
 
+test('vault: decision fields cannot inject frontmatter keys via newlines', () => {
+  const ops = planSofieVaultOps({
+    decisions: [{
+      title: 'Adopt plan B',
+      body: 'We go with B.',
+      decided_by: 'mallory\nvisibility: private\nextra: injected',
+      related: 'a-note\ntags: [pwned]',
+    }],
+  })
+  assert.equal(ops.length, 1)
+  const fmEnd = ops[0].content.indexOf('---', 3)
+  const fm = ops[0].content.slice(0, fmEnd)
+  // Injected keys must not appear as frontmatter lines.
+  assert.ok(!/^visibility:/m.test(fm), 'visibility injected: ' + fm)
+  assert.ok(!/^extra:/m.test(fm), 'extra injected: ' + fm)
+  assert.ok(!/^tags:/m.test(fm), 'tags injected: ' + fm)
+  assert.match(fm, /decided_by: mallory visibility: private extra: injected/)
+})
+
+test('vault: session tags are flattened and non-array tags do not abort the fanout', () => {
+  const withNewline = planSofieVaultOps({
+    sessionSummary: { title: 'Sync', body: 'notes', tags: ['ok', 'bad\ninjected: yes'] },
+  })
+  assert.equal(withNewline.length, 1)
+  const fm = withNewline[0].content.slice(0, withNewline[0].content.indexOf('---', 3))
+  assert.ok(!/^injected:/m.test(fm), 'tag injected a key: ' + fm)
+  assert.match(fm, /tags: \[ok, bad injected: yes\]/)
+
+  // A string tags value previously threw (.join is not a function) and
+  // aborted the entire fanout; now it is simply omitted.
+  const stringTags = planSofieVaultOps({
+    sessionSummary: { title: 'Sync', body: 'notes', tags: 'not-an-array' },
+  })
+  assert.equal(stringTags.length, 1)
+  assert.ok(!/tags:/.test(stringTags[0].content.slice(0, stringTags[0].content.indexOf('---', 3))))
+})
+
 test('vault: vaultRoot env override works', () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'vault-root-'))
   const prev = process.env.OBSIDIAN_VAULT_ROOT

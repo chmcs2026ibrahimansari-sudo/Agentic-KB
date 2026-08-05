@@ -273,6 +273,38 @@ test('closeRepoTask commits repo writes and bus publications atomically', () => 
   assert.equal(repoRt.listRepoBusItems(root, 'test-repo', 'escalation').length, 1)
 })
 
+test('closeRepoTask fails closed and rolls back when the repo lock is held', () => {
+  const root = makeFixture()
+  const contract = agentRt.validateContract({
+    agent_id: 'w1',
+    tier: 'worker',
+    domain: 'eng',
+    allowed_writes: ['wiki/repos/test-repo/**'],
+    forbidden_paths: [],
+    close_policy: { required_fields: ['taskLogEntry'], at_least_one_of: [], require_active_task: true },
+  })
+  const payload = { project: 'test-repo', taskLogEntry: 'Entry under contention', discoveries: [{ body: 'd' }] }
+
+  // Another process holds the per-repo lock for the whole attempt.
+  const lock = agentRt.acquireLock(root, 'repo:test-repo')
+  try {
+    const blocked = repoRt.closeRepoTask(root, 'test-repo', contract, payload)
+    assert.equal(blocked.ok, false)
+    assert.match(blocked.error, /lock busy/)
+    // Nothing landed: no progress entry, no bus item.
+    assert.equal(fs.existsSync(path.join(root, 'wiki/repos/test-repo/progress.md')), false)
+    assert.equal(repoRt.listRepoBusItems(root, 'test-repo', 'discovery').length, 0)
+  } finally {
+    lock.release()
+  }
+
+  // Lock released — the same close now succeeds.
+  const result = repoRt.closeRepoTask(root, 'test-repo', contract, payload)
+  assert.equal(result.ok, true)
+  assert.match(fs.readFileSync(path.join(root, 'wiki/repos/test-repo/progress.md'), 'utf8'), /Entry under contention/)
+  assert.equal(repoRt.listRepoBusItems(root, 'test-repo', 'discovery').length, 1)
+})
+
 test('dryRunCloseRepoTask reports rejected writes without committing', () => {
   const root = makeFixture()
   const contract = agentRt.validateContract({

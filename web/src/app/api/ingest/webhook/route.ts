@@ -134,6 +134,15 @@ function detectAndAdapt(
 
 // ── File writing ──────────────────────────────────────────────────────────────
 
+// Frontmatter values below land on single-line keys. Titles, URLs, and tags
+// arrive from external systems (GitHub issue titles/labels, Slack text), so a
+// newline in any of them would terminate the key early and inject arbitrary
+// frontmatter into the raw doc — same class of bug fixed in the ADR emitter
+// and Sofie's vault fanout.
+function oneLine(s: string): string {
+  return s.replace(/[\r\n]+/g, ' ').trim()
+}
+
 function slugify(str: string): string {
   return str
     .toLowerCase()
@@ -159,11 +168,13 @@ function writeRawDoc(vaultRoot: string, doc: NormalizedDoc, namespace = 'default
 
   const frontmatter = [
     '---',
-    `title: "${doc.title.replace(/"/g, "'")}"`,
-    `source: ${doc.source}`,
+    // JSON.stringify escapes quotes and backslashes so the value round-trips
+    // (the old quote-swap left backslashes free to escape the closing quote).
+    `title: ${JSON.stringify(oneLine(doc.title))}`,
+    `source: ${oneLine(doc.source)}`,
     `ingested: ${new Date().toISOString()}`,
-    doc.url ? `url: ${doc.url}` : null,
-    doc.tags.length ? `tags: [${doc.tags.join(', ')}]` : null,
+    doc.url ? `url: ${oneLine(doc.url)}` : null,
+    doc.tags.length ? `tags: [${doc.tags.map(t => oneLine(String(t))).join(', ')}]` : null,
     '---',
     '',
   ].filter(l => l !== null).join('\n')

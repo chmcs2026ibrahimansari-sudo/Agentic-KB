@@ -1260,8 +1260,12 @@ async function repoCmd(sub, rest) {
     const token = tokenIdx >= 0 ? rest[tokenIdx + 1] : process.env.GITHUB_PAT
     console.log(`\n📦 Syncing repo: ${name}...`)
     const result = await rt.syncRepo(AGENT_KB_ROOT, name, { token })
-    if (result.errors?.length) {
-      console.error(`❌ Sync failed: ${result.errors[0].message}`)
+    // Only a fetch error is fatal (nothing was synced). Per-file write/
+    // archive/registry errors are partial: the sync landed, so report the
+    // counts and surface each failure instead of pretending nothing synced.
+    const fetchError = (result.errors || []).find(e => e.type === 'fetch')
+    if (fetchError) {
+      console.error(`❌ Sync failed: ${fetchError.message}`)
       process.exit(1)
     }
     console.log(`✅ Sync complete`)
@@ -1269,6 +1273,9 @@ async function repoCmd(sub, rest) {
     console.log(`   Updated: ${result.updated?.length || 0}`)
     console.log(`   Archived: ${result.archived?.length || 0}`)
     console.log(`   Commit SHA: ${result.commit_sha || 'unknown'}`)
+    for (const e of result.errors || []) {
+      console.error(`   ⚠ ${e.type}${e.path ? ` ${e.path}` : ''}: ${e.message}`)
+    }
     return
   }
 
@@ -1278,10 +1285,25 @@ async function repoCmd(sub, rest) {
     console.log('\n📦 Syncing all active repos...')
     const repos = rt.listRepos(AGENT_KB_ROOT)
     const active = repos.filter(r => r.status === 'active')
+    // Previously this printed "All N repos synced" even when every fetch
+    // failed — syncRepo reports fetch failures in trace.errors, it does not
+    // throw. Count real outcomes and exit non-zero if any repo failed.
+    let failed = 0
     for (const r of active) {
       const name = r.repo_name || r.name
       console.log(`  syncing ${name}...`)
-      await rt.syncRepo(AGENT_KB_ROOT, name, { token })
+      const result = await rt.syncRepo(AGENT_KB_ROOT, name, { token })
+      const fetchError = (result.errors || []).find(e => e.type === 'fetch')
+      if (fetchError) {
+        failed++
+        console.error(`    ❌ ${name}: ${fetchError.message}`)
+      } else {
+        console.log(`    ✅ ${name}: ${result.created?.length || 0} created, ${result.updated?.length || 0} updated, ${result.archived?.length || 0} archived`)
+      }
+    }
+    if (failed > 0) {
+      console.error(`\n❌ ${failed}/${active.length} repos failed to sync`)
+      process.exit(1)
     }
     console.log(`✅ All ${active.length} repos synced`)
     return

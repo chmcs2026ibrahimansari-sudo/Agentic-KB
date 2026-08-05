@@ -1097,8 +1097,25 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // Escape quotes in YAML values to avoid breakage on special chars.
       const esc = s => JSON.stringify(String(s))
       const frontmatter = `---\ntitle: ${esc(project + ' ' + type + ' rewrite')}\ntype: rewrite\nrepo: ${esc(repo)}\nproject: ${esc(project)}\nauthor: ${esc(author)}\ndate: ${now}\nstatus: draft\n---\n\n`
-      fs.writeFileSync(filePath, frontmatter + content, 'utf8')
-      return { content: [{ type: 'text', text: JSON.stringify({ path: path.relative(KB_ROOT, filePath) }, null, 2) }] }
+      // Exclusive create with -2/-3… suffixes: filenames are project+date, so
+      // a second same-day artifact for the same project silently clobbered
+      // the first draft (same slug-collision class fixed in the ingest
+      // routes and Sofie's vault fanout).
+      let finalPath = filePath
+      let written = false
+      for (let i = 2; !written && i < 100; i++) {
+        try {
+          fs.writeFileSync(finalPath, frontmatter + content, { encoding: 'utf8', flag: 'wx' })
+          written = true
+        } catch (e) {
+          if (e.code !== 'EEXIST') throw e
+          finalPath = safeJoin(dir, `${project}-${now}-${i}.md`)
+        }
+      }
+      if (!written) {
+        return { content: [{ type: 'text', text: `Could not allocate a unique rewrite path for ${project}-${now}.md` }], isError: true }
+      }
+      return { content: [{ type: 'text', text: JSON.stringify({ path: path.relative(KB_ROOT, finalPath) }, null, 2) }] }
     }
 
     if (name === 'publish_repo_discovery') {

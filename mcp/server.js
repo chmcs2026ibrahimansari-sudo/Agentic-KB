@@ -383,7 +383,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     },
     {
       name: 'sync_repo_markdown',
-      description: 'Sync a repository from GitHub — fetches .md/.mjs/.ts/.json files and writes them to wiki/repos/<repo>/repo-docs/.',
+      description: 'Sync a repository from GitHub — fetches markdown docs (.md/.mdx: README/CLAUDE.md plus docs/, specs/, plans/, reports/, architecture/; vendored dirs excluded) and writes them to wiki/repos/<repo>/repo-docs/, recording sync state in the registry.',
       inputSchema: {
         type: 'object',
         properties: {

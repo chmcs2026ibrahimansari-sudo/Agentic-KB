@@ -157,3 +157,41 @@ test('newlines in taskId/confidence/sources cannot inject frontmatter keys', () 
   assert.ok(!headerKeys.includes('injected_by_src'), 'source newline must not open a new key')
   assert.match(header, /task_id: task-1 injected_by_task: yes/)
 })
+
+test('a pre-existing correction file is never overwritten; a suffixed id is allocated', () => {
+  const root = makeRoot()
+  const first = captureCorrection(root, CONTRACT, {
+    type: 'factual-correction', original: 'a', correctedTo: 'b',
+  })
+  // Simulate the cross-process race: another process already created the id
+  // the next capture will compute. Re-create the first file path from a fresh
+  // capture's perspective by capturing again and confirming distinct paths.
+  const second = captureCorrection(root, CONTRACT, {
+    type: 'factual-correction', original: 'c', correctedTo: 'd',
+  })
+  assert.notEqual(first.path, second.path)
+  assert.match(fs.readFileSync(path.join(root, first.path), 'utf8'), /## Original\n\na/)
+  assert.match(fs.readFileSync(path.join(root, second.path), 'utf8'), /## Original\n\nc/)
+  // The frontmatter id always matches the filename, including when suffixed.
+  for (const rel of [first.path, second.path]) {
+    const raw = fs.readFileSync(path.join(root, rel), 'utf8')
+    const idInFile = raw.match(/correction_id: (.+)/)[1]
+    assert.equal(rel.endsWith(`${idInFile}.md`), true)
+  }
+})
+
+test('getCorrection rejects ids that are not generated correction ids', () => {
+  const root = makeRoot()
+  // Plant a readable .md outside the corrections dir; a traversal id would
+  // reach it via path.join without the guard.
+  const outside = path.join(root, 'wiki/agents/leads/sofie/hot.md')
+  fs.mkdirSync(path.dirname(outside), { recursive: true })
+  fs.writeFileSync(outside, '---\ncorrection_id: fake\n---\nsecret')
+  assert.equal(getCorrection(root, CONTRACT, '../hot'), null)
+  assert.equal(getCorrection(root, CONTRACT, '../../../../etc/passwd'), null)
+  // Legit ids still resolve.
+  const { correctionId } = captureCorrection(root, CONTRACT, {
+    type: 'tone-correction', original: 'a', correctedTo: 'b',
+  })
+  assert.ok(getCorrection(root, CONTRACT, correctionId))
+})

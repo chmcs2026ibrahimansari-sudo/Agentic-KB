@@ -1,13 +1,13 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-04 15:05 | Vault: Agentic-KB | Pages scanned: 656
+> Generated: 2026-08-06 14:02 | Vault: Agentic-KB | Pages scanned: 661
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 43 | 🟡 Medium |
+| Orphaned pages | 45 | 🟡 Medium |
 | Stale pages | 278 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
@@ -28,6 +28,8 @@
 - `concepts/react-nextjs-performance.md` — React & Next.js Performance Optimization
 - `concepts/solo-founder-ai-leverage.md` — Solo Founder AI Leverage
 - `daily-systems/logs/2026-05-23.md` — 2026-05-23
+- `daily-systems/logs/2026-08-04.md` — 2026-08-04
+- `daily-systems/logs/2026-08-05.md` — 2026-08-05
 - `entities/hermes-agent.md` — Hermes Agent
 - `frameworks/headroom.md` — Headroom
 - `patterns/pattern-morning-review.md` — Morning-Review Pipeline

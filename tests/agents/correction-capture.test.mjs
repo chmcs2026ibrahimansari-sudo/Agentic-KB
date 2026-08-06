@@ -121,3 +121,39 @@ test('every documented correction type is accepted', () => {
   }
   assert.equal(listCorrections(root, CONTRACT).length, CORRECTION_TYPES.length)
 })
+
+test('captureCorrection rejects durability outside DURABILITY_CLASSES', () => {
+  const root = makeRoot()
+  assert.throws(
+    () => captureCorrection(root, CONTRACT, {
+      type: 'tone-correction', original: 'a', correctedTo: 'b', durability: 'forever',
+    }),
+    /Invalid durability/
+  )
+  // A typo'd contract default must fail loudly too, not silently break
+  // durability filters downstream.
+  const contract = { ...CONTRACT, memory_policy: { correction_durability_default: 'permanant' } }
+  assert.throws(
+    () => captureCorrection(root, contract, { type: 'tone-correction', original: 'a', correctedTo: 'b' }),
+    /Invalid durability/
+  )
+})
+
+test('newlines in taskId/confidence/sources cannot inject frontmatter keys', () => {
+  const root = makeRoot()
+  const { path: rel } = captureCorrection(root, CONTRACT, {
+    type: 'factual-correction',
+    original: 'a',
+    correctedTo: 'b',
+    taskId: 'task-1\ninjected_by_task: yes',
+    confidence: 'high\ninjected_by_conf: yes',
+    sources: ['wiki/x.md\ninjected_by_src: yes'],
+  })
+  const raw = fs.readFileSync(path.join(root, rel), 'utf8')
+  const header = raw.split('\n---\n')[0]
+  const headerKeys = header.split('\n').map(l => l.split(':')[0])
+  assert.ok(!headerKeys.includes('injected_by_task'), 'taskId newline must not open a new key')
+  assert.ok(!headerKeys.includes('injected_by_conf'), 'confidence newline must not open a new key')
+  assert.ok(!headerKeys.includes('injected_by_src'), 'source newline must not open a new key')
+  assert.match(header, /task_id: task-1 injected_by_task: yes/)
+})

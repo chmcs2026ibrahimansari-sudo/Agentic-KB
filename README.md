@@ -8,7 +8,18 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 5, 2026 (Latest)
+## What's New — August 6, 2026 (Latest)
+
+Nightly correctness + hardening pass — **384 tests passing** (was 380):
+
+- 🛡️ **Correction capture can't be frontmatter-injected and validates durability** — `captureCorrection` interpolated `taskId`, string `confidence`, and `sources` entries raw into hand-built YAML (a newline in any of them injected arbitrary frontmatter keys — same class as the vault-writeback/ADR/webhook fixes), and the exported `DURABILITY_CLASSES` list was never actually enforced, so a typo'd durability silently broke every downstream durability filter. Fields are one-lined, durability is validated (including a typo'd contract default), regression tests cover both.
+- 🔒 **Corrections survive cross-process races; `getCorrection` can't traverse** — correction files were written with a plain `writeFileSync` and `timestamp()`'s uniqueness counter is per-process, so the MCP server and CLI capturing in the same second silently overwrote each other. Exclusive create with bounded `-2`/`-3` suffixes now (id in the file always matches the filename). `getCorrection` also joined the caller-supplied id straight into a path — `'../hot'` escaped the corrections dir and read arbitrary vault files; non-generated-id shapes return null.
+- 💾 **Torn-write parity, next round** — in-place rewrites with bare `writeFileSync` remained in: retention (`compactHotMemory`/`rotateTaskLog` truncating live `hot.md`/`task-log.md`), promotion (promoted artifact under supersedes, source bus-item seal, canonical doc, rewrite seal), `repairTaskState`'s pointer rebuild/clear (the path that runs precisely when state is already inconsistent), repo sync (`writeImportedDoc` rewriting every synced doc each sync, and the archive-copy-then-unlink window in `archiveRemovedDoc` where a torn archive was the only surviving copy), and the web `ensureId` backfill rewriting articles in place. All now tmp+rename.
+- 📦 **Hot digests stop clobbering each other** — `summarizeHotToLearned` wrote the dated learned digest with a plain write; two processes closing tasks in the same second computed the same path and lost the first digest. Exclusive create with suffix retry; `learnedPath` reflects the file actually written.
+
+---
+
+## What's New — August 5, 2026
 
 Nightly correctness + hardening pass — **380 tests passing** (was 377):
 

@@ -59,6 +59,14 @@ function parseFrontmatter(content: string): { fm: Map<string, string>; raw: stri
  * Ensure a file has an `id:` in its frontmatter. Returns the ID (existing or
  * newly generated). Writes the file only if it had to add one.
  */
+// Atomic tmp + rename: ensureId rewrites existing wiki/raw articles in place
+// to backfill ids — a crash mid-write must never truncate the article itself.
+function atomicWrite(absPath: string, data: string): void {
+  const tmp = absPath + '.tmp-' + process.pid + '-' + Date.now()
+  fs.writeFileSync(/* turbopackIgnore: true */ tmp, data, 'utf8')
+  fs.renameSync(tmp, absPath)
+}
+
 export function ensureId(absPath: string): string | null {
   let content: string
   try { content = fs.readFileSync(/* turbopackIgnore: true */ absPath, 'utf8') } catch { return null }
@@ -74,14 +82,14 @@ export function ensureId(absPath: string): string | null {
     const id = ulid()
     const newFm = `id: ${id}\n${parsed.raw}`
     const updated = `---\n${newFm}\n---${parsed.body}`
-    fs.writeFileSync(/* turbopackIgnore: true */ absPath, updated, 'utf8')
+    atomicWrite(absPath, updated)
     return id
   }
 
   // No frontmatter at all — prepend a minimal block.
   const id = ulid()
   const updated = `---\nid: ${id}\n---\n\n${content}`
-  fs.writeFileSync(/* turbopackIgnore: true */ absPath, updated, 'utf8')
+  atomicWrite(absPath, updated)
   return id
 }
 

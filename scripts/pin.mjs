@@ -41,7 +41,7 @@
  *   node scripts/pin.mjs unlock
  *   node scripts/pin.mjs read stuck-on
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSync, existsSync, appendFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSync, existsSync, appendFileSync, renameSync } from "node:fs";
 import { resolve, basename, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
@@ -262,7 +262,12 @@ async function cmdLock(argvPin, opts = {}) {
     const body = readFileSync(p, "utf8");
     const blob = encryptFile(pin, body);
     const encPath = resolve(ENC_DIR, basename(p) + ".enc");
-    writeFileSync(encPath, blob);
+    // tmp + rename before deleting the plaintext: after unlinkSync the .enc
+    // blob is the ONLY copy of this file, so a crash mid-write must never
+    // leave a truncated (undecryptable) blob as the sole survivor.
+    const tmpPath = encPath + ".tmp-" + process.pid;
+    writeFileSync(tmpPath, blob);
+    renameSync(tmpPath, encPath);
     console.log(`  ${basename(p)} → ${basename(encPath)}`);
     if (!opts.keep) unlinkSync(p);
   }

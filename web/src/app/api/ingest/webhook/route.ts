@@ -158,13 +158,7 @@ function writeRawDoc(vaultRoot: string, doc: NormalizedDoc, namespace = 'default
   fs.mkdirSync(rawDir, { recursive: true })
 
   const date = new Date().toISOString().slice(0, 10)
-  const slug = slugify(doc.title)
-  // Two same-day docs that slugify identically (e.g. two closed issues with
-  // the same title) must not overwrite each other — suffix until unique.
-  let filePath = path.join(rawDir, `${date}-${slug}.md`)
-  for (let n = 2; fs.existsSync(filePath); n++) {
-    filePath = path.join(rawDir, `${date}-${slug}-${n}.md`)
-  }
+  const slug = slugify(doc.title) || 'untitled'
 
   const frontmatter = [
     '---',
@@ -174,13 +168,29 @@ function writeRawDoc(vaultRoot: string, doc: NormalizedDoc, namespace = 'default
     `source: ${oneLine(doc.source)}`,
     `ingested: ${new Date().toISOString()}`,
     doc.url ? `url: ${oneLine(doc.url)}` : null,
-    doc.tags.length ? `tags: [${doc.tags.map(t => oneLine(String(t))).join(', ')}]` : null,
+    // Tags are external input too (GitHub labels, Slack channel names) — a
+    // bare `]`, quote, or `: ` inside one broke the flow sequence and left
+    // the whole doc's frontmatter unparsed. JSON strings are valid YAML
+    // double-quoted scalars.
+    doc.tags.length ? `tags: [${doc.tags.map(t => JSON.stringify(oneLine(String(t)))).join(', ')}]` : null,
     '---',
     '',
   ].filter(l => l !== null).join('\n')
 
-  fs.writeFileSync(filePath, frontmatter + doc.content, 'utf8')
-  return path.relative(vaultRoot, filePath)
+  // Two same-day docs that slugify identically (e.g. two closed issues with
+  // the same title) must not overwrite each other. The old existsSync probe
+  // followed by a plain write still raced concurrent deliveries (GitHub
+  // retries redeliver in parallel) — exclusive create, suffix on EEXIST.
+  for (let n = 1; ; n++) {
+    const name = n === 1 ? `${date}-${slug}.md` : `${date}-${slug}-${n}.md`
+    const filePath = path.join(rawDir, name)
+    try {
+      fs.writeFileSync(filePath, frontmatter + doc.content, { encoding: 'utf8', flag: 'wx' })
+      return path.relative(vaultRoot, filePath)
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'EEXIST' || n >= 1000) throw e
+    }
+  }
 }
 
 // ── Route handler ─────────────────────────────────────────────────────────────

@@ -621,7 +621,13 @@ async function ingestTwitterArchive(archivePath) {
       const t = item.tweet || item
       const text = t.full_text || t.text || ''
       if (text.startsWith('RT @')) continue  // skip retweets
-      const date = t.created_at ? new Date(t.created_at).toISOString().slice(0, 10) : ''
+      // An unparseable created_at makes .toISOString() throw RangeError, which
+      // would abort the whole archive import over a single bad record.
+      let date = ''
+      if (t.created_at) {
+        const d = new Date(t.created_at)
+        if (!Number.isNaN(d.getTime())) date = d.toISOString().slice(0, 10)
+      }
       const likes = t.favorite_count || 0
       const rts = t.retweet_count || 0
       tweetLines.push('**' + date + '** (❤️ ' + likes + ' 🔁 ' + rts + ')  ')
@@ -841,7 +847,10 @@ async function reindexLocal() {
     // Update count in section headers like "## Concepts (16)"
     content = content.replace(
       new RegExp(`## ${capitalized}s?\\s*\\(\\d+\\)`, 'g'),
-      `## ${capitalized}${section.endsWith('s') ? '' : 's'} (${count})`
+      // Use the section name verbatim — the old `+ 's'` branch turned the
+      // singular `## Personal (N)` heading into `## Personals (N)` and, because
+      // the pattern also matched the mangled form, never repaired it.
+      `## ${capitalized} (${count})`
     )
   }
 
@@ -1356,7 +1365,10 @@ async function repoCmd(sub, rest) {
   if (sub === 'progress') {
     const name = rest[0]
     if (!name) throw new Error('Usage: kb repo progress <name>')
-    const progPath = pathMod.join(AGENT_KB_ROOT, 'wiki', 'repos', name, 'progress.md')
+    // name is unvalidated user input; without validateSlug/safeJoin a value
+    // like ../../.. reads outside the KB (every other fs command here guards).
+    const safeName = validateSlug(String(name), 'repo')
+    const progPath = safeJoin(AGENT_KB_ROOT, 'wiki', 'repos', safeName, 'progress.md')
     if (!fs.existsSync(progPath)) { console.log(`No progress file for ${name}`); return }
     const content = fs.readFileSync(progPath, 'utf8')
     console.log(content)

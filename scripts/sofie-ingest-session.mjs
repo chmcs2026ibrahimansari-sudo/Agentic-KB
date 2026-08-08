@@ -102,17 +102,21 @@ const outPath = path.join(QA_DIR, `${slug}.md`)
 
 // ─── Build frontmatter ───────────────────────────────────────────────────────
 
+// Title/tags/source_path come from argv or filenames — JSON-escape them onto
+// one line so a quote, newline, or ': ' can't break or inject the YAML
+// (same class as the webhook and sofie-watch fixes).
+const oneLine = (v) => String(v).replace(/[\r\n]+/g, ' ').trim()
 const wordCount = content.split(/\s+/).filter(Boolean).length
 const frontmatter = `---
-title: "${sourceTitle}"
+title: ${JSON.stringify(oneLine(sourceTitle))}
 type: qa
 source: sofie-chief-of-staff
 verified: ${verified}
 date: ${dateStr}
 ingested_at: ${now.toISOString()}
-tags: [${tags.join(', ')}]
+tags: [${tags.map(t => JSON.stringify(oneLine(t))).join(', ')}]
 word_count: ${wordCount}
-${sourcePath ? `source_path: "${sourcePath}"` : ''}
+${sourcePath ? `source_path: ${JSON.stringify(oneLine(sourcePath))}` : ''}
 ---
 
 `
@@ -134,8 +138,19 @@ if (dryRun) {
 }
 
 fs.mkdirSync(QA_DIR, { recursive: true })
-fs.writeFileSync(outPath, fullContent, 'utf8')
+// Exclusive create with suffix: a second session ingested under the same
+// title on the same day used to silently overwrite the first.
+let finalSlug = slug
+for (let n = 1; ; n++) {
+  finalSlug = n === 1 ? slug : `${slug}-${n}`
+  try {
+    fs.writeFileSync(path.join(QA_DIR, `${finalSlug}.md`), fullContent, { encoding: 'utf8', flag: 'wx' })
+    break
+  } catch (err) {
+    if (err.code !== 'EEXIST' || n >= 1000) throw err
+  }
+}
 
-console.log(`\n✅ Ingested to raw/qa/${slug}.md`)
+console.log(`\n✅ Ingested to raw/qa/${finalSlug}.md`)
 console.log(`   Words: ${wordCount} | Verified: ${verified}`)
 console.log(`\n   Next: run "node cli/kb.js compile" or "kb compile" to fold into wiki`)

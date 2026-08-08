@@ -21,6 +21,7 @@ import { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import fs from 'fs'
 import path from 'path'
+import { safeJoin } from '@/lib/safe-path'
 import { resolveContentRoot } from '@/lib/articles'
 import { resolveVaultRoot } from '@/lib/vault'
 import { KB_MODEL } from '@/lib/model'
@@ -141,12 +142,15 @@ function reindexWiki(wikiRoot: string): void {
 
 export async function POST(request: NextRequest): Promise<Response> {
   // PIN check for private vaults
-  let pin = ''
+  // Read the header first: a POST with no JSON body throws at request.json(),
+  // and the header read must not be lost inside that catch (a valid
+  // x-private-pin would otherwise be rejected as missing).
+  let pin = request.headers.get('x-private-pin') || ''
   let mode: 'incremental' | 'full' = 'incremental'
   let vault: string | undefined
   try {
     const body = await request.json() as { pin?: string; mode?: string; vault?: string }
-    pin = body.pin || request.headers.get('x-private-pin') || ''
+    pin = body.pin || pin
     mode = body.mode === 'full' ? 'full' : 'incremental'
     vault = body.vault
   } catch { /* defaults */ }
@@ -345,7 +349,13 @@ Rules:
 
           for (const op of ops) {
             if (!op.path || !op.content) continue
-            const pagePath = path.join(/* turbopackIgnore: true */ wikiRoot, op.path)
+            // op.path comes from the model, whose input is untrusted raw/ content
+            // — a prompt-injected source could nominate ../../.ssh/authorized_keys.
+            // safeJoin rejects traversal/absolute/NUL; restrict to markdown pages.
+            if (!/\.(md|mdx)$/.test(op.path)) { send({ type: 'skip', file: relFile, reason: `refused non-markdown op path: ${op.path}` }); continue }
+            let pagePath: string
+            try { pagePath = safeJoin(wikiRoot, op.path) }
+            catch { send({ type: 'skip', file: relFile, reason: `refused unsafe op path: ${op.path}` }); continue }
             fs.mkdirSync(/* turbopackIgnore: true */ path.dirname(pagePath), { recursive: true })
             const existed = fs.existsSync(/* turbopackIgnore: true */ pagePath)
             fs.writeFileSync(/* turbopackIgnore: true */ pagePath, op.content, 'utf8')

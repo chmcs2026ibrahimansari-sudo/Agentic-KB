@@ -50,6 +50,10 @@ test('decayScore: never drops below the class floor, exempt classes always 1.0',
   // No profile at all falls back to the default profile, not NaN
   const fallback = decayScore(30, undefined)
   assert.ok(Number.isFinite(fallback) && fallback > 0 && fallback <= 1)
+  // A truthy-but-partial profile must also stay finite (missing halfLifeDays
+  // previously produced NaN and poisoned every downstream freshness sort).
+  const partial = decayScore(30, { floor: 0.3 })
+  assert.ok(Number.isFinite(partial) && partial >= 0.3 && partial <= 1)
 })
 
 // ─── inferClass ─────────────────────────────────────────────────────────

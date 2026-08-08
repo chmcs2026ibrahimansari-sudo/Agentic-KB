@@ -378,15 +378,20 @@ export function writeRawMaterial(material: RawMaterial): string {
   const fileContent = frontmatter + material.content
 
   // Two materials whose titles slugify identically must not overwrite each
-  // other — suffix until unique (same rule as the webhook ingest route).
+  // other — exclusive create (wx) with numeric suffixes, so two concurrent
+  // ingests can't both pass an existsSync check and clobber one another
+  // (same rule as the webhook ingest route and cli writeUniqueFileSync).
   let filePath = path.join(typeDir, slug + '.md')
-  for (let n = 2; fs.existsSync(filePath); n++) {
-    filePath = path.join(typeDir, `${slug}-${n}.md`)
+  for (let n = 2; n < 1000; n++) {
+    try {
+      fs.writeFileSync(filePath, fileContent, { encoding: 'utf8', flag: 'wx' })
+      return `raw/${material.type}/${path.basename(filePath)}`
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'EEXIST') throw e
+      filePath = path.join(typeDir, `${slug}-${n}.md`)
+    }
   }
-
-  fs.writeFileSync(filePath, fileContent, 'utf8')
-
-  return `raw/${material.type}/${path.basename(filePath)}`
+  throw new Error(`could not allocate a unique filename for ${slug}.md`)
 }
 
 export { WIKI_SECTIONS }

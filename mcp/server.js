@@ -81,7 +81,9 @@ function listWikiFiles(section) {
     for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
       const full = path.join(d, entry.name)
       if (entry.isDirectory()) walk(full)
-      else if (entry.name.endsWith('.md')) results.push(full)
+      // isFile() excludes symlinks: readdir does not follow them, but readFile
+      // does, so a *.md symlink to ~/.ssh/id_rsa would otherwise be read.
+      else if (entry.isFile() && entry.name.endsWith('.md')) results.push(full)
     }
   }
   walk(dir)
@@ -722,11 +724,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       if (!articleContent) {
         return { content: [{ type: 'text', text: `Article not found: ${slug}` }] }
       }
-      // Check visibility — private articles require PIN
+      // Check visibility — anything not explicitly public requires a PIN.
       const meta = parseFrontmatter(articleContent)
-      const isPersonalPath = slug.startsWith('personal/')
+      // Derive personal-ness from the resolved path, lower-cased: validateSlug
+      // permits `Personal/foo`, which on a case-insensitive filesystem reads the
+      // same private file but a case-sensitive `startsWith('personal/')` missed.
+      const relFromWiki = path.relative(WIKI_ROOT, filePath).split(path.sep).join('/').toLowerCase()
+      const isPersonalPath = relFromWiki.startsWith('personal/')
       const visibility = isPersonalPath ? 'private' : (meta.visibility || 'public')
-      if (visibility === 'private') {
+      // Fail closed: gate on !== 'public' so an unrecognised value (internal,
+      // team, ...) is not served without a PIN, matching simpleSearch's scope.
+      if (visibility !== 'public') {
         const pinErr = requirePin('private', args.pin, 'read_article (private)')
         if (pinErr) return pinErr
       }
@@ -988,7 +996,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
           const full = path.join(d, entry.name)
           if (entry.isDirectory()) walkDir(full)
-          else if (entry.name.endsWith('.md')) {
+          // isFile() excludes symlinks (see listWikiFiles walker).
+          else if (entry.isFile() && entry.name.endsWith('.md')) {
             // Per-file try/catch (same as simpleSearch): one unreadable file
             // must not abort the whole search with an MCP error.
             try {

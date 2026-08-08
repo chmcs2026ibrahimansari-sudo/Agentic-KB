@@ -56,10 +56,10 @@ function appendToIndex(entry: string, section: string): void {
 // Claude's response includes the wiki paths to write. The raw file being
 // processed is untrusted content, so a prompt-injected source could steer the
 // model into emitting paths like ../../.ssh/... — only wiki/*.md is writable.
-function resolveWikiPagePath(rel: string): string {
+function resolveWikiPagePath(rel: string, requiredPrefix = 'wiki/'): string {
   const normalized = String(rel).replace(/\\/g, '/')
-  if (!normalized.startsWith('wiki/') || !/\.(md|mdx)$/.test(normalized)) {
-    throw new Error(`Refusing to write outside wiki/: ${normalized}`)
+  if (!normalized.startsWith(requiredPrefix) || !/\.(md|mdx)$/.test(normalized)) {
+    throw new Error(`Refusing to write outside ${requiredPrefix}: ${normalized}`)
   }
   return safeJoin(KB_ROOT, normalized)
 }
@@ -181,8 +181,12 @@ Rules:
           return
         }
 
-        // Write summary page
-        const summaryPath = resolveWikiPagePath(result.summaryPage.path)
+        // Write summary page. The summary is the one page this workflow may
+        // overwrite (re-ingest refreshes it) — so it must stay confined to
+        // wiki/summaries/, or a prompt-injected source could replace any
+        // existing wiki page (index.md, home.md, a concept) with its own
+        // content by picking that path for "summaryPage".
+        const summaryPath = resolveWikiPagePath(result.summaryPage.path, 'wiki/summaries/')
         fs.mkdirSync(path.dirname(summaryPath), { recursive: true })
         fs.writeFileSync(summaryPath, result.summaryPage.content)
         send(controller, { type: 'wrote', path: result.summaryPage.path })

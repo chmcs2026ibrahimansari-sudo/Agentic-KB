@@ -79,10 +79,12 @@ function collectWikiSummaries(wikiRoot: string): PageSummary[] {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  let pin = ''
+  // Header first so a header-only PIN survives a body-less POST (request.json
+  // throws with no body, which would otherwise drop the header read).
+  let pin = request.headers.get('x-private-pin') || ''
   try {
     const body = await request.json() as { pin?: string }
-    pin = body.pin || request.headers.get('x-private-pin') || ''
+    pin = body.pin || pin
   } catch { /* defaults */ }
 
   if (PRIVATE_PIN && !pinMatches(pin, PRIVATE_PIN)) {

@@ -8,7 +8,19 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 6, 2026 (Latest)
+## What's New — August 8, 2026 (Latest)
+
+Nightly correctness + hardening pass — **387 tests passing** (was 384):
+
+- 🔒 **Wiki slug lookups can't traverse out of the wiki root** — `findArticleBySlug`/`findArticleInVault` joined the caller-supplied slug straight into the wiki root before the existence probe, so `/api/article?slug=../raw/foo` (and the `/wiki/[...slug]` page) read any `.md` under KB_ROOT without a PIN — raw/ staging material defaults to public visibility. The `path=` branch of the same route was already guarded; the `slug=` branch now routes through `safeJoin` too.
+- 🛡️ **Webhook + Sofie ingest: exclusive creates and YAML-escaped external fields, everywhere** — the webhook route, `sofie-watch-obsidian`, and `sofie-ingest-session` all still probed with `existsSync` then wrote plainly (concurrent GitHub redeliveries, or a daily note and meeting note sharing a basename — every day — silently clobbered each other), and interpolated titles/tags/paths raw into frontmatter where a quote or `: ` broke or injected the YAML. All three now use `wx` create with `-2`/`-3` suffixes and JSON-escaped one-line scalars.
+- 🧹 **One bad redaction rule no longer disables the rest** — `loadCustomRules` compiled every `config/redaction.yaml` rule inside a single try/catch, so one malformed regex silently switched off all other client-name redaction on the Vault → KB ingest path. Per-rule compile now: log and skip just the bad rule.
+- 💾 **`pin lock` writes .enc blobs atomically** — it deleted the plaintext right after a bare `writeFileSync` of the encrypted blob; a crash mid-write left a truncated, undecryptable blob as the *only* copy of the private note. tmp+rename before the unlink, matching the repo-wide torn-write pattern.
+- 📦 **keyv pinned via npm override** — audited all three lockfiles against the Aug 4, 2026 npm supply-chain attack (keyv/cacheable + ~444 packages, malicious preinstall hooks). Only exposure: dev-only `keyv` (eslint → flat-cache), already locked to a pre-compromise 2023 release; the override keeps the `^` range from ever floating to a poisoned publish.
+
+---
+
+## What's New — August 6, 2026
 
 Nightly correctness + hardening pass — **384 tests passing** (was 380):
 

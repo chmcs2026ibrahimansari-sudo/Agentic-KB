@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { safeJoin } from './safe-path'
 
 export const DEFAULT_KB_ROOT = process.env.KB_ROOT || '/Users/jaywest/Agentic-KB'
 export const KB_ROOT = DEFAULT_KB_ROOT  // keep for backward compat
@@ -189,10 +190,18 @@ export function findArticleBySlug(slug: string): ArticleContent | null {
   // slug might be "concepts/foo" or "concepts/foo.md"
   const cleanSlug = slug.replace(/\.md$/, '')
 
-  // Try direct path first
-  const directPath = path.join(WIKI_ROOT, cleanSlug + '.md')
-  if (fs.existsSync(directPath)) {
-    return parseArticle(directPath)
+  // Try direct path first. The slug is caller-supplied (/api/article?slug=,
+  // /wiki/[...slug]) — a bare path.join let "../raw/foo" escape wiki/ and
+  // read un-PIN-gated private material, since visibility defaults to public
+  // for anything outside wiki/personal/. safeJoin throws on escape; fall
+  // through to the enumerated scan, which only ever matches real wiki files.
+  try {
+    const directPath = safeJoin(WIKI_ROOT, cleanSlug + '.md')
+    if (fs.existsSync(directPath)) {
+      return parseArticle(directPath)
+    }
+  } catch {
+    // traversal attempt — no direct match possible
   }
 
   // Try searching all wiki files
@@ -460,8 +469,14 @@ export function parseFileInVault(filePath: string, vaultRoot: string): ArticleCo
 export function findArticleInVault(slug: string, vaultRoot: string): ArticleContent | null {
   const contentRoot = resolveContentRoot(vaultRoot)
   const cleanSlug = slug.replace(/\.md$/, '')
-  const direct = path.join(contentRoot, cleanSlug + '.md')
-  if (fs.existsSync(direct)) return parseFileInVault(direct, vaultRoot)
+  // Same traversal guard as findArticleBySlug — slug reaches here from the
+  // wiki route with a non-default vault selected.
+  try {
+    const direct = safeJoin(contentRoot, cleanSlug + '.md')
+    if (fs.existsSync(direct)) return parseFileInVault(direct, vaultRoot)
+  } catch {
+    // traversal attempt — fall through to the scan
+  }
   for (const filePath of listFilesUnder(contentRoot)) {
     const rel = path.relative(contentRoot, filePath).replace(/\\/g, '/').replace(/\.md$/, '')
     if (rel === cleanSlug) return parseFileInVault(filePath, vaultRoot)

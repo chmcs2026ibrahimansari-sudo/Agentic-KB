@@ -1,7 +1,10 @@
 // Redaction layer tests.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { redact, redactDefault, _DEFAULT_RULES } from '../../lib/agent-runtime/redaction.mjs'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { redact, redactDefault, loadCustomRules, _DEFAULT_RULES } from '../../lib/agent-runtime/redaction.mjs'
 
 test('redaction: emails scrubbed', () => {
   const r = redactDefault('Contact me at jay@example.com or jay+work@acme.io anytime.')
@@ -65,4 +68,22 @@ test('redaction: custom rule via redact()', () => {
 
 test('redaction: default rules list is non-empty', () => {
   assert.ok(_DEFAULT_RULES.length >= 5)
+})
+
+test('redaction: one invalid custom rule does not drop the others', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'redaction-'))
+  fs.mkdirSync(path.join(dir, 'config'), { recursive: true })
+  fs.writeFileSync(path.join(dir, 'config', 'redaction.yaml'), [
+    'rules:',
+    '  - id: good-before',
+    '    pattern: "\\\\bBEFORE\\\\b"',
+    '  - id: broken',
+    '    pattern: "[unclosed"',
+    '  - id: good-after',
+    '    pattern: "\\\\bAFTER\\\\b"',
+  ].join('\n'))
+  const rules = loadCustomRules(dir)
+  assert.deepEqual(rules.map(r => r.id), ['good-before', 'good-after'])
+  const r = redact('BEFORE and AFTER', rules)
+  assert.equal(r.redacted, '[GOOD-BEFORE] and [GOOD-AFTER]')
 })

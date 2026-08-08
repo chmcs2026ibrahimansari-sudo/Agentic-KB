@@ -78,6 +78,17 @@ test('listContracts returns all contracts', () => {
   assert.equal(all.length, 1)
 })
 
+test('loadContract rejects a contract that is not a YAML mapping', () => {
+  const root = makeFixture()
+  // A scalar document previously threw an opaque "Cannot create property
+  // 'agent_id' on string" TypeError inside loadContract.
+  fs.writeFileSync(path.join(root, 'config/agents/bad.yaml'), 'just-a-bare-string')
+  assert.throws(() => rt.loadContract(root, 'bad'), /YAML mapping/)
+  // Syntactically broken YAML surfaces as a clear validation error too.
+  fs.writeFileSync(path.join(root, 'config/agents/broken.yaml'), 'a: [1, 2, 3')
+  assert.throws(() => rt.loadContract(root, 'broken'), /invalid YAML/)
+})
+
 test('loadContract loads .yml contracts too (listContracts accepts both extensions)', () => {
   const root = makeFixture()
   fs.writeFileSync(path.join(root, 'config/agents/w2.yml'), `

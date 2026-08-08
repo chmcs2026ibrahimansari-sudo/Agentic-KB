@@ -107,9 +107,7 @@ function ingestFile(obsidianPath, log, { forceMtime = false } = {}) {
   const now = new Date()
   const dateStr = now.toISOString().slice(0, 10)
   const baseName = path.basename(obsidianPath, '.md')
-  const slug = baseName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50)
-  const outFile = `obsidian-${dateStr}-${slug}.md`
-  const outPath = path.join(TRANSCRIPTS_DIR, outFile)
+  const slug = baseName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50) || 'note'
 
   const type = detectType(rel)
 
@@ -118,11 +116,17 @@ function ingestFile(obsidianPath, log, { forceMtime = false } = {}) {
     ? `ingest_status: pending\n`
     : ''
 
+  // Title and source_path come from vault filenames — a quote or newline in a
+  // note name injected arbitrary frontmatter keys or broke the YAML scalar
+  // (same class fixed in the ADR emitter / webhook / vault fanout). JSON
+  // strings are valid YAML double-quoted scalars.
+  const oneLine = (v) => String(v).replace(/[\r\n]+/g, ' ').trim()
+
   const frontmatter = `---
-title: "${baseName}"
+title: ${JSON.stringify(oneLine(baseName))}
 type: ${type}
 source: obsidian-vault
-source_path: "${rel}"
+source_path: ${JSON.stringify(oneLine(rel))}
 verified: false
 ${ingestStatusLine}date: ${dateStr}
 ingested_at: ${now.toISOString()}
@@ -132,7 +136,28 @@ tags: [sofie, obsidian, ${type}]
 `
 
   fs.mkdirSync(TRANSCRIPTS_DIR, { recursive: true })
-  fs.writeFileSync(outPath, frontmatter + content.trim() + '\n', 'utf8')
+  const payload = frontmatter + content.trim() + '\n'
+
+  // Re-ingesting a modified note updates the file it originally staged to.
+  // A NEW note allocates an unclaimed name: two vault files with the same
+  // basename on the same day (e.g. daily-notes/2026-08-08.md and
+  // 05 - Meetings/2026-08-08.md) used to collapse onto one outFile and
+  // silently clobber each other. Exclusive create + suffix, same pattern as
+  // the webhook/ingest routes.
+  let outFile = log.ingested[rel]?.outFile
+  if (outFile) {
+    fs.writeFileSync(path.join(TRANSCRIPTS_DIR, outFile), payload, 'utf8')
+  } else {
+    for (let n = 1; ; n++) {
+      outFile = n === 1 ? `obsidian-${dateStr}-${slug}.md` : `obsidian-${dateStr}-${slug}-${n}.md`
+      try {
+        fs.writeFileSync(path.join(TRANSCRIPTS_DIR, outFile), payload, { encoding: 'utf8', flag: 'wx' })
+        break
+      } catch (err) {
+        if (err.code !== 'EEXIST' || n >= 1000) throw err
+      }
+    }
+  }
 
   log.ingested[rel] = { mtime, outFile, type, ingestedAt: now.toISOString() }
   console.log(`  [+] ${rel} → raw/transcripts/${outFile}  (${type})`)

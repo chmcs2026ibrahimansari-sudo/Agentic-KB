@@ -22,7 +22,9 @@ import crypto from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
-const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const REPO = process.env.KB_ROOT
+  ? path.resolve(process.env.KB_ROOT)
+  : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const HASH_FILE = path.join(REPO, 'raw/.ingest-hashes.json')
 
 const args = process.argv.slice(2)
@@ -47,7 +49,29 @@ async function loadHashes() {
 
 async function saveHashes(map) {
   await fs.mkdir(path.dirname(HASH_FILE), { recursive: true })
-  await fs.writeFile(HASH_FILE, JSON.stringify(map, null, 2) + '\n')
+  // tmp+rename: a crash mid-write must not truncate the dedup ledger.
+  const tmp = `${HASH_FILE}.tmp-${process.pid}`
+  await fs.writeFile(tmp, JSON.stringify(map, null, 2) + '\n')
+  await fs.rename(tmp, HASH_FILE)
+}
+
+/** Move src to target, appending -2, -3, … before the extension instead of
+ *  overwriting a different file that already routed under the same name. */
+async function renameUnique(src, target) {
+  const dir = path.dirname(target)
+  const ext = path.extname(target)
+  const stem = path.basename(target, ext)
+  let candidate = target
+  for (let i = 2; i < 1000; i++) {
+    try {
+      await fs.access(candidate)
+      candidate = path.join(dir, `${stem}-${i}${ext}`)
+    } catch {
+      await fs.rename(src, candidate)
+      return candidate
+    }
+  }
+  throw new Error(`could not allocate a unique routed filename for ${path.basename(target)}`)
 }
 
 /** Cheap content-aware type detection — returns one of the raw/ subdirs. */
@@ -100,9 +124,9 @@ async function main() {
     const hash = await hashFile(file)
     if (hashes[hash]) { skipped.push({ name, prev: hashes[hash].path }); continue }
     const sub = await detectType(name, file)
-    const target = path.join(await ensureRawSubdir(sub), name)
+    let target = path.join(await ensureRawSubdir(sub), name)
     if (DRY) { ingested.push({ name, sub, target, hash }); continue }
-    if (ROUTE) await fs.rename(file, target)
+    if (ROUTE) target = await renameUnique(file, target)
     hashes[hash] = { path: path.relative(REPO, target), at: new Date().toISOString() }
     ingested.push({ name, sub, target, hash })
     if (!NO_INGEST && ROUTE) {

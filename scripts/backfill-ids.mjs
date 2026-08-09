@@ -24,6 +24,13 @@ function ulid() {
   for (const b of crypto.randomBytes(10)) r = (r << 8n) | BigInt(b)
   return t + enc(r, 16)
 }
+// tmp+rename in the same directory: a crash mid-write must not truncate a
+// wiki article (same rule the web id-backfill route follows).
+function writeAtomic(abs, content) {
+  const tmp = `${abs}.tmp-${process.pid}`
+  fs.writeFileSync(tmp, content, 'utf8')
+  fs.renameSync(tmp, abs)
+}
 function* walk(dir) {
   let ents
   try { ents = fs.readdirSync(dir, { withFileTypes: true }) } catch { return }
@@ -45,12 +52,12 @@ for (const sub of SCAN) {
     if (fmMatch) {
       if (/^id:\s*\S/m.test(fmMatch[1])) { skipped++; continue }
       const updated = `---\nid: ${ulid()}\n${fmMatch[1]}\n---${content.slice(fmMatch[0].length)}`
-      fs.writeFileSync(abs, updated, 'utf8')
+      writeAtomic(abs, updated)
       added++
     } else {
       // prepend minimal frontmatter
       const updated = `---\nid: ${ulid()}\n---\n\n${content}`
-      fs.writeFileSync(abs, updated, 'utf8')
+      writeAtomic(abs, updated)
       noFm++
       added++
     }

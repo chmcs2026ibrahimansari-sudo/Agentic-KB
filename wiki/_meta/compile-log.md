@@ -9,3 +9,13 @@ id: 01KX98V9PCZ9ZH97GK569PR45B
 - **Source:** `framework-docs/chopratejas-headroom.md`
 - **Created:** `frameworks/headroom.md`
 - **Notes:** Token-compression proxy/library. Jay flagged for Hermes evaluation. Cross-referenced `concepts/agent-memory-runtime.md` and `concepts/agent-resources-platform.md`.
+
+## 2026-08-08T14:20:10.935Z
+- promote: 29
+- defer:    137
+- graduate: 0
+
+## 2026-08-08T14:21:50.031Z
+- promote: 29
+- defer:    137
+- graduate: 0

@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-08 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-context-compression-vs-compilation|Context Compression vs. Context Compilation]] — Headroom (compress at use) and obsidian-wiki (compile in advance) are complements, not substitutes, for context cost
+
 ## 2026-06-01 (Obsidian living graph alignment)
 
 - [[wiki/personal/decision-defer-smart-connections-2026-06-01|Defer Smart Connections]] — Decision: use Hermes/MCP link suggestions + Sofie writeback instead of in-vault Smart Connections

@@ -258,7 +258,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (17)
+## Syntheses (18)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -279,6 +279,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-rrf-as-rlm-fusion-stage]] | What algorithm fills the score-merging slot in the RLM Pipeline's multi-source retrieval stages (4–9), and why is it Reciprocal Rank Fusion? | 2026-05-27 |
 | [[syntheses/synthesis-skills-as-evaluable-artifacts]] | When should an agent skill be treated as a tested software artifact instead of a prose instruction file? | 2026-06-25 |
 | [[syntheses/synthesis-agentic-engineering-operating-model]] | What operating model makes agentic engineering useful instead of performative? | 2026-07-10 |
+| [[syntheses/synthesis-context-compression-vs-compilation]] | Are Headroom-style runtime compression and obsidian-wiki-style knowledge compilation substitutes or complements for managing context cost? | 2026-08-08 |
 
 ---
 

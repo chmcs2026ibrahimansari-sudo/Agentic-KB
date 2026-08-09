@@ -1146,3 +1146,18 @@ Pages affected: `frameworks/headroom.md`, `_meta/compile-log.md`
 **Contradictions flagged:** None.
 
 **Briefing:** `briefings/2026-07-30.md`.
+
+
+---
+
+## 2026-08-08 — morning-review-daily apply pass (session with Jay)
+
+**Created:** `wiki/syntheses/synthesis-context-compression-vs-compilation.md` (reviewed: false) — top cross-domain connection from today's KB intelligence (Headroom ↔ obsidian-wiki). Linked from index.md and recently-added.md.
+
+**Proposals:** `foundry-propose --execute` persisted 1 new proposal (defer backlog 137 > 50 threshold) to `wiki/_meta/proposals.md`.
+
+**Compile gate:** plan identified 29 PROMOTE themes / 137 DEFER / 0 GRADUATE; `kb compile` execution BLOCKED by two infra defects: (1) stale ANTHROPIC_API_KEY in `.env` (fixed locally — replaced with the valid key from `web/.env.local`; backup at `.env.bak-20260808`); (2) `/api/compile` generation call caps at max_tokens: 4096 and requires a complete JSON array — multi-page outputs truncate, regex finds no closing bracket, and every doc skips with "LLM returned no valid JSON". Needs a code fix in `web/src/app/api/compile/route.ts` (raise max_tokens / stream-continue / per-page ops) + `next build`.
+
+**Contradictions flagged:** None new.
+
+**Process:** morning-review-daily scheduled task updated to apply-by-default (Step 5: compile gate --execute, propose --execute, provenance markers, 1 synthesis/day, git commit+push).

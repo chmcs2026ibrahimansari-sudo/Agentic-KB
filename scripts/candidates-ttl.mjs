@@ -21,7 +21,9 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const KB_ROOT = path.resolve(__dirname, '..')
+const KB_ROOT = process.env.KB_ROOT
+  ? path.resolve(process.env.KB_ROOT)
+  : path.resolve(__dirname, '..')
 const TTL_DAYS = parseInt(process.env.KB_CANDIDATES_TTL_DAYS || '90', 10)
 
 const CANDIDATES = path.join(KB_ROOT, 'wiki/candidates.md')

@@ -8,7 +8,19 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 8, 2026 (Latest)
+## What's New — August 9, 2026 (Latest)
+
+Nightly correctness + hardening pass — **395 tests passing** (was 387):
+
+- 📦 **npm lifecycle scripts disabled in all four package roots** — `.npmrc` with `ignore-scripts=true` in root, `cli/`, `mcp/`, and `web/`. The Aug 4–5 Shai-Hulud npm worm spread via malicious preinstall hooks (keyv/cacheable/flat-cache + 400 downstream packages); keyv is already pinned, and now a future compromised transitive dep can't execute code at install time either. web's `flat-cache 4.0.1` / `file-entry-cache 8.0.0` were re-audited: locked to pre-attack releases, clean.
+- 🗃️ **Candidates TTL expiry can't clobber or corrupt** — `candidates-ttl.mjs` interpolated the source list raw inside double quotes in the archive frontmatter (one embedded quote → invalid YAML), overwrote a returning theme's earlier archive record on re-expiry, and rewrote `candidates.md`/the sidecar tracker in place. Now: JSON-escaped `final_sources`, exclusive-create archives with `-2` suffixes, tmp+rename rewrites — with subprocess tests covering all three.
+- 📥 **Ingest routing stops eating same-named files** — `ingest-dedup.mjs` `rename`d inbox files onto `raw/<subdir>/<name>` unconditionally: a new clipping with a previously-used filename (different content — the hash check only catches *identical* bytes) silently replaced the routed original. Routed names now get `-2`/`-3` suffixes like every other writer, and the `.ingest-hashes.json` dedup ledger is written tmp+rename so a crash can't truncate it into mass re-ingestion. Covered by new subprocess tests.
+- 💾 **`backfill-ids` joins the torn-write pattern** — it rewrote every wiki/raw markdown file in place to insert ids; a crash mid-write truncated the article. tmp+rename now, matching the web id-backfill fix (a775d23).
+- 🎬 **`kb ingest-youtube` frontmatter can't be injected** — video title, channel name, duration, and the argv URL went into the transcript's YAML raw (title via a quote-swap hack); a quote or newline in any of them broke or injected frontmatter keys. JSON-escaped scalars now, same class as the sofie-ingest argv fix.
+
+---
+
+## What's New — August 8, 2026
 
 Nightly correctness + hardening pass — **387 tests passing** (was 384):
 

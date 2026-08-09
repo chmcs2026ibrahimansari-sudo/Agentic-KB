@@ -89,8 +89,28 @@ if (!apply) {
 
 // Apply: archive each expired theme + rewrite candidates.md + update tracker
 fs.mkdirSync(ARCHIVE_DIR, { recursive: true })
+// Atomic tmp+rename so a crash mid-write can't leave a truncated file.
+function writeAtomic(target, content) {
+  const tmp = `${target}.tmp-${process.pid}`
+  fs.writeFileSync(tmp, content)
+  fs.renameSync(tmp, target)
+}
+// Exclusive create with numeric suffixes: a theme that expires, reappears,
+// and expires again must not overwrite its earlier archive record.
+function writeUniqueArchive(name, content) {
+  let target = path.join(ARCHIVE_DIR, `${name}.md`)
+  for (let i = 2; i < 1000; i++) {
+    try {
+      fs.writeFileSync(target, content, { encoding: 'utf8', flag: 'wx' })
+      return target
+    } catch (err) {
+      if (err.code !== 'EEXIST') throw err
+      target = path.join(ARCHIVE_DIR, `${name}-${i}.md`)
+    }
+  }
+  throw new Error(`could not allocate a unique archive filename for ${name}.md`)
+}
 for (const e of expired) {
-  const archivePath = path.join(ARCHIVE_DIR, `${e.name}.md`)
   const content = [
     '---',
     `title: "Expired candidate: ${e.name}"`,
@@ -99,7 +119,7 @@ for (const e of expired) {
     `first_seen: ${e.first_seen}`,
     `last_seen: ${e.last_seen}`,
     `ttl_days: ${TTL_DAYS}`,
-    `final_sources: "${e.sources || ''}"`,
+    `final_sources: ${JSON.stringify(String(e.sources || ''))}`,
     '---',
     '',
     `# Expired candidate — ${e.name}`,
@@ -108,7 +128,7 @@ for (const e of expired) {
     `Did not reach 2-source threshold within TTL (${TTL_DAYS}d).`,
     '',
   ].join('\n')
-  fs.writeFileSync(archivePath, content)
+  writeUniqueArchive(e.name, content)
   delete tracker[e.name]
 }
 
@@ -120,9 +140,9 @@ const newBody = body.split('\n').filter(line => {
   const m = line.match(/^-\s+([a-z0-9][a-z0-9-]*)\s*\(/)
   return !m || !expired.some(e => e.name === m[1])
 }).join('\n')
-fs.writeFileSync(CANDIDATES, updatedFm + '\n' + newBody.replace(/^\n+/, '\n'))
+writeAtomic(CANDIDATES, updatedFm + '\n' + newBody.replace(/^\n+/, '\n'))
 
-fs.writeFileSync(TRACKER, JSON.stringify(tracker, null, 2) + '\n')
+writeAtomic(TRACKER, JSON.stringify(tracker, null, 2) + '\n')
 
 console.log(`\n✓ Archived ${expired.length} → wiki/archive/candidates-expired/`)
 console.log(`✓ Updated tracker (${Object.keys(tracker).length} active themes)`)

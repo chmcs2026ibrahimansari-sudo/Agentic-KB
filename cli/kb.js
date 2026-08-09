@@ -530,13 +530,15 @@ async function ingestYoutube(url) {
 
     const frontmatter = [
       '---',
-      'title: "' + title.replace(/"/g, "'") + '"',
+      // JSON.stringify produces valid YAML double-quoted scalars and escapes
+      // quotes/newlines — yt-dlp metadata and the argv URL are untrusted.
+      'title: ' + JSON.stringify(title),
       'type: transcript',
       'source: youtube',
-      'url: ' + url,
-      'author: ' + uploader,
+      'url: ' + JSON.stringify(String(url)),
+      'author: ' + JSON.stringify(uploader),
       'date: ' + date,
-      'duration: ' + duration,
+      'duration: ' + JSON.stringify(duration),
       'tags: [youtube, transcript]',
       '---',
       '',

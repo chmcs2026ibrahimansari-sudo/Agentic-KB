@@ -171,7 +171,9 @@ function writeReceipt(receipt) {
 
   const briefingPath = path.join(briefingDir, `graph-maintenance-${date}.md`)
   const md = formatBriefing(receipt)
-  fs.writeFileSync(briefingPath, md)
+  const briefingTmp = briefingPath + '.tmp-' + process.pid
+  fs.writeFileSync(briefingTmp, md)
+  fs.renameSync(briefingTmp, briefingPath)
 
   const state = {
     last_run: receipt.scanned_at,
@@ -179,7 +181,11 @@ function writeReceipt(receipt) {
     receipt,
     status: 'ok',
   }
-  fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2) + '\n')
+  // tmp + rename: a torn state file parses as null on the next run, which
+  // silently forgets last_run and re-scans as if from scratch.
+  const stateTmp = STATE_PATH + '.tmp-' + process.pid
+  fs.writeFileSync(stateTmp, JSON.stringify(state, null, 2) + '\n')
+  fs.renameSync(stateTmp, STATE_PATH)
   return { briefingPath, statePath: STATE_PATH }
 }
 

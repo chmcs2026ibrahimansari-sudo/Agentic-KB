@@ -1161,3 +1161,23 @@ Pages affected: `frameworks/headroom.md`, `_meta/compile-log.md`
 **Contradictions flagged:** None new.
 
 **Process:** morning-review-daily scheduled task updated to apply-by-default (Step 5: compile gate --execute, propose --execute, provenance markers, 1 synthesis/day, git commit+push).
+
+---
+
+## 2026-08-09 — morning-review-daily apply pass (evening run)
+
+**Pipeline:** Morning Review completed; ⚠️ Apple Notes AppleScript timed out at 60s → 0 notes read (recurring known issue). Daily note written to vault + KB Intelligence section appended.
+
+**Capture/staging:** sofie-watch — 0 new; Apple Notes KB Inbox — 1 note, already deduped; Snipd — empty; raw/transcripts — 0 pending.
+
+**Intelligence:** connections/tensions/leverage queries succeeded; patterns query returned an empty answer body twice (retrieval hit wiki/candidates.md but no text generated) — gap surfaced in daily note.
+
+**Created:** [[syntheses/synthesis-skillopt-gate-obsidian-wiki-governance]] (reviewed: false) — top cross-domain connection of the day (SkillOpt held-out gate ↔ obsidian-wiki governance gap; closes the third side of the Headroom/SkillOpt/obsidian-wiki triangle). Backlinks added from framework-skillopt and framework-obsidian-wiki; index.md syntheses table updated (25→26); recently-added.md updated.
+
+**Compile gate:** plan again 29 PROMOTE / 137 DEFER / 0 GRADUATE; `--execute` still BLOCKED by the known `/api/compile` max_tokens truncation defect ("Error: undefined") logged 2026-08-08 — needs code fix in `web/src/app/api/compile/route.ts`. 0 pages promoted.
+
+**Proposals:** `foundry-propose --execute` persisted PROP-145 [HEAVY_BACKLOG] (137 deferred > 50 threshold) to `wiki/_meta/proposals.md`.
+
+**Provenance:** no new provenance gaps flagged in today's intelligence — no [UNVERIFIED] edits made.
+
+**Contradictions flagged:** none new. Standing unresolved: obsidian-wiki `_raw/` mutation vs. Agentic-KB raw-immutability (2026-06-25 caveat, still unadjudicated).

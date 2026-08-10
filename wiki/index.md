@@ -53,7 +53,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Concepts (68)
+## Concepts (79)
 
 | Page | Type | Tags | Confidence | Description |
 |------|------|------|------------|-------------|
@@ -82,7 +82,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Patterns (64)
+## Patterns (70)
 
 | Page | Category | Problem | Confidence |
 |------|----------|---------|------------|
@@ -102,7 +102,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Frameworks (21)
+## Frameworks (24)
 
 | Page | Vendor | Version | Jay's Experience | Last Checked |
 |------|--------|---------|-----------------|--------------|
@@ -130,7 +130,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Entities (12)
+## Entities (14)
 
 | Page | Category | Description |
 |------|----------|-------------|
@@ -145,7 +145,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Recipes (14)
+## Recipes (18)
 
 | Page | Difficulty | Time | Description |
 |------|-----------|------|-------------|
@@ -166,7 +166,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Evaluations (2)
+## Evaluations (3)
 
 | Page | Comparing | Verdict |
 |------|-----------|---------|
@@ -223,7 +223,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 - [[summaries/x-twitter-2066530299467706495|LEANN Lightweight Local RAG Claim]] — Low-confidence tweet lead claiming 97% lower-storage local RAG via selective recomputation; primary repo/paper still needed.
 - [[summaries/rohitg00-ai-engineering-from-scratch|AI Engineering from Scratch]] — Artifact-based AI engineering curriculum; high-signal areas are MCP/tools, agent workbench, RAG/eval, multi-agent, and production capstones.
 
-## Personals (6) (Jay's patterns)
+## Personal (10)s (6) (Jay's patterns)
 
 | Page | Category | Confidence | Description |
 |------|----------|------------|-------------|
@@ -258,7 +258,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (18)
+## Syntheses (26)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -280,6 +280,8 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-skills-as-evaluable-artifacts]] | When should an agent skill be treated as a tested software artifact instead of a prose instruction file? | 2026-06-25 |
 | [[syntheses/synthesis-agentic-engineering-operating-model]] | What operating model makes agentic engineering useful instead of performative? | 2026-07-10 |
 | [[syntheses/synthesis-context-compression-vs-compilation]] | Are Headroom-style runtime compression and obsidian-wiki-style knowledge compilation substitutes or complements for managing context cost? | 2026-08-08 |
+| [[syntheses/synthesis-headroom-compression-skillopt-signal]] | If Headroom compresses the same agent transcripts SkillOpt scores rollouts against, does skill optimization still receive a trustworthy training signal? | 2026-08-09 |
+| [[syntheses/synthesis-skillopt-gate-obsidian-wiki-governance]] | Can SkillOpt's held-out validation gate close obsidian-wiki's admitted governance gap for agent-writable vaults? | 2026-08-09 |
 
 ---
 

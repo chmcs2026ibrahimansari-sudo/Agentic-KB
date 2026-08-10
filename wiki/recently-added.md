@@ -9,6 +9,11 @@ type: meta
 
 ---
 
+## 2026-08-09 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-skillopt-gate-obsidian-wiki-governance|SkillOpt's Validation Gate Is the Governance Layer obsidian-wiki Lacks]] — held-out fixture gating as the missing quality gate for agent-writable vaults; closes the third side of the Headroom/SkillOpt/obsidian-wiki triangle
+- [[wiki/syntheses/synthesis-headroom-compression-skillopt-signal|Headroom Compression Can Silently Corrupt SkillOpt's Training Signal]] — co-deploying runtime compression and eval-gated skill optimization risks training on degraded evidence
+
 ## 2026-08-08 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-context-compression-vs-compilation|Context Compression vs. Context Compilation]] — Headroom (compress at use) and obsidian-wiki (compile in advance) are complements, not substitutes, for context cost

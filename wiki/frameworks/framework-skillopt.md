@@ -108,5 +108,7 @@ N/A — not yet used.
 ## Sources
 
 - [[summaries/microsoft-skillopt]]
+- [[syntheses/synthesis-headroom-compression-skillopt-signal]] — compression risk to rollout-scoring signal when co-deployed with Headroom
+- [[syntheses/synthesis-skillopt-gate-obsidian-wiki-governance]] — the validation gate as the governance layer missing from agent-writable vaults
 - Raw source: `raw/framework-docs/microsoft-skillopt.md`
 - GitHub: https://github.com/microsoft/SkillOpt

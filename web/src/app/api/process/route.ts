@@ -30,9 +30,11 @@ function readIndex(): string {
 }
 
 function appendToLog(entry: string): void {
+  // appendFileSync, not read-modify-write: two concurrent process runs were
+  // interleaving full-file rewrites and silently dropping one side's entry,
+  // and a crash mid-write truncated the whole log.
   const logPath = path.join(KB_ROOT, 'wiki', 'log.md')
-  const existing = fs.existsSync(logPath) ? fs.readFileSync(logPath, 'utf8') : ''
-  fs.writeFileSync(logPath, existing + '\n' + entry)
+  fs.appendFileSync(logPath, '\n' + entry)
 }
 
 function appendToIndex(entry: string, section: string): void {
@@ -46,7 +48,10 @@ function appendToIndex(entry: string, section: string): void {
   if (match) {
     const insertAt = content.indexOf(match[0]) + match[0].lastIndexOf('\n')
     content = content.slice(0, insertAt) + '\n' + entry + content.slice(insertAt)
-    fs.writeFileSync(indexPath, content)
+    // tmp+rename: wiki/index.md is the master index; torn write truncated it.
+    const tmp = indexPath + '.tmp-' + process.pid
+    fs.writeFileSync(tmp, content)
+    fs.renameSync(tmp, indexPath)
   } else {
     // Append to end
     fs.appendFileSync(indexPath, '\n' + entry + '\n')

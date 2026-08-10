@@ -252,7 +252,9 @@ Be specific. Return ONLY the JSON object.`,
 
   // Write report to wiki
   const reportPath = path.join(wikiRoot, 'lint-report.md')
-  fs.writeFileSync(reportPath, reportLines.join('\n'), 'utf8')
+  const reportTmp = reportPath + '.tmp-' + process.pid
+  fs.writeFileSync(reportTmp, reportLines.join('\n'), 'utf8')
+  fs.renameSync(reportTmp, reportPath)
 
   appendAuditLog({
     op: 'lint',

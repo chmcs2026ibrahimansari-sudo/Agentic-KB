@@ -8,7 +8,21 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 9, 2026 (Latest)
+## What's New — August 9, 2026 (Evening) (Latest)
+
+Second nightly correctness pass of the day — **400 tests passing** (was 395):
+
+- 🔗 **Autolinker can't corrupt its own links** — `autolink.py` substituted raw wikilink targets, so a later (shorter) phrase matched *inside* a link inserted earlier in the same pass. Live with the shipped entity map: `Fan-out Worker` + its `fan-out` alias produced the broken nested link `[[pattern-[[pattern-fan-out-worker]]-worker]]` (same shape for `Andrej Karpathy`/`Karpathy`). Inserted links are now protected-region tokens; new subprocess tests cover nesting, aliases, code spans, and frontmatter.
+- 🔐 **Lock steals are atomic; release only removes its own lock** — two waiters that both read the same stale lock record could both `unlink` it, the second unlink deleting the first waiter's *fresh* re-acquisition → two holders under one key. Stale clears now go through a rename-to-tomb steal (one winner). `release()` also verified nothing: a holder that overran `maxAgeMs` unlinked whatever lock a waiter had legitimately re-acquired — it now checks the on-disk pid/ts are its own first.
+- 🔑 **`pin unlock` won't destroy drifted edits** — unlock decrypted every `.enc` straight over `wiki/_private/*.md`, silently replacing any plaintext edited since the last lock with the stale encrypted copy (the plaintext is gitignored — unrecoverable). Files whose plaintext is newer than their `.enc` are now skipped with instructions; `--force` overrides.
+- 💸 **Compile ledger can't trigger a full recompile** — `raw/.compiled-log.json` (which decides what still needs compiling) was rewritten in place after every file; a torn write reset it to `{}` and the next run re-sent the whole raw/ corpus through the Claude API. tmp+rename now, same class as the ingest-hashes fix.
+- 💾 **Torn-write/ledger parity, next round** — the sofie-watch ingest ledger (torn write → every vault note re-staged and re-notified via Telegram), Sofie's `profile.md` (torn write bricked all future syncs), the weekly digest, graph-maintenance state + briefings, `kb` index-sync's `wiki/index.md`/`home.md` (with a redundant double-write removed), `/api/process`'s `wiki/log.md` append (read-modify-write dropped concurrent entries) and index insertion, and `/api/lint`'s report. All tmp+rename or true append now.
+
+Also re-audited all lockfiles against the Shai-Hulud npm worm's package list: no `axios` or `cacheable` anywhere; `keyv 4.5.4`, `flat-cache 4.0.1`, `file-entry-cache 8.0.0` remain pinned to pre-attack releases, and `ignore-scripts=true` still guards all four package roots.
+
+---
+
+## What's New — August 9, 2026 (Morning)
 
 Nightly correctness + hardening pass — **395 tests passing** (was 387):
 

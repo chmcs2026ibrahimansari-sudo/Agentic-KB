@@ -298,7 +298,12 @@ async function cmdUnlock(argvPin, opts = {}) {
     }
     const blob = readFileSync(e);
     const plaintext = decryptFile(pin, blob);
-    writeFileSync(out, plaintext);
+    // tmp + rename: a torn in-place write leaves a truncated plaintext whose
+    // mtime is *newer* than the .enc — the drift guard above then blocks the
+    // re-unlock that would repair it, wrongly reporting user edits.
+    const tmp = `${out}.tmp-${process.pid}`;
+    writeFileSync(tmp, plaintext);
+    renameSync(tmp, out);
     console.log(`  ${basename(e)} → ${name}`);
     written++;
   }

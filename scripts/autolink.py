@@ -83,7 +83,18 @@ def process_text(text: str, compiled_patterns, first_only: bool = False):
     changes = []
     for pattern, target, phrase in compiled_patterns:
         count = 1 if first_only else 0
-        updated, n = pattern.subn(target, protected_text, count=count)
+
+        # Substitute a protected token, not the raw target: a later (shorter)
+        # phrase could otherwise match *inside* an already-inserted wikilink —
+        # e.g. "fan-out" inside "[[pattern-fan-out-worker]]" produced the
+        # corrupted nested link "[[pattern-[[pattern-fan-out-worker]]-worker]]".
+        # Using a function also stops re from interpreting backslashes in the
+        # target as escape sequences.
+        def replacer(m, _t=target, _r=regions):
+            _r.append(_t)
+            return f"__PROTECTED_{len(_r)-1}__"
+
+        updated, n = pattern.subn(replacer, protected_text, count=count)
         if n:
             changes.append((phrase, n))
             protected_text = updated

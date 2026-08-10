@@ -275,7 +275,7 @@ async function cmdLock(argvPin, opts = {}) {
   console.log(`     commit the .enc files; they are safe to push.`);
 }
 
-async function cmdUnlock(argvPin) {
+async function cmdUnlock(argvPin, opts = {}) {
   const enc = listEncrypted();
   if (enc.length === 0) {
     console.log("pin: nothing to unlock (no .enc files)");
@@ -283,15 +283,26 @@ async function cmdUnlock(argvPin) {
   }
   const pin = await getPin(argvPin, "unlock");
   ensureDirs();
+  let written = 0;
+  let skipped = 0;
   for (const e of enc) {
-    const blob = readFileSync(e);
-    const plaintext = decryptFile(pin, blob);
     const name = basename(e).replace(/\.enc$/, "");
     const out = resolve(PRIVATE_DIR, name);
+    // Drift guard: if the plaintext exists and is newer than its .enc (edited
+    // since the last lock), unlocking would silently overwrite those edits
+    // with the stale encrypted copy. Skip unless --force.
+    if (!opts.force && existsSync(out) && statSync(out).mtime > statSync(e).mtime) {
+      console.log(`  ⚠ ${name} skipped — plaintext is newer than ${basename(e)} (run \`pin lock\` first, or unlock --force to discard the edits)`);
+      skipped++;
+      continue;
+    }
+    const blob = readFileSync(e);
+    const plaintext = decryptFile(pin, blob);
     writeFileSync(out, plaintext);
     console.log(`  ${basename(e)} → ${name}`);
+    written++;
   }
-  console.log(`pin: unlocked ${enc.length} file(s) into wiki/_private/`);
+  console.log(`pin: unlocked ${written} file(s) into wiki/_private/${skipped ? ` (${skipped} skipped — drifted plaintext)` : ""}`);
 }
 
 async function cmdRead(name, argvPin) {
@@ -321,7 +332,7 @@ async function main() {
       await cmdLock(args[0], { keep: flags.has("--keep") });
       break;
     case "unlock":
-      await cmdUnlock(args[0]);
+      await cmdUnlock(args[0], { force: flags.has("--force") });
       break;
     case "read":
       await cmdRead(args[0], args[1]);
@@ -337,6 +348,8 @@ Usage:
   node scripts/pin.mjs lock [PIN]       — encrypt *.md → .enc/*.enc, remove plaintext
                                           (--keep to retain plaintext alongside .enc)
   node scripts/pin.mjs unlock [PIN]     — decrypt .enc/*.enc → *.md
+                                          (skips plaintext newer than its .enc;
+                                           --force to overwrite anyway)
   node scripts/pin.mjs read NAME [PIN]  — decrypt one file to stdout
   node scripts/pin.mjs help             — this help
 

@@ -4,7 +4,7 @@ title: Context Management
 type: concept
 tags: [context, memory, agents, architecture, retrieval]
 created: 2026-04-25
-updated: 2026-04-25
+updated: 2026-08-10
 visibility: public
 confidence: high
 related: [memory-systems, agent-loops, agent-failure-modes]
@@ -36,6 +36,12 @@ As agents accumulate capabilities — more tools, instructions, skills, and conv
 
 Dynamic discovery is more token-efficient and can improve response quality by reducing potentially confusing or contradictory information. The trade-off: it requires the model to correctly recognise when additional context is needed. This works well with frontier models but may fail with less capable models.
 
+## Prompt Minimization and External Control
+
+Shorter prompts can be a context-management win only when control moves outside the prompt. The Claude/Fable social-source capture claims newer models may perform better with much smaller prompts, but the useful engineering rule is conservative: reduce static prompt bulk while strengthening tool schemas, verification gates, refusal/partial-completion detection, permission boundaries, and audit logs ([[summaries/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi]]).
+
+Do not treat prompt minimization as permission to remove controls. A shorter prompt with weak external checks is less control, not better context engineering.
+
 ## Example
 
 An agent handling a complex research task stores large tool outputs (web search results, database query rows) to files rather than keeping them in the message history. When it needs a specific fact, it uses grep or a targeted file read to pull only the relevant lines — rather than re-reading thousands of tokens of raw output.
@@ -58,6 +64,7 @@ See the [filesystem context pattern](../patterns/pattern-filesystem-context.md) 
 - Including all possible instructions statically when most are rarely relevant
 - Failing to implement any discovery mechanism, leaving the agent unable to find information it does not know is missing
 - Over-relying on dynamic discovery with weaker models that do not self-prompt retrieval reliably
+- Treating social/media claims about desktop context management as evidence when the captured text lacks the actual workflow details ([[summaries/x-twitter-2076018000570785847]]).
 
 ## See Also
 

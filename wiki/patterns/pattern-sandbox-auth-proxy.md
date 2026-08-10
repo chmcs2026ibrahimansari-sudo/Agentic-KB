@@ -6,8 +6,9 @@ tags: [agentic, security, credentials, sandboxing, multi-tenancy]
 confidence: medium
 sources:
   - [[summaries/langchain-deepagents-production]]
+  - [[summaries/x-twitter-2075854920738021682]]
 created: 2026-04-07
-updated: 2026-04-07
+updated: 2026-08-10
 related:
   - [[concepts/guardrails]]
   - [[concepts/permission-modes]]
@@ -46,6 +47,7 @@ Route all outbound HTTP requests from the sandbox through a sidecar or proxy lay
 ## Known Uses
 - LangChain Deep Agents: sandbox auth proxy for LangSmith-deployed agents
 - General pattern in cloud-native microservices (Envoy, AWS VPC endpoints with IAM injection)
+- OOMOL/OpenConnector is a low-confidence source lead claiming an open-source, self-hostable, MCP-native connector gateway that holds credentials while agents receive scoped access and safe results; no primary docs/repo were captured in this run ([[summaries/x-twitter-2075854920738021682]]).
 
 ## Related Patterns
 - [[concepts/permission-modes]] — controlling what actions agents can take

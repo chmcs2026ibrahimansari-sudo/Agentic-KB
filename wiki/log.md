@@ -4,6 +4,45 @@ id: 01KNNVX2QX9QG2KH6FCT2ARV5Y
 
 # Wiki Compile Log
 
+## 2026-08-10 — Agentic-KB Refinery Run
+
+**Trigger:** Scheduled `agentic-kb-refinery-run`.
+
+**Pre-run safety:** `git status --porcelain` showed one pre-existing dirty file inside an expected Refinery write path: `briefings/scout-2026-08-09.md`. No dirty files outside the user-allowed Refinery paths or the two explicitly allowed noisy logs, so the run proceeded.
+
+**Sources processed:** 8 raw files marked `status: unprocessed`; `raw/inbox/README.md` skipped as operational intake guidance. Previously processed unprocessed-marker files with unchanged hashes were skipped via `.night-shift/state/refinery-processed.json`. `raw/framework-docs/vault-3tier-architecture.md` was ignored because its `status: unprocessed` text appears only as documentation text, not frontmatter status.
+
+**Summaries created:**
+- `[[summaries/sierra-ai-blog-ai-pilling-our-company-lessons-learned]]` from `raw/framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md`
+- `[[summaries/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi]]` from `raw/framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md`
+- `[[summaries/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc]]` from `raw/framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md`
+- `[[summaries/x-twitter-2075854920738021682]]` from `raw/framework-docs/x-twitter-2075854920738021682.md`
+- `[[summaries/x-twitter-2076018000570785847]]` from `raw/framework-docs/x-twitter-2076018000570785847.md`
+- `[[summaries/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-]]` from `raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md`
+- `[[summaries/x-twitter-2076231055443440105]]` from `raw/framework-docs/x-twitter-2076231055443440105.md`
+- `[[summaries/www-linkedin-com-jobs-view-4438558062]]` from `raw/framework-docs/www-linkedin-com-jobs-view-4438558062.md`
+
+**Pattern created:**
+- `[[patterns/pattern-embedded-graduation-model]]` — embed deeply, build capability, graduate teams to independence, and harvest repeated friction into centralized tooling.
+
+**Existing pages updated:**
+- `[[patterns/pattern-outcome-metrics-for-agent-adoption]]` — added capability-persistence/graduation as an outcome signal and linked the Netflix/Salesforce/Sierra summaries.
+- `[[patterns/pattern-navigator-driver-agentic-coding]]` — linked the Airbnb transcript summary.
+- `[[patterns/pattern-agent-as-ui-system-of-record-backend]]` — linked the Sierra summary.
+- `[[patterns/pattern-sandbox-auth-proxy]]` — added OOMOL/OpenConnector as a low-confidence source lead for credential-gateway design.
+- `[[concepts/context-management]]` — added prompt-minimization/external-control caveat and Hermes desktop source lead links.
+- `[[wiki/index]]` — updated counts and added summary/pattern entries.
+
+**Conservative skips:**
+- No framework page for OpenConnector/OOMOL; captured source is tweet-only and primary docs/repo were not captured.
+- No Hermes Desktop framework/page update from the Eric Siu tweet; substantive details were likely in inaccessible media and not present in extracted text.
+- No Fable/Claude model page from the LinkedIn post; the underlying Anthropic tutorial was not captured.
+- No PODMEME recipe; tweet-only prototype lacks workflow/code details.
+
+**Contradictions flagged:** None new.
+
+**State:** hashes recorded in `.night-shift/state/refinery-processed.json`.
+
 ## 2026-07-10 — Apple Notes agentic engineering synthesis
 
 **Trigger:** Jay asked Hermes to review recent Apple Notes and apply Hermes/Pi/agentic-engineering lessons.
@@ -1181,3 +1220,19 @@ Pages affected: `frameworks/headroom.md`, `_meta/compile-log.md`
 **Provenance:** no new provenance gaps flagged in today's intelligence — no [UNVERIFIED] edits made.
 
 **Contradictions flagged:** none new. Standing unresolved: obsidian-wiki `_raw/` mutation vs. Agentic-KB raw-immutability (2026-06-25 caveat, still unadjudicated).
+
+## 2026-08-10 — morning-review-daily apply pass (2nd run, 13:05 UTC)
+
+**Morning Review:** pipeline completed (1 note, 1 link, 1 finding; 0 auto-apply). Daily note written to vault; KB Intelligence section appended.
+
+**Compile gate:** `compile-2source-gate.mjs --execute` planned PROMOTE 30 / DEFER 167 / GRADUATE 0, then errored during the incremental compile phase ("Error: undefined") — promotions were NOT written. Recurring failure across recent runs (all show graduate: 0). Needs debugging before planned promotions land.
+
+**Proposals:** `foundry-propose --execute` persisted PROP-146 [HEAVY_BACKLOG] (167 deferred > 50 threshold).
+
+**New synthesis:** [[syntheses/synthesis-headroom-compression-episodic-judgment-signal]] — Headroom compression risk generalized from SkillOpt training signal to the Episodic Judgment Log freshness signal (top cross-domain connection from today intelligence). Born `reviewed: false`. Inbound links added from index.md, recently-added.md, and [[syntheses/synthesis-headroom-compression-skillopt-signal]].
+
+**Provenance:** no new gaps flagged. agentmemory/RRF gap confirmed RESOLVED (2026-06-10 corroboration note present on page).
+
+**Contradictions flagged:** none new in 14-day window. Standing open: obsidian-wiki `_raw/` mutability vs. raw-immutability rule (2026-06-25, unadjudicated).
+
+**Candidate watch:** tdd-execution + tdd-first cluster (summary-gsd-executor, summary-superpowers-framework) arguably clears the 2-source bar for a pattern-tdd-first-execution page — flagged for next compile/human review rather than force-promoted.

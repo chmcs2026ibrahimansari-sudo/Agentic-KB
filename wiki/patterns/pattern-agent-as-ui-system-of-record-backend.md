@@ -15,8 +15,9 @@ tags: [agentic, orchestration, tool-use, systems-of-record, context-management]
 confidence: medium
 sources:
   - raw/framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md
+  - [[summaries/sierra-ai-blog-ai-pilling-our-company-lessons-learned]]
 created: 2026-07-10
-updated: 2026-07-10
+updated: 2026-08-10
 ---
 
 # Pattern: Agent as UI, System of Record as Backend
@@ -92,6 +93,7 @@ Avoid over-building when:
 - Agentic-KB Scout writes source captures under `raw/` and state under `.night-shift/state/`, not just a chat summary.
 - Hermes skill updates land in `~/.hermes/skills/`, then `skill_view` verifies the behavior changed.
 - SellerFi repo work should land as code/docs/tests in the repo, with chat only reporting changed files and verification.
+- Sierra's Pinecone writeup states the agent should update the deck, PR, account, issue, or other artifact where the work belongs instead of creating a parallel chat-only output ([[summaries/sierra-ai-blog-ai-pilling-our-company-lessons-learned]]).
 
 ## Related Patterns
 

@@ -52,3 +52,4 @@ Treat the combination as unsafe-by-default until verified: if SkillOpt (especial
 - [[summaries/chopratejas-headroom]]
 - [[summaries/microsoft-skillopt]]
 - [[syntheses/synthesis-compression-vs-trajectory-eval]]
+- [[syntheses/synthesis-headroom-compression-episodic-judgment-signal]] — the same silent-corruption risk generalized to the episodic freshness signal

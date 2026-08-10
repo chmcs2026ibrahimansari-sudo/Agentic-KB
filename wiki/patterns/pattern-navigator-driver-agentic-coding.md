@@ -15,9 +15,10 @@ tags: [agentic, orchestration, multi-agent, coding, human-in-the-loop]
 confidence: medium
 sources:
   - raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md
+  - [[summaries/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-]]
   - raw/framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md
 created: 2026-07-10
-updated: 2026-07-10
+updated: 2026-08-10
 ---
 
 # Pattern: Navigator-Driver Agentic Coding
@@ -110,6 +111,7 @@ Avoid when:
 - Hermes as orchestrator dispatching repo changes to Turing/Codex lanes while preserving final review authority.
 - Agentic-KB Scout/Refinery/Editor jobs: each lane produces raw captures, summaries, syntheses, or briefings with receipts.
 - SellerFi implementation tasks where one driver updates backend logic while another updates docs/tests, then Hermes reconciles.
+- The Airbnb transcript capture frames the shift as a human engineer steering multiple agentic sessions that materialize code changes, instead of treating AI as copy-paste/autocomplete ([[summaries/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-]]).
 
 ## Related Patterns
 

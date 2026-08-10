@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-10 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-headroom-compression-episodic-judgment-signal|Headroom Compression Threatens the Episodic Judgment Log's Freshness Authority]] — the silent-corruption risk from the SkillOpt synthesis generalized to the KB's highest-trust freshness signal
+
 ## 2026-08-09 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-skillopt-gate-obsidian-wiki-governance|SkillOpt's Validation Gate Is the Governance Layer obsidian-wiki Lacks]] — held-out fixture gating as the missing quality gate for agent-writable vaults; closes the third side of the Headroom/SkillOpt/obsidian-wiki triangle

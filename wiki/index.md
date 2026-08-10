@@ -3,7 +3,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 ---
 
 # Agentic Engineering KB — Master Index
-> Last updated: 2026-06-25 (refinery run) | Maintained by LLM | Never edit manually
+> Last updated: 2026-08-10 (refinery run) | Maintained by LLM | Never edit manually
 
 ## Quick Navigation
 - [[wiki/home|Home]] — Visual front door: concept map, top 5 pages, KB roadmap
@@ -82,7 +82,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Patterns (70)
+## Patterns (71)
 
 | Page | Category | Problem | Confidence |
 |------|----------|---------|------------|
@@ -97,8 +97,9 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[patterns/pattern-grounded-generation]] | evaluation | LLM outputs that cite retrieved content often hallucinate citations or make claims not supported by source chunks | high |
 | [[patterns/pattern-react]] | orchestration | Agents that reason only from parametric memory hallucinate and cannot update beliefs from new information mid-task | high |
 | [[patterns/pattern-navigator-driver-agentic-coding]] | orchestration | Developers use agents as autocomplete or isolated chat assistants, leaving the human to still perform coordination, review, and artifact assembly | medium |
-| [[patterns/pattern-agent-as-ui-system-of-record-backend]] | orchestration | Agent systems create duplicate plans, duplicated state, and split-brain workflows when they store work outside the tools where the organization already operates | medium |
-| [[patterns/pattern-outcome-metrics-for-agent-adoption]] | evaluation | Agent programs optimize for easy activity metrics without proving that work got faster, better, safer, or less burdensome | medium |
+|| [[patterns/pattern-agent-as-ui-system-of-record-backend]] | orchestration | Agent systems create duplicate plans, duplicated state, and split-brain workflows when they store work outside the tools where the organization already operates | medium |
+|| [[patterns/pattern-outcome-metrics-for-agent-adoption]] | evaluation | Agent programs optimize for easy activity metrics without proving that work got faster, better, safer, or less burdensome | medium |
+|| [[patterns/pattern-embedded-graduation-model]] | deployment | Central expert teams either stay too far from product teams to change behavior or embed permanently and become an unscalable dependency | medium |
 
 ---
 
@@ -175,7 +176,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Summaries (56)
+## Summaries (64)
 
 | Page | Source | Date Ingested | Key Concepts |
 |------|--------|--------------|-------------|
@@ -222,6 +223,14 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 - [[summaries/langchain-ai-rag-from-scratch|LangChain RAG From Scratch]] — Thin README/source pointer for RAG notebooks covering indexing, retrieval, and generation basics; no atomic page changes from this capture alone.
 - [[summaries/x-twitter-2066530299467706495|LEANN Lightweight Local RAG Claim]] — Low-confidence tweet lead claiming 97% lower-storage local RAG via selective recomputation; primary repo/paper still needed.
 - [[summaries/rohitg00-ai-engineering-from-scratch|AI Engineering from Scratch]] — Artifact-based AI engineering curriculum; high-signal areas are MCP/tools, agent workbench, RAG/eval, multi-agent, and production capstones.
+- [[summaries/sierra-ai-blog-ai-pilling-our-company-lessons-learned|Sierra — AI-pilling Our Company: Lessons Learned]] — Single agent front door, persistent/proactive workflows, MCP Gateway/context controls, systems-of-record backends, and outcome-over-activity metrics.
+- [[summaries/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi|Eduardo Ordax LinkedIn — Claude/Fable Prompt-Minimization Signal]] — Low-confidence social source on shorter prompts; useful only when control moves to external tools, verification, refusal handling, and audit.
+- [[summaries/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc|Netflix NTech SRE — Purpose-Built Reliability at Scale]] — Embedded Graduation Model: embed deeply, build reliability capability, graduate teams, and convert repeated pain into central tooling.
+- [[summaries/x-twitter-2075854920738021682|OOMOL/OpenConnector — Scoped Credential Gateway Tweet]] — Low-confidence tweet lead for scoped credential gateways and MCP-native connector layers; no framework page yet.
+- [[summaries/x-twitter-2076018000570785847|Eric Siu Tweet — Hermes Desktop Context-Management Lead]] — Very thin tweet/media lead on Hermes desktop context management; no atomic page from capture alone.
+- [[summaries/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-|Airbnb Agentic Coding Talk — LinkedIn Transcript Capture]] — Partial transcript source for navigator/driver agentic coding and multiple agentic sessions.
+- [[summaries/x-twitter-2076231055443440105|Jason Calacanis PODMEME — Personalized Podcast Topic Stream Tweet]] — Low-confidence tweet lead for topic-clustered podcast playback/media-ingest workflows.
+- [[summaries/www-linkedin-com-jobs-view-4438558062|Salesforce Director, Human-AI Collaboration — Job Description Capture]] — Job-market signal for human-AI collaboration, workforce transformation, HCI, job redesign, and KPI-linked adoption.
 
 ## Personal (10)s (6) (Jay's patterns)
 
@@ -258,7 +267,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (26)
+## Syntheses (27)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -282,6 +291,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-context-compression-vs-compilation]] | Are Headroom-style runtime compression and obsidian-wiki-style knowledge compilation substitutes or complements for managing context cost? | 2026-08-08 |
 | [[syntheses/synthesis-headroom-compression-skillopt-signal]] | If Headroom compresses the same agent transcripts SkillOpt scores rollouts against, does skill optimization still receive a trustworthy training signal? | 2026-08-09 |
 | [[syntheses/synthesis-skillopt-gate-obsidian-wiki-governance]] | Can SkillOpt's held-out validation gate close obsidian-wiki's admitted governance gap for agent-writable vaults? | 2026-08-09 |
+| [[syntheses/synthesis-headroom-compression-episodic-judgment-signal]] | If Headroom compresses the same session transcripts that populate the Episodic Judgment Log, does the freshness-decay engine still receive a trustworthy human-judgment signal? | 2026-08-10 |
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "job": "agentic-kb-refinery-run",
-  "updated_at": "2026-07-01T06:05:27-05:00",
+  "updated_at": "2026-08-10T03:16:00-07:00",
   "processed": {
     "raw/framework-docs/mgechev-skills-best-practices.md": {
       "sha256": "18ada3a8eab879c132eeefafa0ea6fc23bba7258400cf50902f61add5a1a9210",
@@ -75,11 +75,97 @@
         "wiki/log.md"
       ],
       "note": "Treated as curriculum/source corpus; no broad framework page created."
+    },
+    "raw/framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md": {
+      "sha256": "f06ba178438ddcef2103f6e594b91b9d94ea48f9ea840a6630f3aa5fd7295665",
+      "processed_at": "2026-08-10T03:16:00-07:00",
+      "outputs": [
+        "wiki/summaries/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md",
+        "wiki/patterns/pattern-agent-as-ui-system-of-record-backend.md",
+        "wiki/patterns/pattern-outcome-metrics-for-agent-adoption.md",
+        "wiki/index.md",
+        "wiki/log.md"
+      ]
+    },
+    "raw/framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md": {
+      "sha256": "595cdab8bdc52095b761d9aaa950a0b57a06b9d330d85552b2effbc42a926e61",
+      "processed_at": "2026-08-10T03:16:00-07:00",
+      "outputs": [
+        "wiki/summaries/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md",
+        "wiki/concepts/context-management.md",
+        "wiki/index.md",
+        "wiki/log.md"
+      ],
+      "note": "Social-source prompt-minimization signal; no model/framework page created."
+    },
+    "raw/framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md": {
+      "sha256": "c582957c4a5610f7f83b48c6ed39da58c4edd2ce509d975ca4811e4eccee71aa",
+      "processed_at": "2026-08-10T03:16:00-07:00",
+      "outputs": [
+        "wiki/summaries/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md",
+        "wiki/patterns/pattern-embedded-graduation-model.md",
+        "wiki/patterns/pattern-outcome-metrics-for-agent-adoption.md",
+        "wiki/index.md",
+        "wiki/log.md"
+      ]
+    },
+    "raw/framework-docs/x-twitter-2075854920738021682.md": {
+      "sha256": "2a86ea085daf1e17dc4102299b8a6c8242ca622c2ff506c79b85cccfc6d1d3a0",
+      "processed_at": "2026-08-10T03:16:00-07:00",
+      "outputs": [
+        "wiki/summaries/x-twitter-2075854920738021682.md",
+        "wiki/patterns/pattern-sandbox-auth-proxy.md",
+        "wiki/index.md",
+        "wiki/log.md"
+      ],
+      "note": "Tweet-only OpenConnector/OOMOL source; no framework page created until primary docs/repo are captured."
+    },
+    "raw/framework-docs/x-twitter-2076018000570785847.md": {
+      "sha256": "11adf6d2430545a520d2d016dec13457ddac7793729fbad0797137a1e06a04ec",
+      "processed_at": "2026-08-10T03:16:00-07:00",
+      "outputs": [
+        "wiki/summaries/x-twitter-2076018000570785847.md",
+        "wiki/concepts/context-management.md",
+        "wiki/index.md",
+        "wiki/log.md"
+      ],
+      "note": "Very thin tweet/media lead; no atomic page created."
+    },
+    "raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md": {
+      "sha256": "0fc0b5e1ea381d261911a468d9c5581800224512e300a06d72a329ac492db1e9",
+      "processed_at": "2026-08-10T03:16:00-07:00",
+      "outputs": [
+        "wiki/summaries/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md",
+        "wiki/patterns/pattern-navigator-driver-agentic-coding.md",
+        "wiki/index.md",
+        "wiki/log.md"
+      ],
+      "note": "Partial LinkedIn transcript; existing navigator-driver pattern linked instead of creating another atomic page."
+    },
+    "raw/framework-docs/x-twitter-2076231055443440105.md": {
+      "sha256": "11424580313522973b8c3c704c424f0353a678fda30e45c24ef6a2d0e7a0ff42",
+      "processed_at": "2026-08-10T03:16:00-07:00",
+      "outputs": [
+        "wiki/summaries/x-twitter-2076231055443440105.md",
+        "wiki/index.md",
+        "wiki/log.md"
+      ],
+      "note": "Tweet-only PODMEME prototype lead; summary only."
+    },
+    "raw/framework-docs/www-linkedin-com-jobs-view-4438558062.md": {
+      "sha256": "4068e0b9b8495a18ce64b340ef91899ea1a27c556a31eeef7dae307327a4700f",
+      "processed_at": "2026-08-10T03:16:00-07:00",
+      "outputs": [
+        "wiki/summaries/www-linkedin-com-jobs-view-4438558062.md",
+        "wiki/patterns/pattern-outcome-metrics-for-agent-adoption.md",
+        "wiki/index.md",
+        "wiki/log.md"
+      ]
     }
   },
   "last_run": {
-    "timestamp": "2026-07-01T06:05:27-05:00",
-    "result": "noop",
+    "timestamp": "2026-08-10T03:16:00-07:00",
+    "result": "processed",
     "scanned": {
       "raw_inbox_files": [
         "raw/inbox/README.md"
@@ -91,7 +177,15 @@
         "raw/framework-docs/mgechev-skills-best-practices.md",
         "raw/framework-docs/microsoft-skillopt.md",
         "raw/framework-docs/rohitg00-ai-engineering-from-scratch.md",
-        "raw/framework-docs/x-twitter-2066530299467706495.md"
+        "raw/framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md",
+        "raw/framework-docs/www-linkedin-com-jobs-view-4438558062.md",
+        "raw/framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md",
+        "raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md",
+        "raw/framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md",
+        "raw/framework-docs/x-twitter-2066530299467706495.md",
+        "raw/framework-docs/x-twitter-2075854920738021682.md",
+        "raw/framework-docs/x-twitter-2076018000570785847.md",
+        "raw/framework-docs/x-twitter-2076231055443440105.md"
       ],
       "ignored_content_matches": [
         {
@@ -142,6 +236,16 @@
         "sha256": "e88682da5f1b98bef99ba6fa4cc5d7a53c106b9deaf61030caafac53a329dfeb"
       }
     ],
-    "processed_count": 0
+    "processed_count": 8,
+    "processed_files": [
+      "raw/framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md",
+      "raw/framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md",
+      "raw/framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md",
+      "raw/framework-docs/x-twitter-2075854920738021682.md",
+      "raw/framework-docs/x-twitter-2076018000570785847.md",
+      "raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md",
+      "raw/framework-docs/x-twitter-2076231055443440105.md",
+      "raw/framework-docs/www-linkedin-com-jobs-view-4438558062.md"
+    ]
   }
 }

@@ -46,7 +46,12 @@ function loadLog(root: string): CompiledLog {
 function saveLog(root: string, log: CompiledLog): void {
   const p = path.join(/* turbopackIgnore: true */ root, COMPILED_LOG)
   fs.mkdirSync(/* turbopackIgnore: true */ path.dirname(p), { recursive: true })
-  fs.writeFileSync(/* turbopackIgnore: true */ p, JSON.stringify(log, null, 2))
+  // tmp + rename: this is the compile ledger. A torn write makes loadLog's
+  // catch reset it to {}, and the next run re-compiles the entire raw/ corpus
+  // through the Claude API (same ledger class as .ingest-hashes.json).
+  const tmp = p + '.tmp-' + process.pid
+  fs.writeFileSync(/* turbopackIgnore: true */ tmp, JSON.stringify(log, null, 2))
+  fs.renameSync(tmp, p)
 }
 
 /** Recursively collect all .md files under a directory */
@@ -137,7 +142,10 @@ function reindexWiki(wikiRoot: string): void {
     )
   }
 
-  fs.writeFileSync(/* turbopackIgnore: true */ indexPath, indexContent, 'utf8')
+  // tmp + rename: wiki/index.md is the master index; torn write truncated it.
+  const idxTmp = indexPath + '.tmp-' + process.pid
+  fs.writeFileSync(/* turbopackIgnore: true */ idxTmp, indexContent, 'utf8')
+  fs.renameSync(idxTmp, indexPath)
 }
 
 export async function POST(request: NextRequest): Promise<Response> {

@@ -152,7 +152,12 @@ tags: [sofie, obsidian, ${type}]
   // the webhook/ingest routes.
   let outFile = log.ingested[rel]?.outFile
   if (outFile) {
-    fs.writeFileSync(path.join(TRANSCRIPTS_DIR, outFile), payload, 'utf8')
+    // Re-ingest updates in place — tmp + rename so a crash mid-write can't
+    // truncate the previously staged transcript.
+    const outFull = path.join(TRANSCRIPTS_DIR, outFile)
+    const outTmp = outFull + '.tmp-' + process.pid
+    fs.writeFileSync(outTmp, payload, 'utf8')
+    fs.renameSync(outTmp, outFull)
   } else {
     for (let n = 1; ; n++) {
       outFile = n === 1 ? `obsidian-${dateStr}-${slug}.md` : `obsidian-${dateStr}-${slug}-${n}.md`
@@ -212,7 +217,12 @@ function updateInbox(ingested) {
     action: hasMeetings ? 'run /foundry-ingest to process meeting notes' : null,
   })
 
-  fs.writeFileSync(INBOX_FILE, JSON.stringify(inbox, null, 2), 'utf8')
+  // tmp + rename (same as saveLog): a torn in-place write leaves invalid
+  // JSON, and the read above silently resets to { pending: [] } — dropping
+  // every pending notification.
+  const inboxTmp = INBOX_FILE + '.tmp-' + process.pid
+  fs.writeFileSync(inboxTmp, JSON.stringify(inbox, null, 2), 'utf8')
+  fs.renameSync(inboxTmp, INBOX_FILE)
   console.log(`\n[sofie] Inbox updated: ${summary}`)
 }
 

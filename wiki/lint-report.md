@@ -1,14 +1,14 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-10 04:43 | Vault: Agentic-KB | Pages scanned: 665
+> Generated: 2026-08-10 14:07 | Vault: Agentic-KB | Pages scanned: 679
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 49 | 🟡 Medium |
-| Stale pages | 289 | 🟡 Medium |
+| Orphaned pages | 50 | 🟡 Medium |
+| Stale pages | 284 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
 ## 🟡 Orphaned Pages (no inbound links)
@@ -53,6 +53,7 @@
 - `reports/2026-08-05-nightly-ci-analysis.md` — 2026-08-05-nightly-ci-analysis
 - `reports/2026-08-06-nightly-ci-analysis.md` — 2026-08-06-nightly-ci-analysis
 - `reports/2026-08-07-nightly-ci-analysis.md` — 2026-08-07-nightly-ci-analysis
+- `reports/2026-08-10-nightly-ci-analysis.md` — 2026-08-10-nightly-ci-analysis
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18
 - `syntheses/synthesis-provenance-freshness-infrastructure.md` — Delta Tracking and Provenance Tagging Operationalize the Freshness Policy
@@ -102,7 +103,6 @@
 - `concepts/capture-pipeline.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/chain-of-thought.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/compile-once-knowledge.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `concepts/context-management.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/contradiction-handling-in-knowledge-bases.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/cost-optimization.md` — last updated: Wed Jun 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/cross-linking-and-orphan-prevention.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -212,7 +212,6 @@
 - `patterns/fetch-readwise-highlights.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/layer-evidence-verification.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/llm-wiki-pattern.md` — last updated: Wed Jun 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `patterns/pattern-agent-as-ui-system-of-record-backend.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-agent-proof-of-work-loop.md` — last updated: Fri May 29 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-anchored-iterative-summarization.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-architecture-decision-record.md` — last updated: Tue Apr 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -238,8 +237,6 @@
 - `patterns/pattern-minimal-permissions.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-mistake-log.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-morning-review.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `patterns/pattern-navigator-driver-agentic-coding.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `patterns/pattern-outcome-metrics-for-agent-adoption.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-parallel-subagent-ingest.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-per-claim-confidence.md` — last updated: Tue Jun 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-pipeline.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -251,7 +248,6 @@
 - `patterns/pattern-reflection-loop.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-rolling-summary.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-safe-cli-document-fetch.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `patterns/pattern-sandbox-auth-proxy.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-scientific-debugging.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-shared-agent-workspace.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-specialist-agent-team.md` — last updated: Fri Jul 10 2026 17:00:00 GMT-0700 (Pacific Daylight Time)

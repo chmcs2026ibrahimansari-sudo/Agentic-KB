@@ -74,3 +74,25 @@ test('old unreadable lock IS cleared once past the grace window', () => {
   assert.ok(lock)
   lock.release()
 })
+
+test('release does not remove a lock that was stolen and re-acquired', () => {
+  const root = makeRoot()
+  const lock = acquireLock(root, 'agent-steal')
+  // Simulate: this holder overran maxAgeMs, a waiter stole the lock and
+  // re-acquired it (different pid/ts now owns the file).
+  fs.writeFileSync(lockFile(root, 'agent-steal'), JSON.stringify({ pid: 2 ** 30, ts: Date.now(), key: 'agent-steal' }))
+  lock.release()
+  assert.ok(fs.existsSync(lockFile(root, 'agent-steal')), 'release must not delete another holder\'s lock')
+  const rec = JSON.parse(fs.readFileSync(lockFile(root, 'agent-steal'), 'utf8'))
+  assert.equal(rec.pid, 2 ** 30)
+})
+
+test('stale steal leaves no tomb files behind in .locks/', () => {
+  const root = makeRoot()
+  fs.mkdirSync(path.join(root, '.locks'), { recursive: true })
+  fs.writeFileSync(lockFile(root, 'agent-tomb'), JSON.stringify({ pid: 2 ** 30, ts: Date.now() - 120_000, key: 'agent-tomb' }))
+  const lock = acquireLock(root, 'agent-tomb', { retries: 2, retryDelayMs: 10 })
+  lock.release()
+  const leftovers = fs.readdirSync(path.join(root, '.locks'))
+  assert.deepEqual(leftovers, [], 'no .stale-* tombs or lock files should remain')
+})

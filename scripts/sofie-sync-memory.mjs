@@ -66,6 +66,10 @@ if (dryRun) {
   console.log('--- new frontmatter preview ---')
   console.log(`---\n${lines.join('\n')}\n---`)
 } else {
-  fs.writeFileSync(profilePath, newProfile)
+  // tmp + rename: profile.md is required to exist (checked above), so a
+  // torn in-place write both loses the profile and bricks every future sync.
+  const tmp = profilePath + '.tmp-' + process.pid
+  fs.writeFileSync(tmp, newProfile)
+  fs.renameSync(tmp, profilePath)
   console.log('✓ profile.md frontmatter updated')
 }

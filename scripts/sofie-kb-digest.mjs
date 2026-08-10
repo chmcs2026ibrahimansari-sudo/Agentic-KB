@@ -167,7 +167,9 @@ if (dryRun) {
 
 // Write to KB
 const kbPath = path.join(KB_ROOT, 'wiki', 'agents', 'leads', 'sofie', 'weekly-digest.md')
-fs.writeFileSync(kbPath, digest, 'utf8')
+const kbTmp = kbPath + '.tmp-' + process.pid
+fs.writeFileSync(kbTmp, digest, 'utf8')
+fs.renameSync(kbTmp, kbPath)
 console.log(`✅ KB digest: wiki/agents/leads/sofie/weekly-digest.md`)
 
 // Write to Obsidian Tasks

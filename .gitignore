@@ -46,3 +46,4 @@ logs/web-server-error.log
 logs/web-server.log
 logs/audit.log
 logs/kb-dev-server.log
+.env.bak*

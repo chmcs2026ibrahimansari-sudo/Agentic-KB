@@ -193,7 +193,11 @@ Rules:
         // content by picking that path for "summaryPage".
         const summaryPath = resolveWikiPagePath(result.summaryPage.path, 'wiki/summaries/')
         fs.mkdirSync(path.dirname(summaryPath), { recursive: true })
-        fs.writeFileSync(summaryPath, result.summaryPage.content)
+        // tmp+rename: re-ingest overwrites this page in place, and a torn
+        // write left a truncated summary as the only copy.
+        const summaryTmp = summaryPath + '.tmp-' + process.pid
+        fs.writeFileSync(summaryTmp, result.summaryPage.content)
+        fs.renameSync(summaryTmp, summaryPath)
         send(controller, { type: 'wrote', path: result.summaryPage.path })
 
         // Write new pages
@@ -201,11 +205,16 @@ Rules:
         for (const page of (result.newPages || [])) {
           const pagePath = resolveWikiPagePath(page.path)
           fs.mkdirSync(path.dirname(pagePath), { recursive: true })
-          if (!fs.existsSync(pagePath)) {
-            fs.writeFileSync(pagePath, page.content)
+          // Exclusive create ('wx') instead of existsSync-then-write: two
+          // concurrent process runs could both pass the existence probe and
+          // the loser's page silently replaced the winner's (same TOCTOU
+          // class as the webhook/Sofie ingest fixes).
+          try {
+            fs.writeFileSync(pagePath, page.content, { flag: 'wx' })
             send(controller, { type: 'wrote', path: page.path })
             newPagePaths.push(page.path)
-          } else {
+          } catch (err) {
+            if ((err as NodeJS.ErrnoException).code !== 'EEXIST') throw err
             send(controller, { type: 'skipped', path: page.path, reason: 'already exists' })
           }
         }

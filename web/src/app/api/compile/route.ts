@@ -366,7 +366,12 @@ Rules:
             catch { send({ type: 'skip', file: relFile, reason: `refused unsafe op path: ${op.path}` }); continue }
             fs.mkdirSync(/* turbopackIgnore: true */ path.dirname(pagePath), { recursive: true })
             const existed = fs.existsSync(/* turbopackIgnore: true */ pagePath)
-            fs.writeFileSync(/* turbopackIgnore: true */ pagePath, op.content, 'utf8')
+            // tmp+rename: the compiled ledger below marks this source done, so
+            // a torn in-place page write would leave a permanently corrupted
+            // article that no future incremental compile regenerates.
+            const pageTmp = pagePath + '.tmp-' + process.pid
+            fs.writeFileSync(/* turbopackIgnore: true */ pageTmp, op.content, 'utf8')
+            fs.renameSync(pageTmp, pagePath)
             ensureId(pagePath)
             affectedPages.push(op.path)
             if (existed) totalPagesUpdated++; else totalPagesCreated++

@@ -100,8 +100,24 @@ export interface Heading {
 export function extractHeadings(content: string): Heading[] {
   const headings: Heading[] = []
   const lines = content.split('\n')
+  let inFence = false
+  let fenceMarker = ''
 
   for (const line of lines) {
+    // Skip fenced code blocks: a `# comment` inside ``` / ~~~ is not a
+    // heading — it produced ToC entries pointing at anchors that don't
+    // exist in the rendered article (remark only ids real headings).
+    const fence = line.match(/^\s{0,3}(`{3,}|~{3,})/)
+    if (fence) {
+      if (!inFence) {
+        inFence = true
+        fenceMarker = fence[1][0]
+      } else if (fence[1][0] === fenceMarker) {
+        inFence = false
+      }
+      continue
+    }
+    if (inFence) continue
     const match = line.match(/^(#{1,4})\s+(.+)$/)
     if (match) {
       const level = match[1].length

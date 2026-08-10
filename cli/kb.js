@@ -856,7 +856,7 @@ async function reindexLocal() {
     )
   }
 
-  fs.writeFileSync(indexPath, content, 'utf8')
+  // (single atomic write happens after the dedupe pass below)
   console.log(`✅ Index counts updated: ${total} pages across ${sections.length} sections`)
   for (const [s, c] of Object.entries(counts)) {
     if (c > 0) console.log(`   ${s}: ${c}`)
@@ -892,8 +892,11 @@ async function reindexLocal() {
       content = idx
       console.log(`✅ Deduped ${removed} duplicate summary bullet(s) in index.md`)
     }
-    // Persist dedupe before SVG sync below.
-    fs.writeFileSync(indexPath, content, 'utf8')
+    // Persist count updates + dedupe in one atomic tmp+rename — wiki/index.md
+    // is the master index; a torn in-place write truncated it.
+    const tmp = indexPath + '.tmp-' + process.pid
+    fs.writeFileSync(tmp, content, 'utf8')
+    fs.renameSync(tmp, indexPath)
   }
 
   // Sync the SVG concept-map stats bar in wiki/home.md so the front-door
@@ -924,7 +927,9 @@ async function reindexLocal() {
       `$1${counts.frameworks} frameworks$2`,
     )
     if (home !== before) {
-      fs.writeFileSync(homePath, home, 'utf8')
+      const homeTmp = homePath + '.tmp-' + process.pid
+      fs.writeFileSync(homeTmp, home, 'utf8')
+      fs.renameSync(homeTmp, homePath)
       console.log(`✅ wiki/home.md SVG stats synced`)
     }
   }

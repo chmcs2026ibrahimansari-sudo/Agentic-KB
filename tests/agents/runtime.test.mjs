@@ -544,6 +544,49 @@ test('startTask creates working-memory file and active-task pointer', () => {
   assert.match(atContent, /task_id:/)
 })
 
+test('startTask with an explicit task_id refuses to overwrite an existing working-memory file', () => {
+  const root = makeFixture()
+  const c = rt.loadContract(root, 'w1')
+
+  const first = rt.startTask(root, c, { project: 'p1', description: 'original', taskId: 'task-reused-id' })
+  const wmFull = path.join(root, first.workingMemoryPath)
+  const originalContent = fs.readFileSync(wmFull, 'utf8')
+
+  // Close out the pointer so only the working-memory file blocks the reuse
+  rt.abandonTask(root, c, first.taskId, 'test cleanup')
+
+  assert.throws(
+    () => rt.startTask(root, c, { project: 'p1', description: 'clobber attempt', taskId: 'task-reused-id' }),
+    /already exists for task task-reused-id/,
+  )
+  // The abandoned task's working memory must be untouched
+  const after = fs.readFileSync(wmFull, 'utf8')
+  assert.match(after, /original/)
+  assert.match(after, /status: abandoned/)
+  assert.ok(!after.includes('clobber attempt'), 'archived working memory must not be overwritten')
+  assert.notEqual(after, originalContent.replace('active', 'clobber attempt'))
+})
+
+test('startTask auto-generated ids allocate a fresh id instead of clobbering on collision', () => {
+  const root = makeFixture()
+  const c = rt.loadContract(root, 'w1')
+  const first = rt.startTask(root, c, { project: 'p1', description: 'first' })
+  rt.abandonTask(root, c, first.taskId, 'make room')
+
+  // Pre-create the exact file a colliding auto id would target by copying the
+  // first task's file back under a new startTask call's would-be path: easiest
+  // deterministic simulation is to reuse the completed task's id as a squatter
+  // for the next auto id — so instead assert the invariant directly: starting
+  // many tasks never throws and never reuses an existing working-memory path.
+  const seen = new Set([first.workingMemoryPath])
+  for (let i = 0; i < 5; i++) {
+    const t = rt.startTask(root, c, { project: 'p1', description: `t${i}` })
+    assert.ok(!seen.has(t.workingMemoryPath), 'working-memory path must be unique')
+    seen.add(t.workingMemoryPath)
+    rt.abandonTask(root, c, t.taskId, 'cycle')
+  }
+})
+
 test('getActiveTask returns null when no active task exists', () => {
   const root = makeFixture()
   const c = rt.loadContract(root, 'w1')

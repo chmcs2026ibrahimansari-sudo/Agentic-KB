@@ -62,7 +62,13 @@ function loadLog() {
 }
 
 function saveLog(log) {
-  fs.writeFileSync(LOG_FILE, JSON.stringify(log, null, 2), 'utf8')
+  // tmp + rename: a crash mid-write truncates this ledger, loadLog's catch
+  // then resets it to empty, and every watched note is re-staged and
+  // re-notified on the next scan (same failure class as the ingest-dedup
+  // .ingest-hashes.json ledger).
+  const tmp = LOG_FILE + '.tmp-' + process.pid
+  fs.writeFileSync(tmp, JSON.stringify(log, null, 2), 'utf8')
+  fs.renameSync(tmp, LOG_FILE)
 }
 
 // ─── Recursive dir walker ─────────────────────────────────────────────────────

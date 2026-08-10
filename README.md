@@ -8,7 +8,22 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 9, 2026 (Evening) (Latest)
+## What's New — August 10, 2026 (Latest)
+
+Nightly correctness pass — **402 tests passing** (was 400):
+
+- 🗂️ **`startTask` can't destroy archived task state** — reusing an explicit `task_id` silently overwrote a completed/abandoned task's working-memory file (its audit trail included) with a fresh template, and a same-second cross-process auto-id collision did the same (`timestamp()`'s uniqueness counter is per-process). Working-memory files are exclusive-create now: explicit reuse errors, auto ids retry with a fresh id. The active-task pointer — the file `getActiveTask` parses — is also finally written tmp+rename like every other pointer write in the file.
+- 📸 **Compaction/merge snapshots can't overwrite each other** — `compactHotMemory`, `rotateTaskLog`, and `mergeRewrite`'s canonical archive all wrote their pre-truncation/pre-overwrite snapshot to a `timestamp()`-derived path with a plain write. Two processes hitting the same agent/canonical in the same second computed the same path — the second write replaced the first snapshot immediately before the live file was truncated or overwritten, destroying the only surviving copy. Exclusive create with `-2`/`-3`… suffixes now (same class as the hot-digest fix).
+- 📝 **Compiled wiki pages survive torn writes** — `/api/compile` wrote each model-emitted page in place, then marked the source compiled in the ledger; a torn page write therefore left a *permanently* corrupted article no future incremental run regenerates. `/api/process` had the same in-place summary write, plus an `existsSync`-then-write TOCTOU for new pages (concurrent runs clobbered each other). tmp+rename and `wx` creates now.
+- 🔑 **`pin unlock` can't trip its own drift guard** — unlock wrote decrypted plaintext in place; a torn write left a truncated file whose mtime is newer than the `.enc`, which the Aug 9 drift guard then read as user edits — blocking exactly the re-unlock that would repair it. tmp+rename closes the loop.
+- 📬 **Sofie inbox + re-ingest hardening** — `raw/.sofie-inbox.json` was rewritten in place (torn write → invalid JSON → next read silently reset to `{ pending: [] }`, dropping every pending notification), and re-ingesting a modified vault note rewrote its staged transcript in place. Both tmp+rename now.
+- 📑 **ToC stops listing code comments** — `extractHeadings` matched `# ...` lines inside fenced code blocks, so shell/python comments in article snippets appeared in the table of contents with anchors that don't exist in the rendered page. The scanner now tracks ``` / ~~~ fence state.
+
+Also re-verified the Shai-Hulud npm guards: `ignore-scripts=true` present in all four package roots; `keyv 4.5.4`, `flat-cache 4.0.1`, `file-entry-cache 8.0.0` still pinned to pre-attack releases; no `axios`/`cacheable` anywhere.
+
+---
+
+## What's New — August 9, 2026 (Evening)
 
 Second nightly correctness pass of the day — **400 tests passing** (was 395):
 

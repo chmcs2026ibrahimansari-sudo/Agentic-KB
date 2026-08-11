@@ -63,9 +63,12 @@ export default function ProcessPage(): React.ReactElement {
     setFileStates(prev => ({ ...prev, [filePath]: { status: 'processing', log: [] } }))
 
     try {
+      // Forward the unlocked private-mode PIN (if any) — /api/process is
+      // PIN-gated when the server has PRIVATE_PIN configured.
+      const pin = typeof window !== 'undefined' ? sessionStorage.getItem('private_pin') || '' : ''
       const res = await fetch('/api/process', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
         body: JSON.stringify({ filePath }),
       })
 

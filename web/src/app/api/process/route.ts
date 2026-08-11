@@ -5,8 +5,10 @@ import Anthropic from '@anthropic-ai/sdk'
 import { KB_MODEL } from '@/lib/model'
 import { DEFAULT_KB_ROOT } from '@/lib/articles'
 import { safeJoin } from '@/lib/safe-path'
+import { pinMatches } from '@/lib/pin'
 
 const KB_ROOT = DEFAULT_KB_ROOT
+const PRIVATE_PIN = process.env.PRIVATE_PIN || ''
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 function send(controller: ReadableStreamDefaultController, data: object): void {
@@ -70,7 +72,24 @@ function resolveWikiPagePath(rel: string, requiredPrefix = 'wiki/'): string {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const { filePath } = await req.json() as { filePath: string }
+  // PIN gate — /api/process drives the same Claude API spend and wiki writes
+  // as /api/compile and /api/lint, both of which already require the PIN when
+  // one is configured; this route was the unauthenticated gap. Header first:
+  // a body-less POST throws in req.json() and must not drop the header read.
+  let pin = req.headers.get('x-private-pin') || ''
+  let filePath = ''
+  try {
+    const body = await req.json() as { filePath?: string; pin?: string }
+    pin = body.pin || pin
+    filePath = body.filePath || ''
+  } catch { /* defaults */ }
+
+  if (PRIVATE_PIN && !pinMatches(pin, PRIVATE_PIN)) {
+    return new Response(JSON.stringify({ error: '🔒 Process requires a valid PIN.', code: 'UNAUTHORIZED' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
 
   // Only raw/**/*.md may be processed — filePath previously went straight
   // into path.join(KB_ROOT, ...), so ../../ read (and then summarized back

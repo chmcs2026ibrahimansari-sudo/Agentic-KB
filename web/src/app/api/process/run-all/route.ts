@@ -1,7 +1,16 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 // Trigger processing of all pending files (used by nightly cron)
-export async function POST(): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  // /api/process is PIN-gated when PRIVATE_PIN is set; forward the caller's
+  // PIN so the nightly cron can authenticate (re-run the schedule installer
+  // to regenerate the launchd plist with the header).
+  let pin = request.headers.get('x-private-pin') || ''
+  try {
+    const body = await request.json() as { pin?: string }
+    pin = body.pin || pin
+  } catch { /* body optional */ }
+
   try {
     // Get pending files
     const pendingRes = await fetch('http://localhost:3002/api/process/pending')
@@ -18,9 +27,14 @@ export async function POST(): Promise<NextResponse> {
       try {
         const res = await fetch('http://localhost:3002/api/process', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
           body: JSON.stringify({ filePath: file.path }),
         })
+
+        if (res.status === 401) {
+          results.push({ path: file.path, success: false, error: 'PIN required or invalid (set x-private-pin)' })
+          continue
+        }
 
         // Drain the SSE stream and check for done/error
         const reader = res.body?.getReader()

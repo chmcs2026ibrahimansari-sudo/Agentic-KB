@@ -22,7 +22,11 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { buildIndex as buildIndexCore, classify as classifyCore } from './lib/compile-gate-core.mjs'
 
-const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+// KB_ROOT env override lets tests run the gate against a sandbox tree
+// (same convention as candidates-ttl.mjs).
+const REPO = process.env.KB_ROOT
+  ? path.resolve(process.env.KB_ROOT)
+  : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SUMMARIES = path.join(REPO, 'wiki/summaries')
 const CANDIDATES = path.join(REPO, 'wiki/candidates.md')
 const COMPILE_LOG = path.join(REPO, 'wiki/_meta/compile-log.md')

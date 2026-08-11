@@ -163,6 +163,9 @@ export default function QueryPage(): React.ReactElement {
     if (!state.answer || state.isStreaming) return
     setState(prev => ({ ...prev, saveStatus: 'saving' }))
     try {
+      // Forward the unlocked private-mode PIN (if any): auto-compile hits the
+      // PIN-gated /api/compile behind this save.
+      const pin = typeof window !== 'undefined' ? sessionStorage.getItem('private_pin') || '' : ''
       const res = await fetch('/api/query/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -172,6 +175,7 @@ export default function QueryPage(): React.ReactElement {
           sources: state.sources,
           verified,
           autoCompile: state.autoCompile,
+          ...(pin ? { pin } : {}),
         }),
       })
       const data = await res.json() as { ok?: boolean; path?: string; error?: string }

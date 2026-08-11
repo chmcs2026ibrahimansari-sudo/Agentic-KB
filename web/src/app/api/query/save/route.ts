@@ -4,6 +4,7 @@ import path from 'path'
 import { resolveVaultRoot } from '@/lib/vault'
 import { appendAuditLog } from '@/lib/audit'
 import { ulid, invalidateIdIndex } from '@/lib/ids'
+import { pinMatches } from '@/lib/pin'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,7 +15,10 @@ interface SaveBody {
   tags?: string[]
   verified?: boolean
   autoCompile?: boolean
+  pin?: string
 }
+
+const PRIVATE_PIN = process.env.PRIVATE_PIN || ''
 
 function slugify(s: string): string {
   return s
@@ -133,20 +137,29 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   // Auto-compile: fire-and-forget POST to /api/compile?mode=incremental.
   // We don't await — saves should feel instant and compile is streamed.
+  // /api/compile is PIN-gated: forward the caller's PIN, and when it would be
+  // rejected say so instead of reporting a compile that silently 401s.
   let compileTriggered = false
+  let compileBlocked = false
   if (body.autoCompile) {
-    try {
-      const origin = new URL(request.url).origin
-      void fetch(`${origin}/api/compile?mode=incremental`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          cookie: request.headers.get('cookie') || '',
-        },
-        body: JSON.stringify({}),
-      }).catch(() => { /* fire and forget */ })
-      compileTriggered = true
-    } catch { /* ignore */ }
+    const pin = body.pin || request.headers.get('x-private-pin') || ''
+    if (PRIVATE_PIN && !pinMatches(pin, PRIVATE_PIN)) {
+      compileBlocked = true
+    } else {
+      try {
+        const origin = new URL(request.url).origin
+        void fetch(`${origin}/api/compile?mode=incremental`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            cookie: request.headers.get('cookie') || '',
+            ...(pin ? { 'x-private-pin': pin } : {}),
+          },
+          body: JSON.stringify({}),
+        }).catch(() => { /* fire and forget */ })
+        compileTriggered = true
+      } catch { /* ignore */ }
+    }
   }
 
   return NextResponse.json({
@@ -155,6 +168,8 @@ export async function POST(request: NextRequest): Promise<Response> {
     compileTriggered,
     message: compileTriggered
       ? 'Saved. Compile triggered in background.'
-      : 'Saved. Run Compile to fold this into the wiki.',
+      : compileBlocked
+        ? 'Saved. Auto-compile skipped: compile requires the private PIN.'
+        : 'Saved. Run Compile to fold this into the wiki.',
   })
 }

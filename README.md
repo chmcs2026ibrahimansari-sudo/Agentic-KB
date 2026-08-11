@@ -8,7 +8,21 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 10, 2026 (Latest)
+## What's New — August 11, 2026 (Latest)
+
+Nightly correctness + security pass — **406 tests passing** (was 402):
+
+- 🎯 **The recurring compile-gate failure is diagnosable (and half of it is fixed)** — the Aug 10 morning review flagged `compile-2source-gate --execute` dying with a literal `Error: undefined`, promotions never landing. Root cause: `/api/compile`'s PIN-rejection event was the only error the route emitted under a `content:` field while every consumer (`kb compile`, CompilePanel, the MCP server's `compile_wiki`) reads `message:` — so a PIN-gated server failed with no visible reason. The event now uses `message:`, both CLI consumers fall back to `content` so no emitter shape can print `undefined` again, and `kb compile` also fails loudly on non-SSE responses (a proxy 500 page previously printed nothing and exited 0, making the gate report a failed compile as success). **Action:** the gate environment still needs `PRIVATE_PIN` exported for promotions to land — the error will now tell you exactly that.
+- 🔐 **`/api/process` honors the PIN gate** — the ingest pipeline read untrusted raw/ files, called the Claude API, and wrote wiki pages with **no authentication**, while its siblings `/api/compile` and `/api/lint` both require the PIN. Now gated the same conditional way; `run-all` forwards the caller's PIN to each inner call; the schedule installer embeds the header in the generated launchd plist (and is itself PIN-gated so it can't leak the secret); the process page forwards the unlocked private-mode PIN. **Action (only if `PRIVATE_PIN` is set):** re-run the schedule installer once so the 2 AM cron authenticates.
+- 💾 **Compounding loop stops lying about auto-compile** — `/api/query/save` fired its background compile with no PIN, so on a PIN-configured server every auto-compile 401'd silently while the UI said "Compile triggered." The save route forwards the caller's PIN and answers honestly ("Auto-compile skipped: compile requires the private PIN") when it would be rejected.
+- 🗂️ **candidates.md rewrite is atomic** — the 2-source gate rewrote its deferral ledger in place; a torn write erased the gate's only memory of what was deferred, so no theme could ever GRADUATE. tmp+rename now (the TTL script's rewrite of the same file was fixed Aug 9; the gate's own writer was missed).
+- 🧪 **Compile gate has subprocess tests** — the gate now honors the `KB_ROOT` sandbox override (same convention as candidates-ttl) and 4 new tests cover the defer → graduate lifecycle end-to-end, including that deferrals land even when the trailing `kb compile` fails.
+
+Supply-chain posture re-checked: `ignore-scripts=true` in all four package roots; MCP SDK locked at 1.29.0; no floating upgrades taken (active npm supply-chain attacks this week — pin, don't chase).
+
+---
+
+## What's New — August 10, 2026
 
 Nightly correctness pass — **402 tests passing** (was 400):
 

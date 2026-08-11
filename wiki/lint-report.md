@@ -1,13 +1,13 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-10 14:07 | Vault: Agentic-KB | Pages scanned: 679
+> Generated: 2026-08-11 14:07 | Vault: Agentic-KB | Pages scanned: 681
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 50 | 🟡 Medium |
+| Orphaned pages | 51 | 🟡 Medium |
 | Stale pages | 284 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
@@ -30,6 +30,7 @@
 - `daily-systems/logs/2026-05-23.md` — 2026-05-23
 - `daily-systems/logs/2026-08-04.md` — 2026-08-04
 - `daily-systems/logs/2026-08-05.md` — 2026-08-05
+- `daily-systems/logs/2026-08-10.md` — 2026-08-10
 - `entities/hermes-agent.md` — Hermes Agent
 - `frameworks/headroom.md` — Headroom
 - `patterns/pattern-morning-review.md` — Morning-Review Pipeline

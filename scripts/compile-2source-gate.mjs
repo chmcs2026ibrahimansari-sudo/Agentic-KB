@@ -82,7 +82,12 @@ async function writeCandidates(defer) {
     .sort((a, b) => a.theme.localeCompare(b.theme))
     .map((i) => `- ${i.theme}  (1 source: ${i.sources[0]})`)
     .join('\n')
-  await fs.writeFile(CANDIDATES, header + lines + '\n')
+  // tmp+rename: candidates.md is the gate's only memory of what was deferred.
+  // A torn in-place write loses it, so every deferred theme re-enters as new
+  // and no theme can ever GRADUATE on its next second source.
+  const tmp = CANDIDATES + '.tmp-' + process.pid
+  await fs.writeFile(tmp, header + lines + '\n')
+  await fs.rename(tmp, CANDIDATES)
 }
 
 async function appendLog({ promote, defer, graduate }) {

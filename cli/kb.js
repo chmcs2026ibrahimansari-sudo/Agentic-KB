@@ -391,6 +391,15 @@ async function compile(mode, pin) {
     body: JSON.stringify({ mode, pin }),
   })
   if (!res.body) { console.error('Compile API unavailable.'); process.exit(1) }
+  // A non-SSE response (proxy 500 page, misrouted request) has no `data:`
+  // lines: the loop below would print nothing and exit 0, so the 2-source
+  // gate would report a failed compile as success.
+  const ctype = res.headers.get('content-type') || ''
+  if (!ctype.includes('text/event-stream')) {
+    const bodyText = await res.text().catch(() => '')
+    console.error(`Error: compile API returned ${res.status} (${ctype || 'no content-type'}): ${bodyText.slice(0, 300)}`)
+    process.exit(1)
+  }
   const reader = res.body.getReader()
   const decoder = new TextDecoder()
   let buf = ''
@@ -409,7 +418,7 @@ async function compile(mode, pin) {
         if (data.type === 'page') console.log('    ' + (data.op === 'create' ? '[new]' : '[upd]') + ' ' + data.path)
         if (data.type === 'skip') console.log('  skip ', data.file, '-', data.reason)
         if (data.type === 'done') { console.log('\nDone: ' + data.message); break }
-        if (data.type === 'error') { console.error('Error: ' + data.message); process.exit(1) }
+        if (data.type === 'error') { console.error('Error: ' + (data.message || data.content || JSON.stringify(data))); process.exit(1) }
       } catch(e) { }
     }
   }

@@ -841,7 +841,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             const data = JSON.parse(part.slice(6))
             if (data.type === 'progress' || data.type === 'done') lines.push(data.message || '')
             if (data.type === 'page') lines.push((data.op === 'create' ? '[new] ' : '[upd] ') + data.path)
-            if (data.type === 'error') return { content: [{ type: 'text', text: 'Error: ' + data.message }], isError: true }
+            if (data.type === 'error') return { content: [{ type: 'text', text: 'Error: ' + (data.message || data.content || JSON.stringify(data)) }], isError: true }
           } catch(e) { }
         }
       }

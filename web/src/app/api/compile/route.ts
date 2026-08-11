@@ -165,7 +165,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   if (PRIVATE_PIN && !pinMatches(pin, PRIVATE_PIN)) {
     return new Response(
-      encodeSSE({ type: 'error', content: '🔒 Compile requires a valid PIN.' }),
+      encodeSSE({ type: 'error', message: '🔒 Compile requires a valid PIN.' }),
       { status: 401, headers: { 'Content-Type': 'text/event-stream' } }
     )
   }

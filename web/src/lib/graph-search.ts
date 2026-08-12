@@ -103,11 +103,28 @@ export function applyBudgetAllocation(
 
   // Deduplicate by filePath, preserving order
   const seen = new Set<string>()
-  return picked.filter(r => {
-    if (seen.has(r.filePath)) return false
+  const out: GraphSearchResult[] = []
+  for (const r of picked) {
+    if (seen.has(r.filePath)) continue
     seen.add(r.filePath)
-    return true
-  })
+    out.push(r)
+  }
+
+  // Backfill: the caps only exist to stop graph expansion drowning out
+  // direct matches — an under-subscribed bucket must not shrink the result
+  // set. Without this, a query with only direct hits returned 60% of the
+  // requested limit (and the never-populated hot bucket wasted 5% always).
+  // Leftovers arrive score-ranked, so fill remaining capacity in order.
+  if (out.length < limit) {
+    for (const r of results) {
+      if (out.length >= limit) break
+      if (seen.has(r.filePath)) continue
+      seen.add(r.filePath)
+      out.push(r)
+    }
+  }
+
+  return out.slice(0, limit)
 }
 
 // ── Graph loader (cached per process) ────────────────────────────────────────

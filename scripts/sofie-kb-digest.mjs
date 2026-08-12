@@ -176,7 +176,11 @@ console.log(`✅ KB digest: wiki/agents/leads/sofie/weekly-digest.md`)
 const obsidianPath = path.join(OBSIDIAN_VAULT, '07 - Tasks', `KB Digest ${dateStr}.md`)
 try {
   fs.mkdirSync(path.dirname(obsidianPath), { recursive: true })
-  fs.writeFileSync(obsidianPath, digest, 'utf8')
+  // tmp + rename, same as the KB copy above: Obsidian Sync/iCloud can read
+  // the note mid-write, and a torn write ships a truncated digest to Sofie.
+  const obsTmp = obsidianPath + '.tmp-' + process.pid
+  fs.writeFileSync(obsTmp, digest, 'utf8')
+  fs.renameSync(obsTmp, obsidianPath)
   console.log(`✅ Obsidian digest: 07 - Tasks/KB Digest ${dateStr}.md`)
 } catch (err) {
   console.warn(`⚠️  Could not write to Obsidian (${err.message}) — KB copy saved`)

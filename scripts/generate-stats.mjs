@@ -308,6 +308,10 @@ lines.push(`# Or with explicit root:`)
 lines.push(`node scripts/generate-stats.mjs --kb-root /path/to/Agentic-KB`)
 lines.push(`\`\`\``)
 
-fs.writeFileSync(OUT, lines.join('\n') + '\n', 'utf8')
+// tmp + rename: stats.md is a served wiki page — a torn in-place write
+// leaves a truncated article until the next manual refresh.
+const outTmp = OUT + '.tmp-' + process.pid
+fs.writeFileSync(outTmp, lines.join('\n') + '\n', 'utf8')
+fs.renameSync(outTmp, OUT)
 console.log(`✅ Stats written → ${path.relative(KB_ROOT, OUT)}`)
 console.log(`   ${totalPages} pages | ${totalWords.toLocaleString()} words | ${totalLinks.toLocaleString()} links | ${orphans.length} orphans`)

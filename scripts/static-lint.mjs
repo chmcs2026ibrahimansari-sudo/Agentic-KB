@@ -119,5 +119,8 @@ const lines = [
   ...stale.map(s => `- \`${s.rel}\` (mtime ${s.mtime})`),
   '',
 ]
-fs.writeFileSync(reportPath, lines.join('\n'))
+// tmp + rename, same class as the /api/lint report fix (Aug 9).
+const reportTmp = reportPath + '.tmp-' + process.pid
+fs.writeFileSync(reportTmp, lines.join('\n'))
+fs.renameSync(reportTmp, reportPath)
 console.log(`\n✓ Wrote ${path.relative(KB, reportPath)}`)

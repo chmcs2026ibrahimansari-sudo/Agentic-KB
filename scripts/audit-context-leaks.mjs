@@ -111,7 +111,11 @@ if (allowed.length > 0) {
   }
 }
 
-fs.writeFileSync(reportPath, lines.join('\n') + '\n')
+// tmp + rename: a same-day re-run overwrites the dated report in place —
+// a torn write leaves a corrupt report that reads as a clean audit.
+const reportTmp = reportPath + '.tmp-' + process.pid
+fs.writeFileSync(reportTmp, lines.join('\n') + '\n')
+fs.renameSync(reportTmp, reportPath)
 
 console.log(`Tier-leak audit: scanned ${contracts.length} contracts, ${findings.length} findings, ${allowed.length} permitted`)
 console.log(`Report: ${path.relative(KB_ROOT, reportPath)}`)

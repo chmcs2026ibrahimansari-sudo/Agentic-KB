@@ -212,6 +212,16 @@ async function query(question, scope = 'public', pin = '') {
     process.exit(1)
   }
 
+  // A non-SSE response (proxy 500 page, misrouted request) has no `data:`
+  // lines: the loop below would print nothing and exit 0 — same failure mode
+  // the compile path guards against.
+  const ctype = res.headers.get('content-type') || ''
+  if (!ctype.includes('text/event-stream')) {
+    const bodyText = await res.text().catch(() => '')
+    console.error(`❌ Query API returned ${res.status} (${ctype || 'no content-type'}): ${bodyText.slice(0, 300)}`)
+    process.exit(1)
+  }
+
   const reader = res.body.getReader()
   const decoder = new TextDecoder()
   let sseBuf = ''

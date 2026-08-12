@@ -8,7 +8,22 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 11, 2026 (Latest)
+## What's New — August 12, 2026 (Latest)
+
+Nightly correctness pass — **410 tests passing** (was 406):
+
+- 🔗 **Section anchors in wikilinks finally work** — `[[page#Some Section]]` kept the anchor inside the path, so the rendered markdown link had a raw space in its destination; CommonMark doesn't parse that as a link at all, so anchored wikilinks displayed as literal `[text](url)` source (live example: `[[CLAUDE.md#QUERY Workflow]]` in the knowledge-workflows MoC). And even encoded, the fragment could never land: heading ids are slugified lowercase. Anchors are now split off and slugified with the exact `extractHeadings` id rules; `[[#Local Section]]` keeps a bare fragment.
+- 🔍 **Graph search stops under-filling results** — the 60/20/5/15 budget allocator filled each bucket independently and returned the concatenation, so a query whose matches were all direct label hits returned 6 of 10 requested results — and the `hot` bucket, which no caller ever populates, silently wasted 5% of every search's budget. Unused capacity now backfills from the score-ranked leftovers (the caps still protect direct matches first), and the result is capped at `limit`, which the rounded slot sum could previously exceed.
+- 🤫 **`kb query` can't report success on a dead server** — same failure mode the compile path was guarded against on Aug 11: a proxy 500 page has no `data:` lines, so the SSE loop printed nothing and exited 0. Non-event-stream responses now print status + body excerpt and exit 1.
+- 💾 **The tmp+rename sweep is complete** — four writers the Aug 8–10 passes missed: `wiki/stats.md` (a served wiki page; a torn write left a truncated article), the Obsidian copy of Sofie's weekly digest (the KB copy was already atomic; Obsidian Sync reads mid-write), and the tier-leak + static-lint reports (same-day re-runs overwrote dated reports in place — a torn tier-leak report reads as a clean audit).
+- 🧪 **`generate-stats.mjs` has tests** — the stats generator had zero coverage; 4 new subprocess tests cover section/type/confidence counts, namespace exclusions, orphan + link detection, idempotent re-runs, and that the new atomic write leaves no tmp files behind.
+- 📜 **MCP spec-compat note un-staled** — the mcp/README claimed "no migration needed until the SDK ships 2026-07-28 support"; Tier-1 SDKs have since shipped it. The section now states the real posture: pinned at 1.29.0 by choice (pin-and-audit under the current npm supply-chain climate), with the Tasks-extension id and the DCR→CIMD deprecation noted.
+
+Supply-chain posture re-checked against the Aug 4 ChainDrop npm worm list: no `keyv@6.0.0`, `flat-cache@6.1.24`, or `file-entry-cache@11.1.6` anywhere — all three remain pinned to pre-attack releases (`4.5.4` / `4.0.1` / `8.0.0`); `ignore-scripts=true` still guards all four package roots; the lone `"version": "6.0.0"` in web's lockfile is `locate-path` (benign).
+
+---
+
+## What's New — August 11, 2026
 
 Nightly correctness + security pass — **406 tests passing** (was 402):
 

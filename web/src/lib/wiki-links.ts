@@ -28,13 +28,31 @@ export function parseWikiLinkTarget(target: string): { path: string; label: stri
     label = label.charAt(0).toUpperCase() + label.slice(1)
   }
 
+  // Split off a #section anchor before path cleanup. Left in the path,
+  // [[page#Some Section]] produced hrefs like "/wiki/page#Some Section" —
+  // a destination with a raw space, which markdown does not even parse as
+  // a link — and `path` no longer matched any article for backlinks.
+  let anchor = ''
+  const hashIdx = rawPath.indexOf('#')
+  if (hashIdx !== -1) {
+    anchor = rawPath.slice(hashIdx + 1).trim()
+    rawPath = rawPath.slice(0, hashIdx).trim()
+  }
+
   // Strip leading "wiki/" if present
   const cleanPath = rawPath.replace(/^wiki\//, '').replace(/\.md$/, '')
+
+  // Slugify the anchor the same way extractHeadings generates heading ids,
+  // so the fragment actually lands on the rendered heading.
+  const fragment = anchor
+    ? '#' + anchor.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/^-+|-+$/g, '')
+    : ''
 
   return {
     path: cleanPath,
     label,
-    href: `/wiki/${cleanPath}`,
+    // [[#Local Section]] links within the same page keep a bare fragment
+    href: cleanPath ? `/wiki/${cleanPath}${fragment}` : fragment || '/wiki/',
   }
 }
 

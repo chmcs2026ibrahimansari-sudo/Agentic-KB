@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-12 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-skillopt-gate-episodic-judgment-log|SkillOpt's Validation Gate Closes the Episodic Judgment Log's Missing-Gate Gap]] — the gate mechanism transplanted a second time, onto freshness-clock resets; completes the governance story across skills, vault pages, and episodic events
+
 ## 2026-08-10 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-headroom-compression-episodic-judgment-signal|Headroom Compression Threatens the Episodic Judgment Log's Freshness Authority]] — the silent-corruption risk from the SkillOpt synthesis generalized to the KB's highest-trust freshness signal

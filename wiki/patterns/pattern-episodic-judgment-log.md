@@ -167,3 +167,4 @@ The failures log is described as the most valuable: "It encodes pattern recognit
 - [[concepts/memory-systems]] — the four-type taxonomy; judgment logs extend the episodic memory type
 - [[concepts/context-management]] — primacy-recency attention curve affects how judgment log entries should be structured (lead with the lesson, reasoning in the middle)
 - [[syntheses/synthesis-episodic-judgment-log-to-trace-dataset]] — this pattern is architecturally equivalent to LangSmith's trace-to-dataset workflow; see the synthesis for build/buy analysis
+- [[syntheses/synthesis-skillopt-gate-episodic-judgment-log]] — SkillOpt's held-out validation gate as the missing quality gate before log events reset freshness clocks

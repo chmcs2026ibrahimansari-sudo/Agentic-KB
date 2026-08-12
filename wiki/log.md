@@ -1236,3 +1236,38 @@ Pages affected: `frameworks/headroom.md`, `_meta/compile-log.md`
 **Contradictions flagged:** none new in 14-day window. Standing open: obsidian-wiki `_raw/` mutability vs. raw-immutability rule (2026-06-25, unadjudicated).
 
 **Candidate watch:** tdd-execution + tdd-first cluster (summary-gsd-executor, summary-superpowers-framework) arguably clears the 2-source bar for a pattern-tdd-first-execution page — flagged for next compile/human review rather than force-promoted.
+
+---
+
+## 2026-08-10 — Agentic-KB Editor Run
+
+**Trigger:** Scheduled `agentic-kb-editor-run` at 06:26 PDT.
+
+**Pages considered:** 30 wiki files changed in the last 24 hours, including 8 new summaries from the Refinery Run, 1 new pattern, 5 updated concept/pattern pages, 3 recent syntheses, `wiki/index.md`, `wiki/recently-added.md`, `wiki/candidates.md`, `wiki/_meta/compile-log.md`, `wiki/_meta/proposals.md`, `wiki/reports/2026-08-10-nightly-ci-analysis.md`, and `wiki/log.md`.
+
+**Thread updated:** `[[syntheses/synthesis-agentic-engineering-operating-model]]` received a targeted new principle: capability must graduate out of the enablement lane.
+
+**Reason:** The Sierra, Airbnb, Salesforce, and Netflix sources form a real multi-source operating-model thread. Sierra/Airbnb describe the visible-orchestrator and artifact-native work model; Netflix adds the organizational adoption arc: embed, transfer capability, graduate teams, and harvest repeated friction into shared tooling.
+
+**Contradictions flagged:** None new.
+
+**Briefing:** `briefings/2026-08-10.md`.
+
+---
+
+## 2026-08-12 — morning-review-daily apply pass
+
+**Run:** scheduled morning-review-daily (Cowork).
+
+**Staging/capture:** sofie-watch-obsidian --once staged 0 files; Apple Notes KB Inbox (1 old note, already deduped) and Snipd (empty) yielded 0 new clippings; 0 transcripts pending. No ingest needed.
+
+**Compile gate:** `compile-2source-gate.mjs --execute` planned PROMOTE 30 / DEFER 167 / GRADUATE 0, but the compile step aborted with `Error: undefined` before writing any wiki pages — same failure signature as the 2026-08-11/12 refinery error briefings. No pages were promoted. Needs investigation.
+
+**Proposals:** `foundry-propose --execute --top 3` persisted PROP-147 [HEAVY_BACKLOG] — 167 deferred candidates (threshold 50).
+
+**Pages created:**
+- [[syntheses/synthesis-skillopt-gate-episodic-judgment-log]] — top cross-domain connection of the day: SkillOpt's held-out validation gate transplanted onto episodic-log freshness-clock resets, closing the "no comparable gate" gap named in [[syntheses/synthesis-headroom-compression-episodic-judgment-signal]]. Born `reviewed: false`. Inbound links added from [[frameworks/framework-skillopt]] and [[patterns/pattern-episodic-judgment-log]].
+
+**Provenance edits:** none new — today's tensions scan re-surfaced only the two known open items (obsidian-wiki raw-mutability vs. raw-immutability rule; agentmemory provenance gap), both already carrying [UNVERIFIED PROVENANCE] markers and downgraded confidence from prior passes.
+
+**Contradictions flagged:** None new.

@@ -6,6 +6,7 @@ sources:
   - raw/framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md
   - raw/framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md
   - raw/framework-docs/www-linkedin-com-jobs-view-4438558062.md
+  - raw/framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md
   - wiki/daily-systems/logs/2026-07-28.md
   - wiki/daily-systems/logs/2026-07-29.md
   - wiki/reports/2026-07-24-nightly-ci-analysis.md
@@ -15,7 +16,7 @@ sources:
 question: What operating model makes agentic engineering useful instead of performative?
 tags: [agentic, orchestration, multi-agent, human-in-the-loop, evaluation, context-management, observability]
 created: 2026-07-10
-updated: 2026-07-30
+updated: 2026-08-10
 confidence: medium
 ---
 
@@ -114,7 +115,13 @@ Sessions, tool calls, tokens, and PR counts can show adoption, but they do not p
 - more completed artifacts per operator hour;
 - user/customer/deal outcome changed.
 
-### 7. Failure signals must escape the failing system
+### 7. Capability must graduate out of the enablement lane
+
+The operating model should not leave central AI/SRE/platform experts permanently attached to every workflow they improve. [[summaries/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc]] adds the missing adoption arc: embed deeply enough to see real work, build partner-team capability, graduate the team to independence, then harvest repeated friction into centralized tooling. That turns enablement from a service desk into a capability flywheel.
+
+This sharpens the agentic engineering model. Sierra shows one visible agent front door and system-of-record writeback; Airbnb shows the human as navigator over multiple artifact-producing sessions; Netflix shows how the organization absorbs the new capability instead of depending forever on the expert team. For WAID/Workday AI, the anti-pattern is a central AI team becoming the permanent prompt/tool helpdesk. The better model is bounded embeds, explicit graduation criteria, and shared tooling/templates produced from repeated field friction ([[patterns/pattern-embedded-graduation-model]], [[patterns/pattern-outcome-metrics-for-agent-adoption]]).
+
+### 8. Failure signals must escape the failing system
 
 Scheduled agents need a failure path that is outside the repo, vault, or service they are blocked on. The July 28 and July 29 daily system logs show the Agentic-KB Night Shift had been blocked at the dirty-worktree gate for five to six consecutive days, with the signal degrading from repo-local error briefings to no visible 07-29 briefing at all (`[[daily-systems/logs/2026-07-28]]`, `[[daily-systems/logs/2026-07-29]]`). In parallel, the SellerFi Vercel Environment Check reports show a non-auto-fixable secret rotation failure recurring across multiple scheduled CI runs while remaining report-only because the nightly job correctly cannot handle secrets (`[[reports/2026-07-24-nightly-ci-analysis]]`, `[[reports/2026-07-27-nightly-ci-analysis]]`, `[[reports/2026-07-28-nightly-ci-analysis]]`, `[[reports/2026-07-29-nightly-ci-analysis]]`).
 

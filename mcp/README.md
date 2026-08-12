@@ -153,12 +153,19 @@ launch. What matters for this server:
 - **`Mcp-Session-Id` header removed** — no session identity to hold onto;
   irrelevant for this stdio server, which never depended on it.
 - **Tasks moved to an extension** — long-running work (a natural fit for
-  `compile_wiki` runs) is opt-in rather than core.
+  `compile_wiki` runs) is opt-in rather than core, under
+  `io.modelcontextprotocol/tasks`.
+- **Dynamic Client Registration deprecated** in favor of CIMD
+  (client-ID-as-metadata-URL) — an HTTP-authorization concern with no
+  effect on this stdio server.
 
-No migration is needed until `@modelcontextprotocol/sdk` ships support —
-the SDK is expected to handle the `_meta` negotiation details, and this
-server keeps no per-session state of its own, so the stateless core is a
-non-event here. When upgrading the SDK, revisit:
+Tier-1 SDKs (including the TypeScript SDK) have shipped 2026-07-28
+support. This server deliberately stays pinned at SDK 1.29.0 — the
+lockstep policy here is pin-and-audit, not chase-latest, given the active
+npm supply-chain climate — and nothing in the new revision forces an
+upgrade: the SDK handles the `_meta` negotiation details, and this server
+keeps no per-session state of its own, so the stateless core is a
+non-event. When the pin is next reviewed, revisit:
 - long-running tools (`compile_wiki`, `query_wiki`) → Tasks extension
 - `PRIVATE_PIN` gating → OAuth-aligned authorization
 

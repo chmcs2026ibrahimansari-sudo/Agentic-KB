@@ -234,6 +234,12 @@ export function getBacklinks(targetSlug: string): ArticleMeta[] {
       let match
       while ((match = wikiLinkPattern.exec(content)) !== null) {
         const linkedPath = match[1].trim()
+          // [[page#Some Section]] links to the page — split the anchor off
+          // before comparing, same as parseWikiLinkTarget. Left in place, an
+          // anchored link never string-matched the target slug, so pages
+          // linked only via section anchors showed zero backlinks.
+          .replace(/#[\s\S]*$/, '')
+          .trim()
           .replace(/^wiki\//, '')
           .replace(/\.md$/, '')
         if (linkedPath === targetSlug || linkedPath === baseName ||

@@ -45,6 +45,18 @@ function extractWikilinks(content) {
   return links
 }
 
+function countTags(content, tagCounts) {
+  const fm = content.match(/^---\n([\s\S]*?)\n---/)
+  if (!fm) return
+  const tagsLine = fm[1].match(/^tags:\s*(.+)$/m)
+  if (!tagsLine) return
+  const raw = tagsLine[1].trim()
+  const tags = raw.startsWith('[')
+    ? [...raw.matchAll(/["']?([\w-]+)["']?/g)].map(m => m[1]).filter(t => t !== 'tags')
+    : raw.split(/[,\s]+/).filter(Boolean)
+  for (const t of tags) tagCounts.set(t, (tagCounts.get(t) || 0) + 1)
+}
+
 function stemVariants(name) {
   const base = name.replace(/\.md$/i, '')
   return new Set([base, base.toLowerCase()])
@@ -80,11 +92,16 @@ function scanVault() {
   const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
   const notes = []
 
+  // Single pass: link extraction and tag counting share one read per file
+  // (this scan previously re-read the whole vault a second time for tags).
+  const tagCounts = new Map()
+
   for (const abs of files) {
     const rel = relVaultPath(abs)
+    const content = fs.readFileSync(abs, 'utf8')
+    countTags(content, tagCounts)
     if (rel.startsWith('00 - Dashboards/')) continue
     const stat = fs.statSync(abs)
-    const content = fs.readFileSync(abs, 'utf8')
     const outlinks = [...extractWikilinks(content)]
     notes.push({
       rel,
@@ -119,19 +136,6 @@ function scanVault() {
   const createdThisWeek = enriched.filter(n => n.ctime >= weekAgo).sort((a, b) => b.ctime - a.ctime)
   const modifiedThisWeek = enriched.filter(n => n.mtime >= weekAgo).sort((a, b) => b.mtime - a.mtime)
 
-  const tagCounts = new Map()
-  for (const abs of files) {
-    const content = fs.readFileSync(abs, 'utf8')
-    const fm = content.match(/^---\n([\s\S]*?)\n---/)
-    if (!fm) continue
-    const tagsLine = fm[1].match(/^tags:\s*(.+)$/m)
-    if (!tagsLine) continue
-    const raw = tagsLine[1].trim()
-    const tags = raw.startsWith('[')
-      ? [...raw.matchAll(/["']?([\w-]+)["']?/g)].map(m => m[1]).filter(t => t !== 'tags')
-      : raw.split(/[,\s]+/).filter(Boolean)
-    for (const t of tags) tagCounts.set(t, (tagCounts.get(t) || 0) + 1)
-  }
   const topTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 25)
 
   return {

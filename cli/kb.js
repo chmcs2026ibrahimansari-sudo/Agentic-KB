@@ -245,9 +245,13 @@ async function query(question, scope = 'public', pin = '') {
         if (data.type === 'sources') {
           // Server sends { paths, contradicted }; older builds sent { sources }
           const srcs = data.paths || data.sources || []
+          // The route flags sources the lint pass marked contradicted (it
+          // still uses them, deprioritized); presenting them as equal to the
+          // clean sources hid that caveat from CLI users.
+          const contradicted = new Set(data.contradicted || [])
           if (srcs.length) {
             console.log('\n\n📚 Sources:')
-            for (const s of srcs) console.log(`  → ${s}`)
+            for (const s of srcs) console.log(`  → ${s}${contradicted.has(s) ? '  ⚠️ contradicted — deprioritized in synthesis' : ''}`)
           }
         }
         if (data.type === 'done') break

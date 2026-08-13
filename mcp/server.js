@@ -802,6 +802,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const decoder = new TextDecoder()
       let fullAnswer = ''
       let errorText = ''
+      let sources = []
+      let contradicted = new Set()
       let sseBuf = ''
 
       while (true) {
@@ -820,6 +822,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             // it returned a blank non-error answer. `message` fallback matches
             // the compile-path convention.
             if (data.type === 'error') errorText = data.content || data.message || 'unknown error'
+            if (data.type === 'sources') {
+              // Server sends { paths, contradicted }; older builds sent { sources }.
+              sources = data.paths || data.sources || []
+              contradicted = new Set(data.contradicted || [])
+            }
             if (data.type === 'done') break
           } catch { /* skip */ }
         }
@@ -828,6 +835,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       if (errorText) {
         const partial = fullAnswer ? `\n\nPartial answer before the error:\n${fullAnswer}` : ''
         return { content: [{ type: 'text', text: `Query error: ${errorText}${partial}` }], isError: true }
+      }
+
+      if (fullAnswer && sources.length) {
+        const list = sources
+          .map(sp => `- ${sp}${contradicted.has(sp) ? ' (contradicted — deprioritized in synthesis)' : ''}`)
+          .join('\n')
+        fullAnswer += `\n\nSources:\n${list}`
       }
 
       return { content: [{ type: 'text', text: fullAnswer || 'No answer returned' }] }

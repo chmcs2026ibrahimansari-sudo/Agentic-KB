@@ -8,7 +8,23 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 12, 2026 (Latest)
+## What's New — August 13, 2026 (Latest)
+
+Nightly correctness pass — **415 tests passing** (was 410):
+
+- 🔗 **Anchored wikilinks finally count as backlinks** — the Aug 12 pass taught the link *renderer* to split `[[page#Some Section]]` anchors off the path, but `getBacklinks` — the scanner behind the "Pages that link here" footer and `/api/article` — was missed: it kept the `#anchor` in the compared path, so a page referenced only through section anchors reported zero backlinks. Anchor stripped before comparison now, same rule as the parser.
+- 🐙 **GitHub webhooks can actually authenticate** — `/api/ingest/webhook` documents "set as webhook URL in repo settings", but its only auth was an `Authorization: Bearer` header — which GitHub webhooks cannot send. With `WEBHOOK_SECRET` set, every documented GitHub delivery 401'd. The route now verifies GitHub's `X-Hub-Signature-256` HMAC over the raw payload bytes (same constant-time comparison as the Bearer path).
+- 🤫 **`query_wiki` (MCP) can't report a dead server as an empty answer** — same two silent-failure paths fixed on the CLI Aug 11–12, missed in the MCP consumer: a non-SSE response (proxy 500) returned "No answer returned" without `isError`, and the route's SSE `error` events (cost cap hit, missing index, API failures) were dropped entirely. Both now fail loudly, preserving any partial answer.
+- 📚 **`query_wiki` answers carry their citations** — the tool description always promised "a synthesized answer with citations", but the handler discarded the `sources` event; MCP callers got unattributed answers. Sources are appended now, with contradiction markers.
+- ⚠️ **Contradicted sources are flagged everywhere** — `/api/query` marks sources the lint pass found contradictions in (still used, deprioritized in synthesis), but every consumer presented all citations as equally solid. `kb query` prints an explicit marker, the QueryPanel renders flagged chips in amber with a tooltip, and the MCP output annotates them.
+- ⚡ **Graph maintenance scan reads the vault once** — `scanVault` read every note twice (once for wikilinks, a second full pass just for frontmatter tags); tag counting now shares the first read, halving the dominant I/O on the multi-thousand-note vault it targets.
+- 🧪 **`graph-maintenance-scan.mjs` has tests** — the script now honors the `KB_ROOT` sandbox override (candidates-ttl convention), and 5 new subprocess tests cover orphan/dead-end/tag detection with dashboard exclusion, anchored+aliased link resolution, atomic receipt writes, `--verify-receipt` pass/fail, and the missing-vault exit path.
+
+Supply-chain posture re-checked against the Aug 4 ChainDrop npm worm list: no `keyv@6.0.0`, `flat-cache@6.1.24`, `file-entry-cache@11.1.6`, and no Mastra packages anywhere — web's lockfile still pins the pre-attack `4.5.4` / `4.0.1` / `8.0.0`; `ignore-scripts=true` guards all four package roots.
+
+---
+
+## What's New — August 12, 2026
 
 Nightly correctness pass — **410 tests passing** (was 406):
 

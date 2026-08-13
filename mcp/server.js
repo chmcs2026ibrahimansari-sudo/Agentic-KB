@@ -784,13 +784,24 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       })
 
       if (!res.body) {
-        return { content: [{ type: 'text', text: 'Query API unavailable' }] }
+        return { content: [{ type: 'text', text: 'Query API unavailable' }], isError: true }
+      }
+
+      // A non-SSE response (proxy 500 page, misrouted request) has no `data:`
+      // lines, so the collector below would answer "No answer returned"
+      // without isError — the same silent-success failure the CLI's kb query
+      // and kb compile were guarded against; this consumer was missed.
+      const ctype = res.headers.get('content-type') || ''
+      if (!ctype.includes('text/event-stream')) {
+        const bodyText = await res.text().catch(() => '')
+        return { content: [{ type: 'text', text: `Query API returned ${res.status} (${ctype || 'no content-type'}): ${bodyText.slice(0, 300)}` }], isError: true }
       }
 
       // Collect SSE stream
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
       let fullAnswer = ''
+      let errorText = ''
       let sseBuf = ''
 
       while (true) {
@@ -804,9 +815,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           try {
             const data = JSON.parse(line.slice(6))
             if ((data.type === 'token' || data.type === 'answer') && data.content) fullAnswer += data.content
+            // The route reports failures (cost cap hit, missing index, API
+            // errors) as an SSE error event with a `content` field; dropping
+            // it returned a blank non-error answer. `message` fallback matches
+            // the compile-path convention.
+            if (data.type === 'error') errorText = data.content || data.message || 'unknown error'
             if (data.type === 'done') break
           } catch { /* skip */ }
         }
+      }
+
+      if (errorText) {
+        const partial = fullAnswer ? `\n\nPartial answer before the error:\n${fullAnswer}` : ''
+        return { content: [{ type: 'text', text: `Query error: ${errorText}${partial}` }], isError: true }
       }
 
       return { content: [{ type: 'text', text: fullAnswer || 'No answer returned' }] }

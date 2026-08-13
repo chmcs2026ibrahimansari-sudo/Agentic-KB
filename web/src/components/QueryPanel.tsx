@@ -15,6 +15,7 @@ interface StreamEvent {
   content?: string
   path?: string
   paths?: string[]
+  contradicted?: string[]
 }
 
 interface QueryState {
@@ -22,6 +23,7 @@ interface QueryState {
   reading: string[]
   answer: string
   sources: string[]
+  contradicted: string[]
   error: string | null
   isStreaming: boolean
   saveStatus: 'idle' | 'saving' | 'saved' | 'error'
@@ -46,6 +48,7 @@ export default function QueryPanel({ isOpen, onClose }: QueryPanelProps): React.
     reading: [],
     answer: '',
     sources: [],
+    contradicted: [],
     error: null,
     isStreaming: false,
     saveStatus: 'idle',
@@ -82,6 +85,7 @@ export default function QueryPanel({ isOpen, onClose }: QueryPanelProps): React.
       reading: [],
       answer: '',
       sources: [],
+      contradicted: [],
       error: null,
       isStreaming: true,
       saveStatus: 'idle',
@@ -126,7 +130,7 @@ export default function QueryPanel({ isOpen, onClose }: QueryPanelProps): React.
                 case 'answer':
                   return { ...prev, answer: prev.answer + (event.content || '') }
                 case 'sources':
-                  return { ...prev, sources: event.paths || [] }
+                  return { ...prev, sources: event.paths || [], contradicted: event.contradicted || [] }
                 case 'error':
                   return { ...prev, error: event.content || 'Unknown error', isStreaming: false }
                 case 'done':
@@ -493,25 +497,32 @@ export default function QueryPanel({ isOpen, onClose }: QueryPanelProps): React.
                 Sources Read ({state.sources.length})
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                {state.sources.map((src, i) => (
-                  <Link
-                    key={src + ':' + i}
-                    href={`/wiki/${pathToSlug(src)}`}
-                    onClick={onClose}
-                    style={{
-                      display: 'inline-block',
-                      background: '#eaecf0',
-                      border: '1px solid #a2a9b1',
-                      borderRadius: '2px',
-                      padding: '0.15rem 0.5rem',
-                      fontSize: '0.75rem',
-                      color: '#0645ad',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    {pathToLabel(src)}
-                  </Link>
-                ))}
+                {state.sources.map((src, i) => {
+                  // The server flags sources the lint pass found contradictions
+                  // in (still used, deprioritized during synthesis) — surface
+                  // that instead of presenting every citation as equally solid.
+                  const flagged = state.contradicted.includes(src)
+                  return (
+                    <Link
+                      key={src + ':' + i}
+                      href={`/wiki/${pathToSlug(src)}`}
+                      onClick={onClose}
+                      title={flagged ? 'Lint found contradictions on this page — deprioritized during synthesis' : undefined}
+                      style={{
+                        display: 'inline-block',
+                        background: flagged ? '#fef6e7' : '#eaecf0',
+                        border: flagged ? '1px solid #edab00' : '1px solid #a2a9b1',
+                        borderRadius: '2px',
+                        padding: '0.15rem 0.5rem',
+                        fontSize: '0.75rem',
+                        color: '#0645ad',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      {flagged ? '\u26a0 ' : ''}{pathToLabel(src)}
+                    </Link>
+                  )
+                })}
               </div>
             </div>
           )}

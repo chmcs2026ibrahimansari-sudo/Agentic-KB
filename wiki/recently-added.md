@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-13 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-episodic-judgment-obsidian-wiki-gate|The Episodic Judgment Log Is the Ground-Truth Oracle obsidian-wiki's Gate Is Missing]] — the missing sixth edge of the Headroom/SkillOpt/obsidian-wiki/episodic-log cluster; proposes sourcing vault-gate validation cases from human correction events instead of synthetic fixtures
+
 ## 2026-08-12 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-skillopt-gate-episodic-judgment-log|SkillOpt's Validation Gate Closes the Episodic Judgment Log's Missing-Gate Gap]] — the gate mechanism transplanted a second time, onto freshness-clock resets; completes the governance story across skills, vault pages, and episodic events

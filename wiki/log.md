@@ -1271,3 +1271,24 @@ Pages affected: `frameworks/headroom.md`, `_meta/compile-log.md`
 **Provenance edits:** none new — today's tensions scan re-surfaced only the two known open items (obsidian-wiki raw-mutability vs. raw-immutability rule; agentmemory provenance gap), both already carrying [UNVERIFIED PROVENANCE] markers and downgraded confidence from prior passes.
 
 **Contradictions flagged:** None new.
+
+---
+
+## 2026-08-13 — morning-review-daily apply pass
+
+**Run type:** scheduled (Cowork, unattended)
+
+**Staging:** sofie-watch-obsidian --once — no new meetings. Apple Notes KB Inbox: only the already-captured 2026-05-16 test note; Snipd folder empty. No new clippings; /foundry-ingest skipped (nothing new). raw/transcripts: 0 pending.
+
+**Intelligence:** connections/patterns/tensions/leverage queries + foundry-propose ran clean; full output appended to Obsidian daily note 2026-08-13.
+
+**Compile gate:** `compile-2source-gate.mjs --execute` ran: PROMOTE 0, GRADUATE 0, 167 candidates deferred. Write phase blocked again by `Error: 🔒 Compile requires a valid PIN` — same blockage as 2026-05-23/2026-05-27. Unattended run cannot supply KB_PIN; needs Jay to run compile interactively with PIN set to confirm whether the 2026-05-27 `Error: undefined` was the same PIN issue or a distinct bug (open contradiction C from today's tensions scan).
+
+**Proposals:** PROP-148 [HEAVY_BACKLOG] persisted to wiki/_meta/proposals.md — 167 deferred candidates (>50 threshold); recommends more frequent compiles, candidate audit, or 2nd-source seeding.
+
+**Pages created:**
+- [[syntheses/synthesis-episodic-judgment-obsidian-wiki-gate]] — top cross-domain connection of the day: the missing sixth edge of the Headroom/SkillOpt/obsidian-wiki/episodic-log cluster. Proposes the Episodic Judgment Log's correction events as the ground-truth oracle for obsidian-wiki vault-write gating, replacing the undefined fixture set in [[syntheses/synthesis-skillopt-gate-obsidian-wiki-governance]]. Born `reviewed: false`. Inbound link added from [[patterns/pattern-episodic-judgment-log]].
+
+**Provenance edits:** none. Today's tensions scan re-surfaced the agentmemory provenance items, but both were RESOLVED 2026-06-10 ([[concepts/reciprocal-rank-fusion]] restored to `high` via Cormack 2009 + siagian corroboration; [[patterns/pattern-per-claim-confidence]] retained at `medium`, won't-fix). The scan was reading a stale log window — no edits made; changing them would drop a resolved position.
+
+**Contradictions flagged:** none new. Still open: (B) obsidian-wiki `_raw/` mutation vs. KB raw-immutability rule (2026-06-25); (C) compile write-phase failure root cause — today's run reproduces the PIN-gate error, partially supporting the PIN hypothesis, but the 2026-05-27 `Error: undefined` trace remains unexplained.

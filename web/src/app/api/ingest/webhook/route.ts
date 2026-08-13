@@ -4,7 +4,9 @@
  * Allows external systems to push documents into raw/ without the UI.
  * Supports GitHub, Slack, Notion, Jira, and generic JSON payloads.
  *
- * Auth: Bearer token in Authorization header (WEBHOOK_SECRET env var)
+ * Auth: Bearer token in Authorization header (WEBHOOK_SECRET env var), or
+ * GitHub's X-Hub-Signature-256 HMAC (set WEBHOOK_SECRET as the webhook
+ * secret in the GitHub repo settings)
  *
  * Generic usage:
  *   POST /api/ingest/webhook
@@ -15,6 +17,7 @@
  *   Automatically ingests: issues (closed), PRs (merged), push commits to docs/
  */
 import { NextRequest, NextResponse } from 'next/server'
+import crypto from 'crypto'
 import fs from 'fs'
 import path from 'path'
 import { DEFAULT_KB_ROOT } from '@/lib/articles'
@@ -30,13 +33,23 @@ const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || ''
 // RBAC is primary; WEBHOOK_SECRET is a legacy fallback for non-namespaced
 // deployments. If neither matches, reject.
 
-function legacySecretOk(request: NextRequest): boolean {
+function legacySecretOk(request: NextRequest, rawBody: string): boolean {
   if (!WEBHOOK_SECRET) return true
   const auth = request.headers.get('authorization') || ''
   // Constant-time comparison — same rationale as the PIN routes: a plain
   // string compare short-circuits on the first differing character and
   // leaks secret prefixes to a caller measuring response timing.
-  return auth.startsWith('Bearer ') && pinMatches(auth.slice(7), WEBHOOK_SECRET)
+  if (auth.startsWith('Bearer ') && pinMatches(auth.slice(7), WEBHOOK_SECRET)) return true
+  // GitHub cannot attach an Authorization header — its webhook secret signs
+  // the payload bytes as `X-Hub-Signature-256: sha256=<hmac>`. Without this
+  // branch the documented GitHub usage ("set as webhook URL in repo
+  // settings") unconditionally 401'd once WEBHOOK_SECRET was set.
+  const sig = request.headers.get('x-hub-signature-256') || ''
+  if (sig.startsWith('sha256=')) {
+    const expected = crypto.createHmac('sha256', WEBHOOK_SECRET).update(rawBody, 'utf8').digest('hex')
+    return pinMatches(sig.slice(7).toLowerCase(), expected)
+  }
+  return false
 }
 
 // ── Adapters ─────────────────────────────────────────────────────────────────
@@ -197,8 +210,12 @@ function writeRawDoc(vaultRoot: string, doc: NormalizedDoc, namespace = 'default
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const identity = resolveIdentity(request)
+  // Read the raw body before parsing: GitHub's HMAC signature is computed
+  // over the exact payload bytes, so verification needs the unparsed text.
+  const rawBody = await request.text().catch(() => '')
+
   // Reject only if: legacy secret is set AND doesn't match AND caller has no namespace token
-  if (identity.source === 'default' && !legacySecretOk(request)) {
+  if (identity.source === 'default' && !legacySecretOk(request, rawBody)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -206,7 +223,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   let body: Record<string, unknown>
 
   try {
-    body = await request.json() as Record<string, unknown>
+    body = JSON.parse(rawBody) as Record<string, unknown>
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }

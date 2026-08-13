@@ -7,7 +7,11 @@ import fs from 'fs'
 import path from 'path'
 import os from 'os'
 
-const REPO_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
+// KB_ROOT env override lets tests point the receipt/briefing writes at a
+// sandbox tree (same convention as candidates-ttl and compile-2source-gate).
+const REPO_ROOT = process.env.KB_ROOT
+  ? path.resolve(process.env.KB_ROOT)
+  : path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const VAULT_ROOT = process.env.OBSIDIAN_VAULT_ROOT || path.join(os.homedir(), 'Documents', 'Obsidian Vault')
 const STATE_PATH = path.join(REPO_ROOT, '.night-shift/state/graph-maintenance-state.json')
 const SKIP_DIRS = new Set(['.git', '.obsidian', 'assets', 'scripts', '99 - Templates'])

@@ -75,13 +75,21 @@ export default function ProcessPage(): React.ReactElement {
       if (!res.body) throw new Error('No response body')
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
+      let buf = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
-        const text = decoder.decode(value)
-        const lines = text.split('\n').filter(l => l.startsWith('data: '))
+        // Buffer across reads (same as QueryPanel/CompilePanel): the old
+        // per-chunk split dropped any SSE line that straddled two network
+        // chunks — a lost `done`/`error` event left the file stuck on
+        // "processing" and run-all counting it wrong. stream:true also keeps
+        // a multi-byte char split mid-chunk from corrupting the JSON.
+        buf += decoder.decode(value, { stream: true })
+        const rawLines = buf.split('\n')
+        buf = rawLines.pop() || ''
+        const lines = rawLines.filter(l => l.startsWith('data: '))
 
         for (const line of lines) {
           try {

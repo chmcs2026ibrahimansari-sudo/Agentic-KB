@@ -1292,3 +1292,13 @@ Pages affected: `frameworks/headroom.md`, `_meta/compile-log.md`
 **Provenance edits:** none. Today's tensions scan re-surfaced the agentmemory provenance items, but both were RESOLVED 2026-06-10 ([[concepts/reciprocal-rank-fusion]] restored to `high` via Cormack 2009 + siagian corroboration; [[patterns/pattern-per-claim-confidence]] retained at `medium`, won't-fix). The scan was reading a stale log window — no edits made; changing them would drop a resolved position.
 
 **Contradictions flagged:** none new. Still open: (B) obsidian-wiki `_raw/` mutation vs. KB raw-immutability rule (2026-06-25); (C) compile write-phase failure root cause — today's run reproduces the PIN-gate error, partially supporting the PIN hypothesis, but the 2026-05-27 `Error: undefined` trace remains unexplained.
+
+## 2026-08-14 — morning-review-daily apply pass
+
+- **Intelligence queries:** connections, patterns, tensions, leverage, proposals — all generated and appended to Obsidian daily note `Daily Notes/2026-08-14.md`.
+- **New synthesis:** `wiki/syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion.md` (born `reviewed: false`) — top cross-domain connection of the day: the Proof-of-Work Loop's "learning update" step is the missing ingestion contract for the Episodic Judgment Log. Backlinks added from both pattern pages; index + recently-added updated.
+- **Compile gate:** `compile-2source-gate.mjs --execute` planned 30 PROMOTE / 167 DEFER / 0 GRADUATE, but actual compile **blocked: requires PIN** (`AGENTIC_KB_PIN` not set in non-interactive session). Plan logged to `/tmp/compile-gate-20260814.log`; re-run interactively to execute promotions.
+- **Proposals:** `foundry-propose --execute --top 3` wrote `PROP-149 [HEAVY_BACKLOG]` (167 deferred > 50 threshold) to `wiki/_meta/proposals.md`.
+- **Provenance:** tensions query re-surfaced the agentmemory gap, but `concepts/reciprocal-rank-fusion` was already RESOLVED 2026-06-10 via corroboration (confidence high, supersession note on page) and `pattern-per-claim-confidence` already carries `confidence: medium` — no downgrade applied; downgrading RRF would drop a resolved claim, so left untouched per apply-guard.
+- **Contradictions flagged:** None new. Two pre-existing open items noted (agentmemory provenance — resolved on RRF side; obsidian-wiki `_raw/` mutation vs raw-immutability rule — still open, needs a design decision).
+- **Captures:** sofie-watch staged 0 meetings; Apple Notes KB Inbox / Snipd yielded 0 new clippings (existing test note already deduped); 0 pending transcripts.

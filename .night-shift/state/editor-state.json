@@ -1,5 +1,5 @@
 {
-  "last_run_timestamp": "2026-08-12T06:25:35-0700",
+  "last_run_timestamp": "2026-08-13T06:29:54-0700",
   "files_considered": [
     "AGENTS.md",
     "house-rules.md",
@@ -7,47 +7,41 @@
     "playbooks/editor-run.md",
     "wiki/log.md",
     ".night-shift/state/editor-state.json",
-    "wiki/candidates.md",
-    "wiki/_meta/compile-log.md",
-    "wiki/_meta/proposals.md",
-    "wiki/daily-systems/logs/2026-08-10.md",
-    "wiki/daily-systems/logs/2026-08-11.md",
-    "wiki/frameworks/framework-skillopt.md",
     "wiki/index.md",
-    "wiki/lint-report.md",
-    "wiki/patterns/pattern-episodic-judgment-log.md",
     "wiki/recently-added.md",
-    "wiki/reports/2026-08-11-nightly-ci-analysis.md",
-    "wiki/reports/2026-08-12-nightly-ci-analysis.md",
-    "wiki/syntheses/synthesis-agentic-engineering-operating-model.md",
-    "wiki/syntheses/synthesis-headroom-compression-episodic-judgment-signal.md",
+    "wiki/patterns/pattern-episodic-judgment-log.md",
+    "wiki/syntheses/synthesis-episodic-judgment-obsidian-wiki-gate.md",
     "wiki/syntheses/synthesis-skillopt-gate-episodic-judgment-log.md",
-    "wiki/syntheses/synthesis-skillopt-gate-obsidian-wiki-governance.md"
+    "wiki/syntheses/synthesis-skillopt-gate-obsidian-wiki-governance.md",
+    "wiki/syntheses/synthesis-headroom-compression-episodic-judgment-signal.md",
+    "wiki/daily-systems/logs/2026-08-13.md",
+    "wiki/daily-systems/logs/2026-08-12.md",
+    "wiki/reports/2026-08-13-nightly-ci-analysis.md",
+    "wiki/candidates.md",
+    "wiki/_meta/proposals.md",
+    "wiki/_meta/compile-log.md"
   ],
   "wiki_pages_changed_last_24h": [
-    "wiki/syntheses/synthesis-skillopt-gate-episodic-judgment-log.md",
-    "wiki/syntheses/synthesis-agentic-engineering-operating-model.md",
+    "wiki/syntheses/synthesis-episodic-judgment-obsidian-wiki-gate.md",
     "wiki/recently-added.md",
     "wiki/patterns/pattern-episodic-judgment-log.md",
     "wiki/log.md",
     "wiki/index.md",
-    "wiki/frameworks/framework-skillopt.md",
-    "wiki/daily-systems/logs/2026-08-11.md",
-    "wiki/daily-systems/logs/2026-08-10.md",
+    "wiki/daily-systems/logs/2026-08-13.md",
+    "wiki/daily-systems/logs/2026-08-12.md",
     "wiki/candidates.md",
     "wiki/_meta/proposals.md",
     "wiki/_meta/compile-log.md",
-    "wiki/lint-report.md",
-    "wiki/reports/2026-08-12-nightly-ci-analysis.md",
-    "wiki/reports/2026-08-11-nightly-ci-analysis.md"
+    "wiki/reports/2026-08-13-nightly-ci-analysis.md",
+    "wiki/lint-report.md"
   ],
   "outputs_written": [
-    "briefings/2026-08-12.md",
+    "briefings/2026-08-13.md",
     ".night-shift/state/editor-state.json"
   ],
   "status": "completed_no_editor_synthesis_change",
-  "briefing_path": "briefings/2026-08-12.md",
+  "briefing_path": "briefings/2026-08-13.md",
   "synthesis_created": [],
   "synthesis_updated": [],
-  "notes": "Editor Run found one real multi-source thread already captured by the morning-review synthesis: SkillOpt validation gates applied to episodic judgment log freshness resets. No additional Editor synthesis was created or updated to avoid duplicating that thread. Operational CI/daily-log changes were reviewed but not promoted to synthesis because they were not grounded in wiki summaries or raw source paths under this run's citation rule. No raw files modified."
+  "notes": "Editor Run reviewed the last-24-hour wiki changes. The only real multi-source synthesis thread was the Headroom / SkillOpt / obsidian-wiki / episodic-log governance cluster, already captured by morning-review in synthesis-episodic-judgment-obsidian-wiki-gate.md. No additional synthesis was created or edited to avoid duplication. No raw files modified."
 }

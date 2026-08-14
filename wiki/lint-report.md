@@ -1,13 +1,13 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-12 14:06 | Vault: Agentic-KB | Pages scanned: 685
+> Generated: 2026-08-13 14:06 | Vault: Agentic-KB | Pages scanned: 689
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 54 | 🟡 Medium |
+| Orphaned pages | 57 | 🟡 Medium |
 | Stale pages | 284 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
@@ -15,6 +15,7 @@
 
 - `_meta/compile-log.md` — compile-log
 - `_meta/proposals.md` — Foundry Proposals
+- `_private/<redacted — see local private layer>` — (filename withheld from committable report per PII rule)
 - `_quarantine/wiki-wiki-stray-log-20260606.md` — Compile Log
 - `agents/leads/planning-agent/domain-standards.md` — Planning Agent — Domain Standards
 - `agents/leads/sofie/weekly-digest.md` — KB Digest — 2026-04-10
@@ -32,6 +33,8 @@
 - `daily-systems/logs/2026-08-05.md` — 2026-08-05
 - `daily-systems/logs/2026-08-10.md` — 2026-08-10
 - `daily-systems/logs/2026-08-11.md` — 2026-08-11
+- `daily-systems/logs/2026-08-12.md` — 2026-08-12
+- `daily-systems/logs/2026-08-13.md` — 2026-08-13
 - `entities/hermes-agent.md` — Hermes Agent
 - `frameworks/headroom.md` — Headroom
 - `patterns/pattern-morning-review.md` — Morning-Review Pipeline
@@ -58,6 +61,7 @@
 - `reports/2026-08-10-nightly-ci-analysis.md` — 2026-08-10-nightly-ci-analysis
 - `reports/2026-08-11-nightly-ci-analysis.md` — 2026-08-11-nightly-ci-analysis
 - `reports/2026-08-12-nightly-ci-analysis.md` — 2026-08-12-nightly-ci-analysis
+- `reports/2026-08-13-nightly-ci-analysis.md` — 2026-08-13-nightly-ci-analysis
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18
 - `syntheses/synthesis-provenance-freshness-infrastructure.md` — Delta Tracking and Provenance Tagging Operationalize the Freshness Policy

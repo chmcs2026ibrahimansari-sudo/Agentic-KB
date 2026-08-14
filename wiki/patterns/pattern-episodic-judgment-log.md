@@ -169,3 +169,4 @@ The failures log is described as the most valuable: "It encodes pattern recognit
 - [[syntheses/synthesis-episodic-judgment-log-to-trace-dataset]] — this pattern is architecturally equivalent to LangSmith's trace-to-dataset workflow; see the synthesis for build/buy analysis
 - [[syntheses/synthesis-skillopt-gate-episodic-judgment-log]] — SkillOpt's held-out validation gate as the missing quality gate before log events reset freshness clocks
 - [[syntheses/synthesis-episodic-judgment-obsidian-wiki-gate]] — this log as the ground-truth oracle for vault-write gating in agent-writable vaults
+- [[syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion]] — the [[patterns/pattern-agent-proof-of-work-loop|Proof-of-Work Loop]]'s receipt step as this log's missing ingestion contract

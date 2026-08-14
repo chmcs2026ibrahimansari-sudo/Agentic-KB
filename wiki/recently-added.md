@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-14 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion|Proof-of-Work Receipts as the Episodic Judgment Log's Ingestion Contract]] — the Proof-of-Work Loop's "learning update" step supplies the ingestion contract the episodic log assumes but never specifies; open question is whether agent-emitted entries dilute the log's human-judgment authority
+
 ## 2026-08-13 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-episodic-judgment-obsidian-wiki-gate|The Episodic Judgment Log Is the Ground-Truth Oracle obsidian-wiki's Gate Is Missing]] — the missing sixth edge of the Headroom/SkillOpt/obsidian-wiki/episodic-log cluster; proposes sourcing vault-gate validation cases from human correction events instead of synthetic fixtures

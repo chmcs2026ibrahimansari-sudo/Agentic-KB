@@ -294,6 +294,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-headroom-compression-episodic-judgment-signal]] | If Headroom compresses the same session transcripts that populate the Episodic Judgment Log, does the freshness-decay engine still receive a trustworthy human-judgment signal? | 2026-08-10 |
 | [[syntheses/synthesis-skillopt-gate-episodic-judgment-log]] | Can SkillOpt's held-out validation gate serve as the quality gate the Episodic Judgment Log lacks before its correction events reset freshness-decay clocks? | 2026-08-12 |
 | [[syntheses/synthesis-episodic-judgment-obsidian-wiki-gate]] | Should obsidian-wiki-style vault-write gating validate against the Episodic Judgment Log's human correction events instead of a generic held-out fixture set? | 2026-08-13 |
+| [[syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion]] | Where do the Proof-of-Work Loop's "learning updates" actually live — and is the Episodic Judgment Log their missing write target? | 2026-08-14 |
 
 ---
 

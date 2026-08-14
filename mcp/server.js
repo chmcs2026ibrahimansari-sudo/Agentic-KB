@@ -859,7 +859,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         headers: { 'Content-Type': 'application/json', ...(PRIVATE_PIN ? { 'x-private-pin': PRIVATE_PIN } : {}) },
         body: JSON.stringify({ mode, pin: String(args.pin || '') }),
       })
-      if (!res.body) return { content: [{ type: 'text', text: 'Compile API unavailable' }] }
+      if (!res.body) return { content: [{ type: 'text', text: 'Compile API unavailable' }], isError: true }
+      // Same guard as query_wiki: a non-SSE response (proxy 500 page,
+      // misrouted request) has no `data:` lines, so the collector below
+      // returned an empty non-error result — a failed compile reported as
+      // success to the MCP caller.
+      const ctype = res.headers.get('content-type') || ''
+      if (!ctype.includes('text/event-stream')) {
+        const bodyText = await res.text().catch(() => '')
+        return { content: [{ type: 'text', text: `Compile API returned ${res.status} (${ctype || 'no content-type'}): ${bodyText.slice(0, 300)}` }], isError: true }
+      }
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
       const lines = []

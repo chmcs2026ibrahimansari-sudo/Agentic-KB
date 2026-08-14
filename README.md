@@ -8,7 +8,22 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 13, 2026 (Latest)
+## What's New — August 14, 2026 (Latest)
+
+Nightly correctness pass — **420 tests passing** (was 415):
+
+- 🔑 **The index-page compile/lint buttons actually work on a PIN-configured server** — the Aug 11 pass PIN-gated `/api/compile` and `/api/lint` and taught the process page to forward the unlocked private-mode PIN, but CompilePanel — the "Compile New" / "Recompile All" / "Lint Wiki" buttons on the front page — was missed: it sent no `x-private-pin` header, so every compile and lint from that panel was rejected. Both handlers now read the same sessionStorage key the private-mode context stores.
+- 📦 **The process page can't drop SSE events anymore** — `processFile` decoded each network chunk independently and split it into lines, so a `data:` line straddling two reads was silently discarded; if that line carried the `done`/`error` event the file stayed stuck on "processing" and run-all miscounted. It now buffers the tail line across reads with `stream: true` decoding, the same handling QueryPanel and CompilePanel already had.
+- 🤫 **`compile_wiki` (MCP) fails loudly on non-SSE responses** — the same silent-success path closed for `query_wiki` (Aug 13) and `kb compile` (Aug 11): a proxy 500 page has no `data:` lines, so the collector returned an empty non-error result and a failed compile read as success to the MCP caller. The no-body "Compile API unavailable" reply is also finally marked `isError`.
+- 💾 **`kb ingest-twitter` writes are atomic** — the tweets and bookmarks archives were the last two overwrite-in-place writers the Aug 8–12 tmp+rename sweep missed: a re-import interrupted mid-write left a truncated archive in raw/twitter/ that the next compile ingested as if complete.
+- ⚡ **`/api/pending-count` stops rebuilding the ingested-path array per file** — the substring-match fallback called `Array.from(ingestedPaths)` inside the walk for every `.md` under raw/, an O(files × log-entries) allocation on a route the TopBar badge polls on every page load. Materialized once; matching semantics unchanged.
+- 🧪 **`sofie-watch-obsidian.mjs` has tests** — the vault→KB ingest front door had zero coverage. The script now honors the `KB_ROOT` sandbox override (candidates-ttl / graph-scan convention), and 5 new subprocess tests cover staging with pending frontmatter + ledger + inbox updates, idempotent re-runs, in-place re-ingest of modified notes, same-basename collision suffixing, and JSON-escaped titles for quoted note names.
+
+Supply-chain posture re-checked against the Aug 4 npm worm list: web's lockfile still pins pre-attack `keyv@4.5.4` / `flat-cache@4.0.1` / `file-entry-cache@8.0.0`, no `cacheable` or `axios` anywhere, `ignore-scripts=true` in all four package roots. Model config already rides `KB_MODEL` with family-fallback pricing, so no stale model pins to chase.
+
+---
+
+## What's New — August 13, 2026
 
 Nightly correctness pass — **415 tests passing** (was 410):
 

@@ -26,6 +26,10 @@ function getIngestedPaths(): Set<string> {
 export async function GET(): Promise<NextResponse> {
   const rawRoot = path.join(KB_ROOT, 'raw')
   const ingestedPaths = getIngestedPaths()
+  // Materialize the set once — the substring fallback below re-built this
+  // array for every raw/ file, an O(files x log-entries) allocation on each
+  // poll of this route (TopBar hits it on every page load).
+  const ingestedList = Array.from(ingestedPaths)
   let count = 0
 
   function walk(dir: string): void {
@@ -39,7 +43,7 @@ export async function GET(): Promise<NextResponse> {
       } else if (entry.name.endsWith('.md') && entry.name !== 'Untitled.md') {
         const relPath = path.relative(KB_ROOT, fullPath).replace(/\\/g, '/')
         const alreadyIngested = ingestedPaths.has(relPath) ||
-          Array.from(ingestedPaths).some(p =>
+          ingestedList.some(p =>
             relPath.includes(p) || p.includes(path.basename(relPath, '.md'))
           )
         if (!alreadyIngested) count++

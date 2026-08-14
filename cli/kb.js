@@ -674,7 +674,13 @@ async function ingestTwitterArchive(archivePath) {
       tweetLines.join('\n'),
     ].join('\n')
 
-    fs.writeFileSync(path.join(outDir, 'tweets-archive.md'), tweetsOut)
+    // tmp + rename: re-imports overwrite the archive in place, and a crash
+    // mid-write left a truncated archive that compiled as if complete (same
+    // sweep as the Aug 8-12 tmp+rename fixes; these two writers were missed).
+    const tweetsPath = path.join(outDir, 'tweets-archive.md')
+    const tweetsTmp = tweetsPath + '.tmp-' + process.pid
+    fs.writeFileSync(tweetsTmp, tweetsOut)
+    fs.renameSync(tweetsTmp, tweetsPath)
     totalSaved++
     console.log('   ✅ Tweets saved (' + tweets.filter(t => !(t.tweet?.full_text || t.full_text || '').startsWith('RT @')).length + ' original tweets)')
   }
@@ -708,7 +714,10 @@ async function ingestTwitterArchive(archivePath) {
       bookmarkLines.join('\n'),
     ].join('\n')
 
-    fs.writeFileSync(path.join(outDir, 'bookmarks-archive.md'), bookmarksOut)
+    const bookmarksPath = path.join(outDir, 'bookmarks-archive.md')
+    const bookmarksTmp = bookmarksPath + '.tmp-' + process.pid
+    fs.writeFileSync(bookmarksTmp, bookmarksOut)
+    fs.renameSync(bookmarksTmp, bookmarksPath)
     totalSaved++
     console.log('   ✅ Bookmarks saved (' + bookmarks.length + ' bookmarks)')
   }

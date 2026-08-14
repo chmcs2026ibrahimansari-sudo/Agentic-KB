@@ -37,9 +37,14 @@ export default function CompilePanel(): React.ReactElement {
     abortRef.current = new AbortController()
 
     try {
+      // Forward the unlocked private-mode PIN (if any) — /api/compile is
+      // PIN-gated when the server has PRIVATE_PIN configured, so without the
+      // header every compile from this panel was rejected (the process page
+      // got the same forwarding earlier; this panel was missed).
+      const pin = typeof window !== 'undefined' ? sessionStorage.getItem('private_pin') || '' : ''
       const res = await fetch('/api/compile', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
         body: JSON.stringify({ mode }),
         signal: abortRef.current.signal,
       })
@@ -78,9 +83,11 @@ export default function CompilePanel(): React.ReactElement {
     setDone(null)
     setError(null)
     try {
+      // /api/lint is PIN-gated the same way as /api/compile.
+      const pin = typeof window !== 'undefined' ? sessionStorage.getItem('private_pin') || '' : ''
       const res = await fetch('/api/lint', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
         body: JSON.stringify({}),
       })
       const data = await res.json() as { ok?: boolean; summary?: string; reportPath?: string; error?: string }

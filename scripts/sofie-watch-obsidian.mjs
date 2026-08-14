@@ -34,7 +34,11 @@ import { promisify } from 'util'
 const execAsync = promisify(exec)
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const KB_ROOT = path.resolve(__dirname, '..')
+// KB_ROOT env override lets tests point the transcript/ledger/inbox writes at
+// a sandbox tree (same convention as candidates-ttl and graph-maintenance-scan).
+const KB_ROOT = process.env.KB_ROOT
+  ? path.resolve(process.env.KB_ROOT)
+  : path.resolve(__dirname, '..')
 const OBSIDIAN_VAULT = process.env.OBSIDIAN_VAULT_ROOT || path.join(os.homedir(), 'Documents', 'Obsidian Vault')
 const TRANSCRIPTS_DIR = path.join(KB_ROOT, 'raw', 'transcripts')
 const LOG_FILE = path.join(KB_ROOT, 'raw', '.obsidian-ingest-log.json')

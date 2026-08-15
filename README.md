@@ -1,1383 +1,160 @@
 # Agentic Engineering Knowledge Base
 
-> Jay West | Built: 2026-04-04 | Last major update: 2026-04-10 | Maintained by LLM + Human
+## Persistent knowledge and context infrastructure for agent systems
 
-A personal knowledge base for agentic AI engineering — 1000+ articles covering concepts, patterns, frameworks, entities, recipes, evaluations, summaries, and agent memory. Queryable via a Wikipedia-style web UI, CLI, and MCP server. Fully agentified with a live Operational Runtime Memory Layer and Sofie integration.
+Agentic-KB is a persistent, cross-referenced engineering knowledge system for **agentic AI, autonomous software delivery, agent memory, evaluations, orchestration, and AI engineering patterns**.
 
-Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki. Not RAG: the compile step is deliberate, auditable, and runs incrementally over a logged state.
+It contains 1,000+ compiled articles and exposes the knowledge through a Wikipedia-style web UI, CLI, graph/search interfaces, and an MCP server.
 
----
+The core idea is simple:
 
-## What's New — August 15, 2026 (Latest)
+> Useful agent memory should be durable, inspectable, attributable, and continuously maintained—not trapped in one chat window or rebuilt from raw context on every run.
 
-Nightly correctness pass — **432 tests passing** (was 420):
+## Beyond RAG
 
-- 🔐 **The no-PIN lint stops publishing private page names into git** — `scripts/static-lint.mjs` runs without an API key or PIN and writes `wiki/system/reports/static-lint-<date>.md`, a committed path. Its `walk()` had no directory filter at all, so `wiki/_private/*.md` — the gitignored PIN plaintext layer whose entire purpose is never reaching git — was scanned like any other page. Those pages have no inbound links by construction, so every one of them landed in the report's orphan list *by filename*. Now skips `_private` and dotted dirs (the PIN-gated `/api/lint` already skipped the latter), and honors `KB_ROOT` so the scan can be sandboxed. The stale section was also reporting the wrong field: `isStalePage` judges on frontmatter `updated`, but the output printed each file's mtime — today's date for every page in a fresh clone, so the column was pure noise.
-- 📖 **Wiki pages can show wikilink syntax again** — `ArticleRenderer` ran `replaceWikiLinks` over the raw markdown as one global regex, so every `[[...]]` inside a fenced block or inline code span was rewritten to `[Label](/wiki/...)` inside the very block meant to display it literally. Live: 38 in fenced blocks across 23 pages, ~290 in code spans. The worst hits are the ones that matter — `wiki/prompt-library/*` and `wiki/decisions/README.md` show copy-out templates like `source: [[path/to/transcript]]`, so a reader copied a resolved link instead of the template and the prompt no longer worked. Fence tracking reuses `extractHeadings`' rules; code spans match longest-backtick-run-first.
-- 🧼 **Quick-capture frontmatter can't be broken or injected** — `buildFrontmatter` JSON-escaped `title` and `author` but interpolated `source`, `type_hint`, `captured_at` and `tags` raw. All four are caller-supplied by the agent driving the Slack/Notes capture flow, and `--ts` is unsafe by construction (`normalizeTs` passes unparseable input straight through), so a value carrying `': '`, a quote or a `]` either broke the clipping's YAML — the ingest gate then skips the file — or injected sibling keys the routing layer read as real metadata. Escaping is conditional on a plain-safe pattern, so every existing clipping renders byte-identically.
-- 📉 **Frontmatter head reads can't leak file descriptors** — `verifiedBoost`, `confidenceBoost` and `extractId` each did `openSync` → `readSync` → `closeSync` inside a try whose catch returns a default; a `readSync` that throws (EISDIR, EIO, a file swapped out mid-scan by the compiler's tmp+rename) never reached the close. All three are hot paths in a long-lived server — the first two run per candidate on every search, `extractId` walks every `.md` under `wiki/` and `raw/` on each 60s ID-index cache miss — so enough repeats reach EMFILE and every read in the server starts failing. Now a `readHead()` helper that closes in a `finally`, the shape `lastLine()` in the audit writer already used; it also decodes only the bytes actually read, so short files no longer carry up to 1KB of NUL padding into the match.
-- ⚡ **The vault allowlist stops re-parsing the Obsidian config per request** — `allowedVaultPaths()` did a synchronous `readFileSync` + `JSON.parse` of `obsidian.json` on every call, and `resolveVaultRoot()` calls it for every request across 18 routes and pages. Cached against the config's mtime (the invalidation `rbac.ts` and `graph-search.ts` already use); a missing config caches too, so the common no-Obsidian case stops re-stat-ing.
-- 🧯 **`POST /api/switch-vault` answers a body-less request with 400** — it destructured `request.json()` with no guard, so an empty or malformed body threw before any of the route's own validation and surfaced as a Next stack page; the UI renders the JSON `error` field.
-- 🧪 **`static-lint.mjs` has tests** — 6 subprocess tests over a sandboxed wiki covering orphan/stale detection, the `_private` and dotted-dir exclusions, the no-report-without-`--apply` path, atomic report writes, and `--stale-days`.
-- 📜 **MCP spec-compat note completed** — the 2026-07-28 section covered the stateless core, the `Mcp-Session-Id` removal, the Tasks extension and DCR→CIMD, but not the fourth deprecation: Roots, Sampling and Logging, on a 12-month window to July 2027. Recorded with the actual answer — the server declares `capabilities: { tools: {} }` and uses none of the three — so the next pin review can skip it.
+Agentic-KB does not treat the knowledge base as a pile of documents behind semantic search.
 
-Supply-chain posture re-checked against the Aug 4 ChainDrop npm worm list: `keyv@4.5.4`, `flat-cache@4.0.1`, `file-entry-cache@8.0.0` still pinned to pre-attack releases in web's lockfile, no `cacheable`, `axios` or Mastra packages in any of the three lockfiles, `ignore-scripts=true` in all four package roots. No committed secrets; `.env` and the private layer remain gitignored.
+Raw sources move through an explicit compilation and maintenance process into a persistent wiki:
 
-**Flagged for human review:** `scripts/pin.mjs` derives its key with PBKDF2-HMAC-SHA256 at 100,000 iterations — well below current guidance (~600k) for the threat model it names (offline brute force against committed `.enc` blobs). The header's `MAGIC` already carries a version byte, so a v2 format could raise the count while still decrypting v1 blobs, but that is a format migration, not a nightly-pass change.
-
----
-
-## What's New — August 14, 2026
-
-Nightly correctness pass — **420 tests passing** (was 415):
-
-- 🔑 **The index-page compile/lint buttons actually work on a PIN-configured server** — the Aug 11 pass PIN-gated `/api/compile` and `/api/lint` and taught the process page to forward the unlocked private-mode PIN, but CompilePanel — the "Compile New" / "Recompile All" / "Lint Wiki" buttons on the front page — was missed: it sent no `x-private-pin` header, so every compile and lint from that panel was rejected. Both handlers now read the same sessionStorage key the private-mode context stores.
-- 📦 **The process page can't drop SSE events anymore** — `processFile` decoded each network chunk independently and split it into lines, so a `data:` line straddling two reads was silently discarded; if that line carried the `done`/`error` event the file stayed stuck on "processing" and run-all miscounted. It now buffers the tail line across reads with `stream: true` decoding, the same handling QueryPanel and CompilePanel already had.
-- 🤫 **`compile_wiki` (MCP) fails loudly on non-SSE responses** — the same silent-success path closed for `query_wiki` (Aug 13) and `kb compile` (Aug 11): a proxy 500 page has no `data:` lines, so the collector returned an empty non-error result and a failed compile read as success to the MCP caller. The no-body "Compile API unavailable" reply is also finally marked `isError`.
-- 💾 **`kb ingest-twitter` writes are atomic** — the tweets and bookmarks archives were the last two overwrite-in-place writers the Aug 8–12 tmp+rename sweep missed: a re-import interrupted mid-write left a truncated archive in raw/twitter/ that the next compile ingested as if complete.
-- ⚡ **`/api/pending-count` stops rebuilding the ingested-path array per file** — the substring-match fallback called `Array.from(ingestedPaths)` inside the walk for every `.md` under raw/, an O(files × log-entries) allocation on a route the TopBar badge polls on every page load. Materialized once; matching semantics unchanged.
-- 🧪 **`sofie-watch-obsidian.mjs` has tests** — the vault→KB ingest front door had zero coverage. The script now honors the `KB_ROOT` sandbox override (candidates-ttl / graph-scan convention), and 5 new subprocess tests cover staging with pending frontmatter + ledger + inbox updates, idempotent re-runs, in-place re-ingest of modified notes, same-basename collision suffixing, and JSON-escaped titles for quoted note names.
-
-Supply-chain posture re-checked against the Aug 4 npm worm list: web's lockfile still pins pre-attack `keyv@4.5.4` / `flat-cache@4.0.1` / `file-entry-cache@8.0.0`, no `cacheable` or `axios` anywhere, `ignore-scripts=true` in all four package roots. Model config already rides `KB_MODEL` with family-fallback pricing, so no stale model pins to chase.
-
----
-
-## What's New — August 13, 2026
-
-Nightly correctness pass — **415 tests passing** (was 410):
-
-- 🔗 **Anchored wikilinks finally count as backlinks** — the Aug 12 pass taught the link *renderer* to split `[[page#Some Section]]` anchors off the path, but `getBacklinks` — the scanner behind the "Pages that link here" footer and `/api/article` — was missed: it kept the `#anchor` in the compared path, so a page referenced only through section anchors reported zero backlinks. Anchor stripped before comparison now, same rule as the parser.
-- 🐙 **GitHub webhooks can actually authenticate** — `/api/ingest/webhook` documents "set as webhook URL in repo settings", but its only auth was an `Authorization: Bearer` header — which GitHub webhooks cannot send. With `WEBHOOK_SECRET` set, every documented GitHub delivery 401'd. The route now verifies GitHub's `X-Hub-Signature-256` HMAC over the raw payload bytes (same constant-time comparison as the Bearer path).
-- 🤫 **`query_wiki` (MCP) can't report a dead server as an empty answer** — same two silent-failure paths fixed on the CLI Aug 11–12, missed in the MCP consumer: a non-SSE response (proxy 500) returned "No answer returned" without `isError`, and the route's SSE `error` events (cost cap hit, missing index, API failures) were dropped entirely. Both now fail loudly, preserving any partial answer.
-- 📚 **`query_wiki` answers carry their citations** — the tool description always promised "a synthesized answer with citations", but the handler discarded the `sources` event; MCP callers got unattributed answers. Sources are appended now, with contradiction markers.
-- ⚠️ **Contradicted sources are flagged everywhere** — `/api/query` marks sources the lint pass found contradictions in (still used, deprioritized in synthesis), but every consumer presented all citations as equally solid. `kb query` prints an explicit marker, the QueryPanel renders flagged chips in amber with a tooltip, and the MCP output annotates them.
-- ⚡ **Graph maintenance scan reads the vault once** — `scanVault` read every note twice (once for wikilinks, a second full pass just for frontmatter tags); tag counting now shares the first read, halving the dominant I/O on the multi-thousand-note vault it targets.
-- 🧪 **`graph-maintenance-scan.mjs` has tests** — the script now honors the `KB_ROOT` sandbox override (candidates-ttl convention), and 5 new subprocess tests cover orphan/dead-end/tag detection with dashboard exclusion, anchored+aliased link resolution, atomic receipt writes, `--verify-receipt` pass/fail, and the missing-vault exit path.
-
-Supply-chain posture re-checked against the Aug 4 ChainDrop npm worm list: no `keyv@6.0.0`, `flat-cache@6.1.24`, `file-entry-cache@11.1.6`, and no Mastra packages anywhere — web's lockfile still pins the pre-attack `4.5.4` / `4.0.1` / `8.0.0`; `ignore-scripts=true` guards all four package roots.
-
----
-
-## What's New — August 12, 2026
-
-Nightly correctness pass — **410 tests passing** (was 406):
-
-- 🔗 **Section anchors in wikilinks finally work** — `[[page#Some Section]]` kept the anchor inside the path, so the rendered markdown link had a raw space in its destination; CommonMark doesn't parse that as a link at all, so anchored wikilinks displayed as literal `[text](url)` source (live example: `[[CLAUDE.md#QUERY Workflow]]` in the knowledge-workflows MoC). And even encoded, the fragment could never land: heading ids are slugified lowercase. Anchors are now split off and slugified with the exact `extractHeadings` id rules; `[[#Local Section]]` keeps a bare fragment.
-- 🔍 **Graph search stops under-filling results** — the 60/20/5/15 budget allocator filled each bucket independently and returned the concatenation, so a query whose matches were all direct label hits returned 6 of 10 requested results — and the `hot` bucket, which no caller ever populates, silently wasted 5% of every search's budget. Unused capacity now backfills from the score-ranked leftovers (the caps still protect direct matches first), and the result is capped at `limit`, which the rounded slot sum could previously exceed.
-- 🤫 **`kb query` can't report success on a dead server** — same failure mode the compile path was guarded against on Aug 11: a proxy 500 page has no `data:` lines, so the SSE loop printed nothing and exited 0. Non-event-stream responses now print status + body excerpt and exit 1.
-- 💾 **The tmp+rename sweep is complete** — four writers the Aug 8–10 passes missed: `wiki/stats.md` (a served wiki page; a torn write left a truncated article), the Obsidian copy of Sofie's weekly digest (the KB copy was already atomic; Obsidian Sync reads mid-write), and the tier-leak + static-lint reports (same-day re-runs overwrote dated reports in place — a torn tier-leak report reads as a clean audit).
-- 🧪 **`generate-stats.mjs` has tests** — the stats generator had zero coverage; 4 new subprocess tests cover section/type/confidence counts, namespace exclusions, orphan + link detection, idempotent re-runs, and that the new atomic write leaves no tmp files behind.
-- 📜 **MCP spec-compat note un-staled** — the mcp/README claimed "no migration needed until the SDK ships 2026-07-28 support"; Tier-1 SDKs have since shipped it. The section now states the real posture: pinned at 1.29.0 by choice (pin-and-audit under the current npm supply-chain climate), with the Tasks-extension id and the DCR→CIMD deprecation noted.
-
-Supply-chain posture re-checked against the Aug 4 ChainDrop npm worm list: no `keyv@6.0.0`, `flat-cache@6.1.24`, or `file-entry-cache@11.1.6` anywhere — all three remain pinned to pre-attack releases (`4.5.4` / `4.0.1` / `8.0.0`); `ignore-scripts=true` still guards all four package roots; the lone `"version": "6.0.0"` in web's lockfile is `locate-path` (benign).
-
----
-
-## What's New — August 11, 2026
-
-Nightly correctness + security pass — **406 tests passing** (was 402):
-
-- 🎯 **The recurring compile-gate failure is diagnosable (and half of it is fixed)** — the Aug 10 morning review flagged `compile-2source-gate --execute` dying with a literal `Error: undefined`, promotions never landing. Root cause: `/api/compile`'s PIN-rejection event was the only error the route emitted under a `content:` field while every consumer (`kb compile`, CompilePanel, the MCP server's `compile_wiki`) reads `message:` — so a PIN-gated server failed with no visible reason. The event now uses `message:`, both CLI consumers fall back to `content` so no emitter shape can print `undefined` again, and `kb compile` also fails loudly on non-SSE responses (a proxy 500 page previously printed nothing and exited 0, making the gate report a failed compile as success). **Action:** the gate environment still needs `PRIVATE_PIN` exported for promotions to land — the error will now tell you exactly that.
-- 🔐 **`/api/process` honors the PIN gate** — the ingest pipeline read untrusted raw/ files, called the Claude API, and wrote wiki pages with **no authentication**, while its siblings `/api/compile` and `/api/lint` both require the PIN. Now gated the same conditional way; `run-all` forwards the caller's PIN to each inner call; the schedule installer embeds the header in the generated launchd plist (and is itself PIN-gated so it can't leak the secret); the process page forwards the unlocked private-mode PIN. **Action (only if `PRIVATE_PIN` is set):** re-run the schedule installer once so the 2 AM cron authenticates.
-- 💾 **Compounding loop stops lying about auto-compile** — `/api/query/save` fired its background compile with no PIN, so on a PIN-configured server every auto-compile 401'd silently while the UI said "Compile triggered." The save route forwards the caller's PIN and answers honestly ("Auto-compile skipped: compile requires the private PIN") when it would be rejected.
-- 🗂️ **candidates.md rewrite is atomic** — the 2-source gate rewrote its deferral ledger in place; a torn write erased the gate's only memory of what was deferred, so no theme could ever GRADUATE. tmp+rename now (the TTL script's rewrite of the same file was fixed Aug 9; the gate's own writer was missed).
-- 🧪 **Compile gate has subprocess tests** — the gate now honors the `KB_ROOT` sandbox override (same convention as candidates-ttl) and 4 new tests cover the defer → graduate lifecycle end-to-end, including that deferrals land even when the trailing `kb compile` fails.
-
-Supply-chain posture re-checked: `ignore-scripts=true` in all four package roots; MCP SDK locked at 1.29.0; no floating upgrades taken (active npm supply-chain attacks this week — pin, don't chase).
-
----
-
-## What's New — August 10, 2026
-
-Nightly correctness pass — **402 tests passing** (was 400):
-
-- 🗂️ **`startTask` can't destroy archived task state** — reusing an explicit `task_id` silently overwrote a completed/abandoned task's working-memory file (its audit trail included) with a fresh template, and a same-second cross-process auto-id collision did the same (`timestamp()`'s uniqueness counter is per-process). Working-memory files are exclusive-create now: explicit reuse errors, auto ids retry with a fresh id. The active-task pointer — the file `getActiveTask` parses — is also finally written tmp+rename like every other pointer write in the file.
-- 📸 **Compaction/merge snapshots can't overwrite each other** — `compactHotMemory`, `rotateTaskLog`, and `mergeRewrite`'s canonical archive all wrote their pre-truncation/pre-overwrite snapshot to a `timestamp()`-derived path with a plain write. Two processes hitting the same agent/canonical in the same second computed the same path — the second write replaced the first snapshot immediately before the live file was truncated or overwritten, destroying the only surviving copy. Exclusive create with `-2`/`-3`… suffixes now (same class as the hot-digest fix).
-- 📝 **Compiled wiki pages survive torn writes** — `/api/compile` wrote each model-emitted page in place, then marked the source compiled in the ledger; a torn page write therefore left a *permanently* corrupted article no future incremental run regenerates. `/api/process` had the same in-place summary write, plus an `existsSync`-then-write TOCTOU for new pages (concurrent runs clobbered each other). tmp+rename and `wx` creates now.
-- 🔑 **`pin unlock` can't trip its own drift guard** — unlock wrote decrypted plaintext in place; a torn write left a truncated file whose mtime is newer than the `.enc`, which the Aug 9 drift guard then read as user edits — blocking exactly the re-unlock that would repair it. tmp+rename closes the loop.
-- 📬 **Sofie inbox + re-ingest hardening** — `raw/.sofie-inbox.json` was rewritten in place (torn write → invalid JSON → next read silently reset to `{ pending: [] }`, dropping every pending notification), and re-ingesting a modified vault note rewrote its staged transcript in place. Both tmp+rename now.
-- 📑 **ToC stops listing code comments** — `extractHeadings` matched `# ...` lines inside fenced code blocks, so shell/python comments in article snippets appeared in the table of contents with anchors that don't exist in the rendered page. The scanner now tracks ``` / ~~~ fence state.
-
-Also re-verified the Shai-Hulud npm guards: `ignore-scripts=true` present in all four package roots; `keyv 4.5.4`, `flat-cache 4.0.1`, `file-entry-cache 8.0.0` still pinned to pre-attack releases; no `axios`/`cacheable` anywhere.
-
----
-
-## What's New — August 9, 2026 (Evening)
-
-Second nightly correctness pass of the day — **400 tests passing** (was 395):
-
-- 🔗 **Autolinker can't corrupt its own links** — `autolink.py` substituted raw wikilink targets, so a later (shorter) phrase matched *inside* a link inserted earlier in the same pass. Live with the shipped entity map: `Fan-out Worker` + its `fan-out` alias produced the broken nested link `[[pattern-[[pattern-fan-out-worker]]-worker]]` (same shape for `Andrej Karpathy`/`Karpathy`). Inserted links are now protected-region tokens; new subprocess tests cover nesting, aliases, code spans, and frontmatter.
-- 🔐 **Lock steals are atomic; release only removes its own lock** — two waiters that both read the same stale lock record could both `unlink` it, the second unlink deleting the first waiter's *fresh* re-acquisition → two holders under one key. Stale clears now go through a rename-to-tomb steal (one winner). `release()` also verified nothing: a holder that overran `maxAgeMs` unlinked whatever lock a waiter had legitimately re-acquired — it now checks the on-disk pid/ts are its own first.
-- 🔑 **`pin unlock` won't destroy drifted edits** — unlock decrypted every `.enc` straight over `wiki/_private/*.md`, silently replacing any plaintext edited since the last lock with the stale encrypted copy (the plaintext is gitignored — unrecoverable). Files whose plaintext is newer than their `.enc` are now skipped with instructions; `--force` overrides.
-- 💸 **Compile ledger can't trigger a full recompile** — `raw/.compiled-log.json` (which decides what still needs compiling) was rewritten in place after every file; a torn write reset it to `{}` and the next run re-sent the whole raw/ corpus through the Claude API. tmp+rename now, same class as the ingest-hashes fix.
-- 💾 **Torn-write/ledger parity, next round** — the sofie-watch ingest ledger (torn write → every vault note re-staged and re-notified via Telegram), Sofie's `profile.md` (torn write bricked all future syncs), the weekly digest, graph-maintenance state + briefings, `kb` index-sync's `wiki/index.md`/`home.md` (with a redundant double-write removed), `/api/process`'s `wiki/log.md` append (read-modify-write dropped concurrent entries) and index insertion, and `/api/lint`'s report. All tmp+rename or true append now.
-
-Also re-audited all lockfiles against the Shai-Hulud npm worm's package list: no `axios` or `cacheable` anywhere; `keyv 4.5.4`, `flat-cache 4.0.1`, `file-entry-cache 8.0.0` remain pinned to pre-attack releases, and `ignore-scripts=true` still guards all four package roots.
-
----
-
-## What's New — August 9, 2026 (Morning)
-
-Nightly correctness + hardening pass — **395 tests passing** (was 387):
-
-- 📦 **npm lifecycle scripts disabled in all four package roots** — `.npmrc` with `ignore-scripts=true` in root, `cli/`, `mcp/`, and `web/`. The Aug 4–5 Shai-Hulud npm worm spread via malicious preinstall hooks (keyv/cacheable/flat-cache + 400 downstream packages); keyv is already pinned, and now a future compromised transitive dep can't execute code at install time either. web's `flat-cache 4.0.1` / `file-entry-cache 8.0.0` were re-audited: locked to pre-attack releases, clean.
-- 🗃️ **Candidates TTL expiry can't clobber or corrupt** — `candidates-ttl.mjs` interpolated the source list raw inside double quotes in the archive frontmatter (one embedded quote → invalid YAML), overwrote a returning theme's earlier archive record on re-expiry, and rewrote `candidates.md`/the sidecar tracker in place. Now: JSON-escaped `final_sources`, exclusive-create archives with `-2` suffixes, tmp+rename rewrites — with subprocess tests covering all three.
-- 📥 **Ingest routing stops eating same-named files** — `ingest-dedup.mjs` `rename`d inbox files onto `raw/<subdir>/<name>` unconditionally: a new clipping with a previously-used filename (different content — the hash check only catches *identical* bytes) silently replaced the routed original. Routed names now get `-2`/`-3` suffixes like every other writer, and the `.ingest-hashes.json` dedup ledger is written tmp+rename so a crash can't truncate it into mass re-ingestion. Covered by new subprocess tests.
-- 💾 **`backfill-ids` joins the torn-write pattern** — it rewrote every wiki/raw markdown file in place to insert ids; a crash mid-write truncated the article. tmp+rename now, matching the web id-backfill fix (a775d23).
-- 🎬 **`kb ingest-youtube` frontmatter can't be injected** — video title, channel name, duration, and the argv URL went into the transcript's YAML raw (title via a quote-swap hack); a quote or newline in any of them broke or injected frontmatter keys. JSON-escaped scalars now, same class as the sofie-ingest argv fix.
-
----
-
-## What's New — August 8, 2026
-
-Nightly correctness + hardening pass — **387 tests passing** (was 384):
-
-- 🔒 **Wiki slug lookups can't traverse out of the wiki root** — `findArticleBySlug`/`findArticleInVault` joined the caller-supplied slug straight into the wiki root before the existence probe, so `/api/article?slug=../raw/foo` (and the `/wiki/[...slug]` page) read any `.md` under KB_ROOT without a PIN — raw/ staging material defaults to public visibility. The `path=` branch of the same route was already guarded; the `slug=` branch now routes through `safeJoin` too.
-- 🛡️ **Webhook + Sofie ingest: exclusive creates and YAML-escaped external fields, everywhere** — the webhook route, `sofie-watch-obsidian`, and `sofie-ingest-session` all still probed with `existsSync` then wrote plainly (concurrent GitHub redeliveries, or a daily note and meeting note sharing a basename — every day — silently clobbered each other), and interpolated titles/tags/paths raw into frontmatter where a quote or `: ` broke or injected the YAML. All three now use `wx` create with `-2`/`-3` suffixes and JSON-escaped one-line scalars.
-- 🧹 **One bad redaction rule no longer disables the rest** — `loadCustomRules` compiled every `config/redaction.yaml` rule inside a single try/catch, so one malformed regex silently switched off all other client-name redaction on the Vault → KB ingest path. Per-rule compile now: log and skip just the bad rule.
-- 💾 **`pin lock` writes .enc blobs atomically** — it deleted the plaintext right after a bare `writeFileSync` of the encrypted blob; a crash mid-write left a truncated, undecryptable blob as the *only* copy of the private note. tmp+rename before the unlink, matching the repo-wide torn-write pattern.
-- 📦 **keyv pinned via npm override** — audited all three lockfiles against the Aug 4, 2026 npm supply-chain attack (keyv/cacheable + ~444 packages, malicious preinstall hooks). Only exposure: dev-only `keyv` (eslint → flat-cache), already locked to a pre-compromise 2023 release; the override keeps the `^` range from ever floating to a poisoned publish.
-
----
-
-## What's New — August 6, 2026
-
-Nightly correctness + hardening pass — **384 tests passing** (was 380):
-
-- 🛡️ **Correction capture can't be frontmatter-injected and validates durability** — `captureCorrection` interpolated `taskId`, string `confidence`, and `sources` entries raw into hand-built YAML (a newline in any of them injected arbitrary frontmatter keys — same class as the vault-writeback/ADR/webhook fixes), and the exported `DURABILITY_CLASSES` list was never actually enforced, so a typo'd durability silently broke every downstream durability filter. Fields are one-lined, durability is validated (including a typo'd contract default), regression tests cover both.
-- 🔒 **Corrections survive cross-process races; `getCorrection` can't traverse** — correction files were written with a plain `writeFileSync` and `timestamp()`'s uniqueness counter is per-process, so the MCP server and CLI capturing in the same second silently overwrote each other. Exclusive create with bounded `-2`/`-3` suffixes now (id in the file always matches the filename). `getCorrection` also joined the caller-supplied id straight into a path — `'../hot'` escaped the corrections dir and read arbitrary vault files; non-generated-id shapes return null.
-- 💾 **Torn-write parity, next round** — in-place rewrites with bare `writeFileSync` remained in: retention (`compactHotMemory`/`rotateTaskLog` truncating live `hot.md`/`task-log.md`), promotion (promoted artifact under supersedes, source bus-item seal, canonical doc, rewrite seal), `repairTaskState`'s pointer rebuild/clear (the path that runs precisely when state is already inconsistent), repo sync (`writeImportedDoc` rewriting every synced doc each sync, and the archive-copy-then-unlink window in `archiveRemovedDoc` where a torn archive was the only surviving copy), and the web `ensureId` backfill rewriting articles in place. All now tmp+rename.
-- 📦 **Hot digests stop clobbering each other** — `summarizeHotToLearned` wrote the dated learned digest with a plain write; two processes closing tasks in the same second computed the same path and lost the first digest. Exclusive create with suffix retry; `learnedPath` reflects the file actually written.
-
----
-
-## What's New — August 5, 2026
-
-Nightly correctness + hardening pass — **380 tests passing** (was 377):
-
-- 🔒 **`closeRepoTask` commits under the per-repo lock** — the agent-runtime `closeTask` has committed under an exclusive lock since Phase 3, but the repo twin committed bare: two agents closing tasks on the same repo could interleave the read-modify-write appends to `progress.md` and silently drop one side's entry. A held lock now fails the close cleanly through the existing rollback path; regression test covers the blocked and post-release retry paths.
-- 💾 **Torn-write parity finished** — `commitRepoWrite`, `appendRepoProgress`, and `writeRepoTaskLog` still rewrote files in place (a crash mid-write could truncate a repo's whole progress history), as did `abandonTask`'s active-task pointer clear — the very file `getActiveTask` parses. All four now use the same tmp+rename pattern as everything else.
-- 🛡️ **Sofie's vault fanout can't be frontmatter-injected** — `planSofieVaultOps` interpolated `decided_by`, `related`, and session tags raw into hand-built YAML headers, so a newline in any of them injected arbitrary frontmatter (e.g. `visibility:`) into the written vault note; a non-array `tags` value also threw and aborted the whole fanout. Fields are flattened to one line (same `oneLine` helper as the ADR emitter), tags emitted only for non-empty arrays.
-- 🛡️ **Webhook ingestion, same class** — `/api/ingest/webhook` builds raw-doc frontmatter from external payloads (GitHub issue titles/labels, Slack text); newlines injected keys and the title quote-swap left backslashes free to escape the closing quote. One-lined + JSON-escaped now.
-- 📝 **`write_rewrite_artifact` stops clobbering same-day drafts** — the MCP tool wrote `<project>-<date>.md` with a plain `writeFileSync`, so a second same-day artifact for the same project silently replaced the first. Exclusive create with `-2`/`-3`… suffixes; the tool returns the path actually written.
-- 🖥️ **`kb repo sync` / `sync-all` report honestly** — `sync` treated any non-fatal per-file error as total failure (exit 1, no counts, even though the sync landed); only fetch errors are fatal now, partial errors print as warnings. `sync-all` had the inverse bug — `syncRepo` reports fetch failures in `trace.errors` rather than throwing, so it printed "All N repos synced" even when every fetch failed; it now reports per-repo outcomes and exits non-zero on any failure.
-- 📚 **`sync_repo_markdown` tool description matches reality** — it claimed `.md/.mjs/.ts/.json`; the sync imports markdown/MDX docs only. Tool descriptions steer the calling model.
-
-Also audited all three lockfiles against the July 2026 npm supply-chain compromises (`@asyncapi/specs`, `jscrambler` + plugins) — no hits.
-
----
-
-## What's New — August 4, 2026
-
-Nightly correctness + sync-pipeline pass — **377 tests passing** (was 372):
-
-- 🗃️ **Removed repo docs archive without clobbering each other** — `archiveRemovedDoc` flattened every removed doc to its basename inside the dated archive dir, so removing `docs/a/README.md` and `docs/b/README.md` on the same day silently overwrote the first archive with the second. The archive now preserves the path relative to `repo-docs/`.
-- 🔄 **CLI and MCP syncs update the registry** — only the web sync route called `markSynced`, so `kb repo sync`, `kb repo sync-all`, and the MCP `sync_repo_markdown` tool never stamped `last_sync_at`/`last_synced_commit`/file counts — `kb repo list` said "never" after successful syncs. `syncRepo` records sync state itself now (still skipped on fetch failure).
-- 💾 **registry.json writes are atomic** — a crash mid-write left a truncated registry that `loadRegistry` parsed as empty, and the next upsert then persisted a registry missing every prior record. tmp+rename, same as bus/task-lifecycle writes.
-- ⚡ **Repo sync fetches blobs 8-wide** — the blob loop was serial (one round-trip per file); a few hundred markdown files took minutes. Bounded worker pool keeps tree-order determinism and per-file failure isolation.
-- 🗓️ **Duplicate same-day titles no longer abort Sofie's vault fanout** — decision/session filenames are date+slug; a second decision with the same slug hit the create-exists guard and rolled back the *entire* fanout, losing the unrelated action items and client updates in the same payload. Create ops now allocate a `-2`/`-3` suffix on collision (re-guarded against `vault_writes`), and the audit records the path actually written.
-- 🖥️ **`kb lint` / `kb pending` fail readably** — both crashed with a raw `Unexpected token '<'` stack when the API returned a non-JSON error page; they now surface the HTTP status and error like `kb search` does.
-
----
-
-## What's New — August 3, 2026
-
-Nightly correctness + coverage pass — **372 tests passing** (was 361):
-
-- 🔢 **Bus id allocation no longer wedges after 999 items in a day** — `nextBusId` (and the repo-bus twin) scanned existing filenames with an exact three-digit regex, so once a channel produced item 999 the four-digit successor ("1000") became invisible: every later publish recomputed id 1000, hit the EEXIST guard, exhausted its 20 retries, and threw for the rest of the day despite free ids. The scan now accepts 3+ digits; rollover test added.
-- 📄 **`.yml` contracts are loadable** — `listContracts` accepted `config/agents/*.yml`, but `loadContract` only ever tried `.yaml`, so a `.yml` contract passed the directory filter, loaded as null, and silently vanished from the agent list (every `/api/agents/[id]/*` route 404'd it). `loadContract` now falls back to the `.yml` extension.
-- 🗂️ **Repo-only agents can close repo tasks** — `planRepoWrites` fell back to the repo-scoped write rules only when the global guard answered `not in allowed_writes`; a contract with an *empty* allowlist gets `no allowed_writes configured` instead, which skipped the fallback and rejected the agent's own `progress.md`, agent-memory, rewrites, and bus paths. Both not-in-allowlist answers fall through now — unsafe-path and `forbidden_paths` rejections stay final.
-- 🔑 **`kb search` sends the PIN as a header** — it was the last CLI command putting the PIN in the URL query string, where it lands in server access logs and any proxy in between; it now uses `x-private-pin` like `kb query`/`compile`/`lint`.
-- ✍️ **Torn-write parity** — `transitionRepoBusItem` and `abandonTask` still rewrote files in place while their siblings had already moved to tmp+rename; both now use the same atomic pattern.
-- 🔗 **Audit chain gets direct tests** — the hash-chained audit log (tamper-evidence under every runtime operation) had zero direct coverage; seven tests pin chain linkage, tamper detection (edited body, deleted middle entry), legacy-entry tolerance, the >8KB tail-read path, and `readRecentAudit` filters.
-
----
-
-## What's New — August 2, 2026
-
-Nightly correctness + ops pass — **361 tests passing** (was 359):
-
-- 🧹 **Fresh `npm ci` works again in `web/`** — package.json pinned `eslint ^8` while the lockfile carried `eslint-config-next` 16.2.2 (peer range `eslint >=9`), so every fresh clone/deploy failed with ERESOLVE unless `--legacy-peer-deps` was passed. eslint bumped to ^9 (dev-only; `web/` has no eslint config, so nothing to migrate), lockfile regenerated, all resolved URLs verified against registry.npmjs.org. Verified end-to-end: clean `npm ci`, `tsc --noEmit`, and a full `next build` all pass.
-- ⏱️ **Wiki lint no longer dies on long generations** — the 2026-08-01 nightly lint was skipped because `/api/lint` failed with `ERR_SOCKET_TIMEOUT`: it was the last route still using a non-streaming `messages.create()`, which sits silent while the whole answer generates. It now streams like `/api/process` and `/api/query`, and an Anthropic-side failure returns a clean 502 JSON body instead of an unhandled 500.
-- 🧷 **`abandonTask` can't clobber other tasks anymore** — it accepted any task id with a working-memory file: abandoning a completed/abandoned task silently rewrote its sealed status, and the active-task pointer was cleared unconditionally — so cleaning up an orphaned task (left behind by `startTask({ force: true })`) stranded the *current* task as exactly the orphan `verifyTaskState` flags. Only active tasks can be abandoned now, and the pointer is cleared only when it points at the task being abandoned. Two regression tests added.
-- 🔁 **Review-channel publishes survive id races** — `publishReviewItem` (used by the promotion scorer to route blocked promotions to review) threw a raw EEXIST when two concurrent publishers computed the same next id; it now uses the same bounded rescan-retry loop `publishBusItem` already had.
-- 📡 **`/api/vault-watch` stops leaking on watcher errors** — the SSE route's wiki-watcher error path only closed the stream controller, leaving the 15s keep-alive interval and the raw/ watcher alive for the life of the server process on every errored connection. Both teardown paths now share one idempotent cleanup.
-
----
-
-## What's New — July 30, 2026
-
-Nightly correctness + coverage pass — **359 tests passing** (was 319):
-
-- 📄 **CLI ingest keeps both docs** — `kb ingest-file` and `kb ingest-youtube` had the same slug-collision bug fixed in the web ingest routes on July 27/28: two documents (or videos) whose titles slugify identically silently overwrote each other in `raw/`. Filenames now get `-2`, `-3`… suffixes via exclusive create, and all-punctuation titles fall back to `video`/`document` instead of producing a bare `date-.md`.
-- 🏛️ **ADR frontmatter can't be broken or injected by decision titles** — `planAdrOpsForDecisions` interpolated close-task decision fields straight into single-line frontmatter keys, so a title with a newline terminated the value and injected arbitrary keys (`visibility:` …) into the generated ADR, and a title ending in a backslash escaped its own closing quote. Title/status/author/confidence are flattened to one line and the title is JSON-escaped; module gets its first test suite.
-- 🧪 **Four scoring/learning modules get first direct coverage** — `freshness` (decay curve, floors, exempt classes, frontmatter-date-over-mtime, `staleDays` gate), `source-trust` (weight × multiplier math, verified-bonus clamp, contract overrides, mtime cache invalidation), `promotion-scorer` (provenance hard-reject, evidence asymptote, canonical/learned/review/working-only routing, hard gates demoting to review, contradiction pre-check), and `correction-capture` (validation, file layout, durability defaults, list/get filters). These drive context ranking and every promotion decision; they were previously only exercised indirectly.
-
----
-
-## What's New — July 29, 2026
-
-Nightly security pass — **319 tests passing** (was 304):
-
-- 🕳️ **`/api/query` no longer answers public questions with private pages** — the PIN gate only checked the *requested* scope; the pages actually read were chosen by Claude and fetched with a raw `path.join`, so an unauthenticated public-scope query could synthesize `wiki/personal/**` and `visibility: private` articles into its streamed answer, and a prompt-injected wiki page could steer reads to any `.md` under the KB root via `wiki/../…`. Model-emitted paths now reject dot-segments, resolve through `safeJoin`, must stay under `wiki/`, and public-scope reads skip private articles (same CRLF-normalized rules as `/api/search`).
-- 📇 **`/api/articles` metadata leak closed** — the unauthenticated listing returned titles, descriptions, and slugs for every article including `wiki/personal/`; it now returns public-visibility metadata only.
-- 🔓 **Private-mode unlock actually verifies the PIN** — `unlock()` tested `res.ok || res.status !== 401`, but the API rejects a bad PIN with **403**, so any PIN "unlocked" the private UI (reads still failed server-side, surfacing as confusing 403s). Only `res.ok` counts now.
-- 🧬 **Prototype-key hardening in two lookups** — `X-KB-Namespace: constructor` (dev mode) resolved `Object.prototype` members into a truthy non-ACL identity that 500'd every `canRead`/`canWrite`; a bus item whose frontmatter carried `status: constructor` made `canTransition` throw a TypeError instead of rejecting the transition. Both are `Object.hasOwn`-gated, with the state-machine module getting its first direct test suite.
-- 🔎 **Search inputs behave** — `/api/search?limit=abc` reached `.slice(0, NaN)` and silently returned zero results (now defaults to 20, caps at 100); repo search compiled the raw query as a regex, so `c++` or `foo[` threw per-file and always returned nothing (occurrences are counted literally now).
-- 🧪 **hot-learned covered** — the hot → learned digest hook (runs after every closeTask that touched `hot.md`) gets direct tests: skip thresholds, snapshot provenance, the 60-line cap, and custom-summarizer edge cases.
-
----
-
-## What's New — July 28, 2026
-
-Nightly security pass — **304 tests passing** (was 296):
-
-- 🍪 **The active-vault cookie is no longer a filesystem passport** — `active_vault_path` is client-controlled, but eight routes used it directly as a serving root: `Cookie: active_vault_path=/` read every `.md` on disk through `/api/search` and `/wiki` (no PIN — articles without `visibility: private` are public) and wrote files under arbitrary directories via `/api/query/save`. New `web/src/lib/vault.ts` resolves the cookie against an allowlist (default KB root + vaults registered in the Obsidian config), and `/api/switch-vault` rejects unregistered paths.
-- 🧨 **`/api/process` hardened both ways** — the client's `filePath` traversed out of the KB (any file on disk got read and summarized back through Claude), and the *model's* JSON response chose the write paths, so a prompt-injected raw source could steer output to `../../.ssh/...`. Input is now restricted to `raw/**/*.md`; writes to `wiki/**.md`, both via `safeJoin`.
-- 🪪 **Agent ids are validated at the chokepoint** — `loadContract` interpolated caller-supplied ids into `config/agents/<id>.yaml`, so `..%2F..%2F` ids from `/api/agents/[id]/*` or MCP tool args loaded any `.yaml` on disk as a contract. Ids now must match the same shape the diff route enforced; `isSafeAgentId` exported, regression tests added.
-- 📝 **UI ingest keeps both docs** — `/api/ingest` had the collision bug the webhook route was fixed for on July 27, minus the date prefix: any two materials whose titles slugify identically overwrote each other, across days. Now suffixed `-2`, `-3`…; titles with quotes/newlines can no longer inject frontmatter keys, and all-punctuation titles no longer produce the filename `.md`.
-- 🗄️ **Retention finally has direct tests** — the module that archives bus items and working memory and truncates task logs had zero coverage; six tests pin the rules (pinned/fresh items survive TTL, unparseable dates never archive, snapshot-before-truncate).
-- 🤖 **Default model → `claude-sonnet-5`** — released July 24; `KB_MODEL` env override unchanged, cost meter already prices the family correctly.
-
----
-
-## What's New — July 27, 2026
-
-Nightly security + integrity pass — **296 tests passing** (was 286):
-
-- 🎭 **`X-KB-Namespace` header is no longer a credential** — once RBAC tokens are configured, an unauthenticated caller could still claim any namespace (and its write ACL) with one header, which also bypassed `WEBHOOK_SECRET` on the ingest webhook. The header now only works while no tokens exist (dev mode). A `namespaces.json` without a `tokens` key also no longer 500s every Bearer request.
-- ⏱️ **Timing-safe secrets, everywhere** — the webhook's legacy Bearer secret and the MCP server's `requirePin` were the two remaining plain `===`/`!==` secret comparisons after the July 26 PIN pass; both now use the same sha256 + `timingSafeEqual` construction.
-- 📝 **Webhook ingest keeps both docs** — two same-day ingests whose titles slugify identically (e.g. two closed issues titled "Fix build") silently overwrote each other; filenames now get `-2`, `-3`… suffixes.
-- 🔄 **Frontmatter round-trips are lossless** — the zero-dep codec (under repo sync, writeback, bus persistence) left literal `\"`/`\n` escapes in quoted strings on re-parse, turned string `"true"`/`"42"` into boolean/number, and turned the empty string into an empty *list*. All fixed, with a round-trip test suite.
-- 📦 **Repo sync skips vendored markdown at any depth** — `docs/node_modules/pkg/README.md` was syncable (exclusions only matched at the repo root); truncated GitHub tree listings are now warned about instead of silently syncing a partial doc set.
-- 📋 **MCP spec 2026-07-28** — README spec-compat section updated for the finalized revision (stateless core, `_meta` per-request, `Mcp-Session-Id` removed, Tasks → extension) and what it means for this stdio server: nothing until the SDK ships support.
-
----
-
-## What's New — July 26, 2026
-
-Nightly security + correctness pass — **286 tests passing** (was 277):
-
-- 🔒 **`/api/article` locked down** — the one API route with no PIN gating served private articles (including `wiki/personal/`) to anyone, and its `?path=` param accepted any extension, exposing `.env`, `namespaces.json` RBAC tokens, and logs. Now `.md`/`.mdx` only, private requires the same PIN as `/api/search`.
-- ⏱️ **Constant-time PIN checks** — all five PIN-gated routes (search, article, query, lint, compile) now compare via sha256 + `timingSafeEqual` (`web/src/lib/pin.ts`) instead of `!==`, which leaked correct-prefix length through response timing.
-- 🧭 **Repo context traversal guard** — `loadRepoContext` `source_files` entries like `../../../personal/secret.md` could pull files from outside the repo namespace into the context bundle; now validated with the same rule as `importedDocPath` (regression test added).
-- 🔑 **Web repo sync actually authenticates** — the sync route passed the GitHub token as `opts.githubToken` but `syncRepo` reads `opts.token`; private-repo syncs from the UI ran unauthenticated. Also: a failed fetch no longer stamps `last_sync_at` / wipes `last_synced_commit`.
-- 🖥️ **CLI honesty** — `kb search` now honors `--pin` (was silently ignored) and surfaces 403 auth errors instead of printing "No results"; `search_repo_docs` (MCP) skips unreadable files instead of aborting the whole search.
-- 🧪 **memory-classes covered** — the last untested agent-runtime module (drives append-only semantics in both writeback engines) now has 8 direct tests; MCP README documents all 37 tools, not the original 5.
-
----
-
-## What's New — July 24, 2026
-
-Nightly correctness pass — **276 tests passing** (was 269):
-
-- 🔁 **Task-state repair convergence** — `repairTaskState` no longer clears the active-task pointer it just rebuilt (stale-metadata read between repair blocks).
-- 🚫 **No silent task orphaning** — `startTask` now refuses when another task is active (pass `force: true` to orphan deliberately); previously it stranded the old working-memory file in the non-repairable `multiple-active-working-files` state.
-- 📃 **CRLF frontmatter** — shared parser and the MCP server's visibility gate both normalize `\r\n`; a CRLF article with `visibility: private` was previously served publicly, and CRLF files lost all metadata.
-- 📦 **Repo sync** — `archiveRemovedDoc` actually moves docs out of `repo-docs/` (was copy-only, re-archived every sync); provenance now records the real branch commit SHA instead of an arbitrary blob SHA.
-- 🚌 **Bus integrity** — publishes use exclusive create with id-retry, so concurrent publishers can't overwrite each other's items; `promote_repo_learning` / `promote_learning` MCP tools now honor `target_path` / `target` and record `reviewed_by` + `promoted_to`.
-- 🧹 **Dedup** — retention and corrections use the shared frontmatter parser (corrections previously truncated reads at 1KB, dropping metadata for items with long source lists).
-
----
-
-## What's New — April 25, 2026
-
-Foundation lift + Phase 1–5 punch list — **108/108 agent tests passing** (was 86):
-
-**Phase 0 — Foundation**
-- 📦 **Real YAML parser** — vendored `yaml@2.8.3`. Hand-rolled `parseYamlLite` (~130 lines) deleted. Block scalars, anchors, aliases now safe.
-- 🛡️ **Centralized path-safety** — `lib/agent-runtime/path-safety.mjs` is now the single source of truth for adversarial input rejection. Both KB and vault write-guards import the same 13-check `UNSAFE_CHECKS` table.
-- 🤖 **GitHub Actions CI** — `.github/workflows/test.yml` runs runtime tests + fuzzer + context-snapshot drift gate + audit-chain verify + tier-leak audit on every push/PR.
-- 🌱 **`.env.example` + `kb env check` + `kb bootstrap <role>`** — first-run experience covered. Bootstrap CLI replaces paste-only docs.
-
-**Phase 1 — Real bug fixes**
-- 🔧 **`kb list <section>` + `--table`** — bug already fixed by earlier refactor; added aligned-column rendering.
-- 📋 **MCP SDK migration → ADR-001** — 1148-line rewrite deferred with documented plan. Seeds `wiki/decisions/`.
-- 🧠 **Sofie `Memory.md` route** — `payload.memoryUpdate` now writes to vault Memory.md. `scripts/sofie-sync-memory.mjs` mirrors hash to KB profile.
-
-**Phase 2 — Boundary safety**
-- 🔒 **Redaction layer** — `lib/agent-runtime/redaction.mjs` with default rules (email, phone, SSN, JWT, AWS, PEM). 10 tests. Pluggable custom rules from `config/redaction.yaml`. CLI: `kb redact preview <file>`.
-- 🚨 **Tier read-leak audit** — `scripts/audit-context-leaks.mjs`: scans every contract's effective context bundle, flags cross-tier reads (worker→lead, lead→orchestrator). Report-only in CI; promote to `--strict` once contracts add `permitted_cross_tier_reads:` allowlist.
-
-**Phase 3 — Production bake**
-- 🧪 **Foundry-compile gate** — plan-mode verified against 178 pages: theme extraction works, classification works, candidates routing works. `--execute` blocked by missing `ANTHROPIC_API_KEY`. Logged in `wiki/_meta/compile-log.md`.
-
-**Phase 4 — Habits + ergonomics**
-- 📝 **ADR auto-emit** — Sofie close-task with `decisions[]` now drops both vault decision file AND `wiki/decisions/ADR-NNN-{slug}.md` with bidirectional backlinks.
-- 💰 **Cost meter** — `lib/agent-runtime/cost-meter.mjs` tracks per-call USD, daily/monthly rollup, hard cap from `KB_DAILY_COST_CAP_USD` (default $5). CLI: `kb cost`.
-- ⏰ **Candidates TTL** — `scripts/candidates-ttl.mjs`: tracks single-source theme age via sidecar JSON. Auto-archives themes >90d to `wiki/archive/candidates-expired/`.
-- 🪦 **Outputs/ deprecated** — drafts now land directly in `wiki/syntheses/` with `status: draft`. CLAUDE.md spec updated.
-
-**Phase 5 — Strategic cleanup**
-- 🪄 **Cowork skill** — `~/.claude/skills/agentic-kb-session/SKILL.md`. Auto-loads bootstrap when sessions touch the KB/Vault.
-- 📄 **PR template + CONTRIBUTING.md** — `.github/pull_request_template.md` lists every verification step. CONTRIBUTING covers scaffolding, security, vault boundary.
-- 🔄 **Off-site mirror script** — `scripts/mirror-push.sh` pushes to `mirror` remote when configured. No-op if not.
-- 🧠 **Sofie reasoning modes** — `loadAgentContext({mode})` adds conditional includes for `critique` (lint reports), `plan` (ADRs), `compare` (evaluations).
-- 🌐 **`vault_id` schema field** — reserved on contracts (multi-vault federation, post-MVP).
-- 🔍 **Contract diff API** — `GET /api/agents/[id]/diff?ref=HEAD~1` returns parsed before/after + field diffs.
-- 🧬 **Embeddings stub** — `lib/search/embeddings.mjs` documents activation criteria (≥500 pages OR keyword recall <60%).
-
----
-
-## What's New — April 24, 2026
-
-Runtime hardening pass — 10 enhancements, **86/86 agent tests passing** (78 runtime + 4 fuzzer + 4 snapshots):
-
-- 🔒 **Writeback lockfile** — `lib/agent-runtime/locks.mjs`: per-agent O_EXCL lock with PID/age staleness check. `closeTask` commit phase runs under `withLock('agent:<id>')`. Prevents concurrent compaction/log interleaving.
-- 🔐 **Contract hash in audit + trace** — `contractHash()` stamps sha256[:16] on every contract at load. Every audit entry, runtime trace, and bus publication carries `contract_hash`. Session-long tamper-evidence for "agent X did Y under policy Z".
-- ⛓️ **Hash-chained audit log** — `audit.log` entries now carry `prev_hash` + `entry_hash`. `verifyAuditChain()` walks the chain, distinguishes legacy/pre-chain from broken. CLI `kb agent verify-audit`, route `GET /api/agents/verify-audit`.
-- 🛡️ **Forbidden-path fuzzer** — `tests/agents/fuzz-paths.test.mjs` fires 25 exploit seeds + 2000 randomized mutations. Caught 335 real leaks first run. `paths.mjs` now rejects null bytes, newlines, backslashes, `%2e/%2f`, drive letters, `~`, `file://`, dot-segments before any glob match.
-- ✅ **Schema validation on load** — `validateContract` throws with full error list: bad tier, non-array allowed_writes, missing `path|class` in include rules, non-numeric priority, unsafe glob patterns. Fails at load, not first use.
-- 🧪 **Dry-run close-task** — `closeTask({ dryRun: true })` short-circuits to plan-only preview. New CLI `kb agent dry-run-close-task`, route `POST /api/agents/[id]/dry-run-close-task`.
-- 📸 **Context-bundle snapshot tests** — `tests/agents/context-snapshots.test.mjs` snapshots each contract's effective context bundle. `UPDATE_SNAPSHOTS=1` to accept drift. PR-time visibility on policy changes.
-- 🧠 **Hot → Learned summarization hook** — `hot-learned.mjs` writes a dated digest to `wiki/agents/<tier>s/<id>/learned/hot-digest/` after any `closeTask` that touched `hot.md`. Pluggable summarizer (default = heading/bullet extraction, zero-dep).
-- 🏗️ **Contract scaffolder** — `kb agent new <id> --tier worker|lead|orchestrator [--domain X] [--team Y]` + `lib/agent-runtime/scaffold.mjs`. One command = contract YAML + profile/hot/task-log/gotchas seeded with tier-aware defaults. Replaces 8 manual file edits.
-- 🖥️ **/agents web page** — `web/src/app/agents/page.tsx`: roster + audit-chain health badge + tabs for context (file table + excluded reasons), audit (recent entries with contract_hash column), trace (runtime JSONL). Live project scoping. Backed by new routes `[id]/audit`, `[id]/dry-run-close-task`, `verify-audit`.
-
----
-
-## What's New — April 10, 2026
-
-Task lifecycle hardening + repo runtime parity + codebase quality pass — **112/112 tests passing** (78 agent + 34 repo):
-
-- 🔍 **Task state verification & repair** — `verifyTaskState(kbRoot, contract)` detects broken active-task pointers, orphan working-memory files, task_id mismatches, and multiple simultaneous active files. `repairTaskState(kbRoot, contract)` safely rebuilds the pointer when only one active file exists. `getAgentStatus(kbRoot, contract)` returns active task + verification issues + close policy + recent runtime traces in a single call.
-- 🛠️ **3 new CLI subcommands** — `kb agent status <id>` (full lifecycle snapshot), `kb agent verify-state <id>` (consistency check with issue codes and severity), `kb agent repair-state <id>` (safe pointer repair with action log).
-- 📡 **3 new MCP tools** — `agent_status` (agent snapshot for dashboard integration), `agent_verify_state` (pre-task check for orchestrators), `agent_repair_state` (recovery tool for broken task state).
-- 🔄 **Repo close-task parity** — `closeRepoTask` and `dryRunCloseRepoTask` in `lib/repo-runtime/writeback.mjs` now have full parity with agent close-task: payload validation against `close_policy`, atomic commit/rollback, bus publication as first-class write ops, and repo-scoped write guard via `assertRepoScopedWriteAllowed`. New MCP tools: `close_repo_task`, `dry_run_close_repo_task`.
-- 🔧 **Frontmatter round-trip fix** — `frontmatter.mjs` now correctly parses and re-serializes inline arrays of JSON objects (e.g. bus `status_history` fields). Previously a read/rewrite cycle would corrupt object arrays into quoted strings.
-- 🧹 **Path helper API cleanup** — `lib/repo-runtime/paths.mjs` had a misleading `kbRoot` first parameter on all functions that was silently ignored; `writeback.mjs` was passing `contract.agent_id` in that slot. Fixed: all path helpers now take `(repoName, ...)` only, callers updated, type declarations corrected.
-- 📋 **Close policy derivation** — `contracts.mjs` derives `close_policy` automatically from `task_end_actions` (e.g. `append_task_log` → `required_fields: [taskLogEntry]`). Explicit `close_policy` in YAML overrides the derived defaults.
-
----
-
-### Previous: April 10, 2026
-
-Operational Runtime Memory Layer (all 5 phases) + Sofie AI Chief of Staff integration + GitHub repo sync:
-
-- 🧠 **Operational Runtime Memory Layer — Phases 1–5** — Full agent memory lifecycle implemented. Agents have identity (YAML contracts), structured memory classes (profile/hot/working/learned/rewrite/bus), task lifecycle (startTask → appendState → closeTask with atomic commit), and governance-grade promotion. Built as zero-dependency Node.js ES modules in `lib/agent-runtime/`.
-- 🔐 **Phase 4: Promotion governance** — `promotion.mjs` enforces contract-driven tier validation (`TIER_RANK: worker=1 lead=2 orchestrator=3`) before any bus promotion. Duplicate-title detection with self-exclusion, target-path collision guard requiring explicit `supersedes`, `assertPromotable` state gate. `mergeRewrite` upgrades also validated with approver tier.
-- 📋 **Phase 5: CLI + MCP surface** — 5 new `kb agent` subcommands (`start-task`, `active-task`, `append-state`, `abandon-task`, `close-task --dry-run`). 5 new MCP tools (`agent_start_task`, `agent_active_task`, `agent_append_task_state`, `agent_abandon_task`, `agent_dry_run_close_task`). MCP `merge_rewrite` updated with governance params.
-- 🗂️ **Task retention** — `retention.mjs` implements `archiveCompletedTaskMemory` and `archiveAbandonedTaskMemory`. Task-local working memory is archived on close/abandon, preventing context bleed across sessions.
-- 🤝 **Sofie integration — AI Chief of Staff ↔ Agentic-KB** — Sofie (lead-tier agent, `config/agents/sofie.yaml`) is the business-strategy bridge between the Obsidian Vault and this KB. Her context policy loads: profile + hot cache (priority 10/20), learned context from all agents (30), wiki/personal/** (40), wiki/concepts/** and wiki/patterns/** (50/60). Budget: 65KB. Context load in production: 19 files, ~62KB.
-- 📥 **Sofie pipeline scripts** — Three scripts connect Sofie to the KB: `scripts/sofie-ingest-session.mjs` (ingest Q&A conversations into `raw/qa/` with `--content/--file/--obsidian-session/--verified/--dry-run`), `scripts/sofie-watch-obsidian.mjs` (30s poll watcher for Obsidian meeting/session/daily-note dirs, mtime-tracked), `scripts/sofie-kb-digest.mjs` (weekly digest of KB health + open bus items + recent pages, writes to both KB and Obsidian `07 - Tasks/`).
-- 🔄 **GitHub repo sync** — `kb repo sync <name>` pulls markdown from GitHub repos into `raw/repos/<name>/repo-docs/`. Agentic-KB repo synced and fully ingested (5 source files → 5 summaries + 2 new concept/pattern pages). Private repos (Agentic-Pi-Harness, Pi, MissionControl) pending public access.
-- 📚 **5 new repo summaries ingested** — README, ENTERPRISE_PLAN, RLM_PIPELINE, OBSIDIAN_GRAPH, OH_MY_MERMAID → `wiki/summaries/agentic-kb-*.md`. New concept: `concepts/rlm-pipeline.md` (10-stage retrieval, stages 4–9 live). New pattern: `patterns/pattern-compounding-loop.md` (raw/qa/ → compile → wiki → query → save with ×1.25 verified boost).
-
----
-
-## What's New — April 9, 2026
-
-RLM pipeline upgrade pass — stages 6–9 now live, two-step compile, auto-reindex, raw file watcher:
-
-- 🧠 **Two-step compile pipeline** — `/api/compile` now runs two separate Claude calls per raw doc. **Call 1 (Analysis)** extracts a structured knowledge graph (entities with salience, typed relationships with evidence, key claims, candidate pages, contradictions, tags) using a pure analyst persona. **Call 2 (Generation)** feeds that JSON into the wiki curator to write page content. Improves page quality and surfaces contradictions automatically as `⚠️ Contradictions` sections. Analysis failure is non-fatal — generation still runs. SSE now emits `{type:'analysis'}` progress events per doc.
-- 🔄 **Auto-reindex** — after every compile run, `reindexWiki()` walks all 9 wiki sections and updates `## Section (N)` counts in `index.md` automatically. No more stale counts.
-- 🎯 **Confidence weighting** (RLM stage 6) — `ranking.ts` now reads frontmatter `confidence` field and applies a multiplier: `high → ×1.10`, `medium → ×1.00`, `low → ×0.85`. Cached per mtime. High-confidence articles rank above speculation automatically.
-- 🚫 **Contradiction filtering** (RLM stage 7) — `query/route.ts` parses `wiki/lint-report.md` for flagged contradictions and deprioritizes those pages to the end of synthesis context. `sources` SSE response includes a `contradicted[]` array so the UI can warn users.
-- 📦 **Token-budget packing** (RLM stage 9) — query synthesis now caps context at `MAX_CONTEXT_CHARS = 24,000`. `packArticles()` distributes budget proportionally; `extractArticleSummary()` keeps frontmatter + first 3 paragraphs when an article is over budget. No more context overflow silently truncating critical pages.
-- ⚖️ **Proportional bucket allocation** — `graph-search.ts` now enforces `{direct: 60%, graph: 20%, hot: 5%, citation: 15%}` across result buckets. Graph traversal can no longer crowd out direct keyword matches. Results tagged with their bucket for debugging.
-- 👁️ **Raw file watcher** — `vault-watch/route.ts` now monitors `raw/` separately and emits `{type:'raw_pending'}` SSE events when new files appear, prompting the UI to surface them in the process queue immediately.
-- 📄 **CLI: `ingest-file`** — `kb ingest-file <path>` converts any file to markdown via markitdown (PDF, DOCX, PPTX, XLSX, audio, YouTube URLs), writes it to the correct `raw/` subdirectory with frontmatter, and reports word count.
-- 📊 **CLI: `reindex`** — `kb reindex` updates `wiki/index.md` section counts from actual directory listings without running a full compile.
-
----
-
-## What's New — April 7, 2026
-
-Enterprise-scaling pass inspired by the Karpathy LLM-Wiki gist and patterns borrowed from [archivist-oss](https://github.com/NetworkBuild3r/archivist-oss):
-
-- 🔐 **Namespace-level RBAC** — `X-KB-Namespace` header or Bearer-token identity resolution, per-namespace read/write ACLs, audit log now records identity. See [`web/src/lib/rbac.ts`](web/src/lib/rbac.ts) and [`namespaces.example.json`](namespaces.example.json).
-- 📉 **Temporal decay + hotness ranking** — search results are now scored as `baseScore × decay(mtime) × hotness(audit hits)`. 180-day half-life, 30-day hotness window. See [`web/src/lib/ranking.ts`](web/src/lib/ranking.ts).
-- 🕸️ **Graph-based semantic search** — hybrid keyword + graph traversal over graphify's `graph.json` (222 nodes, 299 links, 12 hyperedges). 1-hop traversal + hyperedge expansion. See [`web/src/lib/graph-search.ts`](web/src/lib/graph-search.ts).
-- 🧠 **Karpathy compile pipeline** — `/api/compile` streams SSE progress while Claude batches raw docs into wiki pages using `wiki/schema.md` as system prompt. Incremental via `raw/.compiled-log.json`.
-- 🩺 **Wiki lint + scheduled daily health check** — `/api/lint` detects contradictions, orphans, stale pages, knowledge gaps → `wiki/lint-report.md`. Runs daily at 07:00 via a scheduled task.
-- 🪝 **Webhook ingest with auto-adapters** — `/api/ingest/webhook` accepts GitHub issues/PRs, Slack, and generic JSON. GitHub Actions workflow at `.github/workflows/kb-ingest.yml` auto-ingests merged PRs, closed issues, and pushed docs.
-- 🎥 **YouTube + Twitter ingest CLI** — `kb ingest-youtube <url>` (yt-dlp + SRT parsing) and `kb ingest-twitter <archive.zip>` (parses the Twitter/X data export).
-- 🏛️ **Interactive architecture viewer** — [oh-my-mermaid](https://github.com/oh-my-mermaid/oh-my-mermaid) integration. Clickable drill-down through 6 nested perspectives of the system. Linked from the wiki sidebar.
-- 🔗 **Sidebar Tools section** — one-click jump to the architecture viewer and to Obsidian's global graph view (via Advanced URI plugin).
-- 🧪 **10-stage RLM retrieval pipeline** — reference design documented in [`docs/RLM_PIPELINE.md`](docs/RLM_PIPELINE.md). Temporal decay + hotness (stages 4–5) were live; **stages 6–9 are now live as of April 9**.
-
-See [`ENTERPRISE_PLAN.md`](ENTERPRISE_PLAN.md) for the full P0–P3 roadmap.
-
----
-
-## Table of Contents
-
-- [Quick Start](#quick-start)
-- [Web UI](#web-ui)
-- [CLI](#cli)
-- [MCP Server](#mcp-server)
-- [Agent Runtime Memory Layer](#agent-runtime-memory-layer)
-  - [Agent Contracts](#agent-contracts)
-  - [Memory Classes](#memory-classes)
-  - [Task Lifecycle](#task-lifecycle)
-  - [Promotion Governance](#promotion-governance)
-- [Sofie Integration (AI Chief of Staff)](#sofie-integration-ai-chief-of-staff)
-- [Compile Pipeline (Karpathy LLM Wiki)](#compile-pipeline-karpathy-llm-wiki)
-- [Enterprise Features](#enterprise-features)
-  - [Namespace RBAC](#namespace-rbac)
-  - [Temporal Decay + Hotness Ranking](#temporal-decay--hotness-ranking)
-  - [Webhook Ingest](#webhook-ingest)
-  - [Scheduled Lint](#scheduled-lint)
-- [Architecture Visualization (oh-my-mermaid)](#architecture-visualization-oh-my-mermaid)
-- [Private Wiki / PIN System](#private-wiki--pin-system)
-- [Multi-Vault Support](#multi-vault-support)
-- [Live Reload](#live-reload)
-- [Ingest Workflow](#ingest-workflow)
-- [Knowledge Base Structure](#knowledge-base-structure)
-- [Architecture](#architecture)
-
----
-
-## Quick Start
-
-```bash
-# 1. Start the web UI
-cd /Users/jaywest/Agentic-KB/web
-PORT=3009 npm run dev
-# → http://localhost:3009/wiki
-
-# 1b. (Optional) Architecture viewer
-omm view               # → http://localhost:4567
-
-# 2. Use the CLI
-kb search "multi-agent orchestration"
-kb query "What is the best pattern for a supervisor-worker system?"
-kb read concepts/tool-use
-
-# 3. Use via Claude Desktop MCP
-# Tools: search_wiki, read_article, read_index, list_articles, query_wiki
+```text
+Raw sources
+    ↓
+Ingestion / normalization
+    ↓
+Compilation
+    ↓
+Cross-referenced knowledge
+    ↓
+Lint / graph / contradiction checks
+    ↓
+Queryable wiki + CLI + MCP
+    ↓
+Agent and human workflows
 ```
 
----
+The compile step is deliberate, incremental, logged, and auditable. Retrieval remains useful, but the durable asset is maintained knowledge rather than transient context assembly.
 
-## Web UI
+## What it includes
 
-Full Wikipedia-style knowledge base browser at `http://localhost:3009`.
+- 1,000+ agentic-engineering articles
+- concepts, patterns, frameworks, entities, recipes, and evaluations
+- persistent operational memory
+- cross-referenced wiki links and backlinks
+- graph-oriented navigation and maintenance
+- CLI query and maintenance workflows
+- MCP access for agent runtimes
+- source citations and contradiction markers
+- incremental compilation state
+- ingestion ledgers and durable receipts
+- private/public knowledge boundaries
+- linting, stale-content detection, and graph-maintenance checks
+- agent-driven capture and maintenance workflows
 
-**Sidebar Tools section** — one-click jump to the interactive architecture viewer (oh-my-mermaid) and to Obsidian's global graph view (via the Advanced URI plugin). Added 2026-04-07.
+## Why this matters for AI-native engineering
 
-### Features
+As agent systems become more autonomous, context engineering becomes infrastructure.
 
-- **Wiki index** — structured master index with sections, tables, article counts
-- **Article pages** — Wikipedia-style layout with infobox, table of contents, backlinks
-- **Search** — instant debounced search with scope filtering (public / private / all)
-- **Ask AI (WikiQuery)** — SSE-streamed AI answers synthesized from relevant wiki articles, with citations
-- **Vault switcher** — switch between any Obsidian vault from the top bar; article counts per vault shown in dropdown
-- **Vault-aware breadcrumbs** — breadcrumb trail auto-built from folder path (e.g. `VaultName → folder → subfolder`)
-- **Open in Obsidian** — every article has a purple button that fires `obsidian://open?vault=…&file=…` to jump directly to the note in Obsidian
-- **Live reload** — edit a note in Obsidian, wiki auto-refreshes in the browser within ~1 second (no Cmd+R needed)
-- **Private mode** — 🔒 button in top bar; enter PIN to unlock private articles in search and browsing
-- **Process queue** — ingest raw material files through an AI processing pipeline
-- **Add Material** — paste/upload raw content directly from the browser
+A durable knowledge layer can help agents and operators answer:
 
-### Pages
+- What do we already know about this system?
+- Which source supports this claim?
+- Is the knowledge current or stale?
+- Does another source contradict it?
+- Which concepts and systems are related?
+- What was learned from previous execution?
+- Which knowledge is safe to expose to a given agent?
+- What should become durable memory versus temporary context?
 
-| Route | Description |
-|-------|-------------|
-| `/wiki` | Main index (Agentic KB structured view or generic vault browser) |
-| `/wiki/[slug]` | Individual article |
-| `/search` | Full search results page |
-| `/query` | AI WikiQuery interface |
-| `/process` | Pending raw material queue |
-| `/ingest` | Paste/upload raw material |
+The objective is not unlimited memory. It is **useful, governed, high-signal context**.
 
----
+## Interfaces
 
-## CLI
+### Web
 
-Install once (symlink already set up):
+Wikipedia-style browsing, search, article rendering, backlinks, graph-oriented navigation, and maintenance workflows.
 
-```bash
-# Already linked to /usr/local/bin/kb
-kb --help
+### CLI
+
+Command-line access for ingestion, compilation, querying, verification, and maintenance.
+
+### MCP
+
+Agent-facing tools expose bounded knowledge operations so external agent runtimes can query the KB without treating the filesystem as an unrestricted authority surface.
+
+## Knowledge lifecycle
+
+Agentic-KB distinguishes raw input from compiled knowledge and private/canonical state.
+
+Important design principles include:
+
+1. Raw content is untrusted input.
+2. Compilation is an explicit state transition.
+3. Sources and citations should survive synthesis.
+4. Contradictions should be visible rather than silently resolved.
+5. Writes should be atomic and recoverable.
+6. Private knowledge must not leak through reports, indexes, or git.
+7. Agent access should be policy-bounded.
+8. Maintenance should be continuously testable.
+
+## Reliability and security work
+
+The repository includes extensive correctness and maintenance coverage around areas such as:
+
+- atomic writes
+- SSE/event-stream failure handling
+- graph and backlink correctness
+- private-layer exclusions
+- PIN-gated operations
+- webhook authentication
+- MCP error propagation
+- citation preservation
+- contradiction signaling
+- ingestion idempotency
+- file-descriptor safety
+- supply-chain pinning and install-script restrictions
+
+The latest maintenance cycle reports **432 passing tests**.
+
+## Relationship to autonomous software delivery
+
+Agentic-KB is the **knowledge/context layer** in a broader autonomous-engineering architecture.
+
+[Mission Control](https://github.com/jaydubya818/MissionControl) governs intent, WorkOrders, execution, verification, evidence, and delivery decisions.
+
+[Agentic Pi Harness](https://github.com/jaydubya818/Agentic-Pi-Harness) explores governed worker execution and knowledge-access boundaries.
+
+Agentic-KB provides durable knowledge those systems can query without turning transient model context into the system of record.
+
+```text
+Mission / WorkOrder
+       ↓
+Agent runtime / harness
+       ↓
+bounded context request
+       ↓
+    Agentic-KB
+       ↓
+source-backed knowledge
+       ↓
+execution + evidence
 ```
 
-### Commands
-
-```bash
-# Search (hybrid keyword + graph with bucket allocation)
-kb search "tool use patterns"
-kb search "my stack" --scope private
-kb search "everything" --scope all --limit 20
-
-# Ask a natural language question (SSE-streams the answer)
-kb query "What is the ReAct pattern and when should I use it?"
-kb query "What's my preferred framework?" --scope private
-
-# Read / list
-kb read concepts/tool-use
-kb read patterns/pattern-supervisor-worker
-kb list concepts
-kb list personal
-
-# Karpathy compile pipeline (raw → analyze → generate → wiki + auto-reindex)
-kb compile                   # incremental: only new/changed raw docs
-kb compile --mode full       # recompile everything
-
-# Update index.md section counts from directory listings (no recompile)
-kb reindex
-
-# Wiki health check
-kb lint                      # writes wiki/lint-report.md
-
-# Ingest a file (PDF, DOCX, PPTX, XLSX, audio, YouTube URL → raw/ + markitdown)
-kb ingest-file <path>              # auto-detects raw/ subdirectory
-kb ingest-file <path> --dir papers # override target subdirectory
-
-# Ingest external sources
-kb ingest-youtube <url>      # yt-dlp + SRT parse → raw/transcripts/
-kb ingest-twitter <x.zip>    # parses Twitter/X archive → raw/twitter/
-
-# Check pending ingestion queue
-kb pending
-
-# ─── Agent lifecycle ──────────────────────────────────────────────────────────
-# Task management
-kb agent start-task <agent-id> [--project <name>] [--description <desc>]
-kb agent active-task <agent-id>          # show current active task
-kb agent append-state <agent-id> <task-id> "<entry>"
-
-# Diagnostics & repair (new)
-kb agent status <agent-id>               # full snapshot: task + issues + traces
-kb agent verify-state <agent-id>         # consistency check with issue codes
-kb agent repair-state <agent-id>         # safe pointer rebuild
-
-# Close a task (dry-run first!)
-kb agent close-task <agent-id> --dry-run --payload payload.json
-kb agent close-task <agent-id> --payload payload.json
-
-kb agent abandon-task <agent-id> <task-id> ["reason"]
-
-# ─── Repo runtime ─────────────────────────────────────────────────────────────
-kb repo close-task <name> <agent-id> --payload payload.json [--dry-run]
-```
-
-### Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `KB_API_URL` | `http://localhost:3009` | Web server base URL |
-| `PRIVATE_PIN` | _(empty)_ | PIN for private content access |
-
-Set in `~/.zshrc`:
-```bash
-export KB_API_URL=http://localhost:3009
-export PRIVATE_PIN=1124
-```
-
----
-
-## MCP Server
-
-Exposes the KB as MCP tools for Claude Desktop and any MCP-compatible agent.
-
-### Configuration (`~/Library/Application Support/Claude/claude_desktop_config.json`)
-
-```json
-{
-  "mcpServers": {
-    "agentic-kb": {
-      "command": "node",
-      "args": ["/Users/jaywest/Agentic-KB/mcp/server.js"],
-      "env": {
-        "KB_API_URL": "http://localhost:3009",
-        "PRIVATE_PIN": "1124"
-      }
-    }
-  }
-}
-```
-
-> **Note:** Restart Claude Desktop after changing this config for env vars to take effect.
-
-### Tools (25 total)
-
-**Wiki tools (7):**
-
-| Tool | Description |
-|------|-------------|
-| `search_wiki` | Hybrid keyword + graph search. Supports `scope` (public/private/all) and `pin` |
-| `read_article` | Read full article by slug. Requires `pin` for private articles |
-| `read_index` | Read the master wiki index |
-| `list_articles` | List all articles in a section |
-| `query_wiki` | Natural language Q&A — Claude synthesizes an answer from ranked wiki pages |
-| `compile_wiki` | Run the Karpathy compile pipeline — batches new/changed raw docs to Claude and writes wiki pages |
-| `lint_wiki` | Health check — returns contradictions, orphans, stale pages, and knowledge gaps |
-
-**Agent runtime tools (18):**
-
-| Tool | Description |
-|------|-------------|
-| `agent_start_task` | Start a new task for an agent — creates working-memory file and opens task-local context |
-| `agent_active_task` | Get the active task state for an agent |
-| `agent_status` | Full agent lifecycle snapshot: active task, verification issues, close policy, recent traces |
-| `agent_verify_state` | Verify task lifecycle consistency — detects broken pointers, orphan working-memory files |
-| `agent_repair_state` | Safely repair broken active-task pointer when repair is possible without data loss |
-| `agent_append_task_state` | Append a state snapshot to the active task's working memory |
-| `agent_abandon_task` | Abandon the active task — archives working memory, clears active pointer |
-| `agent_dry_run_close_task` | Dry-run close — returns the planned bus publications and file writes without committing |
-| `close_agent_task` | Commit a task close — writes bus publications, archives working memory, seals task |
-| `close_repo_task` | Atomic end-of-task writeback for a repo-scoped workflow (progress, hot, gotchas, bus, rewrites) |
-| `dry_run_close_repo_task` | Dry-run repo close — returns full write plan without executing |
-| `publish_bus_item` | Publish a discovery, escalation, or standards item to the bus |
-| `list_agent_bus_items` | List pending bus items filtered by channel and/or agent |
-| `list_repo_bus_items` | List pending bus items from a specific repo |
-| `promote_learning` | Promote a bus item from discovery to a wiki page (with tier validation) |
-| `merge_rewrite` | Merge a rewrite artifact into a canonical wiki page (with supersedes guard) |
-| `agent_trace` | Trace the context load for an agent — shows which files were included and bytes used |
-| `load_agent_context` | Load the context bundle for an agent (respects RBAC, budget, priority) |
-
-> **Note on long-running tools:** `compile_wiki` is a synchronous wrapper around an SSE endpoint and can time out on large batches. For full recompiles, use the web UI's `CompilePanel` (streams via `EventSource`, no timeout) or `kb compile --mode full`.
-
-### Usage Examples
-
-```
-search_wiki(query: "supervisor worker pattern", scope: "public")
-search_wiki(query: "my stack", scope: "private", pin: "1124")
-read_article(slug: "concepts/tool-use")
-read_article(slug: "personal/my-notes", pin: "1124")
-query_wiki(question: "What is the best pattern for parallel tool execution?")
-query_wiki(question: "What frameworks do I prefer?", scope: "all", pin: "1124")
-```
-
----
-
-## Agent Runtime Memory Layer
-
-Added 2026-04-10. Zero-dependency Node.js ES modules in `lib/agent-runtime/` and `lib/repo-runtime/`. **112/112 tests passing** (78 agent + 34 repo, `npm test`).
-
-The runtime gives every agent a structured memory lifecycle: identity → context load → task → promote → archive. Each phase is governed by the agent's YAML contract.
-
-### Agent Contracts
-
-Each agent is defined by a YAML file at `config/agents/<agent-id>.yaml`:
-
-```yaml
-agent_id: sofie
-tier: lead          # worker | lead | orchestrator
-domain: business
-context_policy:
-  budget_bytes: 65536
-  include_task_local: true
-  include:
-    - class: profile   # identity and role
-      scope: self
-      priority: 10
-      required: true
-    - class: hot       # hot cache — most-used context
-      scope: self
-      priority: 20
-    - class: learned   # cross-agent learned memory
-      scope: all
-      priority: 30
-      max_items: 10
-allowed_writes:
-  - wiki/agents/leads/sofie/**
-  - wiki/system/bus/discovery/**
-  - raw/qa/**
-```
-
-**Tier hierarchy:** `worker=1 < lead=2 < orchestrator=3`. Tier is enforced at promotion — agents cannot promote items if the approver's tier is below `min_approver_tier`.
-
-### Memory Classes
-
-| Class | Path pattern | Description |
-|-------|-------------|-------------|
-| `profile` | `wiki/agents/<tier>/<id>/profile.md` | Identity, role, MCP tools, interaction style |
-| `hot` | `wiki/agents/<tier>/<id>/hot.md` | Hot cache — most-used patterns, current focus |
-| `working` | `wiki/agents/<tier>/<id>/working-memory/<task-id>.md` | Task-local state, per-task |
-| `learned` | `wiki/agents/<tier>/<id>/learned/*.md` | Durable lessons, gotchas, domain standards |
-| `bus` | `wiki/system/bus/<channel>/<id>.md` | Inter-agent communication (discovery/escalation/standards) |
-| `rewrite` | `wiki/agents/<tier>/<id>/rewrite-artifacts/*.md` | Staged rewrites pending canonical merge |
-
-### Task Lifecycle
-
-```
-startTask(kbRoot, contract, {title, goal})
-  → creates working-memory/<task-id>.md
-  → sets wiki/agents/.../active-task.md pointer
-
-appendTaskState(kbRoot, contract, {state})
-  → appends timestamped snapshot to working memory
-
-dryRunCloseTask(kbRoot, contract, payload)
-  → returns planned bus pubs + file writes without committing
-
-closeTask(kbRoot, contract, {discoveries, standards, rewrite})
-  → atomic: publishes bus items + archives working memory in one commit
-  → seals active-task.md → closed
-  → rollback on any write failure: restores all previously committed files
-
-abandonTask(kbRoot, contract)
-  → archives working memory to abandoned/
-  → clears active-task.md
-
-verifyTaskState(kbRoot, contract)
-  → checks pointer consistency, orphan files, task_id mismatches
-  → returns { ok, issues[], repairable, active_task, working_memory_files }
-
-repairTaskState(kbRoot, contract)
-  → safely rebuilds active-task pointer if exactly one active working-memory file exists
-  → returns { ok, repaired, actions[], verification }
-
-getAgentStatus(kbRoot, contract, { traceLimit })
-  → combines active_task + verifyTaskState + recent runtime traces + close_policy
-```
-
-**Issue codes from `verifyTaskState`:**
-
-| Code | Severity | Repairable |
-|------|----------|-----------|
-| `active-pointer-missing-task-id` | error | when 1 active file |
-| `active-pointer-missing-working-memory` | error | when 1 active file |
-| `active-pointer-target-missing` | error | yes |
-| `active-pointer-target-not-active` | error | yes |
-| `active-pointer-task-mismatch` | error | yes |
-| `orphan-active-working-memory` | warn | yes |
-| `multiple-active-working-files` | error | no (manual resolution required) |
-
-### Promotion Governance
-
-`promoteDiscovery(kbRoot, contract, id, {approver, targetPath, promotionReason})`
-
-Rules enforced before any wiki write:
-1. **Approver tier** — approver's contract tier must be ≥ item's `min_approver_tier`
-2. **Duplicate title** — title scan across channel (self-excluded to prevent self-match)
-3. **Target collision** — if `targetPath` already exists, `supersedes` must name the old file
-4. **State gate** — item must be in a promotable state (not archived/promoted already)
-
-`mergeRewrite(kbRoot, contract, artifactId, {supersedes})` — same governance applied to canonical wiki page merges.
-
----
-
-## Sofie Integration (AI Chief of Staff)
-
-Added 2026-04-10. Sofie is a lead-tier agent that bridges business strategy (Obsidian Vault) with the engineering KB (Agentic-KB).
-
-**Contract:** `config/agents/sofie.yaml` | **Memory:** `wiki/agents/leads/sofie/`
-
-### Context Load (Production)
-
-```
-19 files loaded | 61,779 / 65,536 bytes used
-  priority 10: wiki/agents/leads/sofie/profile.md
-  priority 20: wiki/agents/leads/sofie/hot.md
-  priority 30: learned context from all agent tiers (max 10)
-  priority 40: wiki/personal/** (Jay's validated patterns)
-  priority 50: wiki/concepts/** (max 5)
-  priority 60: wiki/patterns/** (max 5)
-```
-
-### Pipeline Scripts
-
-| Script | Command | Description |
-|--------|---------|-------------|
-| `sofie-ingest-session.mjs` | `node scripts/sofie-ingest-session.mjs` | Ingest a Sofie Q&A session into `raw/qa/` |
-| `sofie-watch-obsidian.mjs` | `node scripts/sofie-watch-obsidian.mjs` | Poll Obsidian dirs every 30s for new meeting/session/daily notes |
-| `sofie-kb-digest.mjs` | `node scripts/sofie-kb-digest.mjs` | Generate weekly KB digest → writes to KB + Obsidian `07 - Tasks/` |
-
-#### sofie-ingest-session
-
-```bash
-# Ingest a conversation inline
-node scripts/sofie-ingest-session.mjs \
-  --title "Multi-agent patterns Q&A" \
-  --content "Q: ... A: ..." \
-  --tags "agentic,multi-agent" \
-  --verified
-
-# Ingest from a file
-node scripts/sofie-ingest-session.mjs --file ~/notes/session.md --verified
-
-# Dry run (preview only, no write)
-node scripts/sofie-ingest-session.mjs --title "Test" --content "..." --dry-run
-```
-
-Writes to `raw/qa/sofie-session-{date}-{slug}.md` with frontmatter: `type: qa`, `source: sofie-chief-of-staff`, `verified: true/false`. Run `kb compile` afterward to fold into wiki.
-
-#### sofie-watch-obsidian
-
-```bash
-node scripts/sofie-watch-obsidian.mjs          # continuous 30s poll
-node scripts/sofie-watch-obsidian.mjs --once   # one-shot scan
-```
-
-Watches: `05 - Meetings/`, `Sessions/`, `daily-notes/`, `09 - Daily Notes/` in the Obsidian vault. Tracks ingested files by mtime in `raw/.obsidian-ingest-log.json`. Writes to `raw/transcripts/obsidian-{date}-{slug}.md`.
-
-#### sofie-kb-digest
-
-```bash
-node scripts/sofie-kb-digest.mjs               # generate and write
-node scripts/sofie-kb-digest.mjs --dry-run     # preview only
-```
-
-Outputs:
-- `wiki/agents/leads/sofie/weekly-digest.md` — always written
-- `Obsidian Vault/07 - Tasks/KB Digest {date}.md` — written when run locally (not from sandbox)
-
-### Obsidian Vault → KB Flow
-
-```
-Obsidian session/meeting note
-  → sofie-watch-obsidian (auto) or sofie-ingest-session (manual)
-  → raw/qa/ or raw/transcripts/
-  → kb compile
-  → wiki/summaries/ or wiki/personal/
-  → surfaced in Sofie's context on next load
-```
-
----
-
-## Compile Pipeline (Karpathy LLM Wiki)
-
-The compile pipeline is the heart of the KB — it's what makes this *not* a RAG system. Raw markdown in `raw/` is batched, sent to Claude with `wiki/schema.md` as the system prompt, and written back as structured wiki pages. State is tracked in `raw/.compiled-log.json` so re-runs are incremental.
-
-### Running a compile
-
-**Web UI (recommended for full runs):** Open `http://localhost:3009/wiki` and click **Compile New** in the `CompilePanel`. Streams live progress via `EventSource` with no timeout. Use **Recompile All** to force a full rebuild.
-
-**CLI:** `kb compile` (incremental) or `kb compile --mode full`.
-
-**MCP:** `compile_wiki` tool — works for small incremental runs but may time out on large batches.
-
-### How it works
-
-1. `collectMd(raw/)` walks every markdown file under `raw/`
-2. `loadLog()` reads `raw/.compiled-log.json` — a map of `{relPath → {compiledAt, pagesAffected}}`
-3. Files not yet in the log are selected for this run (or all files in `--mode full`)
-4. **For each file — Call 1 (Analysis, analyst persona):**
-   - Extracts a structured `KnowledgeAnalysis` JSON: entities (name, type, salience 0–1), typed relationships (from, to, label, strength, evidence), key claims, candidate pages (1–3 paths), contradictions, tags
-   - Analysis failure is non-fatal; generation still runs with an empty graph
-   - SSE emits `{type:'analysis', entities, candidates, contradictions, tags}`
-5. **For each file — Call 2 (Generation, wiki curator persona):**
-   - Receives the analysis JSON + raw excerpt + existing page list
-   - Returns a JSON array of page ops `[{op, path, content}]`
-   - Contradictions found in analysis surface as `⚠️ Contradictions` sections in pages
-6. Each op is written to disk under `wiki/`
-7. `wiki/log.md` gets an append-only entry for the run
-8. `raw/.compiled-log.json` is updated so the next run skips already-compiled files
-9. **After the loop — Auto-reindex:** `reindexWiki()` updates all `## Section (N)` counts in `index.md`
-
-### Schema file
-
-`wiki/schema.md` is the system prompt Claude sees on every compile. It defines:
-- Directory routing rules (`concepts/`, `patterns/`, `frameworks/`, `entities/`, `recipes/`, `evaluations/`, `personal/`, `syntheses/`)
-- Full frontmatter schema (required + optional fields)
-- Per-type content guidelines
-- Tag vocabulary
-- Contradiction handling rules (never overwrite, always cross-link with dates)
-
-Edit `wiki/schema.md` to change how Claude organizes content in future compile runs.
-
----
-
-## Enterprise Features
-
-Added 2026-04-07 as part of the enterprise-scaling pass.
-
-### Namespace RBAC
-
-Multi-tenant access control. Every write is scoped to a namespace. One KB, many teams / projects / agents.
-
-**Config file:** `namespaces.json` (copy from [`namespaces.example.json`](namespaces.example.json))
-
-```json
-{
-  "tokens": {
-    "sk-engineering-replace-me": "engineering",
-    "sk-product-replace-me": "product"
-  },
-  "namespaces": {
-    "engineering": { "read": ["*"], "write": ["engineering", "shared"] },
-    "product":     { "read": ["product", "shared"], "write": ["product"] },
-    "readonly":    { "read": ["*"], "write": [] },
-    "default":     { "read": ["*"], "write": ["*"] }
-  }
-}
-```
-
-**Identity resolution order:** `X-KB-Namespace` header → Bearer token lookup → `default` (back-compat).
-
-**File-level enforcement:** writes into `raw/webhooks/<namespace>/`. Reads are filtered via `filterReadable(paths, acl)` which infers each file's namespace from its path prefix.
-
-**Audit log:** every webhook write records `namespace` and `identitySource` (`header` | `token` | `default`) in `logs/audit.log`.
-
-> Deleting `namespaces.json` returns the system to open-access mode. No migration needed.
-
-### Temporal Decay + Hotness Ranking + Confidence Weighting
-
-Search scores are multiplied by a ranking factor that blends recency, popularity, and declared confidence:
-
-```
-finalScore = baseScore × decay(mtime) × hotness(audit hits) × confidence(frontmatter)
-```
-
-- **decay(mtime)** — exponential with 180-day half-life, floored at 0.5. A doc touched 180 days ago scores at 0.5× of a freshly written one.
-- **hotness(path)** — parses `logs/audit.log` for `op:query` entries in the last 30 days, counts hits per file, log-scales: 1 hit → +0.1, 10 hits → +0.33, 100 hits → +0.5 cap. Cached for 60 seconds.
-- **confidence(path)** — reads the `confidence:` frontmatter field via a 512-byte head read (mtime-cached). `high → ×1.10`, `medium → ×1.00`, `low → ×0.85`. Pages marked low-confidence surface below speculation-free articles automatically. _(RLM stage 6, added 2026-04-09)_
-
-Results include `baseScore`, `decay`, `hotness`, `confidence`, and `score` so the UI can show why a page ranked where it did.
-
-Implementation: [`web/src/lib/ranking.ts`](web/src/lib/ranking.ts). Wired into [`graph-search.ts`](web/src/lib/graph-search.ts).
-
-### Webhook Ingest
-
-`POST /api/ingest/webhook` accepts external payloads and writes them into `raw/webhooks/<namespace>/`.
-
-**Auth:** Bearer token (resolved via RBAC) or legacy `WEBHOOK_SECRET` env var.
-
-**Built-in adapters:**
-
-| Source | Detection | Filter |
-|--------|-----------|--------|
-| GitHub issues | `X-GitHub-Event: issues` header | Only on `action: closed` |
-| GitHub PRs | `X-GitHub-Event: pull_request` header | Only on merged PRs |
-| Slack | `token` or `channel_id` in body | Slash command or Events API |
-| Generic JSON | Fallback | Requires `title` + `content` fields |
-
-**GitHub Actions workflow:** [`.github/workflows/kb-ingest.yml`](.github/workflows/kb-ingest.yml) auto-ingests merged PRs, closed issues, and pushed `docs/**.md` on merge. Requires `KB_WEBHOOK_URL` and `KB_WEBHOOK_SECRET` repo secrets.
-
-### Scheduled Lint
-
-A scheduled task (`kb-daily-lint`) runs `POST /api/lint` every day at 07:00 local time.
-
-**What `/api/lint` checks:**
-- **Contradictions** — Claude-synthesized analysis of conflicting claims across wiki pages
-- **Orphans** — pages with zero inbound wiki-links
-- **Stale pages** — untouched for > 90 days
-- **Knowledge gaps** — raw docs with no corresponding compiled wiki page
-
-Results land in `wiki/lint-report.md`. The scheduled task alerts only on P0 contradictions or > 5 new orphans; otherwise a quiet `KB healthy` summary.
-
-See [`docs/RLM_PIPELINE.md`](docs/RLM_PIPELINE.md) for how lint fits into the 10-stage retrieval pipeline reference design.
-
----
-
-## Architecture Visualization (oh-my-mermaid)
-
-Interactive clickable architecture explorer with drill-down nested perspectives.
-
-### Setup
-
-```bash
-npm install -g oh-my-mermaid
-cd /Users/jaywest/Agentic-KB
-omm setup claude      # register /omm-scan skill with Claude Code
-```
-
-### View it
-
-```bash
-omm view              # launches http://localhost:4567
-```
-
-Or click **Architecture Diagram ↗** in the wiki sidebar Tools section.
-
-### Current perspectives
-
-`.omm/overall-architecture/` with 6 clickable child lenses:
-- `web-ui` — Next.js app components and routes
-- `cli` — `kb` command structure
-- `mcp-server` — 7 MCP tools
-- `api-routes` — all `/api/*` endpoints and their shared libs
-- `github-actions` — kb-ingest workflow
-- `vault` — raw/, wiki/, graphify-out, audit.log
-
-Plus three leaf perspectives: `compile-pipeline`, `query-pipeline`, `ingest-flow`.
-
-### Regenerating
-
-In Claude Code, run `/omm-scan` to have Claude re-analyze the codebase and refresh the diagrams, then run `./scripts/ingest-omm.sh` to sync the refreshed perspectives into `raw/architecture/` (ready for the next compile).
-
-> **Why kebab-case matters:** oh-my-mermaid drills into child elements by matching node IDs to child directory names. Always use kebab-case IDs (`web-ui`, `compile-pipeline`) in diagrams — uppercase or camelCase IDs break drill-down.
-
-See [`docs/OH_MY_MERMAID.md`](docs/OH_MY_MERMAID.md) for the full workflow.
-
----
-
-## Private Wiki / PIN System
-
-Private articles have `visibility: private` in their frontmatter (or live in `wiki/personal/`). They are hidden from all public searches and require a PIN to access.
-
-### How it works
-
-| Surface | How to unlock |
-|---------|--------------|
-| **Web UI** | Click 🔒 in top bar → enter PIN → private articles appear in search |
-| **CLI** | Set `PRIVATE_PIN=1124` env var (auto-used) or pass `--pin 1124` |
-| **MCP** | Pass `pin: "1124"` parameter to any tool with `scope: "private"` or `scope: "all"` |
-| **API** | `?scope=private&pin=1124` query param or `x-private-pin: 1124` header |
-
-### Marking an article private
-
-Add to frontmatter:
-```yaml
----
-title: My Private Note
-visibility: private
----
-```
-
-Or place in `wiki/personal/` — that directory is always treated as private.
-
-### Setting your PIN
-
-**Web server** — in `web/.env.local`:
-```
-PRIVATE_PIN=1124
-```
-
-**MCP + CLI** — in `claude_desktop_config.json` env and `~/.zshrc`:
-```bash
-export PRIVATE_PIN=1124
-```
-
----
-
-## Multi-Vault Support
-
-The web UI supports switching between any Obsidian vault registered in `~/Library/Application Support/obsidian/obsidian.json`.
-
-### Vault switcher features
-
-- **Dropdown** in top bar shows all registered vaults with file counts (e.g. `Agentic-KB [83]`)
-- **Active vault stored** in an `active_vault_path` cookie (1 year, readable by client)
-- **Auto-detects content root** — uses `vault/wiki/` subdirectory if present, otherwise vault root
-- **Generic vault index** — rich Wikipedia-style browser for any vault:
-  - Stats bar (note count, folder count, last-modified timestamp)
-  - **Recently Modified** panel — top 10 notes with relative time chips
-  - **2-column section grid** — each folder becomes a card with count badge and note list
-  - **Tag cloud** — auto-built from frontmatter tags, font-size scales with frequency
-  - Inline 🔒 / ✦ badges on private and vault articles
-- **Vault-aware search and AI query** — all surfaces respect the active vault cookie
-- **Vault-aware sidebar** — sidebar regenerates from the new vault's structure on switch
-
----
-
-## Live Reload
-
-Edit a markdown file in Obsidian → wiki updates in the browser automatically (~1 second delay, no Cmd+R needed).
-
-**How it works:**
-
-1. `GET /api/vault-watch` opens an SSE connection and starts `fs.watch(vaultRoot, {recursive: true})`
-2. Any `.md` file change fires a `{type: "change"}` SSE event
-3. `VaultWatcher` client component debounces 600ms (handles Obsidian's burst-save behavior) then calls `router.refresh()`
-4. Next.js re-fetches only the server components — no full page reload
-5. Connection auto-reconnects after 3s if dropped
-
----
-
-## Ingest Workflow
-
-### Via browser
-
-1. Go to `http://localhost:3009/ingest`
-2. Paste raw text or upload a file
-3. The AI processes it, extracts key knowledge, and writes a structured wiki article
-4. View the queue at `http://localhost:3009/process`
-
-### Via CLI (raw file drop)
-
-1. Drop file into `raw/` subdirectory (`papers/`, `transcripts/`, `framework-docs/`, `note/`, etc.)
-2. Check queue: `kb pending`
-3. Process via browser at `/process` or trigger: `curl -X POST http://localhost:3009/api/process/run-all`
-
-### Raw source directories
-
-| Directory | Contents |
-|-----------|----------|
-| `raw/papers/` | PDFs and papers |
-| `raw/transcripts/` | Video/podcast transcripts + Obsidian session imports (via sofie-watch-obsidian) |
-| `raw/framework-docs/` | Framework documentation |
-| `raw/note/` | Quick notes and thoughts |
-| `raw/code-examples/` | Annotated code patterns |
-| `raw/conversations/` | Notable Claude sessions |
-| `raw/changelogs/` | Framework version notes |
-| `raw/my-agents/` | Agent definitions |
-| `raw/my-skills/` | Skill files |
-| `raw/qa/` | Sofie Q&A sessions (ingested via `sofie-ingest-session.mjs`) |
-| `raw/repos/<name>/repo-docs/` | Synced GitHub repo markdown (via `kb repo sync <name>`) |
-
----
-
-## Knowledge Base Structure
-
-```
-Agentic-KB/
-├── wiki/
-│   ├── index.md          # Master catalog
-│   ├── hot.md            # Hot cache (read first for common queries)
-│   ├── log.md            # Operation audit log
-│   ├── concepts/         # Universal agentic concepts (21)
-│   ├── patterns/         # Reusable design patterns (5+)
-│   ├── frameworks/       # Tool/framework reference (12)
-│   ├── entities/         # People, companies, models (8)
-│   ├── recipes/          # Copy-paste how-to guides (9)
-│   ├── evaluations/      # Framework comparisons (2)
-│   ├── summaries/        # Per-source summaries (21+)
-│   ├── syntheses/        # Cross-source synthesis articles
-│   ├── personal/         # Jay's patterns & philosophy (private)
-│   ├── agents/           # Agent memory namespace (NEW)
-│   │   ├── workers/      # Worker-tier agent memory
-│   │   ├── leads/        # Lead-tier agent memory
-│   │   │   └── sofie/    # Sofie (Chief of Staff) memory
-│   │   │       ├── profile.md
-│   │   │       ├── hot.md
-│   │   │       ├── task-log.md
-│   │   │       └── weekly-digest.md
-│   │   └── orchestrators/ # Orchestrator-tier agent memory
-│   └── system/           # System-level KB state
-│       └── bus/          # Inter-agent bus (discovery/escalation/standards)
-├── raw/                  # Unprocessed source material
-│   ├── qa/               # Sofie Q&A sessions (NEW)
-│   └── repos/            # Synced GitHub repo docs (NEW)
-├── config/
-│   └── agents/           # Agent YAML contracts (NEW)
-│       └── sofie.yaml
-├── lib/
-│   └── agent-runtime/    # Operational Runtime Memory Layer (NEW)
-│       ├── index.mjs     # Barrel export
-│       ├── contracts.mjs # YAML contract loader + validator
-│       ├── context-loader.mjs # Context assembly (budget, RBAC, priority)
-│       ├── task-lifecycle.mjs # start/append/close/abandon task
-│       ├── promotion.mjs # Bus promotion with tier governance
-│       ├── retention.mjs # Task memory archival
-│       ├── bus.mjs       # Inter-agent bus publish/list
-│       └── ...           # 9 more modules
-├── scripts/              # Sofie pipeline scripts (NEW)
-│   ├── sofie-ingest-session.mjs
-│   ├── sofie-watch-obsidian.mjs
-│   └── sofie-kb-digest.mjs
-├── tests/
-│   └── agents/
-│       └── runtime.test.mjs  # 52 tests, 100% passing
-├── web/                  # Next.js 16 web application
-│   ├── src/app/          # App Router pages + API routes
-│   ├── src/components/   # React components
-│   └── src/lib/          # Shared utilities (articles.ts)
-├── mcp/
-│   └── server.js         # MCP server — 20 tools (7 wiki + 13 agent runtime)
-├── cli/
-│   └── kb.js             # CLI tool
-└── CLAUDE.md             # Schema, workflows, agent instructions
-```
-
-### Article frontmatter schema
-
-```yaml
----
-title: Article Title
-type: concept | pattern | framework | entity | recipe | evaluation | personal
-tags: [tag1, tag2]
-confidence: high | medium | low
-visibility: public | private     # default: public
-vault: true | false              # marks highest-value articles
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-description: One-line summary
----
-```
-
----
-
-## Architecture
-
-For an **interactive** version of this diagram with clickable drill-down, click the **Architecture Diagram ↗** link in the wiki sidebar, or run `omm view` and open `http://localhost:4567`.
-
-```
-Browser
-  │
-  ├── /wiki/*                  Next.js App Router (force-dynamic, SSR)
-  │                            reads .md files via fs (no DB)
-  │
-  ├── /api/compile             Karpathy compile pipeline — SSE, Claude, incremental
-  ├── /api/query               Hybrid search + decay/hotness ranking + Claude synthesis
-  ├── /api/search              Keyword + graph-based hybrid search
-  ├── /api/lint                Wiki health check (contradictions, orphans, stale, gaps)
-  ├── /api/ingest              Raw material upload
-  ├── /api/ingest/webhook      External ingest with namespace RBAC
-  ├── /api/vaults              Reads obsidian.json → vault list
-  ├── /api/switch-vault        Sets active_vault_path cookie
-  ├── /api/vault-structure     Recursive folder walker for sidebar
-  ├── /api/vault-watch         SSE file watcher for live reload
-  └── /api/process             Legacy raw-material pipeline
-
-Shared libs (web/src/lib/)
-  ├── rbac.ts                  Namespace identity resolution + ACL enforcement
-  ├── ranking.ts               decayFactor + hotnessBoost + confidenceBoost + rankMultiplier
-  ├── graph-search.ts          Semantic search over graphify graph.json + 60/20/5/15 bucket allocation
-  ├── audit.ts                 Append-only JSONL at logs/audit.log
-  └── articles.ts              Article loaders, frontmatter parsing, vault resolution
-
-CLI (kb.js)
-  ├── HTTP → compile, lint, query, search (SSE-streaming where applicable)
-  ├── Direct fs reads (read, list, pending)
-  ├── Local yt-dlp + parsers (ingest-youtube, ingest-twitter)
-  ├── markitdown conversion (ingest-file → raw/ with frontmatter)
-  └── Local index recount (reindex → index.md section counts)
-
-MCP Server (server.js, 7 tools)
-  ├── Direct fs reads: search_wiki, read_article, read_index, list_articles
-  └── HTTP: query_wiki, compile_wiki, lint_wiki
-
-GitHub Actions (kb-ingest.yml)
-  └── POST /api/ingest/webhook on merged PR / closed issue / pushed doc
-
-Scheduled task (kb-daily-lint)
-  └── POST /api/lint → wiki/lint-report.md (07:00 daily)
-```
-
-### Key design decisions
-
-- **Compile, not retrieve** — Karpathy LLM-Wiki pattern. Raw docs are deliberately compiled into persistent wiki pages. Query-time retrieval operates over the compiled, curated wiki — not over raw chunks.
-- **No database** — all content is markdown read directly via `fs.readFileSync`. Every request reads fresh from disk. `force-dynamic` on all routes.
-- **Hybrid search, not pure vector** — keyword + graph traversal (over graphify's `graph.json`) + temporal decay + hotness. Vector store is an optional P2 add (see RLM pipeline doc).
-- **Fail-open RBAC** — no `namespaces.json` = open access (back-compat). Add the file to enforce per-namespace ACLs.
-- **Append-only audit log** — every `query`, `ingest`, `compile`, `lint`, `webhook` op writes a JSON line to `logs/audit.log`. Never truncated. Feeds the hotness ranking multiplier.
-- **Cookie-based vault selection** — `active_vault_path` cookie propagates through Next.js server components via `cookies()`
-- **PIN auth is server-enforced** — `PRIVATE_PIN` env var read server-side only; never exposed to client
-- **MCP is filesystem-first** — `search_wiki`, `read_article`, `list_articles` go direct to disk. `query_wiki`, `compile_wiki`, `lint_wiki` call the HTTP API.
-
-### RLM Pipeline Stage Status
-
-10-stage Recursive Layered Memory retrieval pipeline — see [`docs/RLM_PIPELINE.md`](docs/RLM_PIPELINE.md) for full spec.
-
-| Stage | Name | Status | Notes |
-|-------|------|--------|-------|
-| 1 | Semantic chunking | ⏳ Planned | P2 — vector/BM25 hybrid |
-| 2 | Vector + BM25 search | ⏳ Planned | P2 — excluded from current scope |
-| 3 | Two-step ingest (analyze → generate) | ✅ Live | `/api/compile` — 2026-04-09 |
-| 4 | Temporal decay | ✅ Live | `ranking.ts` — 2026-04-07 |
-| 5 | Hotness boost | ✅ Live | `ranking.ts` audit-log counts — 2026-04-07 |
-| 6 | Confidence weighting | ✅ Live | `ranking.ts` frontmatter `confidence:` — 2026-04-09 |
-| 7 | Contradiction filtering | ✅ Live | `query/route.ts` lint-report parse — 2026-04-09 |
-| 8 | Graph traversal + bucket allocation | ✅ Live | `graph-search.ts` 60/20/5/15 — 2026-04-09 |
-| 9 | Token-budget packing | ✅ Live | `query/route.ts` 24k char cap — 2026-04-09 |
-| 10 | Two-model validation | ⏳ Planned | P2 — excluded from current scope |
-
-### Reference documents
-
-| Doc | Purpose |
-|-----|---------|
-| [`ENTERPRISE_PLAN.md`](ENTERPRISE_PLAN.md) | P0–P3 enterprise scaling roadmap |
-| [`docs/RLM_PIPELINE.md`](docs/RLM_PIPELINE.md) | 10-stage retrieval pipeline reference design |
-| [`docs/OH_MY_MERMAID.md`](docs/OH_MY_MERMAID.md) | Architecture visualization workflow |
-| [`wiki/schema.md`](wiki/schema.md) | Compile pipeline system prompt |
-| [`CLAUDE.md`](CLAUDE.md) | Agent workflows (EXPLORE, BRIEF, ingest conventions) |
-| [`namespaces.example.json`](namespaces.example.json) | RBAC config template |
-
----
-
-## Graph View Colors (Obsidian)
-
-| Color | Type |
-|-------|------|
-| 🟢 Green | Concepts |
-| 🟠 Orange | Patterns |
-| 🔵 Blue | Frameworks |
-| 🔴 Red | Entities |
-| 🟤 Brown | Recipes |
-| 🟣 Purple | Evaluations |
-
----
-
-## 🤖 Agent Memory Runtime
-
-Agentic-KB ships a zero-dep operational agent memory runtime at `lib/agent-runtime/` (plain `.mjs`, importable by the web app, CLI, and MCP server). It turns the vault into a layered brain for orchestrator / lead / worker agents with bounded context, transactional writeback, a discovery/escalation/standards/handoff bus, and canonical promotion/merge paths.
-
-### Architecture
-
-```
-config/agents/*.yaml           machine-readable agent contracts (tier + context_policy + allowed_writes + forbidden_paths)
-wiki/agents/{tier}/{id}/       profile · hot · task-log · gotchas · rewrites
-wiki/system/bus/{channel}/     discovery · escalation · standards · handoffs (markdown + frontmatter)
-wiki/system/policies|routing|schemas|templates
-wiki/archive/                  bus-TTL archive, hot snapshots, merge snapshots (archive-never-delete)
-logs/agent-runtime.log         JSONL traces: ContextLoadTrace + GuardDecisionTrace
-logs/audit.log                 unified audit (humans + agents, same schema)
-lib/agent-runtime/
-  contracts.mjs       load/validate YAML contracts
-  identity.mjs        unified human|agent|service|team identity
-  paths.mjs           glob matching, path traversal defense, write guards
-  memory-classes.mjs  profile|hot|working|learned|rewrite|bus metadata
-  state-machines.mjs  bus/standards/rewrite legal transitions
-  context-loader.mjs  tier+domain+project+subscription bundle builder + trace
-  writeback.mjs       transactional closeTask (plan→guard all→commit all or reject all)
-  bus.mjs             publish/list/read/transition bus items
-  promotion.mjs       promoteLearning + canonical mergeRewrite with provenance
-  retention.mjs       hot compaction, bus TTL, task-log rotation, archiveMove
-  observability.mjs   JSONL trace writer + reader
-  audit.mjs           shared audit log appender
-  frontmatter.mjs     zero-dep YAML frontmatter
-```
-
-### Design pillars
-
-1. **Single master vault, namespaces enforce isolation.** Every write goes through `assertWriteAllowed` which hard-rejects `..` / absolute / `//` paths before any glob match, then checks `forbidden_paths`, then `allowed_writes`.
-2. **Memory classes route writes.** `profile | hot | working | learned | rewrite | bus` — `working` is append-only, `hot` is replace-and-compact, `bus` has a state machine.
-3. **context_policy drives loading, not raw globs.** Contracts declare include rules by class+scope (`self`, `lead:planning-agent`) or by path, plus subscriptions to bus channels, a byte budget, and priority order. The loader sorts, applies the budget, and emits a `ContextLoadTrace` with `included[]`, `excluded[]`, reasons, and `truncated`.
-4. **Transactional writeback.** `closeTask` plans all intended writes, runs the full set through the guard, and commits atomically — any single rejection aborts the whole close. Discoveries/escalations publish as bus items in the same transaction.
-5. **Promotion is rewrite + backlink, never a move.** `promoteLearning` writes the target with `promoted_from` + provenance footer and transitions the source to `promoted`. `mergeRewrite` requires `approved` state, snapshots canonical to `wiki/archive/merges/`, writes new canonical with `merged_from` + provenance, and transitions the rewrite to `merged` with before/after hashes in the audit.
-6. **First-class observability.** Every context load and guard decision is traceable from `logs/agent-runtime.log` and inline in API/CLI responses.
-
-### Quickstart
-
-```bash
-# List agent contracts
-node cli/kb.js agent list
-
-# Show a scoped context bundle for a worker (respects budget + tier scoping)
-node cli/kb.js agent context gsd-executor --project example-project
-
-# Transactional end-of-task writeback
-cat > /tmp/task.json <<'JSON'
-{
-  "project": "example-project",
-  "taskLogEntry": "Implemented X",
-  "hotUpdate": "Refreshed hot cache",
-  "gotcha": "Watch out for Y",
-  "discoveries": [{ "body": "Worth promoting later" }]
-}
-JSON
-node cli/kb.js agent close-task gsd-executor --payload /tmp/task.json
-
-# Bus + promotion
-node cli/kb.js bus list discovery
-node cli/kb.js promote discovery <id> --approver planning-agent
-
-# Recent runtime traces
-node cli/kb.js agent trace gsd-executor --last 20
-
-# Full end-to-end smoke test (includes a forbidden-write rejection)
-./scripts/agents-demo.sh
-```
-
-### Web API
-
-| Route | Purpose |
-|-------|---------|
-| `GET /api/agents/list` | List all contracts |
-| `GET /api/agents/[id]/context?project=…` | Scoped context bundle + trace |
-| `POST /api/agents/[id]/close-task` | Transactional writeback |
-| `GET/POST /api/agents/bus/[channel]` | List / publish bus items |
-| `POST /api/agents/promote` | Promote a bus item |
-
-### MCP tools
-
-Added to `mcp/server.js`: `list_agents`, `load_agent_context`, `close_agent_task`, `publish_bus_item`, `list_agent_bus_items`, `promote_learning`. Worker-tier MCP sessions literally cannot write outside their sandbox — contracts gate every write.
-
-### Tests
-
-```bash
-node --test tests/agents/
-```
-
-12 tests cover contract loading, path traversal rejection, tier/budget scoping, atomic close-task commit + atomic rejection, bus publish/list/read, state-machine illegal-transition rejection, and promotion with provenance.
-
-### Retention & compaction (v1)
-
-- Hot memory compaction triggers on task close when `hot.md` exceeds the compaction threshold; old hot is snapshotted to `wiki/archive/hot-snapshots/{agent}/{timestamp}.md`.
-- Bus TTL archives discovery items after 30 days unless `promoted`, `in_progress`, or pinned. Archived items move to `wiki/archive/bus/{channel}/{year}/` and transition to `archived`.
-- Task logs are append-only (enforced by memory-class) and rotate at 10k lines via snapshot + fresh log.
-- All retention is archive-never-delete: every move is audited and reversible.
+## Technical themes
+
+- context engineering
+- agent memory
+- knowledge graphs
+- MCP
+- retrieval and synthesis
+- provenance and citations
+- contradiction detection
+- incremental compilation
+- durable state
+- privacy boundaries
+- operational memory
+- agent-access policy
+- knowledge maintenance automation
+
+## Status
+
+Active and continuously maintained. The project combines a large compiled knowledge corpus with working web, CLI, MCP, graph, ingestion, linting, and maintenance paths. Current development emphasizes correctness, privacy boundaries, durable operations, and making the knowledge layer safer and more useful for autonomous agent systems.

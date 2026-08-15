@@ -8,7 +8,26 @@ Raw sources are **compiled** by Claude into a persistent, cross-referenced wiki.
 
 ---
 
-## What's New — August 14, 2026 (Latest)
+## What's New — August 15, 2026 (Latest)
+
+Nightly correctness pass — **432 tests passing** (was 420):
+
+- 🔐 **The no-PIN lint stops publishing private page names into git** — `scripts/static-lint.mjs` runs without an API key or PIN and writes `wiki/system/reports/static-lint-<date>.md`, a committed path. Its `walk()` had no directory filter at all, so `wiki/_private/*.md` — the gitignored PIN plaintext layer whose entire purpose is never reaching git — was scanned like any other page. Those pages have no inbound links by construction, so every one of them landed in the report's orphan list *by filename*. Now skips `_private` and dotted dirs (the PIN-gated `/api/lint` already skipped the latter), and honors `KB_ROOT` so the scan can be sandboxed. The stale section was also reporting the wrong field: `isStalePage` judges on frontmatter `updated`, but the output printed each file's mtime — today's date for every page in a fresh clone, so the column was pure noise.
+- 📖 **Wiki pages can show wikilink syntax again** — `ArticleRenderer` ran `replaceWikiLinks` over the raw markdown as one global regex, so every `[[...]]` inside a fenced block or inline code span was rewritten to `[Label](/wiki/...)` inside the very block meant to display it literally. Live: 38 in fenced blocks across 23 pages, ~290 in code spans. The worst hits are the ones that matter — `wiki/prompt-library/*` and `wiki/decisions/README.md` show copy-out templates like `source: [[path/to/transcript]]`, so a reader copied a resolved link instead of the template and the prompt no longer worked. Fence tracking reuses `extractHeadings`' rules; code spans match longest-backtick-run-first.
+- 🧼 **Quick-capture frontmatter can't be broken or injected** — `buildFrontmatter` JSON-escaped `title` and `author` but interpolated `source`, `type_hint`, `captured_at` and `tags` raw. All four are caller-supplied by the agent driving the Slack/Notes capture flow, and `--ts` is unsafe by construction (`normalizeTs` passes unparseable input straight through), so a value carrying `': '`, a quote or a `]` either broke the clipping's YAML — the ingest gate then skips the file — or injected sibling keys the routing layer read as real metadata. Escaping is conditional on a plain-safe pattern, so every existing clipping renders byte-identically.
+- 📉 **Frontmatter head reads can't leak file descriptors** — `verifiedBoost`, `confidenceBoost` and `extractId` each did `openSync` → `readSync` → `closeSync` inside a try whose catch returns a default; a `readSync` that throws (EISDIR, EIO, a file swapped out mid-scan by the compiler's tmp+rename) never reached the close. All three are hot paths in a long-lived server — the first two run per candidate on every search, `extractId` walks every `.md` under `wiki/` and `raw/` on each 60s ID-index cache miss — so enough repeats reach EMFILE and every read in the server starts failing. Now a `readHead()` helper that closes in a `finally`, the shape `lastLine()` in the audit writer already used; it also decodes only the bytes actually read, so short files no longer carry up to 1KB of NUL padding into the match.
+- ⚡ **The vault allowlist stops re-parsing the Obsidian config per request** — `allowedVaultPaths()` did a synchronous `readFileSync` + `JSON.parse` of `obsidian.json` on every call, and `resolveVaultRoot()` calls it for every request across 18 routes and pages. Cached against the config's mtime (the invalidation `rbac.ts` and `graph-search.ts` already use); a missing config caches too, so the common no-Obsidian case stops re-stat-ing.
+- 🧯 **`POST /api/switch-vault` answers a body-less request with 400** — it destructured `request.json()` with no guard, so an empty or malformed body threw before any of the route's own validation and surfaced as a Next stack page; the UI renders the JSON `error` field.
+- 🧪 **`static-lint.mjs` has tests** — 6 subprocess tests over a sandboxed wiki covering orphan/stale detection, the `_private` and dotted-dir exclusions, the no-report-without-`--apply` path, atomic report writes, and `--stale-days`.
+- 📜 **MCP spec-compat note completed** — the 2026-07-28 section covered the stateless core, the `Mcp-Session-Id` removal, the Tasks extension and DCR→CIMD, but not the fourth deprecation: Roots, Sampling and Logging, on a 12-month window to July 2027. Recorded with the actual answer — the server declares `capabilities: { tools: {} }` and uses none of the three — so the next pin review can skip it.
+
+Supply-chain posture re-checked against the Aug 4 ChainDrop npm worm list: `keyv@4.5.4`, `flat-cache@4.0.1`, `file-entry-cache@8.0.0` still pinned to pre-attack releases in web's lockfile, no `cacheable`, `axios` or Mastra packages in any of the three lockfiles, `ignore-scripts=true` in all four package roots. No committed secrets; `.env` and the private layer remain gitignored.
+
+**Flagged for human review:** `scripts/pin.mjs` derives its key with PBKDF2-HMAC-SHA256 at 100,000 iterations — well below current guidance (~600k) for the threat model it names (offline brute force against committed `.enc` blobs). The header's `MAGIC` already carries a version byte, so a v2 format could raise the count while still decrypting v1 blobs, but that is a format migration, not a nightly-pass change.
+
+---
+
+## What's New — August 14, 2026
 
 Nightly correctness pass — **420 tests passing** (was 415):
 

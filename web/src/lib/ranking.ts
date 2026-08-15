@@ -92,6 +92,26 @@ export function hotnessBoost(relPath: string): number {
   return 1.0 + boost
 }
 
+// ── Frontmatter head reader ──────────────────────────────────────────────────
+// Reads the first `size` bytes of a file. closeSync runs in a finally: a
+// readSync that throws (EISDIR, EIO, a file replaced mid-scan) otherwise
+// leaked the descriptor, and both callers below sit on hot search paths in a
+// long-lived server — enough repeats and the process hits EMFILE and every
+// subsequent read fails. Same shape as lastLine() in lib/agent-runtime/audit.mjs.
+// Only the bytes actually read are decoded, so a short file does not get a
+// tail of NUL padding.
+function readHead(absPath: string, size: number): string {
+  let fd: number | undefined
+  try {
+    fd = fs.openSync(absPath, 'r')
+    const buf = Buffer.alloc(size)
+    const bytes = fs.readSync(fd, buf, 0, size, 0)
+    return buf.subarray(0, bytes).toString('utf8')
+  } finally {
+    if (fd !== undefined) { try { fs.closeSync(fd) } catch { /* already closed */ } }
+  }
+}
+
 // ── Verified boost ───────────────────────────────────────────────────────────
 // Docs saved via /api/query/save with verified:true in frontmatter get a
 // ranking multiplier so human-validated Q&A outranks raw source material.
@@ -108,11 +128,7 @@ export function verifiedBoost(absPath: string): number {
       return cached.verified ? VERIFIED_BOOST : 1.0
     }
     // Read only the frontmatter region (first ~1KB is plenty)
-    const fd = fs.openSync(absPath, 'r')
-    const buf = Buffer.alloc(1024)
-    fs.readSync(fd, buf, 0, 1024, 0)
-    fs.closeSync(fd)
-    const head = buf.toString('utf8')
+    const head = readHead(absPath, 1024)
     let fmMatch = head.match(/^---\n([\s\S]*?)\n---/)
     if (!fmMatch && head.startsWith('---\n')) {
       // Closing '---' fell outside the head window (long sources: list) —
@@ -149,11 +165,7 @@ export function confidenceBoost(absPath: string): number {
     if (cached && cached.mtimeMs === stat.mtimeMs) {
       return CONFIDENCE_MULTIPLIERS[cached.confidence] ?? 1.0
     }
-    const fd = fs.openSync(absPath, 'r')
-    const buf = Buffer.alloc(512)
-    fs.readSync(fd, buf, 0, 512, 0)
-    fs.closeSync(fd)
-    const head = buf.toString('utf8')
+    const head = readHead(absPath, 512)
     let fmMatch = head.match(/^---\n([\s\S]*?)\n---/)
     if (!fmMatch && head.startsWith('---\n')) {
       fmMatch = fs.readFileSync(absPath, 'utf8').match(/^---\n([\s\S]*?)\n---/)

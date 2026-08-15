@@ -119,13 +119,27 @@ function walk(dir: string, out: string[]): void {
   }
 }
 
+// Reads the first `size` bytes. closeSync runs in a finally: a readSync that
+// throws (EISDIR, EIO, a file replaced mid-scan) otherwise leaked the
+// descriptor, and buildIdIndex walks every .md under wiki/ and raw/ on a 60s
+// cache miss — enough repeats and the server hits EMFILE. Same shape as
+// lastLine() in lib/agent-runtime/audit.mjs. Only the bytes actually read are
+// decoded, so a short file does not get a tail of NUL padding.
+function readHead(absPath: string, size: number): string {
+  let fd: number | undefined
+  try {
+    fd = fs.openSync(/* turbopackIgnore: true */ absPath, 'r')
+    const buf = Buffer.alloc(size)
+    const bytes = fs.readSync(fd, buf, 0, size, 0)
+    return buf.subarray(0, bytes).toString('utf8')
+  } finally {
+    if (fd !== undefined) { try { fs.closeSync(fd) } catch { /* already closed */ } }
+  }
+}
+
 function extractId(absPath: string): string | null {
   try {
-    const fd = fs.openSync(absPath, 'r')
-    const buf = Buffer.alloc(1024)
-    fs.readSync(fd, buf, 0, 1024, 0)
-    fs.closeSync(fd)
-    const head = buf.toString('utf8')
+    const head = readHead(absPath, 1024)
     let m = head.match(/^---\n([\s\S]*?)\n---/)
     if (!m && head.startsWith('---\n')) {
       // Long frontmatter: the closing '---' fell outside the 1KB window.

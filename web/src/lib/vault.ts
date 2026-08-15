@@ -18,9 +18,25 @@ interface ObsidianVault {
  * could set `active_vault_path=/` (no PIN required) and read or write under
  * arbitrary directories via /api/search, /api/query/save, /wiki, etc.
  */
+// The allowlist is derived from a file on disk, and resolveVaultRoot runs on
+// essentially every API request (18 call sites) — recomputing meant a
+// synchronous readFileSync + JSON.parse of the Obsidian config per request,
+// on the request path, for a file that changes when the user adds a vault.
+// Cached against the config's mtime, the same invalidation rbac.ts and
+// graph-search.ts already use. A missing config is cached too (mtime -1), so
+// the common "no Obsidian installed" case stops stat-ing on every call.
+let _cache: { paths: string[]; mtimeMs: number } | null = null
+
+function configMtime(configPath: string): number {
+  try { return fs.statSync(configPath).mtimeMs } catch { return -1 }
+}
+
 export function allowedVaultPaths(): string[] {
-  const paths = [path.resolve(DEFAULT_KB_ROOT)]
   const configPath = path.join(os.homedir(), 'Library/Application Support/obsidian/obsidian.json')
+  const mtimeMs = configMtime(configPath)
+  if (_cache && _cache.mtimeMs === mtimeMs) return _cache.paths
+
+  const paths = [path.resolve(DEFAULT_KB_ROOT)]
   try {
     const raw = fs.readFileSync(configPath, 'utf8')
     const config = JSON.parse(raw) as { vaults?: Record<string, ObsidianVault> }
@@ -30,7 +46,13 @@ export function allowedVaultPaths(): string[] {
   } catch {
     /* no Obsidian config — default vault only */
   }
+  _cache = { paths, mtimeMs }
   return paths
+}
+
+/** Drop the cached allowlist. Exported for tests. */
+export function invalidateVaultAllowlist(): void {
+  _cache = null
 }
 
 export function isAllowedVault(vaultPath: string): boolean {

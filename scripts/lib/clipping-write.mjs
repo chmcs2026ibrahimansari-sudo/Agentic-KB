@@ -111,16 +111,34 @@ export function buildFilename({ ts, source, slug, hash }) {
   return `${tsPart}__${source}__${slug}__${hash.slice(0, 8)}.md`
 }
 
+// Plain-safe YAML scalars: start alphanumeric, no whitespace (so no ': '
+// sequence can form), no quote/comma/bracket/brace. Everything matching this
+// is emitted bare, exactly as before.
+const PLAIN_SAFE = /^[A-Za-z0-9][A-Za-z0-9._@+/:-]*$/
+
+/** Emit a value as a one-line YAML scalar, quoting only when it needs it.
+ *  title and author were already JSON-escaped; source, type_hint, captured_at
+ *  and tags were interpolated raw. A --source, --type, --ts or --extra-tag
+ *  carrying ': ', a quote, a ']' or a newline therefore broke the clipping's
+ *  frontmatter — or injected sibling keys that the /foundry-ingest routing
+ *  layer then read as real metadata. (--ts is not safe by construction:
+ *  normalizeTs passes unparseable input straight through.) Same escaping rule
+ *  as the ingest-youtube and sofie-ingest frontmatter fixes. */
+export function yamlScalar(value) {
+  const s = String(value)
+  return PLAIN_SAFE.test(s) ? s : JSON.stringify(s.replace(/[\r\n]+/g, ' '))
+}
+
 export function buildFrontmatter({ source, author, ts, title, type, extraTags, hash }) {
   const lines = ['---']
   lines.push(`title: ${JSON.stringify(title)}`)
-  lines.push(`source: ${source}`)
+  lines.push(`source: ${yamlScalar(source)}`)
   if (author) lines.push(`author: ${JSON.stringify(author)}`)
-  lines.push(`captured_at: ${ts}`)
-  if (type) lines.push(`type_hint: ${type}`)
+  lines.push(`captured_at: ${yamlScalar(ts)}`)
+  if (type) lines.push(`type_hint: ${yamlScalar(type)}`)
   const tags = ['quick-capture', `source-${source}`, ...extraTags]
-  lines.push(`tags: [${tags.join(', ')}]`)
-  lines.push(`canonical_hash: ${hash}`)
+  lines.push(`tags: [${tags.map(yamlScalar).join(', ')}]`)
+  lines.push(`canonical_hash: ${yamlScalar(hash)}`)
   lines.push('---')
   return lines.join('\n')
 }

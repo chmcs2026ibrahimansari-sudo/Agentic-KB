@@ -16,6 +16,7 @@ import {
   buildBody,
   normalizeTs,
   normalizeTextForHash,
+  yamlScalar,
 } from '../scripts/lib/clipping-write.mjs'
 
 describe('slugify', () => {
@@ -159,6 +160,40 @@ describe('buildFrontmatter', () => {
     assert.match(fm, /^tags: \[quick-capture, source-slack, meeting\]$/m)
     assert.match(fm, /^canonical_hash: deadbeef$/m)
   })
+  it('quotes a source carrying YAML syntax instead of breaking the block', () => {
+    const fm = buildFrontmatter({
+      source: 'slack: #general',
+      ts: '2026-04-25T17:00:00Z',
+      title: 'hi',
+      extraTags: [],
+      hash: 'h',
+    })
+    assert.match(fm, /^source: "slack: #general"$/m)
+    assert.match(fm, /^tags: \[quick-capture, "source-slack: #general"\]$/m)
+  })
+  it('an --extra-tag cannot escape the tags flow sequence', () => {
+    const fm = buildFrontmatter({
+      source: 'slack',
+      ts: '2026-04-25T17:00:00Z',
+      title: 'hi',
+      extraTags: ['ok], injected: true, x: [y'],
+      hash: 'h',
+    })
+    const tagLine = fm.split('\n').find(l => l.startsWith('tags:'))
+    assert.equal(tagLine, 'tags: [quick-capture, source-slack, "ok], injected: true, x: [y"]')
+    assert.doesNotMatch(fm, /^injected:/m)
+  })
+  it('an unparseable --ts cannot inject a sibling key', () => {
+    const fm = buildFrontmatter({
+      source: 'slack',
+      ts: normalizeTs('not-a-date\nverified: true'),
+      title: 'hi',
+      extraTags: [],
+      hash: 'h',
+    })
+    assert.doesNotMatch(fm, /^verified:/m)
+    assert.match(fm, /^captured_at: "not-a-date verified: true"$/m)
+  })
   it('omits optional fields cleanly', () => {
     const fm = buildFrontmatter({
       source: 'apple-notes',
@@ -239,5 +274,21 @@ describe('clipping-write CLI (dry-run)', () => {
                    '--type', 'transcript', '--dry-run'])
     assert.equal(r.code, 0)
     assert.match(r.stdout, /type_hint: transcript/)
+  })
+})
+
+describe('yamlScalar', () => {
+  it('passes plain-safe values through bare', () => {
+    for (const v of ['slack', 'apple-notes', 'quick-capture', 'paper', 'deadbeef', '2026-04-25T17:00:00.000Z']) {
+      assert.equal(yamlScalar(v), v)
+    }
+  })
+  it('quotes anything with whitespace, quotes, or brackets', () => {
+    assert.equal(yamlScalar('a b'), '"a b"')
+    assert.equal(yamlScalar('say "hi"'), '"say \\"hi\\""')
+    assert.equal(yamlScalar('[list]'), '"[list]"')
+  })
+  it('collapses newlines so a scalar stays one line', () => {
+    assert.equal(yamlScalar('a\nb'), '"a b"')
   })
 })

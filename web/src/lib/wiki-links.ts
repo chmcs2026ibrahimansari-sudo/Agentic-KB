@@ -56,15 +56,75 @@ export function parseWikiLinkTarget(target: string): { path: string; label: stri
   }
 }
 
+const WIKILINK_RE = /\[\[([^\]]+)\]\]/g
+
+/** Rewrite every [[link]] on one line of prose, leaving inline code spans
+ *  alone. A `` `[[a|b]]` `` in running text is documentation of the syntax,
+ *  not a link. Backtick runs are matched longest-first so ``` ``a `b` `` ```
+ *  style spans are handled the way CommonMark handles them. */
+function replaceOutsideCodeSpans(line: string): string {
+  let out = ''
+  let i = 0
+  while (i < line.length) {
+    const tickStart = line.indexOf('`', i)
+    if (tickStart === -1) {
+      out += line.slice(i).replace(WIKILINK_RE, replaceOne)
+      break
+    }
+    out += line.slice(i, tickStart).replace(WIKILINK_RE, replaceOne)
+    // Measure the opening run, then find a closing run of the same length.
+    let runEnd = tickStart
+    while (runEnd < line.length && line[runEnd] === '`') runEnd++
+    const run = line.slice(tickStart, runEnd)
+    const close = line.indexOf(run, runEnd)
+    if (close === -1) {
+      // Unterminated span — not a code span at all; treat the rest as prose.
+      out += run + line.slice(runEnd).replace(WIKILINK_RE, replaceOne)
+      break
+    }
+    out += line.slice(tickStart, close + run.length)
+    i = close + run.length
+  }
+  return out
+}
+
+function replaceOne(_match: string, inner: string): string {
+  const { label, href } = parseWikiLinkTarget(inner)
+  return `[${label}](${href})`
+}
+
 /**
- * Replace all [[wiki-links]] in markdown content with HTML anchor tags.
+ * Replace all [[wiki-links]] in markdown content with markdown links.
  * This is used in the ArticleRenderer for client-side rendering.
+ *
+ * Fenced code blocks and inline code spans are left verbatim. The wiki
+ * documents its own link syntax — prompt templates, decision-record
+ * skeletons and slash-command specs all show literal `[[path/to/page]]`
+ * inside ``` blocks for the reader to copy out. Rewriting those to
+ * `[Page](/wiki/path/to/page)` corrupted the very text the block exists to
+ * display, and a copied template no longer round-trips. Same protected-region
+ * rule autolink.py applies to its substitutions and extractHeadings applies
+ * to its fence scan.
  */
 export function replaceWikiLinks(content: string): string {
-  return content.replace(/\[\[([^\]]+)\]\]/g, (match, inner) => {
-    const { label, href } = parseWikiLinkTarget(inner)
-    return `[${label}](${href})`
-  })
+  const lines = content.split('\n')
+  let inFence = false
+  let fenceMarker = ''
+
+  return lines.map(line => {
+    const fence = line.match(/^\s{0,3}(`{3,}|~{3,})/)
+    if (fence) {
+      if (!inFence) {
+        inFence = true
+        fenceMarker = fence[1][0]
+      } else if (fence[1][0] === fenceMarker) {
+        inFence = false
+      }
+      return line
+    }
+    if (inFence) return line
+    return replaceOutsideCodeSpans(line)
+  }).join('\n')
 }
 
 /**

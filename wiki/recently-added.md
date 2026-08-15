@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-15 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail|The Proof-of-Work Receipt Is the Audit Trail the Gated Vault Never Specified]] — completes the 5-node cluster graph: the receipt schema supplies the commit record the gated-vault proposal leaves unspecified, collapsing gate → write → receipt → log into one pipeline; defensible form is a batch receipt per nightly gate run, not per write
+
 ## 2026-08-14 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion|Proof-of-Work Receipts as the Episodic Judgment Log's Ingestion Contract]] — the Proof-of-Work Loop's "learning update" step supplies the ingestion contract the episodic log assumes but never specifies; open question is whether agent-emitted entries dilute the log's human-judgment authority

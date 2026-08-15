@@ -1,5 +1,5 @@
 {
-  "last_run_timestamp": "2026-08-13T06:29:54-0700",
+  "last_run_timestamp": "2026-08-14T06:27:15-0700",
   "files_considered": [
     "AGENTS.md",
     "house-rules.md",
@@ -7,41 +7,40 @@
     "playbooks/editor-run.md",
     "wiki/log.md",
     ".night-shift/state/editor-state.json",
-    "wiki/index.md",
-    "wiki/recently-added.md",
+    "wiki/syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion.md",
     "wiki/patterns/pattern-episodic-judgment-log.md",
-    "wiki/syntheses/synthesis-episodic-judgment-obsidian-wiki-gate.md",
-    "wiki/syntheses/synthesis-skillopt-gate-episodic-judgment-log.md",
-    "wiki/syntheses/synthesis-skillopt-gate-obsidian-wiki-governance.md",
-    "wiki/syntheses/synthesis-headroom-compression-episodic-judgment-signal.md",
+    "wiki/patterns/pattern-agent-proof-of-work-loop.md",
+    "wiki/syntheses/synthesis-skillopt-pow-writeback.md",
+    "wiki/recently-added.md",
+    "wiki/index.md",
+    "wiki/lint-report.md",
     "wiki/daily-systems/logs/2026-08-13.md",
-    "wiki/daily-systems/logs/2026-08-12.md",
-    "wiki/reports/2026-08-13-nightly-ci-analysis.md",
+    "wiki/reports/2026-08-14-nightly-ci-analysis.md",
     "wiki/candidates.md",
     "wiki/_meta/proposals.md",
     "wiki/_meta/compile-log.md"
   ],
   "wiki_pages_changed_last_24h": [
-    "wiki/syntheses/synthesis-episodic-judgment-obsidian-wiki-gate.md",
+    "wiki/syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion.md",
     "wiki/recently-added.md",
     "wiki/patterns/pattern-episodic-judgment-log.md",
+    "wiki/patterns/pattern-agent-proof-of-work-loop.md",
     "wiki/log.md",
+    "wiki/lint-report.md",
     "wiki/index.md",
     "wiki/daily-systems/logs/2026-08-13.md",
-    "wiki/daily-systems/logs/2026-08-12.md",
     "wiki/candidates.md",
     "wiki/_meta/proposals.md",
     "wiki/_meta/compile-log.md",
-    "wiki/reports/2026-08-13-nightly-ci-analysis.md",
-    "wiki/lint-report.md"
+    "wiki/reports/2026-08-14-nightly-ci-analysis.md"
   ],
   "outputs_written": [
-    "briefings/2026-08-13.md",
+    "briefings/2026-08-14.md",
     ".night-shift/state/editor-state.json"
   ],
-  "status": "completed_no_editor_synthesis_change",
-  "briefing_path": "briefings/2026-08-13.md",
+  "status": "completed_no_additional_editor_synthesis_change",
+  "briefing_path": "briefings/2026-08-14.md",
   "synthesis_created": [],
   "synthesis_updated": [],
-  "notes": "Editor Run reviewed the last-24-hour wiki changes. The only real multi-source synthesis thread was the Headroom / SkillOpt / obsidian-wiki / episodic-log governance cluster, already captured by morning-review in synthesis-episodic-judgment-obsidian-wiki-gate.md. No additional synthesis was created or edited to avoid duplication. No raw files modified."
+  "notes": "Editor Run reviewed 12 wiki files changed in the last 24 hours. The real multi-source thread was the Proof-of-Work Loop / Episodic Judgment Log ingestion-contract bridge, already captured by morning-review in synthesis-proof-of-work-receipts-episodic-judgment-ingestion.md with backlinks from both pattern pages. Existing synthesis-skillopt-pow-writeback covers the sibling write-back/gating mechanism; no additional synthesis was created or edited to avoid duplicate/overlapping synthesis churn. No raw files modified."
 }

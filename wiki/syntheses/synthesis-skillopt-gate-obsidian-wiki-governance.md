@@ -47,3 +47,4 @@ The pairing is the most actionable of this week's triangle (Headroom ↔ SkillOp
 - [[frameworks/framework-skillopt]]
 - [[frameworks/framework-obsidian-wiki]]
 - [[syntheses/synthesis-headroom-compression-skillopt-signal]] — the sibling synthesis that established this week's "compression/governance corrupts a downstream consumer silently" framing
+- [[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]] — supplies the record for writes this gate *accepts*, which this page leaves unspecified

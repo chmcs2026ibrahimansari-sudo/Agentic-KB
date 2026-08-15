@@ -158,6 +158,16 @@ launch. What matters for this server:
 - **Dynamic Client Registration deprecated** in favor of CIMD
   (client-ID-as-metadata-URL) — an HTTP-authorization concern with no
   effect on this stdio server.
+- **Roots, Sampling and Logging deprecated**, with a 12-month support
+  window from the revision date (i.e. through July 2027). This server
+  declares `capabilities: { tools: {} }` and uses none of the three: it
+  never requests roots (KB_ROOT and the vault path come from env), never
+  calls `sampling/createMessage` (compile and query go straight to the
+  Anthropic API through the web routes, which is also where the cost
+  meter can see them), and emits no `logging/*` notifications — runtime
+  events go to `logs/agent-runtime.log` instead. Nothing to migrate when
+  the window closes; this note exists so the next pin review does not
+  have to re-derive it.
 
 Tier-1 SDKs (including the TypeScript SDK) have shipped 2026-07-28
 support. This server deliberately stays pinned at SDK 1.29.0 — the
@@ -168,6 +178,7 @@ keeps no per-session state of its own, so the stateless core is a
 non-event. When the pin is next reviewed, revisit:
 - long-running tools (`compile_wiki`, `query_wiki`) → Tasks extension
 - `PRIVATE_PIN` gating → OAuth-aligned authorization
+- nothing for Roots/Sampling/Logging — see above, no exposure
 
 Already implemented ahead of the RC: W3C Trace Context passthrough. If a
 client sends `traceparent` (and optionally `tracestate`) in `_meta` on a

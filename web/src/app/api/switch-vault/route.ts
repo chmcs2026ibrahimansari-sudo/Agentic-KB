@@ -6,7 +6,16 @@ import { VAULT_COOKIE, isAllowedVault, resolveVaultRoot } from '@/lib/vault'
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
-  const { vaultPath } = await request.json() as { vaultPath: string }
+  // A body-less or malformed POST throws in request.json(). Unhandled, that
+  // surfaces as an opaque 500 with a stack rather than the 400 the UI knows
+  // how to render — same guard the compile/lint/process routes already apply.
+  let vaultPath: string | undefined
+  try {
+    const body = await request.json() as { vaultPath?: string }
+    vaultPath = typeof body?.vaultPath === 'string' ? body.vaultPath : undefined
+  } catch {
+    return NextResponse.json({ error: 'Expected a JSON body with a vaultPath.' }, { status: 400 })
+  }
 
   // Only vaults registered in the Obsidian config (or the default KB root)
   // may be activated — the cookie is client-controlled, so consumers validate

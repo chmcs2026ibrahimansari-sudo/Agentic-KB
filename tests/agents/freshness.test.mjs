@@ -120,3 +120,24 @@ test('freshnessLabel thresholds', () => {
   assert.equal(freshnessLabel(0.5), 'stale')
   assert.equal(freshnessLabel(0.39), 'expired')
 })
+
+test('getAgeInDays reads frontmatter longer than the head window', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'freshness-head-'))
+  const file = path.join(dir, 'big-fm.md')
+  // Pad the frontmatter past the 4KB head read, with `updated:` after the pad.
+  const pad = Array.from({ length: 200 }, (_, i) => `filler_${i}: ${'x'.repeat(40)}`).join('\n')
+  const iso = new Date(Date.now() - 10 * 86_400_000).toISOString()
+  fs.writeFileSync(file, `---\n${pad}\nupdated: ${iso}\n---\n\nbody\n`)
+
+  const age = getAgeInDays(file)
+  assert.ok(age > 9.5 && age < 10.5, `expected ~10 days from frontmatter, got ${age}`)
+  fs.rmSync(dir, { recursive: true, force: true })
+})
+
+test('getAgeInDays falls back to mtime when there is no frontmatter', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'freshness-nofm-'))
+  const file = path.join(dir, 'plain.md')
+  fs.writeFileSync(file, 'no frontmatter here\n')
+  assert.ok(getAgeInDays(file) < 1)
+  fs.rmSync(dir, { recursive: true, force: true })
+})

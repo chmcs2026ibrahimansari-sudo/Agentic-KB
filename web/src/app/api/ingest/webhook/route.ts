@@ -29,6 +29,13 @@ export const dynamic = 'force-dynamic'
 
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || ''
 
+// Cap on the raw payload. App Router route handlers have no bodyParser limit,
+// so request.text() buffers whatever the client sends into memory and
+// writeRawDoc() then commits it to disk — and when WEBHOOK_SECRET is unset
+// (the documented back-compat default) this route takes anonymous POSTs.
+// 5 MB is far above any real GitHub/Slack/Notion payload.
+const MAX_BODY_BYTES = 5 * 1024 * 1024
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 // RBAC is primary; WEBHOOK_SECRET is a legacy fallback for non-namespaced
 // deployments. If neither matches, reject.
@@ -210,9 +217,20 @@ function writeRawDoc(vaultRoot: string, doc: NormalizedDoc, namespace = 'default
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const identity = resolveIdentity(request)
+
+  // Reject on the advertised length before reading a byte; a lying or absent
+  // Content-Length is caught by the post-read check below.
+  const declared = Number(request.headers.get('content-length') || '0')
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
+  }
+
   // Read the raw body before parsing: GitHub's HMAC signature is computed
   // over the exact payload bytes, so verification needs the unparsed text.
   const rawBody = await request.text().catch(() => '')
+  if (Buffer.byteLength(rawBody, 'utf8') > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
+  }
 
   // Reject only if: legacy secret is set AND doesn't match AND caller has no namespace token
   if (identity.source === 'default' && !legacySecretOk(request, rawBody)) {

@@ -92,5 +92,6 @@ N/A — not yet used.
 ## Sources
 
 - [[summaries/chopratejas-headroom]]
+- [[syntheses/synthesis-headroom-compression-proof-of-work-receipts]] — compression upstream of a verification step makes the resulting proof-of-work receipt unauditable
 - Raw source: `raw/framework-docs/chopratejas-headroom.md`
 - GitHub: https://github.com/chopratejas/headroom

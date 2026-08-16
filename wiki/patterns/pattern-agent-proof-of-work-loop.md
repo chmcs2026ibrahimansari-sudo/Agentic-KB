@@ -139,3 +139,4 @@ The 2026-05-30 Apple Notes link review applied the pattern by exporting source n
 - [[mocs/orchestration]]
 - [[syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion]] — the loop's "learning update" step as the ingestion contract for [[patterns/pattern-episodic-judgment-log]]
 - [[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]] — the loop's review packet as the commit record for gated vault writes
+- [[syntheses/synthesis-headroom-compression-proof-of-work-receipts]] — whether context compression upstream of the verify step makes `verified_by` unauditable, and the `context_fidelity` field that would fix it

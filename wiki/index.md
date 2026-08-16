@@ -296,6 +296,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-episodic-judgment-obsidian-wiki-gate]] | Should obsidian-wiki-style vault-write gating validate against the Episodic Judgment Log's human correction events instead of a generic held-out fixture set? | 2026-08-13 |
 | [[syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion]] | Where do the Proof-of-Work Loop's "learning updates" actually live — and is the Episodic Judgment Log their missing write target? | 2026-08-14 |
 | [[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]] | What gets permanently recorded when a gated vault write is accepted — and is the Proof-of-Work receipt schema the missing answer? | 2026-08-15 |
+| [[syntheses/synthesis-headroom-compression-proof-of-work-receipts]] | If Headroom compresses the tool outputs and transcripts an agent verifies against, is the resulting proof-of-work receipt still evidence of verification? | 2026-08-16 |
 
 ---
 

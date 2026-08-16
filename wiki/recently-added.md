@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-16 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-headroom-compression-proof-of-work-receipts|Context Compression Upstream of a Proof-of-Work Receipt Can Certify a Check That Never Really Happened]] — closes the 9th of 10 edges in the 5-node cluster: compression is safe for consumption and unsafe for adjudication, so a receipt that does not record its own `context_fidelity` cannot be audited; strong "verify against the cache" rule deferred pending a two-run comparison
+
 ## 2026-08-15 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail|The Proof-of-Work Receipt Is the Audit Trail the Gated Vault Never Specified]] — completes the 5-node cluster graph: the receipt schema supplies the commit record the gated-vault proposal leaves unspecified, collapsing gate → write → receipt → log into one pipeline; defensible form is a batch receipt per nightly gate run, not per write

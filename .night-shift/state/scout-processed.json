@@ -104,6 +104,48 @@
       "captured_at": "2026-07-23T23:07:10-07:00",
       "sha256": "11424580313522973b8c3c704c424f0353a678fda30e45c24ef6a2d0e7a0ff42",
       "source_note": "Apple Notes 2026-07-12: PODMEME personalized podcast topic-stream automation; evaluate for Pi/media-ingest and briefing workflows before building anything."
+    },
+    {
+      "url": "https://github.com/Untrivial-ai/agent-orchestrator",
+      "destination": "raw/framework-docs/untrivial-ai-agent-orchestrator.md",
+      "captured_at": "2026-08-15T23:10:11-07:00",
+      "sha256": "766bbaf9dd6d4bd7e773551720c639285013381509a35b785cd12f14d3265176",
+      "source_note": "Apple Notes 2026-08-08: parallel coding-agent IDE/orchestrator; mine isolated workspace, CI/review/merge-conflict feedback-loop, and AO-only worker delegation patterns for MissionControl/Hermes."
+    },
+    {
+      "url": "https://x.com/hwchase17/status/2085780032031760694",
+      "destination": "raw/framework-docs/x-twitter-2085780032031760694.md",
+      "captured_at": "2026-08-15T23:10:11-07:00",
+      "sha256": "28217a8879cbffade6e5739b0a85179b547093facb9142d17a7900f77cf8fcb2",
+      "source_note": "Apple Notes 2026-08-08 via share.google: managed agents thesis; mine business-logic/harness/infrastructure split, durable runtime, sandbox, context hub, eval, memory, auth, and file-backed agent definitions."
+    },
+    {
+      "url": "https://huggingface.co/blog/agent-intrusion-technical-timeline",
+      "destination": "raw/framework-docs/huggingface-agent-intrusion-technical-timeline.md",
+      "captured_at": "2026-08-15T23:10:11-07:00",
+      "sha256": "3cea9f387bc28d9657927177e90d2b3cc5f544f1f2f719fbeb741c403a9435db",
+      "source_note": "Apple Notes 2026-08-04 via @bibryam: autonomous-agent intrusion timeline; mine sandbox escape, dataset/config injection, credential exposure, Kubernetes pivot, and agent-security mitigations."
+    },
+    {
+      "url": "https://www.linkedin.com/posts/maryammiradi_forward-deployed-engineering-101-for-share-7491586783273603072-Ov8f/",
+      "destination": "raw/framework-docs/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f.md",
+      "captured_at": "2026-08-15T23:10:11-07:00",
+      "sha256": "96bc8ed112ace3c3b633a2f8aa13902f41a311c78208c5c420bbfdaa6411260f",
+      "source_note": "Apple Notes 2026-08-07: FDE for production AI agents; mine shared primitives, customer-facing engineering, isolated bespoke logic, outcome-first design, eval/observability/human-gate production loop."
+    },
+    {
+      "url": "https://www.linkedin.com/pulse/agentic-sdlc-how-ai-agents-reshaping-software-pavan-belagatti-rsthc",
+      "destination": "raw/framework-docs/linkedin-com-pulse-agentic-sdlc-how-ai-agents-reshaping-software-pavan-belagatti-rsthc.md",
+      "captured_at": "2026-08-15T23:10:12-07:00",
+      "sha256": "c9397973261f2c36b4e2f583cf9a01bc63b019664c625fb6b932819255251ec7",
+      "source_note": "Apple Notes 2026-08-07: agentic SDLC framing; mine end-to-end planning/implementation/testing/review/deploy/monitor/documentation loops and human approval points."
+    },
+    {
+      "url": "https://x.com/suraj_sharma14/status/2084542353344282850",
+      "destination": "raw/framework-docs/x-twitter-2084542353344282850.md",
+      "captured_at": "2026-08-15T23:10:13-07:00",
+      "sha256": "117d5a06df29ec59b6d46f4d1dc7d284b8f434b47a9c5614457f338d0d625ac2",
+      "source_note": "Apple Notes 2026-08-05: production AI engineering project checklist; mine RAG citations, model routing, eval harnesses, observability, security guardrails, local-first dev, multi-tenant agent, CI/CD, vector DB scale, and memory-system patterns."
     }
   ]
 }

@@ -103,3 +103,19 @@ test('redaction placeholders do not swallow the following separator', () => {
     assert.equal(redactDefault(input).redacted, expected, input)
   }
 })
+
+test('git SHA-1s survive the aws-secret heuristic', () => {
+  // 40 chars from [A-Za-z0-9/+=] also describes every git SHA-1, so this rule
+  // used to shred the commit hashes that architecture notes are built on.
+  const sha = 'da39a3ee5e6b4b0d3255bfef95601890afd80709'
+  const r = redactDefault(`Fixed in ${sha} — see the PR.`)
+  assert.equal(r.redacted.includes(sha), true, 'a git SHA must not be redacted')
+  assert.equal(r.total, 0)
+
+  // …while a genuine AWS-shaped secret still is.
+  const secret = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+  assert.equal(secret.length, 40)
+  const s = redactDefault(`aws_secret_access_key = ${secret}`)
+  assert.equal(s.redacted.includes(secret), false)
+  assert.equal(s.hits.find(h => h.rule === 'aws-secret').count, 1)
+})

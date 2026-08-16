@@ -47,6 +47,39 @@ const AGENT_KB_ROOT = pathMod.resolve(pathMod.dirname(fileURLToPath(import.meta.
 const API_URL = process.env.KB_API_URL || 'http://localhost:3002'
 const PRIVATE_PIN = process.env.PRIVATE_PIN || ''
 
+// Node's fetch has no default timeout. A web server that accepted the socket
+// but never answered (mid-restart, wedged on a lock, an SSH tunnel that went
+// away) left `kb search`, `kb pending`, `kb compile` and friends hanging
+// forever with no output — including inside cron and the 2-source gate.
+//
+// The deadline covers only the request up to the response headers, then the
+// timer is cleared: the SSE readers below stream for as long as a compile
+// takes, and aborting mid-stream would be a worse bug than the one being
+// fixed. KB_API_TIMEOUT_MS overrides.
+const API_TIMEOUT_MS = (() => {
+  const v = Number(process.env.KB_API_TIMEOUT_MS)
+  return Number.isFinite(v) && v > 0 ? v : 30_000
+})()
+
+const LINT_TIMEOUT_MS = Math.max(API_TIMEOUT_MS, 300_000)
+
+async function apiFetch(url, init = {}, timeoutMs = API_TIMEOUT_MS) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    return await fetch(url, { ...init, signal: controller.signal })
+  } catch (err) {
+    if (err?.name === 'AbortError') {
+      throw new Error(`KB API did not respond within ${timeoutMs}ms at ${API_URL} (set KB_API_TIMEOUT_MS to raise it)`)
+    }
+    // fetch's own failure message is just "fetch failed"; say where and why.
+    const cause = err?.cause?.code || err?.cause?.message || err?.message
+    throw new Error(`KB API unreachable at ${API_URL} (${cause}). Is the web server running?`)
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 /** Expand a leading ~ using HOME or os.homedir(); throw if neither is set. */
 function expandHome(p) {
   if (typeof p !== 'string' || !p.startsWith('~')) return p
@@ -169,7 +202,7 @@ async function search(query, scope, limit, pin = PRIVATE_PIN) {
   // server access logs, shell history via curl repro lines, and any proxy in
   // between. The API accepts x-private-pin (same as kb query/compile/lint).
   const headers = scope !== 'public' && pin ? { 'x-private-pin': pin } : {}
-  const res = await fetch(`${API_URL}/api/search?${params}`, { headers })
+  const res = await apiFetch(`${API_URL}/api/search?${params}`, { headers })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
     // The API returns 403 for a missing/invalid PIN — surface it instead of
@@ -201,7 +234,7 @@ async function query(question, scope = 'public', pin = '') {
   console.log(`\n🤖 Querying KB: ${question}\n`)
   process.stdout.write('   ')
 
-  const res = await fetch(`${API_URL}/api/query`, {
+  const res = await apiFetch(`${API_URL}/api/query`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
     body: JSON.stringify({ question, scope, pin }),
@@ -337,7 +370,7 @@ async function listSection(section, opts = {}) {
 }
 
 async function pending() {
-  const res = await fetch(`${API_URL}/api/pending-count`)
+  const res = await apiFetch(`${API_URL}/api/pending-count`)
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
     console.error(`❌ Pending check failed (${res.status}): ${data.error || 'unknown error'}`)
@@ -399,7 +432,7 @@ async function sessionCmd(sub, rest) {
 
 async function compile(mode, pin) {
   console.log('\n⚙️  Compiling KB (mode: ' + mode + ')...\n')
-  const res = await fetch(`${API_URL}/api/compile`, {
+  const res = await apiFetch(`${API_URL}/api/compile`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
     body: JSON.stringify({ mode, pin }),
@@ -441,11 +474,14 @@ async function compile(mode, pin) {
 
 async function lint(pin) {
   console.log('\nRunning wiki lint...\n')
-  const res = await fetch(`${API_URL}/api/lint`, {
+  // /api/lint answers with a single JSON body only after its Claude call
+  // returns, so unlike the SSE routes its headers are not immediate — the
+  // 30s default would abort a normal lint of a few hundred pages.
+  const res = await apiFetch(`${API_URL}/api/lint`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
     body: JSON.stringify({ pin }),
-  })
+  }, LINT_TIMEOUT_MS)
   // Guard the parse: a proxy/framework 500 page is HTML, and an unhandled
   // JSON parse rejection here crashed the CLI with a bare stack trace.
   const data = await res.json().catch(() => ({}))
@@ -830,7 +866,7 @@ function inferRawSubdir(filePath) {
 
 async function reindex(pin) {
   console.log('\n🗂️  Rebuilding wiki/index.md...\n')
-  const res = await fetch(`${API_URL}/api/reindex`, {
+  const res = await apiFetch(`${API_URL}/api/reindex`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(pin ? { 'x-private-pin': pin } : {}) },
     body: JSON.stringify({ pin }),

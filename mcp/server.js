@@ -30,6 +30,38 @@ const WIKI_ROOT = path.join(KB_ROOT, 'wiki')
 const API_URL = process.env.KB_API_URL || 'http://localhost:3002'
 const PRIVATE_PIN = process.env.PRIVATE_PIN || ''
 
+// Node's fetch has no default timeout. This server speaks stdio to a host that
+// has no way to cancel an in-flight tool call, so a web server that accepted
+// the socket but never answered wedged query_wiki / compile_wiki / lint_wiki
+// (and the client waiting on them) indefinitely.
+//
+// The deadline covers the request up to the response headers only, then the
+// timer is cleared — the SSE collectors below must be free to stream for as
+// long as a compile takes. KB_API_TIMEOUT_MS overrides.
+const API_TIMEOUT_MS = (() => {
+  const v = Number(process.env.KB_API_TIMEOUT_MS)
+  return Number.isFinite(v) && v > 0 ? v : 30_000
+})()
+// /api/lint answers with one JSON body only after its Claude call returns, so
+// its headers are not immediate the way the SSE routes' are.
+const LINT_TIMEOUT_MS = Math.max(API_TIMEOUT_MS, 300_000)
+
+async function apiFetch(url, init = {}, timeoutMs = API_TIMEOUT_MS) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    return await fetch(url, { ...init, signal: controller.signal })
+  } catch (err) {
+    if (err?.name === 'AbortError') {
+      throw new Error(`KB API did not respond within ${timeoutMs}ms at ${API_URL} (set KB_API_TIMEOUT_MS to raise it)`)
+    }
+    const cause = err?.cause?.code || err?.cause?.message || err?.message
+    throw new Error(`KB API unreachable at ${API_URL} (${cause}). Is the web server running?`)
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 // ─── PIN gating helper ──────────────────────────────────────────────────────
 // Returns an MCP error response when the PIN check fails, or null when the
 // caller is permitted to proceed. An empty PRIVATE_PIN disables private access
@@ -777,7 +809,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const qscope = (args.scope === 'private' || args.scope === 'all') ? args.scope : 'public'
       const pinErr = requirePin(qscope, args.pin, 'query_wiki')
       if (pinErr) return pinErr
-      const res = await fetch(`${API_URL}/api/query`, {
+      const res = await apiFetch(`${API_URL}/api/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(PRIVATE_PIN && qscope !== 'public' ? { 'x-private-pin': PRIVATE_PIN } : {}) },
         body: JSON.stringify({ question, scope: qscope, pin: String(args.pin || '') }),
@@ -854,7 +886,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const pinErr = requirePin('private', args.pin, 'compile_wiki')
         if (pinErr) return pinErr
       }
-      const res = await fetch(`${API_URL}/api/compile`, {
+      const res = await apiFetch(`${API_URL}/api/compile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(PRIVATE_PIN ? { 'x-private-pin': PRIVATE_PIN } : {}) },
         body: JSON.stringify({ mode, pin: String(args.pin || '') }),
@@ -896,11 +928,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const pinErr = requirePin('private', args.pin, 'lint_wiki')
         if (pinErr) return pinErr
       }
-      const res = await fetch(`${API_URL}/api/lint`, {
+      const res = await apiFetch(`${API_URL}/api/lint`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(PRIVATE_PIN ? { 'x-private-pin': PRIVATE_PIN } : {}) },
         body: JSON.stringify({ pin: String(args.pin || '') }),
-      })
+      }, LINT_TIMEOUT_MS)
       if (!res.ok) {
         const bodyText = await res.text().catch(() => '<no body>')
         return { content: [{ type: 'text', text: `Lint API error ${res.status}: ${bodyText.slice(0, 500)}` }], isError: true }

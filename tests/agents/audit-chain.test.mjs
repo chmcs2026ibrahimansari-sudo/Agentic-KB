@@ -122,3 +122,34 @@ test('missing log verifies clean and reads empty', () => {
   assert.deepEqual(verifyAuditChain(root), { ok: true, scanned: 0, signed: 0, legacy: 0 })
   assert.deepEqual(readRecentAudit(root), [])
 })
+
+test('concurrent writers do not break the hash chain', async () => {
+  const { spawn } = await import('node:child_process')
+  const { fileURLToPath } = await import('node:url')
+
+  const root = makeRoot()
+  const auditMod = fileURLToPath(new URL('../../lib/agent-runtime/audit.mjs', import.meta.url))
+  const child = path.join(root, 'writer.mjs')
+  fs.writeFileSync(child, [
+    `import { appendAudit } from ${JSON.stringify(auditMod)}`,
+    `const tag = process.argv[2]`,
+    `for (let i = 0; i < 20; i++) appendAudit(${JSON.stringify(root)}, { op: 'race', agent_id: tag, i })`,
+  ].join('\n'))
+
+  // Real processes, not workers: the race is between OS-level appenders, and
+  // spawnSync in a loop would serialise them out of existence.
+  const WRITERS = 4
+  const procs = Array.from({ length: WRITERS }, (_, n) =>
+    new Promise((resolve, reject) => {
+      const p = spawn(process.execPath, [child, `agent-${n}`], { stdio: 'ignore' })
+      p.on('error', reject)
+      p.on('exit', code => (code === 0 ? resolve() : reject(new Error(`writer exited ${code}`))))
+    }))
+  await Promise.all(procs)
+
+  const result = verifyAuditChain(root)
+  assert.equal(result.signed, WRITERS * 20, 'every append must land')
+  assert.equal(result.ok, true, `chain broke: ${JSON.stringify(result)}`)
+
+  fs.rmSync(root, { recursive: true, force: true })
+})

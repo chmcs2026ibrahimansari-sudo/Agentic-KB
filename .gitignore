@@ -12,6 +12,9 @@ node_modules/
 # Cost + audit logs (generated per-machine)
 logs/api-cost.log
 
+# Runtime file locks (lib/agent-runtime/locks.mjs) — per-process, never shared
+.locks/
+
 # Graphify temp files
 .graphify_*
 

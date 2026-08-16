@@ -73,3 +73,32 @@ test('updateFrontmatter patches keys and keeps the body', () => {
   assert.equal(data.owner, 'a1')
   assert.match(content, /Body here/)
 })
+
+test('YAML indicator characters survive a real YAML parser', async () => {
+  const { parse: yamlParse } = await import('yaml')
+  // These all round-tripped through this codec but broke gray-matter / `yaml`:
+  // "*" read as an alias (throw), "&"/"!" as anchor/tag (null / ""),
+  // "|" and ">" as block-scalar headers (throw), "@" "`" "%" as reserved (throw).
+  const original = {
+    star: '*star',
+    anchor: '&anchor',
+    tag: '!tag',
+    at: '@mention',
+    tick: '`code`',
+    pct: '%directive',
+    pipe: '|pipe',
+    gt: '>gt',
+    question: '?query',
+    comma: ',lead',
+  }
+  const doc = serializeFrontmatter(original, 'body\n')
+  assert.deepEqual(parseFrontmatter(doc).data, original)
+
+  const header = doc.slice(4, doc.indexOf('\n---', 4))
+  assert.deepEqual(yamlParse(header), original)
+})
+
+test('leading and trailing whitespace is preserved', () => {
+  const original = { lead: '  indented', trail: 'trailing  ' }
+  assert.deepEqual(parseFrontmatter(serializeFrontmatter(original, 'body')).data, original)
+})

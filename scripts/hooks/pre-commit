@@ -15,6 +15,13 @@
 # case-insensitive grep-style. Each pattern is checked against ONLY the
 # staged diff (additions), not the full file — so the same string already
 # committed in history won't re-trigger.
+#
+# This hook also carries the Foundry Rule 13 (one-way rule) vault-path check.
+# It used to live in a separate .git/hooks/pre-commit written by
+# scripts/install-personal-vault-guard.sh, but `core.hooksPath` *replaces*
+# the hooks directory rather than adding to it — so the moment this PII guard
+# was enabled, git stopped running .git/hooks entirely and the vault guard
+# went silently dead. One hook, both checks.
 
 set -euo pipefail
 
@@ -61,6 +68,34 @@ PII_PATTERNS=(
   'jaydubya818@gmail\.com'
 )
 
+# ── Rule 13: the personal Obsidian vault is read-only from this repo ────────
+# Reject any staged path that points into it, directly or through a symlink.
+vault_hits=()
+while IFS= read -r vpath; do
+  [ -z "$vpath" ] && continue
+  if printf '%s\n' "$vpath" | grep -qiE 'obsidian[ _-]?vault'; then
+    vault_hits+=("$vpath")
+    continue
+  fi
+  if [ -L "$vpath" ]; then
+    vtarget="$(readlink "$vpath" || true)"
+    if printf '%s\n' "$vtarget" | grep -qiE 'obsidian[ _-]?vault'; then
+      vault_hits+=("$vpath -> $vtarget")
+    fi
+  fi
+done < <(git diff --cached --name-only --diff-filter=ACMRT)
+
+if [ ${#vault_hits[@]} -gt 0 ]; then
+  echo "" >&2
+  echo "🛑 pre-commit: Rule 13 violation — the personal vault is read-only." >&2
+  printf '  - %s\n' "${vault_hits[@]}" >&2
+  echo "" >&2
+  echo "Bypass with --no-verify only if you really intended this." >&2
+  echo "" >&2
+  exit 1
+fi
+
+# ── PII deny-list ───────────────────────────────────────────────────────────
 # Collect added/modified files in this commit
 staged_files=$(git diff --cached --name-only --diff-filter=AM)
 

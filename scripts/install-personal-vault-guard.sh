@@ -25,7 +25,25 @@ if [[ -z "${REPO_ROOT}" ]]; then
   exit 1
 fi
 
-HOOK_PATH="${REPO_ROOT}/.git/hooks/pre-commit"
+# core.hooksPath *replaces* .git/hooks — it does not stack. Writing to
+# .git/hooks/pre-commit while hooksPath points elsewhere installs a hook git
+# will never run, and the operator gets a success message for a dead guard.
+HOOKS_DIR="$(git config --get core.hooksPath || true)"
+if [[ -n "${HOOKS_DIR}" ]]; then
+  # Relative hooksPath is resolved against the repo root.
+  [[ "${HOOKS_DIR}" = /* ]] || HOOKS_DIR="${REPO_ROOT}/${HOOKS_DIR}"
+  if [[ -f "${HOOKS_DIR}/pre-commit" ]]; then
+    echo "✓ core.hooksPath is set to ${HOOKS_DIR} and a pre-commit hook is already there."
+    echo "  scripts/hooks/pre-commit already carries the Rule 13 vault check —"
+    echo "  nothing to install. Verify with:"
+    echo "    git commit --allow-empty -m 'smoke'"
+    exit 0
+  fi
+else
+  HOOKS_DIR="${REPO_ROOT}/.git/hooks"
+fi
+
+HOOK_PATH="${HOOKS_DIR}/pre-commit"
 mkdir -p "$(dirname "${HOOK_PATH}")"
 
 cat > "${HOOK_PATH}" <<'HOOK'

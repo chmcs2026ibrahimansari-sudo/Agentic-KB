@@ -49,7 +49,12 @@ import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes } from "node:
 import { createInterface } from "node:readline";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = resolve(__dirname, "..");
+// KB_ROOT env override, same convention as candidates-ttl / compile-2source-gate
+// / graph-maintenance-scan: lets tests drive lock/unlock/read against a sandbox
+// tree instead of the operator's real wiki/_private (which lock() deletes).
+const REPO_ROOT = process.env.KB_ROOT
+  ? resolve(process.env.KB_ROOT)
+  : resolve(__dirname, "..");
 const PRIVATE_DIR = resolve(REPO_ROOT, "wiki/_private");
 const ENC_DIR = resolve(PRIVATE_DIR, ".enc");
 const GITIGNORE = resolve(REPO_ROOT, ".gitignore");

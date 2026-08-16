@@ -18,7 +18,8 @@ This is the agent-side analogue of OpenBrain's quick-capture-from-Slack pattern,
 4. For each message that is NOT a bot post, NOT a thread reply, and has at least 10 characters of body text:
    - Strip Slack-specific noise (`<@USER>` mentions kept as-is; emoji shortcodes preserved; URLs preserved).
    - Detect a leading type hint: if the message starts with `transcript:`, `paper:`, `thread:`, or `note:`, strip that prefix and pass it as `--type`.
-   - Call `node scripts/lib/clipping-write.mjs --source slack --author <user-display-name> --ts <message-iso-timestamp> --text-file <tmp-path> [--type <hint>]`.
+   - Pass `--source-id <channel-id>:<message-ts>` — Slack's `ts` is unique per channel and is the stable dedup key. Without it the hash falls back to author+ts+body, which drifts if Slack re-serializes the message (edits, unfurls, emoji normalization).
+   - Call `node scripts/lib/clipping-write.mjs --source slack --source-id <channel-id>:<message-ts> --author <user-display-name> --ts <message-iso-timestamp> --text-file <tmp-path> [--type <hint>]`.
    - Use a temp file for the body (`mktemp`) to avoid shell-quoting hell.
 5. Report a summary: `{written, skipped-as-duplicate, errors}` with file paths.
 6. Suggest running `/foundry-ingest` next if anything was written.

@@ -1324,3 +1324,57 @@ Pages affected: `frameworks/headroom.md`, `_meta/compile-log.md`
 - **Provenance edits:** none. Today's tensions query surfaced the **Letta 74% vs. Mem0 68.5% LoCoMo discrepancy** in [[wiki/hot]] — but `hot.md` already carries the "re-verify if comparing current versions" caveat, so no downgrade applied. The second item (embedded-graduation-model vs. permanent supervisor-worker orchestration) is a **scope confusion, not a contradiction**, and is recorded below rather than edited into either page, since resolving it means adding a scope note, not dropping a claim.
 - **Contradictions flagged:** one new, low severity. (D) **embedded-graduation vs. permanent orchestration** — [[patterns/pattern-embedded-graduation-model]] argues central expertise should dissolve itself, while [[patterns/pattern-supervisor-worker]] and [[patterns/pattern-plan-execute-verify]] assume a permanent central orchestrator. Almost certainly reconcilable as different layers (org-layer vs. runtime-layer); needs an explicit scope note in [[mocs/orchestration]] so a reader cannot extend "graduate to independence" into "remove the orchestrator agent." Still open from prior runs: (B) obsidian-wiki `_raw/` mutation vs. raw-immutability rule (2026-06-25); (C) compile write-phase root cause — see above, now near-settled.
 - **Captures:** sofie-watch staged 0 meetings; Apple Notes `KB Inbox` held 1 note (the `test-capture-2026-05-16` fixture, already staged), `Snipd` empty. Capture was **deliberately not re-run** against the fixture note: `raw/clippings/` now holds **10** near-duplicate copies of it under distinct sha256 hashes (up from the 5 noted 2026-08-15), so each capture pass adds another. `ingest-dedup` routed the one un-ingested copy to `raw/articles/` and hash-skipped the other 14. **The dedup key is content-sensitive to capture-time formatting drift** — the same note yields a different hash on each pull. Worth a fix in `scripts/lib/clipping-write.mjs`: dedup on a normalised body or on the source note ID rather than raw bytes.
+
+## 2026-08-16 — Agentic-KB Editor Run
+
+**Trigger:** Scheduled `agentic-kb-editor-run` at 06:25 PDT.
+
+**Pages considered:** 10 wiki files changed in the last 24 hours, centered on `[[syntheses/synthesis-headroom-compression-proof-of-work-receipts]]`, `[[patterns/pattern-agent-proof-of-work-loop]]`, `[[frameworks/framework-headroom]]`, and the compile/proposal ledgers.
+
+**Thread updated:** `[[syntheses/synthesis-headroom-compression-proof-of-work-receipts]]` received a targeted note and source link to `[[syntheses/synthesis-skillopt-pow-writeback]]`; `[[wiki/index]]` synthesis count was corrected 27→28 and the existing SkillOpt ↔ Proof-of-Work synthesis was added to the synthesis table.
+
+**Reason:** The morning run reported the direct SkillOpt ↔ Proof-of-Work edge as remaining unwritten, but that synthesis already exists and was orphaned/absent from the index. The Editor Run added an inbound link and index entry to prevent a duplicate synthesis and make the existing edge discoverable.
+
+**Contradictions flagged:** None new.
+
+**Briefing:** `briefings/2026-08-16.md`.
+
+## 2026-08-16 — Compiled `articles/garrytan-meta-meta-prompting.md`
+
+Pages affected: `summaries/summary-garrytan-meta-meta-prompting.md`
+
+## 2026-08-16 — Compiled `articles/thariq-claude-code-html.md`
+
+Pages affected: `concepts/html-as-agent-output-format.md`
+
+## 2026-08-16 — Compiled `clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__28da9fb8.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`
+
+## 2026-08-16 — Compiled `clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__9930a08e.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`
+
+## 2026-08-16 — Compiled `clippings/2026-05-23T09-30-00__x-twitter__karpathy-claude-md-hits-100k-stars-on-github-trending__a0538da7.md`
+
+Pages affected: `concepts/claude-md-pattern.md`, `entities/andrej-karpathy.md`
+
+### 2026-08-16 (later) — follow-up pass: three attention items addressed
+
+**Correction to this morning's entry.** The compile-gate diagnosis above was wrong in its root cause and therefore in its remedy. `AGENTIC_KB_PIN` and `npm run pin:unlock` are the *private-vault* mechanism and have nothing to do with this failure. The actual chain: `compile-2source-gate.mjs --execute` completes its own bookkeeping (candidates.md, compile-log.md) and then shells out to `node cli/kb.js compile`, which is not a local compiler at all — it POSTs to the web app at `http://localhost:3002/api/compile`. That route gates on `process.env.PRIVATE_PIN` and returns `🔒 Compile requires a valid PIN.` when the caller's `x-private-pin` header does not match. The CLI reads its PIN from `PRIVATE_PIN` in the repo-root `.env`.
+
+**Root cause:** repo-root `.env` had `PRIVATE_PIN=` (empty) while `web/.env.local` had a real value. The server enforced a PIN the client was never sending. Three days of "blocked" runs were a **one-character config drift**, not a missing secret — which is why re-running never helped and why the plan was identical every day.
+
+**Fix applied:** synced `PRIVATE_PIN` in repo-root `.env` from `web/.env.local` (both gitignored and untracked; value never printed or committed; prior `.env` backed up to `.env.bak-pinfix-20260816`). Contradiction (C) is RESOLVED: Position A (the PIN hypothesis) was directionally right that a PIN was involved, but wrong about which one and why; the older `Error: undefined` trace is explained as the same 401 surfacing before the route returned a structured body.
+
+**A second, independent fault sat behind the first.** With auth fixed, compile ran — and skipped **13 of 13** documents with `LLM returned no valid JSON`. Not a model problem: issuing the identical request by hand against the same model and key returned a well-formed JSON array. The difference was in how the route read the response. `web/src/app/api/compile/route.ts` did `response.content[0].type === 'text' ? response.content[0].text : ''` in two places (analysis and generation). That assumes the *first* content block is the text block. When a response leads with a non-text block, the expression silently yields `''` — the API call succeeded, nothing threw, and the route reported the empty string as the model's fault. Every document was therefore skipped, and the misattributed error message pointed the investigation at the LLM instead of at the parser. The analysis step failed the same way but even more quietly: its catch block emits a `warn`, and no warn ever appeared, confirming the call succeeded and returned nothing usable.
+
+**Fix applied:** added a `textOf()` helper that concatenates *all* text blocks and used it at both call sites. This is correct regardless of what precedes the text block. `npx tsc --noEmit` passes. The CLI targets the dev server (`KB_API_URL=http://localhost:3009`, `next dev`), which hot-reloaded the change; re-running the gate now writes pages — first output `[new] summaries/summary-garrytan-meta-meta-prompting.md`, zero skips. **The graduation half of the apply directive is genuinely live again after three days inert.** Note for future debugging: a second stale Next instance is listening on port 3002 (the CLI's *default* when `KB_API_URL` is unset). Anything that loses the env var will silently talk to the stale server instead of the dev one.
+
+**Hardening notes (not applied, flagged):** (1) `compile-2source-gate.mjs` completes its own bookkeeping and then discards the shell-out's exit status into a return value nobody surfaces — which is how a 401 looked like a successful compile for three days. It should fail loudly on a non-zero `shellOutToCompile()`. (2) The `skip` reason string `LLM returned no valid JSON` is an attribution, not an observation. It should report what was actually received (block types, response length) so a parser bug cannot masquerade as a model failure again. Both are the same lesson the day's synthesis argues about receipts: an error message that asserts a cause it did not verify is worse than one that reports what it saw.
+
+**Clipping dedup — fixed.** Root cause was two independent sources of drift, both upstream of a hash that was itself correctly written. (1) The Apple Notes MCP returns a bare local-time string with no zone, so the same note hashed under both `08:40:32` and `15:40:32` depending on how the caller resolved it — that alone explains the 08-40 / 15-40 filename split in `raw/clippings/`. (2) HTML-to-text conversion drifted body whitespace between pulls, so even same-timestamp pulls diverged (three distinct hashes at `08-40-32`, six at `15-40-32`). Changes to `scripts/lib/clipping-write.mjs`: added `--source-id`, which when present makes identity `sha256(source + sourceId)` and drops ts/body from the key entirely — a stable upstream ID already uniquely names the item, and two items cannot legitimately share one; and hardened `normalizeTextForHash` to strip zero-width characters, normalize non-breaking spaces and CRLF, and collapse whitespace runs for the no-source-id fallback. `source_id` is now recorded in clipping frontmatter for provenance. Capture commands (`foundry-capture-notes`, `-snipd`, `-slack`) updated to pass `--source-id` — the Apple Notes `x-coredata://…/ICNote/pNNNN` value, and `channel-id:message-ts` for Slack. Verified: the same note re-pulled with both a 7-hour ts shift and re-serialized spacing now yields one identical hash (`397d53cd`). Test suite extended to 42 tests, all passing.
+
+**Not done, deliberately:** the 10 existing duplicate copies of `test-capture-2026-05-16` in `raw/clippings/` and `raw/articles/` were left in place. Rule 1 makes `raw/` immutable; the fix is forward-looking and stops new duplicates rather than rewriting history. They are inert (the compiler skips them as "no valid JSON") but they do inflate the clippings count — worth a one-time manual cleanup by Jay if the noise bothers him, since only a human can authorize touching `raw/`.
+
+**Contradiction (D) — resolved by scope note, no page edits.** Added a scope note to [[mocs/orchestration]] recording that "graduation" in [[patterns/pattern-embedded-graduation-model]] is an org-layer claim about humans depending on a central platform team, while the permanence assumed by [[patterns/pattern-supervisor-worker]] and [[patterns/pattern-plan-execute-verify]] is a runtime-layer claim about control flow. They do not conflict; a graduated team can still run a supervisor topology forever. The note names the misreading to avoid — extending "graduate to independence" into "remove the orchestrator agent," which would strip runtime error-handling to solve an organizational problem. Neither pattern page was edited and no claim was dropped, per the apply-guard. (D) moves from open to resolved.

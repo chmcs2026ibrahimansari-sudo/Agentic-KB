@@ -9,6 +9,9 @@
  *
  * Flags:
  *   --source <name>     Required. e.g. slack, apple-notes, gmail
+ *   --source-id <id>    Optional but strongly preferred. Stable upstream ID
+ *                       (Apple Notes x-coredata:// id, Slack channel+ts, etc).
+ *                       When present it alone defines identity — see below.
  *   --text <text>       Required. The message body. Use --text-file for long.
  *   --text-file <path>  Read --text from a file (avoids shell quoting hell).
  *   --author <name>     Optional. Author/sender for provenance.
@@ -19,9 +22,20 @@
  *   --extra-tag <tag>   Optional, repeatable. Extra tags added to frontmatter.
  *   --dry-run           Print the would-be filename + body; don't write.
  *
- * Idempotency: if a file with the same canonical sha256 (source+author+ts+text)
- * already exists in raw/clippings/ OR has been routed to raw/<sub>/ (per
- * raw/.ingest-hashes.json), this is a no-op.
+ * Idempotency: if a file with the same canonical sha256 already exists in
+ * raw/clippings/ OR has been routed to raw/<sub>/ (per raw/.ingest-hashes.json),
+ * this is a no-op. Identity is computed one of two ways:
+ *
+ *   with --source-id:  sha256(source + sourceId)          [preferred]
+ *   without:           sha256(source + author + ts + normalized text)
+ *
+ * The content-derived fallback is fragile against re-pulls of the *same*
+ * upstream item: `raw/clippings/` accumulated 10 copies of one Apple Note
+ * because (a) the Notes MCP returns a bare local-time string with no zone, so
+ * the same note hashed under both 08:40 and 15:40 depending on whether the
+ * caller resolved it as local or UTC, and (b) HTML-to-text conversion drifted
+ * the body whitespace between pulls. A stable upstream ID is immune to both,
+ * so callers should always pass --source-id when the source exposes one.
  *
  * Exit codes: 0 on success or duplicate-skip; non-zero on bad input.
  */
@@ -44,6 +58,7 @@ function parseArgs(argv) {
     const next = argv[i + 1]
     switch (a) {
       case '--source':    out.source = next; i++; break
+      case '--source-id': out.sourceId = next; i++; break
       case '--text':      out.text = next; i++; break
       case '--text-file': out.textFile = next; i++; break
       case '--author':    out.author = next; i++; break
@@ -97,12 +112,33 @@ export function normalizeTextForHash(text, { type } = {}) {
       t = firstNl === -1 ? stripped : stripped + t.slice(firstNl)
     }
   }
-  return t.trim()
+  // Whitespace canonicalization. HTML-to-text conversion upstream is not
+  // stable across pulls of the same item: CRLF vs LF, non-breaking spaces from
+  // Apple Notes markup, zero-width joiners, trailing spaces on wrapped lines,
+  // and a varying number of blank lines between paragraphs all drifted the
+  // hash without changing a single visible character. Collapse them so the
+  // content-derived fallback matches on content, not on markup accidents.
+  return t
+    .replace(/[​-‍﻿]/g, '')  // zero-width space/joiner/BOM
+    .replace(/ /g, ' ')                 // non-breaking space → space
+    .replace(/\r\n?/g, '\n')                 // CRLF / CR → LF
+    .replace(/[ \t]+/g, ' ')                 // runs of spaces/tabs → one space
+    .replace(/ *\n */g, '\n')                // strip padding around newlines
+    .replace(/\n{2,}/g, '\n\n')              // collapse blank-line runs
+    .trim()
 }
 
-/** Stable canonical hash over the fields that define identity. */
-export function canonicalHash({ source, author = '', ts = '', text, type }) {
-  const canon = `${source}\0${author}\0${normalizeTs(ts)}\0${normalizeTextForHash(text, { type })}`
+/** Stable canonical hash over the fields that define identity.
+ *
+ *  When `sourceId` is supplied it is the ONLY identity input besides `source`:
+ *  a stable upstream ID already uniquely names the item, so folding in ts or
+ *  body text can only introduce false negatives when the upstream re-serializes
+ *  either one. Two items cannot legitimately share a (source, sourceId) pair,
+ *  so there is no false-positive risk in return. */
+export function canonicalHash({ source, sourceId = '', author = '', ts = '', text, type }) {
+  const canon = sourceId
+    ? `${source}\0id\0${String(sourceId).trim()}`
+    : `${source}\0${author}\0${normalizeTs(ts)}\0${normalizeTextForHash(text, { type })}`
   return crypto.createHash('sha256').update(canon).digest('hex')
 }
 
@@ -129,10 +165,11 @@ export function yamlScalar(value) {
   return PLAIN_SAFE.test(s) ? s : JSON.stringify(s.replace(/[\r\n]+/g, ' '))
 }
 
-export function buildFrontmatter({ source, author, ts, title, type, extraTags, hash }) {
+export function buildFrontmatter({ source, sourceId, author, ts, title, type, extraTags, hash }) {
   const lines = ['---']
   lines.push(`title: ${JSON.stringify(title)}`)
   lines.push(`source: ${yamlScalar(source)}`)
+  if (sourceId) lines.push(`source_id: ${yamlScalar(sourceId)}`)
   if (author) lines.push(`author: ${JSON.stringify(author)}`)
   lines.push(`captured_at: ${yamlScalar(ts)}`)
   if (type) lines.push(`type_hint: ${yamlScalar(type)}`)
@@ -151,10 +188,11 @@ export function buildBody(input) {
   const ts = normalizeTs(input.ts || new Date().toISOString())
   const text = (input.text ?? '').trim()
   const title = input.title || deriveTitle(text)
-  const hash = canonicalHash({ source: input.source, author: input.author, ts, text, type: input.type })
+  const hash = canonicalHash({ source: input.source, sourceId: input.sourceId, author: input.author, ts, text, type: input.type })
   const slug = slugify(title)
   const fm = buildFrontmatter({
     source: input.source,
+    sourceId: input.sourceId,
     author: input.author,
     ts,
     title,

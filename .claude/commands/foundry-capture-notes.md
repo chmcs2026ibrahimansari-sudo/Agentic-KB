@@ -18,8 +18,9 @@ Apple Notes is the right capture surface for thinking on the phone, in the car (
    - Fetch the note body via `mcp__Read_and_Write_Apple_Notes__get_note_content`.
    - Detect a leading type hint on the title or first line (`transcript:`, `paper:`, `thread:`, `note:`); strip and pass as `--type`.
    - Use the note's title as `--title`, modification date as `--ts`.
+   - **Pass the note's `id` from `list_notes` as `--source-id`** (the `x-coredata://…/ICNote/pNNNN` value). This is the dedup key — without it the hash falls back to ts+body, which drifts between pulls and re-stages the same note every run.
    - Write body to a temp file (`mktemp`) to avoid shell-quoting hell.
-   - Call `node scripts/lib/clipping-write.mjs --source apple-notes --title <note-title> --ts <iso> --text-file <tmp> [--type <hint>]`.
+   - Call `node scripts/lib/clipping-write.mjs --source apple-notes --source-id <note-id> --title <note-title> --ts <iso> --text-file <tmp> [--type <hint>]`.
 4. Report `{written, skipped-as-duplicate, errors}` with file paths.
 5. Suggest `/foundry-ingest` next.
 

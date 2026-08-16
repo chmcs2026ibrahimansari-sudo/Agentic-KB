@@ -32,6 +32,24 @@ import { pinMatches } from '@/lib/pin'
 export const dynamic = 'force-dynamic'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+/** Concatenate every text block in a response.
+ *
+ *  Reading `content[0].text` assumes the first block is the text block. That
+ *  is not guaranteed: a response may lead with a non-text block (thinking,
+ *  tool_use), in which case the old code silently yielded '' — the call had
+ *  succeeded, nothing threw, and the caller reported "LLM returned no valid
+ *  JSON". That misattributes a response-parsing bug to the model and skips
+ *  every document, which is exactly how compile came to skip 13/13 docs on
+ *  2026-08-16 while the identical request issued by hand returned valid JSON.
+ *  Filtering for text blocks is correct regardless of what precedes them. */
+function textOf(res: Anthropic.Message): string {
+  return res.content
+    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+    .map((b) => b.text)
+    .join('')
+}
+
 const PRIVATE_PIN = process.env.PRIVATE_PIN || ''
 const COMPILED_LOG = 'raw/.compiled-log.json'
 
@@ -268,8 +286,7 @@ Rules:
               max_tokens: 2048,
               messages: [{ role: 'user', content: analysisPrompt }],
             })
-            const analysisText = analysisResponse.content[0].type === 'text'
-              ? analysisResponse.content[0].text : ''
+            const analysisText = textOf(analysisResponse)
             const analysisJson = analysisText.match(/\{[\s\S]*\}/)
             if (analysisJson) {
               analysis = JSON.parse(analysisJson[0]) as KnowledgeAnalysis
@@ -338,7 +355,7 @@ Rules:
               system: systemPrompt,
               messages: [{ role: 'user', content: genPrompt }],
             })
-            responseText = genResponse.content[0].type === 'text' ? genResponse.content[0].text : ''
+            responseText = textOf(genResponse)
           } catch (err) {
             send({ type: 'error', file: relFile, message: String(err) }); continue
           }

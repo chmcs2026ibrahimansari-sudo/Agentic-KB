@@ -19,7 +19,8 @@ Why Apple Notes and not the Snipd email export? Apple Notes is already a first-c
    - Parse Snipd's structure: the title is typically the show/episode title; the body contains a timestamped quote followed by a takeaway. Both are preserved verbatim — do NOT reformat.
    - Use the note's title as `--title`, modification date as `--ts`.
    - Write body to a temp file (`mktemp`).
-   - Call `node scripts/lib/clipping-write.mjs --source snipd --title <note-title> --ts <iso> --text-file <tmp> --type transcript-clip --extra-tag podcast --extra-tag snipd`.
+   - Pass the note's `id` from `list_notes` as `--source-id` — it is the dedup key, and without it the ts+body fallback re-stages the same clip on every pull.
+   - Call `node scripts/lib/clipping-write.mjs --source snipd --source-id <note-id> --title <note-title> --ts <iso> --text-file <tmp> --type transcript-clip --extra-tag podcast --extra-tag snipd`.
 4. Report `{written, skipped-as-duplicate, errors}` with file paths.
 5. Suggest `/foundry-ingest` next.
 

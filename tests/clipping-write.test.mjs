@@ -75,6 +75,41 @@ describe('canonicalHash', () => {
     const b = canonicalHash({ source: 'apple-notes', ts: '2026-05-16T08:40:32.000Z', text: 'body' })
     assert.equal(a, b)
   })
+  it('is identical for the same source-id regardless of ts or body drift', () => {
+    // The 10-duplicate bug: the same Apple Note re-pulled under a different
+    // timezone reading AND with re-serialized markup produced a new hash every
+    // time. A stable upstream ID collapses all of those back to one identity.
+    const a = canonicalHash({
+      source: 'apple-notes',
+      sourceId: 'x-coredata://ABC/ICNote/p5325',
+      ts: '2026-05-16T08:40:32Z',
+      text: 'body',
+    })
+    const b = canonicalHash({
+      source: 'apple-notes',
+      sourceId: 'x-coredata://ABC/ICNote/p5325',
+      ts: '2026-05-16T15:40:32Z',
+      text: 'body\n\n  re-serialized   spacing ',
+    })
+    assert.equal(a, b)
+  })
+  it('differs for different source-ids even with identical bodies', () => {
+    const a = canonicalHash({ source: 'apple-notes', sourceId: 'p1', text: 'same' })
+    const b = canonicalHash({ source: 'apple-notes', sourceId: 'p2', text: 'same' })
+    assert.notEqual(a, b)
+  })
+  it('does not collide a source-id hash with a content hash', () => {
+    const withId = canonicalHash({ source: 'apple-notes', sourceId: 'p1', text: 'x' })
+    const without = canonicalHash({ source: 'apple-notes', text: 'x' })
+    assert.notEqual(withId, without)
+  })
+  it('ignores whitespace and markup drift in the no-source-id fallback', () => {
+    // CRLF, non-breaking spaces, zero-width joiners and blank-line runs all
+    // come from HTML-to-text conversion, not from the author.
+    const a = canonicalHash({ source: 'apple-notes', text: 'one two\n\nthree' })
+    const b = canonicalHash({ source: 'apple-notes', text: 'one  two\r\n\r\n\r\nthree​  ' })
+    assert.equal(a, b)
+  })
   it('strips a leading <type>: prefix line when --type matches', () => {
     // apple-notes sometimes passes 'paper: foo' as text, sometimes 'foo' with
     // the prefix already stripped by the caller. Hash should be identical

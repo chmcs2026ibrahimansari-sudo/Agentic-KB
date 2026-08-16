@@ -36,6 +36,14 @@ updated: 2026-04-10
 - [[patterns/pattern-agent-as-ui-system-of-record-backend]] — Agent as cross-system UI while GitHub/tasks/docs/vaults remain authoritative backends
 - [[patterns/pattern-outcome-metrics-for-agent-adoption]] — Separate adoption telemetry from artifact, quality, flow, and business outcome movement
 
+> **Scope note — "graduation" is an org-layer idea, not a runtime-layer one.** (Logged 2026-08-16 as contradiction (D); resolved here rather than by editing either page.)
+>
+> [[patterns/pattern-embedded-graduation-model]] argues that central expertise should dissolve itself: experts embed with a team, build capability, then graduate the team to independence. [[patterns/pattern-supervisor-worker]] and [[patterns/pattern-plan-execute-verify]] assume the opposite — a supervisor/planner/verifier that is a permanent architectural fixture.
+>
+> These do not conflict, because they govern different layers. Graduation applies to **humans depending on a central platform team**; the supervisor applies to **a running system's control flow**. A team can graduate to full independence and still run a supervisor-worker topology forever — the supervisor is part of the thing they now own, not the dependency they were freed from.
+>
+> The reading to avoid: extending "graduate to independence" into "remove the orchestrator agent." Dissolving a supervisor because the team matured is a category error — it removes runtime error-handling and retry semantics to solve an organizational problem that was never runtime-shaped.
+
 ---
 
 ## Frameworks

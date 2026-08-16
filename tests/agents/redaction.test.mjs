@@ -87,3 +87,19 @@ test('redaction: one invalid custom rule does not drop the others', () => {
   const r = redact('BEFORE and AFTER', rules)
   assert.equal(r.redacted, '[GOOD-BEFORE] and [GOOD-AFTER]')
 })
+
+test('redaction placeholders do not swallow the following separator', () => {
+  // The credit-card rule's trailing optional [ -] used to eat the space after
+  // the match, gluing the placeholder to the next word in every redacted doc.
+  const cases = [
+    ['Timestamp 1755331200000 in the log', 'Timestamp [CARD] in the log'],
+    ['card 4111 1111 1111 1111 ok', 'card [CARD] ok'],
+    ['card 4111-1111-1111-1111 ok', 'card [CARD] ok'],
+    ['Call me at 555-123-4567 tomorrow', 'Call me at [PHONE] tomorrow'],
+    ['ssn 123-45-6789 filed', 'ssn [SSN] filed'],
+    ['mail a@b.co now', 'mail [EMAIL] now'],
+  ]
+  for (const [input, expected] of cases) {
+    assert.equal(redactDefault(input).redacted, expected, input)
+  }
+})

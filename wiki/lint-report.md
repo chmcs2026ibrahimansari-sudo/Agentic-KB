@@ -1,13 +1,13 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-15 14:07 | Vault: Agentic-KB | Pages scanned: 693
+> Generated: 2026-08-16 14:07 | Vault: Agentic-KB | Pages scanned: 690
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 59 | 🟡 Medium |
+| Orphaned pages | 58 | 🟡 Medium |
 | Stale pages | 284 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
@@ -67,7 +67,6 @@
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18
 - `syntheses/synthesis-provenance-freshness-infrastructure.md` — Delta Tracking and Provenance Tagging Operationalize the Freshness Policy
 - `syntheses/synthesis-repo-aware-system-implementation.md` — Repo-Aware Knowledge & Agent Memory System — Implementation Summary
-- `syntheses/synthesis-skillopt-pow-writeback.md` — SkillOpt as the Write-Back Mechanism for the Proof-of-Work Loop
 - `system/reports/static-lint-2026-04-25.md` — Static Wiki Lint — 2026-04-25
 - `system/reports/tier-leak-audit-2026-04-25.md` — Tier Read-Leak Audit — 2026-04-25
 - `system/reports/tier-leak-audit-2026-04-26.md` — Tier Read-Leak Audit — 2026-04-26

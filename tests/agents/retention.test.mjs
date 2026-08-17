@@ -57,6 +57,23 @@ test('runBusTTL archives only stale, unpinned, non-terminal items', () => {
   assert.ok(fs.existsSync(pinnedFull))
 })
 
+test('runBusTTL skips items with a missing created_at', () => {
+  // `Date.parse(undefined || 0)` resolves to 2000-01-01, so an undated item
+  // used to read as 26 years old and got unlinked off the bus on the first
+  // TTL sweep. A missing date must be treated as unknown, not ancient.
+  const root = makeRoot()
+  const item = publishBusItem(root, { channel: 'discovery', from: 'w1', body: 'undated' })
+  const full = path.join(root, item.path)
+  const { data, content } = parseFrontmatter(fs.readFileSync(full, 'utf8'))
+  delete data.created_at
+  fs.writeFileSync(full, serializeFrontmatter(data, content))
+
+  const { archived } = runBusTTL(root, { ttlDays: 30 })
+
+  assert.equal(archived.length, 0)
+  assert.ok(fs.existsSync(full))
+})
+
 test('runBusTTL skips items with unparseable created_at', () => {
   const root = makeRoot()
   const item = publishBusItem(root, { channel: 'discovery', from: 'w1', body: 'no date' })

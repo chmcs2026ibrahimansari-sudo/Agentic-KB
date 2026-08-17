@@ -1,14 +1,14 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-16 14:07 | Vault: Agentic-KB | Pages scanned: 690
+> Generated: 2026-08-17 14:24 | Vault: Agentic-KB | Pages scanned: 715
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 58 | 🟡 Medium |
-| Stale pages | 284 | 🟡 Medium |
+| Orphaned pages | 68 | 🟡 Medium |
+| Stale pages | 293 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
 ## 🟡 Orphaned Pages (no inbound links)
@@ -19,10 +19,12 @@
 - `agents/leads/planning-agent/domain-standards.md` — Planning Agent — Domain Standards
 - `agents/leads/sofie/weekly-digest.md` — KB Digest — 2026-04-10
 - `candidates.md` — Compile Candidates
+- `concepts/agentic-sdlc.md` — Agentic SDLC
 - `concepts/capture-pipeline.md` — Capture Pipeline (foundry-capture)
 - `concepts/compile-once-knowledge.md` — Compile-Once Knowledge (LLM Wiki Pattern)
 - `concepts/frontend-code-review-skill.md` — Frontend Code Review Skill
 - `concepts/frontend-testing.md` — Frontend Testing with Vitest & React Testing Library
+- `concepts/html-as-agent-output-format.md` — HTML as an Agent Output Format
 - `concepts/mysql-innodb-best-practices.md` — MySQL / InnoDB Best Practices
 - `concepts/postgresql-operations.md` — PostgreSQL Operations Reference
 - `concepts/react-nextjs-performance.md` — React & Next.js Performance Optimization
@@ -35,10 +37,16 @@
 - `daily-systems/logs/2026-08-12.md` — 2026-08-12
 - `daily-systems/logs/2026-08-13.md` — 2026-08-13
 - `daily-systems/logs/2026-08-14.md` — 2026-08-14
+- `entities/gsd-ui-checker.md` — GSD UI Checker
 - `entities/hermes-agent.md` — Hermes Agent
+- `frameworks/agent-orchestrator.md` — Agent Orchestrator (Untrivial-ai)
 - `frameworks/headroom.md` — Headroom
+- `frameworks/openconnector.md` — OpenConnector (OOMOL)
+- `patterns/pattern-filesystem-context.md` — Filesystem-Based Context Pattern
+- `patterns/pattern-forward-deployed-engineering.md` — Forward Deployed Engineering for Production AI Agents
 - `patterns/pattern-morning-review.md` — Morning-Review Pipeline
 - `patterns/pattern-playwright-e2e.md` — Playwright E2E Testing Pattern
+- `patterns/pattern-raw-inbox-workflow.md` — Raw Inbox Workflow
 - `patterns/pattern-react-component-refactoring.md` — React Component Refactoring
 - `recipes/five-agent-business-ops.md` — Five-Agent Business Operations System
 - `recipes/obsidian-smart-vault-setup.md` — Obsidian Smart Vault: Automated Capture-to-Insight Pipeline
@@ -63,7 +71,9 @@
 - `reports/2026-08-12-nightly-ci-analysis.md` — 2026-08-12-nightly-ci-analysis
 - `reports/2026-08-13-nightly-ci-analysis.md` — 2026-08-13-nightly-ci-analysis
 - `reports/2026-08-14-nightly-ci-analysis.md` — 2026-08-14-nightly-ci-analysis
+- `summaries/summary-garrytan-meta-meta-prompting.md` — Meta-Meta-Prompting: The Secret to Making AI Agents Work
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
+- `summaries/summary-langchain-rag-from-scratch.md` — RAG From Scratch (LangChain AI)
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18
 - `syntheses/synthesis-provenance-freshness-infrastructure.md` — Delta Tracking and Provenance Tagging Operationalize the Freshness Policy
 - `syntheses/synthesis-repo-aware-system-implementation.md` — Repo-Aware Knowledge & Agent Memory System — Implementation Summary
@@ -110,6 +120,7 @@
 - `concepts/benchmark-design.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/capture-pipeline.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/chain-of-thought.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/claude-md-pattern.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/compile-once-knowledge.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/contradiction-handling-in-knowledge-bases.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/cost-optimization.md` — last updated: Wed Jun 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -117,13 +128,13 @@
 - `concepts/daily-note-template.md` — last updated: Mon Apr 20 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/enterprise-ai-governance.md` — last updated: Sun Apr 05 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/few-shot-prompting.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `concepts/foundry-capture-pipeline.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/frontend-code-review-skill.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/frontend-testing.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/goal-backward-verification.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/goal-vs-task-completion.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/gstack.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/guardrails.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/html-as-agent-output-format.md` — last updated: Thu May 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/human-in-the-loop.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/hybrid-retrieval.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/ingest-pipeline.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -153,6 +164,7 @@
 - `concepts/postgresql-operations.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/prd-creation-skill.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/prd-to-json-conversion.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/progressive-disclosure.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/query-pipeline.md` — last updated: Tue Apr 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/rag-systems.md` — last updated: Thu Apr 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/react-nextjs-performance.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -161,6 +173,7 @@
 - `concepts/sandboxed-execution.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/self-critique.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/server-sent-events-streaming.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/skill-optimization.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/skills.md` — last updated: Wed Jun 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/solo-founder-ai-leverage.md` — last updated: Fri Jul 10 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/source-trust-tiers.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -177,7 +190,7 @@
 - `daily-systems/index.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `decisions/README.md` — last updated: Sun Apr 19 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/agentlayer.md` — last updated: Sun Apr 05 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `entities/andrej-karpathy.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `entities/andrej-karpathy.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/anthropic.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/garry-tan.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/hermes-agent.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -201,7 +214,9 @@
 - `frameworks/gbrain.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/headroom.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/inspect-ai.md` — last updated: Fri Apr 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `frameworks/langsmith.md` — last updated: Fri Apr 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/promptfoo.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `frameworks/skillopt.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `home.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `mocs/advanced-techniques.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `mocs/automation.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -221,6 +236,7 @@
 - `patterns/layer-evidence-verification.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/llm-wiki-pattern.md` — last updated: Wed Jun 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-agent-proof-of-work-loop.md` — last updated: Fri May 29 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `patterns/pattern-agent-skill-authoring.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-anchored-iterative-summarization.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-architecture-decision-record.md` — last updated: Tue Apr 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-clarification-task.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -327,7 +343,10 @@
 - `summaries/nate-herk-llm-wiki.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/nvidia-gtc-2026-agentic-enterprise.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/private-test-note.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `summaries/summary-farzapedia-personal-wiki.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/summary-gsd-project-researcher.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `summaries/summary-karpathy-llm-wiki.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `summaries/summary-langchain-rag-from-scratch.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/vault-3tier-architecture.md` — last updated: Wed Apr 08 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `syntheses/lint-2026-04-06.md` — last updated: Sun Apr 05 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `syntheses/lint-2026-04-12.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)

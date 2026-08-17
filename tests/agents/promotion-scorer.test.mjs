@@ -183,6 +183,21 @@ test('checkContradictions escalates to confirmed on negation + opposing pair', (
   assert.equal(r.status, 'confirmed')
 })
 
+test('a self-contained negation does not escalate to confirmed on its own', () => {
+  // _hasStrongConflict used to read the candidate's own body twice, so any
+  // prose carrying a negation plus both halves of an opposing pair confirmed
+  // itself against a page it merely shared title words with — and 'confirmed'
+  // hard-blocks canonical promotion.
+  const root = makeRoot()
+  fs.mkdirSync(path.join(root, 'wiki'), { recursive: true })
+  fs.writeFileSync(path.join(root, 'wiki/hot.md'), 'Notes about formatting everywhere with prettier.\n')
+  const r = checkContradictions(root, candidate({
+    title: 'Formatting everywhere with prettier',
+    body: 'Do not skip this: always run the formatter, never commit unformatted code.',
+  }))
+  assert.equal(r.status, 'suspected', JSON.stringify(r))
+})
+
 test('checkContradictions returns none when nothing overlaps', () => {
   const root = makeRoot()
   const r = checkContradictions(root, candidate({ title: 'Entirely unrelated topic', body: 'benign' }))

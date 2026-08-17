@@ -327,3 +327,19 @@ describe('yamlScalar', () => {
     assert.equal(yamlScalar('a\nb'), '"a b"')
   })
 })
+
+// ─── Module import must not run the CLI ───────────────────────────────────
+
+describe('clipping-write module import', () => {
+  it('does not run the CLI or exit the host', () => {
+    // isMain used path.basename(process.argv[1] || '') with an endsWith check,
+    // and ''.endsWith('') is true — so with no argv[1] (node -e, --eval, REPL,
+    // loader/worker contexts) a plain import ran the CLI with empty args and
+    // called process.exit(1) on its importer.
+    const mod = new URL('../scripts/lib/clipping-write.mjs', import.meta.url).href
+    const r = spawnSync(process.execPath, ['-e', `import(${JSON.stringify(mod)}).then(() => console.log('IMPORT_OK'))`], { encoding: 'utf8' })
+    assert.equal(r.status, 0, `import exited ${r.status}: ${r.stderr}`)
+    assert.match(r.stdout, /IMPORT_OK/)
+    assert.doesNotMatch(r.stderr, /--source is required/)
+  })
+})

@@ -43,7 +43,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import crypto from 'node:crypto'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const CLIPPINGS = path.join(REPO, 'raw/clippings')
@@ -253,9 +253,20 @@ export async function writeClipping(input) {
 
 // ─── CLI entry ───────────────────────────────────────────────────────────────
 
+// Compare resolved file URLs. The old check had two holes:
+//   - `file://${process.argv[1]}` is not a correctly encoded file URL (spaces,
+//     '#', non-ASCII), so a valid direct invocation could miss.
+//   - the endsWith fallback used path.basename(process.argv[1] || ''), and
+//     ''.endsWith('') is true — so with no argv[1] at all (node -e, --eval,
+//     the REPL, some loader/worker contexts) isMain was true. Merely
+//     *importing* this module then ran the CLI with empty args, printed
+//     "error: --source is required", and called process.exit(1) on its host.
 const isMain = (() => {
-  try { return import.meta.url === `file://${process.argv[1]}` || import.meta.url.endsWith(path.basename(process.argv[1] || '')) }
-  catch { return false }
+  try {
+    const entry = process.argv[1]
+    if (!entry) return false
+    return import.meta.url === pathToFileURL(entry).href
+  } catch { return false }
 })()
 
 if (isMain) {

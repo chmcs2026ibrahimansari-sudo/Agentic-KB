@@ -730,3 +730,31 @@ test('an oversized canonical doc is skipped, not treated as end-of-list', () => 
   )
   assert.ok(!paths.includes('wiki/repos/test-repo/canonical/b-huge.md'))
 })
+
+test('broadcast repo bus items are delivered; terminal ones are not', () => {
+  // publishRepoBusItem stores `to: to || null`, so broadcast is the default.
+  // An unconditional `meta.to === agent_id` filter meant the repo discovery
+  // channel delivered nothing unless a recipient was named.
+  const root = makeFixture()
+  const broadcast = repoRt.publishRepoBusItem(root, 'test-repo', {
+    channel: 'discovery', from: 'l1', body: 'Everyone should know this',
+  })
+  const addressed = repoRt.publishRepoBusItem(root, 'test-repo', {
+    channel: 'escalation', from: 'l1', to: 'w1', body: 'For w1 only',
+  })
+  const forSomeoneElse = repoRt.publishRepoBusItem(root, 'test-repo', {
+    channel: 'escalation', from: 'l1', to: 'w2', body: 'Not for w1',
+  })
+  const done = repoRt.publishRepoBusItem(root, 'test-repo', {
+    channel: 'discovery', from: 'l1', body: 'Already handled',
+  })
+  repoRt.transitionRepoBusItem(root, 'test-repo', 'discovery', done.id, 'resolved', 'l1')
+
+  const result = repoRt.loadRepoContext(root, 'test-repo', { agent_id: 'w1', budget_bytes: 50000 })
+  const paths = result.files.map(f => f.path)
+
+  assert.ok(paths.includes(broadcast.path), `broadcast not delivered: ${JSON.stringify(paths)}`)
+  assert.ok(paths.includes(addressed.path))
+  assert.ok(!paths.includes(forSomeoneElse.path), 'another agent\'s item must not be delivered')
+  assert.ok(!paths.includes(done.path), 'resolved items must not stay in the bundle forever')
+})

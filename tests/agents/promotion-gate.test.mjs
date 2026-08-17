@@ -72,3 +72,46 @@ test('a cleared candidate still promotes', () => {
   assert.notEqual(result.blocked, true)
   assert.ok(fs.existsSync(path.join(root, 'wiki/system/bus/standards/promoted-disc-0002.md')))
 })
+
+// ─── Approver tier gate ────────────────────────────────────────────────────
+
+function writeContract(root, agentId, body) {
+  const dir = path.join(root, 'config/agents')
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(path.join(dir, `${agentId}.yaml`), body)
+}
+
+test('a worker-tier approver is rejected by the tier gate', () => {
+  const root = makeFixture()
+  writeBusItem(root, 'disc-0003')
+  writeContract(root, 'w1', 'agent_id: w1\ntier: worker\ndomain: eng\nallowed_writes: []\n')
+
+  assert.throws(
+    () => promoteDiscovery(root, { channel: 'discovery', id: 'disc-0003', approver: 'w1', contract: CONTRACT }),
+    /does not meet minimum tier requirement/,
+  )
+})
+
+test('an approver whose contract fails to load is rejected, not treated as human', () => {
+  // The old catch-all could not tell "no contract" from "broken contract", so
+  // an agent whose YAML had a typo was reclassified as a human approver and
+  // skipped min_approver_tier entirely.
+  const root = makeFixture()
+  writeBusItem(root, 'disc-0004')
+  writeContract(root, 'w2', 'agent_id: w2\ntier: worker\n  bad: [indent\n')
+
+  assert.throws(
+    () => promoteDiscovery(root, { channel: 'discovery', id: 'disc-0004', approver: 'w2', contract: CONTRACT }),
+    /could not be loaded/,
+  )
+})
+
+test('an approver with no contract file at all is still treated as human', () => {
+  const root = makeFixture()
+  writeBusItem(root, 'disc-0005')
+  // 'jay' has no contract — must not throw on the approver check.
+  const result = promoteDiscovery(root, {
+    channel: 'discovery', id: 'disc-0005', approver: 'jay', contract: CONTRACT,
+  })
+  assert.equal(result.blocked, true) // blocked by the scorer, not the approver gate
+})

@@ -709,3 +709,24 @@ test('transitionRepoBusItem records string actor and optional promotion provenan
   assert.equal(last.actor, 'l1', 'actor must be the approver string, not an object')
   assert.equal(last.to, 'promoted')
 })
+
+test('an oversized canonical doc is skipped, not treated as end-of-list', () => {
+  // The canonical loop used `break` where every other budget check in
+  // loadRepoContext skips and continues, so one file larger than the
+  // remaining budget dropped every alphabetically later canonical doc.
+  const root = makeFixture()
+  const canon = path.join(root, 'wiki/repos/test-repo/canonical')
+  fs.writeFileSync(path.join(canon, 'a-small.md'), '---\ntitle: A\n---\nsmall\n')
+  fs.writeFileSync(path.join(canon, 'b-huge.md'), '---\ntitle: B\n---\n' + 'x'.repeat(20000) + '\n')
+  fs.writeFileSync(path.join(canon, 'c-small.md'), '---\ntitle: C\n---\nsmall\n')
+
+  const result = repoRt.loadRepoContext(root, 'test-repo', { agent_id: 'w1', budget_bytes: 4096 })
+  const paths = result.files.map(f => f.path)
+
+  assert.ok(paths.includes('wiki/repos/test-repo/canonical/a-small.md'))
+  assert.ok(
+    paths.includes('wiki/repos/test-repo/canonical/c-small.md'),
+    `c-small.md dropped behind the oversized doc: ${JSON.stringify(paths)}`,
+  )
+  assert.ok(!paths.includes('wiki/repos/test-repo/canonical/b-huge.md'))
+})

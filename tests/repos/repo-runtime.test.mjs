@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
+import { spawn } from 'node:child_process'
 
 import * as repoRt from '../../lib/repo-runtime/index.mjs'
 import * as agentRt from '../../lib/agent-runtime/index.mjs'
@@ -757,4 +758,47 @@ test('broadcast repo bus items are delivered; terminal ones are not', () => {
   assert.ok(paths.includes(addressed.path))
   assert.ok(!paths.includes(forSomeoneElse.path), 'another agent\'s item must not be delivered')
   assert.ok(!paths.includes(done.path), 'resolved items must not stay in the bundle forever')
+})
+
+test('appendRepoProgress serialises against a concurrent holder of the repo lock', () => {
+  // closeRepoTask wraps its identical read-modify-write of progress.md in
+  // withLock(kbRoot, `repo:<name>`); this exported twin committed bare, so a
+  // racing writer's entry was replaced wholesale by the atomic rename.
+  const root = makeFixture()
+  const progressFull = path.join(root, 'wiki/repos/test-repo/progress.md')
+  fs.mkdirSync(path.dirname(progressFull), { recursive: true })
+
+  const HOLD_MS = 500
+  const locksMod = new URL('../../lib/agent-runtime/locks.mjs', import.meta.url).href
+  // Child process holds repo:test-repo, writes the first entry, then releases.
+  const child = spawn(process.execPath, ['-e', `
+    import(${JSON.stringify(locksMod)}).then(async ({ acquireLock }) => {
+      const lock = acquireLock(${JSON.stringify(root)}, 'repo:test-repo')
+      require('fs').writeFileSync(${JSON.stringify(progressFull)}, '---\\nrepo: test-repo\\n---\\n\\n## first entry\\n')
+      console.log('HELD')
+      setTimeout(() => { lock.release(); process.exit(0) }, ${HOLD_MS})
+    })
+  `], { stdio: ['ignore', 'pipe', 'pipe'] })
+
+  try {
+    // Wait (busy, on purpose — withLock below blocks the loop anyway) until
+    // the child reports it holds the lock.
+    const lockFile = path.join(root, '.locks', 'repo_test-repo.lock')
+    const deadline = Date.now() + 5000
+    while (!fs.existsSync(lockFile) && Date.now() < deadline) {
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 10)
+    }
+    assert.ok(fs.existsSync(lockFile), 'child never acquired the lock')
+
+    const started = Date.now()
+    repoRt.appendRepoProgress(root, 'test-repo', 'second entry', 'w1')
+    const waited = Date.now() - started
+
+    assert.ok(waited >= HOLD_MS / 2, `appendRepoProgress did not wait for the lock (${waited}ms)`)
+    const content = fs.readFileSync(progressFull, 'utf8')
+    assert.match(content, /first entry/, "the lock holder's content survived")
+    assert.match(content, /second entry/)
+  } finally {
+    child.kill()
+  }
 })

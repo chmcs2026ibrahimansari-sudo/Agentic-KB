@@ -54,6 +54,44 @@ test('evidence score is asymptotic: 0 → 0, 1 → 0.5, 2 → 0.75', () => {
   assert.equal(e2.breakdown.evidence, 0.75)
 })
 
+// ─── Freshness on cited sources ─────────────────────────────────────────
+
+test('cited sources that do not exist score 0 freshness, not 1.0', () => {
+  const root = makeRoot()
+  // getAgeInDays returns 0 for an unstattable path ("treat as fresh"), so a
+  // phantom citation used to bank a perfect 1.00 on 0.20 of the score.
+  const phantom = scorePromotion(root, candidate({
+    related_sources: ['wiki/concepts/never-written.md'],
+  }))
+  assert.equal(phantom.breakdown.freshness, 0)
+  assert.ok(phantom.reasons.some(r => /do not exist/.test(r)))
+
+  fs.mkdirSync(path.join(root, 'wiki/concepts'), { recursive: true })
+  fs.writeFileSync(
+    path.join(root, 'wiki/concepts/real.md'),
+    `---\nupdated: ${new Date().toISOString()}\n---\n\nbody\n`,
+  )
+  const real = scorePromotion(root, candidate({ related_sources: ['wiki/concepts/real.md'] }))
+  assert.ok(real.breakdown.freshness > 0.9, `expected fresh, got ${real.breakdown.freshness}`)
+})
+
+test('the canonical freshness gate fails on a source that is not on disk', () => {
+  const root = makeRoot()
+  const r = scorePromotion(root, candidate({
+    memory_class: 'canonical',
+    evidence_count: 8,
+    confidence: 'high',
+    related_sources: ['wiki/concepts/never-written.md'],
+  }), {
+    targetPath: 'wiki/concepts/new-page.md',
+    explicitApproval: true,
+    contract: { agent_id: 'a1', tier: 'lead', governance_policy: { freshness_required_for_canonical: true } },
+  })
+
+  assert.notEqual(r.decision, DECISIONS.CANONICAL)
+  assert.ok(r.reasons.some(r2 => /not found/.test(r2)), JSON.stringify(r.reasons))
+})
+
 // ─── Decision routing ───────────────────────────────────────────────────
 
 test('strong candidate with passing hard gates lands canonical', () => {

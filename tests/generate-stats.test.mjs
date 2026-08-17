@@ -87,3 +87,44 @@ describe('generate-stats', () => {
     assert.match(stats, /\| discovery \| 1 \|/)
   })
 })
+
+describe('generate-stats — orphan edge cases', () => {
+  let root2
+
+  function run2() {
+    const r = spawnSync(process.execPath, [SCRIPT, '--kb-root', root2], { encoding: 'utf8' })
+    assert.equal(r.status, 0, `script failed: ${r.stderr}`)
+    return r
+  }
+
+  before(() => {
+    root2 = fs.mkdtempSync(path.join(os.tmpdir(), 'kb-generate-stats-orphan-'))
+    const write = (rel, body) => {
+      const full = path.join(root2, 'wiki', rel)
+      fs.mkdirSync(path.dirname(full), { recursive: true })
+      fs.writeFileSync(full, `---\ntitle: ${path.basename(rel, '.md')}\ntype: concept\n---\n\n${body}\n`)
+    }
+    // narcissus links only to itself — nobody else links to it.
+    write('concepts/narcissus.md', 'See [[narcissus]] for more.')
+    write('concepts/lonely.md', 'No links at all.')
+  })
+
+  after(() => {
+    fs.rmSync(root2, { recursive: true, force: true })
+  })
+
+  it('a self-link does not rescue a page from the orphan list', () => {
+    run2()
+    const stats = fs.readFileSync(path.join(root2, 'wiki', 'stats.md'), 'utf8')
+    assert.match(stats, /\| Orphan pages \| 2 \|/)
+    assert.match(stats, /- \[\[concepts\/narcissus\]\]/)
+    assert.match(stats, /- \[\[concepts\/lonely\]\]/)
+  })
+
+  it('--kb-root with no value fails with a clear message', () => {
+    const r = spawnSync(process.execPath, [SCRIPT, '--kb-root'], { encoding: 'utf8' })
+    assert.equal(r.status, 1)
+    assert.match(r.stderr, /--kb-root requires a path argument/)
+    assert.doesNotMatch(r.stderr, /ERR_INVALID_ARG_TYPE/)
+  })
+})

@@ -12,6 +12,12 @@ import path from 'path'
 
 const args = process.argv.slice(2)
 const rootArg = args.indexOf('--kb-root')
+if (rootArg !== -1 && !args[rootArg + 1]) {
+  // path.join(undefined, 'wiki') throws a raw ERR_INVALID_ARG_TYPE two lines
+  // down; say what is actually wrong.
+  console.error('Error: --kb-root requires a path argument')
+  process.exit(1)
+}
 const KB_ROOT = rootArg !== -1 ? args[rootArg + 1] : path.resolve(import.meta.dirname, '..')
 const WIKI = path.join(KB_ROOT, 'wiki')
 const OUT  = path.join(WIKI, 'stats.md')
@@ -99,7 +105,12 @@ let highLinkPages = []
 let oldestAge = 0
 let newestAge = Infinity
 
-const linkTargets = new Set()
+// target key (lowercased page name or relative path) → set of pages linking
+// to it. A plain Set of targets counted a page's own [[self-link]] as an
+// inbound link, so any self-linking page was never reported as an orphan —
+// contradicting the section's own definition ("no inbound links from other
+// pages").
+const linkSources = new Map()
 const pageLinks = {}   // relPath → outbound link count
 
 for (const f of allWikiFiles) {
@@ -133,22 +144,32 @@ for (const f of allWikiFiles) {
 
   // Collect link targets for orphan detection
   const targets = content.match(/\[\[([^\]|#]+)/g) || []
-  for (const t of targets) linkTargets.add(t.replace('[[', '').trim().toLowerCase())
+  for (const t of targets) {
+    const key = t.replace('[[', '').trim().toLowerCase()
+    if (!linkSources.has(key)) linkSources.set(key, new Set())
+    linkSources.get(key).add(rel.toLowerCase())
+  }
 
   // High-link pages
   if (links >= 10) highLinkPages.push({ rel, links })
 }
 
 // Orphan detection: pages with no inbound links from other pages
-const allPageNames = allWikiFiles.map(f =>
-  path.basename(f, '.md').toLowerCase()
-)
+function linkedFromAnotherPage(key, selfRel) {
+  const sources = linkSources.get(key)
+  if (!sources) return false
+  for (const src of sources) if (src !== selfRel) return true
+  return false
+}
+
 for (const f of allWikiFiles) {
   const name = path.basename(f, '.md').toLowerCase()
   const rel = relPath(f)
+  const selfRel = rel.toLowerCase()
   // skip index, hot, log
   if (['index', 'hot', 'log', 'stats', 'recently-added', 'schema'].includes(name)) continue
-  if (!linkTargets.has(name) && !linkTargets.has(rel.replace('.md','').toLowerCase())) {
+  if (!linkedFromAnotherPage(name, selfRel) &&
+      !linkedFromAnotherPage(rel.replace('.md', '').toLowerCase(), selfRel)) {
     orphans.push(rel)
   }
 }

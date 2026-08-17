@@ -113,7 +113,7 @@ The repository includes extensive correctness and maintenance coverage around ar
 - file-descriptor safety
 - supply-chain pinning and install-script restrictions
 
-The latest maintenance cycle reports **432 passing tests**.
+The latest maintenance cycle reports **472 passing tests**.
 
 ## Relationship to autonomous software delivery
 

@@ -107,6 +107,20 @@ describe('graph-maintenance-scan', () => {
     assert.match(fail.stderr, /FAIL: briefing missing/)
   })
 
+  it('--verify-receipt reports a state file with no last_briefing', () => {
+    // path.join(REPO_ROOT, undefined) threw ERR_INVALID_ARG_TYPE, so a
+    // partial state file crashed the verifier on a stack trace instead of
+    // reporting the failure it exists to report.
+    run(['--write-receipt'])
+    const state = JSON.parse(fs.readFileSync(STATE(), 'utf8'))
+    delete state.last_briefing
+    fs.writeFileSync(STATE(), JSON.stringify(state, null, 2))
+
+    const fail = run(['--verify-receipt'], { expectStatus: 1 })
+    assert.match(fail.stderr, /FAIL: state has no last_briefing/)
+    assert.doesNotMatch(fail.stderr, /ERR_INVALID_ARG_TYPE/)
+  })
+
   it('exits 1 when the vault does not exist', () => {
     const r = spawnSync(process.execPath, [SCRIPT], {
       encoding: 'utf8',

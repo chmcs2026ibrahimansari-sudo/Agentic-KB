@@ -6,12 +6,17 @@
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
+import { fileURLToPath } from 'url'
 
 // KB_ROOT env override lets tests point the receipt/briefing writes at a
 // sandbox tree (same convention as candidates-ttl and compile-2source-gate).
 const REPO_ROOT = process.env.KB_ROOT
   ? path.resolve(process.env.KB_ROOT)
-  : path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
+  // fileURLToPath, not URL.pathname: pathname is percent-encoded, so a
+  // checkout under a directory with a space ("My Repos") resolved to a
+  // literal "My%20Repos" path and every receipt/briefing write landed in a
+  // freshly mkdir'd phantom tree. candidates-ttl.mjs already does this.
+  : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const VAULT_ROOT = process.env.OBSIDIAN_VAULT_ROOT || path.join(os.homedir(), 'Documents', 'Obsidian Vault')
 const STATE_PATH = path.join(REPO_ROOT, '.night-shift/state/graph-maintenance-state.json')
 const SKIP_DIRS = new Set(['.git', '.obsidian', 'assets', 'scripts', '99 - Templates'])
@@ -239,6 +244,14 @@ function verifyReceipt() {
     process.exit(1)
   }
   const briefingRel = state.last_briefing
+  // A state file from an older or partial run has no last_briefing;
+  // path.join(root, undefined) threw ERR_INVALID_ARG_TYPE and --verify-receipt
+  // exited on a raw stack trace instead of reporting the failure it exists to
+  // report.
+  if (typeof briefingRel !== 'string' || briefingRel.length === 0) {
+    console.error('FAIL: state has no last_briefing')
+    process.exit(1)
+  }
   const briefingAbs = path.join(REPO_ROOT, briefingRel)
   if (!fs.existsSync(briefingAbs)) {
     console.error(`FAIL: briefing missing: ${briefingRel}`)

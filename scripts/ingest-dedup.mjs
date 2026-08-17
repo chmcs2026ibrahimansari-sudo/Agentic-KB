@@ -124,10 +124,21 @@ async function main() {
     const hash = await hashFile(file)
     if (hashes[hash]) { skipped.push({ name, prev: hashes[hash].path }); continue }
     const sub = await detectType(name, file)
-    let target = path.join(await ensureRawSubdir(sub), name)
+    // Compute the destination without creating it: ensureRawSubdir ran before
+    // the DRY check, so --dry-run created every detected raw/<sub>/ directory.
+    let target = path.join(REPO, 'raw', sub, name)
     if (DRY) { ingested.push({ name, sub, target, hash }); continue }
-    if (ROUTE) target = await renameUnique(file, target)
-    hashes[hash] = { path: path.relative(REPO, target), at: new Date().toISOString() }
+    if (ROUTE) {
+      await ensureRawSubdir(sub)
+      target = await renameUnique(file, target)
+      // Only record the hash for a file that was actually routed. Without
+      // --route the file stays in the inbox, yet the ledger used to gain an
+      // entry pointing at a raw/<sub>/<name> that does not exist — and every
+      // later run, *including* one with --route, then skipped it forever on
+      // the hashes[hash] check above. One flagless run poisoned the whole
+      // inbox.
+      hashes[hash] = { path: path.relative(REPO, target), at: new Date().toISOString() }
+    }
     ingested.push({ name, sub, target, hash })
     if (!NO_INGEST && ROUTE) {
       const r = spawnSync('node', ['cli/kb.js', 'ingest-file', target], { cwd: REPO, stdio: 'inherit' })

@@ -92,3 +92,63 @@ describe('ingest-dedup routing', () => {
     assert.match(r.stdout, /Inbox is empty/)
   })
 })
+
+describe('ingest-dedup without --route', () => {
+  let root2
+
+  function runNoRoute(extraArgs = []) {
+    const r = spawnSync(process.execPath, [SCRIPT, '--no-ingest', ...extraArgs], {
+      encoding: 'utf8', env: { ...process.env, KB_ROOT: root2 },
+    })
+    assert.equal(r.status, 0, `script failed: ${r.stderr}`)
+    return r
+  }
+
+  function runRoute() {
+    const r = spawnSync(process.execPath, [SCRIPT, '--route', '--no-ingest'], {
+      encoding: 'utf8', env: { ...process.env, KB_ROOT: root2 },
+    })
+    assert.equal(r.status, 0, `script failed: ${r.stderr}`)
+    return r
+  }
+
+  before(() => {
+    root2 = fs.mkdtempSync(path.join(os.tmpdir(), 'kb-ingest-dedup-noroute-'))
+    fs.mkdirSync(path.join(root2, 'raw', 'clippings'), { recursive: true })
+  })
+
+  after(() => {
+    fs.rmSync(root2, { recursive: true, force: true })
+  })
+
+  it('a run without --route does not poison the ledger for a later routed run', () => {
+    // The hash used to be recorded even though the file was never moved, so
+    // every later run — including one with --route — skipped it forever on
+    // the ledger check and the file stayed in the inbox permanently.
+    fs.writeFileSync(path.join(root2, 'raw', 'clippings', 'note.md'), '# hello\n')
+
+    runNoRoute()
+    const ledgerPath = path.join(root2, 'raw', '.ingest-hashes.json')
+    if (fs.existsSync(ledgerPath)) {
+      const ledger = JSON.parse(fs.readFileSync(ledgerPath, 'utf8'))
+      assert.equal(Object.keys(ledger).length, 0, 'nothing was routed, so nothing may be recorded')
+    }
+    assert.ok(fs.existsSync(path.join(root2, 'raw', 'clippings', 'note.md')), 'file stays in the inbox')
+
+    runRoute()
+    assert.ok(fs.existsSync(path.join(root2, 'raw', 'articles', 'note.md')), 'the routed run still picks it up')
+  })
+
+  it('--dry-run does not create raw/ subdirectories', () => {
+    fs.writeFileSync(path.join(root2, 'raw', 'clippings', 'transcript-of-call.md'), 'we talked\n')
+    assert.equal(fs.existsSync(path.join(root2, 'raw', 'transcripts')), false)
+
+    runNoRoute(['--dry-run'])
+
+    assert.equal(
+      fs.existsSync(path.join(root2, 'raw', 'transcripts')),
+      false,
+      'a dry run must not touch the filesystem',
+    )
+  })
+})

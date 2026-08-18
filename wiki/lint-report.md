@@ -1,13 +1,13 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-17 14:24 | Vault: Agentic-KB | Pages scanned: 715
+> Generated: 2026-08-18 14:22 | Vault: Agentic-KB | Pages scanned: 712
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 68 | 🟡 Medium |
+| Orphaned pages | 69 | 🟡 Medium |
 | Stale pages | 293 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
@@ -37,6 +37,7 @@
 - `daily-systems/logs/2026-08-12.md` — 2026-08-12
 - `daily-systems/logs/2026-08-13.md` — 2026-08-13
 - `daily-systems/logs/2026-08-14.md` — 2026-08-14
+- `daily-systems/logs/2026-08-17.md` — 2026-08-17
 - `entities/gsd-ui-checker.md` — GSD UI Checker
 - `entities/hermes-agent.md` — Hermes Agent
 - `frameworks/agent-orchestrator.md` — Agent Orchestrator (Untrivial-ai)

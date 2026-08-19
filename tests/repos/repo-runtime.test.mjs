@@ -835,7 +835,13 @@ test('appendRepoProgress serialises against a concurrent holder of the repo lock
   const progressFull = path.join(root, 'wiki/repos/test-repo/progress.md')
   fs.mkdirSync(path.dirname(progressFull), { recursive: true })
 
-  const HOLD_MS = 500
+  // Must stay well under acquireLock's default give-up budget
+  // (retries * retryDelayMs = 10 * 50 = 500ms). Holding for exactly 500ms put
+  // the waiter's deadline and the holder's release at the same instant, so on
+  // a loaded machine appendRepoProgress lost the race and threw
+  // "lock busy: repo:test-repo" — a flaky failure of a test that is only
+  // meant to prove the call serialises at all.
+  const HOLD_MS = 200
   const locksMod = new URL('../../lib/agent-runtime/locks.mjs', import.meta.url).href
   // Child process holds repo:test-repo, writes the first entry, then releases.
   const child = spawn(process.execPath, ['-e', `

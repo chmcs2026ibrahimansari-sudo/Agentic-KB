@@ -1,38 +1,29 @@
 ---
-id: 01KNNVX2QNRXD9HHWP1VAX9WWE
+id: 01M06A09PQ5J3JE2V4HMAG4VY7
 title: "Andrej Karpathy"
 type: entity
-tags: [research, llm, knowledge-base, agents]
-created: 2025-01-01
-updated: 2026-04-07
+tags: [research, agents, entities, claude]
+created: 2026-05-23
+updated: 2026-05-23
 visibility: public
-confidence: high
-related: [concepts/llm-wiki, patterns/pattern-llm-wiki, entities/openai]
-source: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+confidence: medium
+related: [claude-md-pattern]
+source: x-twitter (karpathy-claude-md-hits-100k-stars-on-github-trending)
 ---
 
-# [[andrej-karpathy]]
+# Andrej Karpathy
 
-AI researcher and educator. Formerly at [[openai]] (co-founder) and Tesla (Director of AI). Known for influential educational content on deep learning and LLMs.
+Andrej Karpathy is an AI researcher (noted in this source's framing as an OpenAI co-founder) widely followed for distilling practical, high-signal thinking about building software with AI. He recurs in the KB as a source of influential frameworks-of-thought rather than shipped products.
 
-## Relevance to Agentic KB
+## Notable Contributions Referenced in Captured Signals
+- **[CLAUDE.md pattern](../concepts/claude-md-pattern.md)** — a ~65-line markdown file encoding coding philosophy for AI-assisted development that hit 100K+ GitHub stars, outperforming full agent frameworks on GitHub Trending.
+- **"Software 3.0"** — referenced in a related capture as a talk/concept that others are summarizing and turning into reusable skills (e.g., a user reported using an AI agent to watch and summarize a Karpathy talk into a "Software 3.0 skill" in 29 minutes).
 
-[[andrej-karpathy]] authored the **[[llm-wiki]] Pattern** — a lightweight architecture for LLM-maintained knowledge bases. The pattern has been widely adopted for personal and enterprise knowledge management.
+## Why It Matters
+> "A reminder that sometimes the highest leverage tool in tech isn't a product… it's a way of thinking."
 
-### [[llm-wiki]] Pattern (Gist)
-
-Published as a GitHub Gist, the pattern defines:
-- A three-layer architecture: Raw Sources → Wiki → Schema
-- Three operations: Ingest, Query, Lint
-- Special files: `index.md` (catalog) and `log.md` (append-only log)
-- Implementation guidance: Obsidian frontend, Git for version history
-
-> "Left vague so that you can hack it and customize it to your own project."
-
-The schema (a `CLAUDE.md` or equivalent system prompt) is intended to co-evolve with the user's needs — making the pattern deliberately extensible rather than prescriptive.
+Karpathy's output is frequently cited as validation for lightweight, principle-based approaches to agent instruction and context-setting, as opposed to heavier framework/tooling investments. This is directly relevant to KB entries on agent context design and instruction persistence.
 
 ## See Also
-
-- [LLM Wiki Concept](../concepts/llm-wiki.md)
-- [LLM Wiki Pattern](../patterns/pattern-llm-wiki.md)
-- [Key Agentic Researchers](../entities/key-agentic-researchers.md)
+- [claude-md-pattern](../concepts/claude-md-pattern.md)
+- [agent-memory-runtime](../concepts/agent-memory-runtime.md)

@@ -202,3 +202,11 @@ type: meta
 - [[syntheses/synthesis-deepeval-metrics-as-trajectory-vocabulary|Synthesis: DeepEval's Named Agent Metrics as Trajectory Eval Vocabulary]] — names DeepEval's PlanQuality / ToolCalling / ArgumentCorrectness as the missing operational vocabulary that turns the ReAct-as-trace claim into a pytest-native CI gate.
 - `wiki/_meta/proposals.md` — 109 new proposals appended (108 stuck candidates + `PROP-111 [HEAVY_BACKLOG]`).
 - `wiki/_meta/compile-log.md` — 2-source gate ledger run (29 promote queued, 108 defer, 0 graduate; actual page compile crashed with `Error: undefined` — re-run needed).
+
+
+## 2026-08-18
+
+- [[syntheses/synthesis-headroom-compression-obsidian-wiki-vault|Synthesis: An Agent-Maintained Vault Compiled Through a Compression Layer Inherits Lossy Knowledge It Cannot Later Detect]] — closes the 10th and final pairwise edge of the five-node governance cluster (Headroom × obsidian-wiki); argues CCR reversibility expires at the session boundary while a compile-once vault page is read as settled fact for months, and `obsidian-wiki` documents no validation gate to catch it. Proposes a `context_fidelity` frontmatter field; counter-argument is that the flag becomes ceremony if it is almost always set.
+- `wiki/_meta/proposals.md` — new entry `PROP-152 [HEAVY_BACKLOG]` (167 deferred themes vs threshold 50).
+- `wiki/_meta/compile-log.md` — 2-source gate run: 30 promote, 167 defer, 0 graduate; 12 raw docs compiled → 11 pages created, 3 updated.
+- New pages from the compile gate: `concepts/foundry-capture-pipeline`, `frameworks/remember-cite-forget`, `concepts/agent-memory-architecture`, `summaries/summary-hf-agent-intrusion-technical-timeline`, `concepts/agent-evaluation-gaming`, `patterns/pattern-single-agent-front-door`, `summaries/summary-sierra-ai-pilling-lessons`, `entities/sierra-ai`, `patterns/pattern-embedded-graduation-model`, `entities/leann`, `concepts/local-rag-storage-optimization`, `concepts/managed-agents`, `summaries/summary-hwchase17-managed-agents-thesis`.

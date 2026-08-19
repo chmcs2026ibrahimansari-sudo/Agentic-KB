@@ -7,6 +7,7 @@ sources:
   - "[[syntheses/synthesis-headroom-compression-skillopt-signal]]"
   - "[[syntheses/synthesis-headroom-compression-episodic-judgment-signal]]"
   - "[[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]]"
+  - "[[syntheses/synthesis-skillopt-pow-writeback]]"
 question: If Headroom compresses the tool outputs and transcripts an agent verifies against, is the resulting proof-of-work receipt still evidence of verification?
 tags: [agentic, context-management, evaluation, observability, receipts, human-in-the-loop]
 created: 2026-08-16
@@ -29,6 +30,8 @@ This is not a novel risk; it is the same risk the KB has already diagnosed twice
 
 The stakes rose on 2026-08-15, when [[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]] made the receipt the audit trail for the entire gate → write → log pipeline. That synthesis argues the gate's accept decision is itself an agent completion claim deserving a receipt — but it does not ask whether the receipt's own contents are trustworthy if compression sat upstream. The audit trail the cluster just finished designing inherits an unexamined single point of failure identical to the one already found in the two signals it depends on. An audit trail whose entries can be confidently wrong is worse than no audit trail, because it converts an unknown into a false known.
 
+One correction for the cluster map: the direct SkillOpt ↔ Proof-of-Work edge is not actually unwritten. [[syntheses/synthesis-skillopt-pow-writeback]] already frames SkillOpt as the governed write-back mechanism that turns proof-of-work failure receipts into staged, validation-gated skill edits. This page should not spawn a duplicate final edge; it inherits that write-back route and adds the missing `context_fidelity` condition on the receipts that feed it.
+
 The mitigation is cheap and follows from Headroom's own design. Headroom caches originals; the receipt schema is extensible. Adding a `context_fidelity` field to the review packet — recording whether compression was active, which compressor path ran, and the cache handle for the original — costs one line per receipt and makes the failure loud instead of silent. The stronger rule: **verification steps read from the cache, not the compressed view.** Compression is a budget optimization for the execute phase; the verify phase should pay full price, because that is the phase whose output other systems will trust without re-deriving.
 
 ## Evidence
@@ -41,6 +44,7 @@ The mitigation is cheap and follows from Headroom's own design. Headroom caches 
 | [[syntheses/synthesis-headroom-compression-skillopt-signal]] | Compression can silently corrupt SkillOpt's eval scores | First instance of the generalization: compression + adjudication = silent corruption |
 | [[syntheses/synthesis-headroom-compression-episodic-judgment-signal]] | Compression can silently corrupt the episodic log's freshness signal | Second instance — two independent confirmations make the third a prediction, not a guess |
 | [[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]] | Receipts are the audit trail for the gate → write → log pipeline; calls the untested version "theater" | Raises the cost of the gap: the receipt is now load-bearing for the whole cluster |
+| [[syntheses/synthesis-skillopt-pow-writeback]] | SkillOpt is the staged, validation-gated write-back mechanism for failures captured by proof-of-work receipts | Shows the direct SkillOpt ↔ Proof-of-Work edge already exists and should be reused rather than duplicated |
 
 ## Counter-arguments & Gaps
 
@@ -66,3 +70,4 @@ Treat compression as unsafe upstream of any verification step whose output anoth
 - [[syntheses/synthesis-headroom-compression-episodic-judgment-signal]]
 - [[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]]
 - [[syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion]]
+- [[syntheses/synthesis-skillopt-pow-writeback]]

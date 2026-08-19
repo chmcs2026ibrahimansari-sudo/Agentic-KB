@@ -53,7 +53,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Concepts (79)
+## Concepts (88)
 
 | Page | Type | Tags | Confidence | Description |
 |------|------|------|------------|-------------|
@@ -82,7 +82,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Patterns (71)
+## Patterns (76)
 
 | Page | Category | Problem | Confidence |
 |------|----------|---------|------------|
@@ -103,7 +103,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Frameworks (24)
+## Frameworks (31)
 
 | Page | Vendor | Version | Jay's Experience | Last Checked |
 |------|--------|---------|-----------------|--------------|
@@ -131,7 +131,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Entities (14)
+## Entities (17)
 
 | Page | Category | Description |
 |------|----------|-------------|
@@ -146,7 +146,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Recipes (18)
+## Recipes (19)
 
 | Page | Difficulty | Time | Description |
 |------|-----------|------|-------------|
@@ -176,7 +176,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Summaries (64)
+## Summaries (71)
 
 | Page | Source | Date Ingested | Key Concepts |
 |------|--------|--------------|-------------|
@@ -267,7 +267,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (27)
+## Syntheses (34)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -288,6 +288,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-rrf-as-rlm-fusion-stage]] | What algorithm fills the score-merging slot in the RLM Pipeline's multi-source retrieval stages (4–9), and why is it Reciprocal Rank Fusion? | 2026-05-27 |
 | [[syntheses/synthesis-skills-as-evaluable-artifacts]] | When should an agent skill be treated as a tested software artifact instead of a prose instruction file? | 2026-06-25 |
 | [[syntheses/synthesis-agentic-engineering-operating-model]] | What operating model makes agentic engineering useful instead of performative? | 2026-07-10 |
+| [[syntheses/synthesis-skillopt-pow-writeback]] | How should an agent convert logged failures into skill updates without unchecked self-mutation? | 2026-07-11 |
 | [[syntheses/synthesis-context-compression-vs-compilation]] | Are Headroom-style runtime compression and obsidian-wiki-style knowledge compilation substitutes or complements for managing context cost? | 2026-08-08 |
 | [[syntheses/synthesis-headroom-compression-skillopt-signal]] | If Headroom compresses the same agent transcripts SkillOpt scores rollouts against, does skill optimization still receive a trustworthy training signal? | 2026-08-09 |
 | [[syntheses/synthesis-skillopt-gate-obsidian-wiki-governance]] | Can SkillOpt's held-out validation gate close obsidian-wiki's admitted governance gap for agent-writable vaults? | 2026-08-09 |
@@ -297,6 +298,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-proof-of-work-receipts-episodic-judgment-ingestion]] | Where do the Proof-of-Work Loop's "learning updates" actually live — and is the Episodic Judgment Log their missing write target? | 2026-08-14 |
 | [[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]] | What gets permanently recorded when a gated vault write is accepted — and is the Proof-of-Work receipt schema the missing answer? | 2026-08-15 |
 | [[syntheses/synthesis-headroom-compression-proof-of-work-receipts]] | If Headroom compresses the tool outputs and transcripts an agent verifies against, is the resulting proof-of-work receipt still evidence of verification? | 2026-08-16 |
+| [[syntheses/synthesis-headroom-compression-obsidian-wiki-vault]] | If Headroom compresses the source material an agent compiles into an Obsidian vault, does the resulting wiki page record knowledge or a lossy impression of it? | 2026-08-18 |
 
 ---
 

@@ -1378,3 +1378,131 @@ Pages affected: `concepts/claude-md-pattern.md`, `entities/andrej-karpathy.md`
 **Not done, deliberately:** the 10 existing duplicate copies of `test-capture-2026-05-16` in `raw/clippings/` and `raw/articles/` were left in place. Rule 1 makes `raw/` immutable; the fix is forward-looking and stops new duplicates rather than rewriting history. They are inert (the compiler skips them as "no valid JSON") but they do inflate the clippings count — worth a one-time manual cleanup by Jay if the noise bothers him, since only a human can authorize touching `raw/`.
 
 **Contradiction (D) — resolved by scope note, no page edits.** Added a scope note to [[mocs/orchestration]] recording that "graduation" in [[patterns/pattern-embedded-graduation-model]] is an org-layer claim about humans depending on a central platform team, while the permanence assumed by [[patterns/pattern-supervisor-worker]] and [[patterns/pattern-plan-execute-verify]] is a runtime-layer claim about control flow. They do not conflict; a graduated team can still run a supervisor topology forever. The note names the misreading to avoid — extending "graduate to independence" into "remove the orchestrator agent," which would strip runtime error-handling to solve an organizational problem. Neither pattern page was edited and no claim was dropped, per the apply-guard. (D) moves from open to resolved.
+
+## 2026-08-16 — Compiled `clippings/2026-08-12T20-30-49__apple-notes__test-capture-2026-05-16__ee78ee45.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`
+
+## 2026-08-16 — Compiled `framework-docs/langchain-ai-rag-from-scratch.md`
+
+Pages affected: `summaries/summary-langchain-rag-from-scratch.md`
+
+## 2026-08-16 — Compiled `framework-docs/langsmith.md`
+
+Pages affected: `frameworks/langsmith.md`
+
+## 2026-08-16 — Compiled `framework-docs/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f.md`
+
+Pages affected: `patterns/pattern-forward-deployed-engineering.md`
+
+## 2026-08-16 — Compiled `framework-docs/linkedin-com-pulse-agentic-sdlc-how-ai-agents-reshaping-software-pavan-belagatti-rsthc.md`
+
+Pages affected: `concepts/agentic-sdlc.md`
+
+## 2026-08-16 — Compiled `framework-docs/mgechev-skills-best-practices.md`
+
+Pages affected: `patterns/pattern-agent-skill-authoring.md`, `concepts/progressive-disclosure.md`
+
+## 2026-08-16 — Compiled `framework-docs/microsoft-skillopt.md`
+
+Pages affected: `frameworks/skillopt.md`, `concepts/skill-optimization.md`
+
+## 2026-08-16 — Compiled `framework-docs/rohitg00-ai-engineering-from-scratch.md`
+
+Pages affected: 
+
+## 2026-08-16 — Compiled `framework-docs/untrivial-ai-agent-orchestrator.md`
+
+Pages affected: `frameworks/agent-orchestrator.md`
+
+## 2026-08-16 — Compiled `framework-docs/www-linkedin-com-jobs-view-4438558062.md`
+
+Pages affected: 
+
+## 2026-08-16 — Compiled `framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md`
+
+Pages affected: 
+
+## 2026-08-16 — Compiled `framework-docs/x-twitter-2075854920738021682.md`
+
+Pages affected: `patterns/pattern-credential-gateway.md`, `frameworks/openconnector.md`
+
+## 2026-08-16 — Compiled `framework-docs/x-twitter-2076018000570785847.md`
+
+Pages affected: `frameworks/hermes-desktop.md`, `concepts/context-management.md`
+
+## 2026-08-16 — Compiled `framework-docs/x-twitter-2076231055443440105.md`
+
+Pages affected: 
+
+## 2026-08-16 — Compiled `inbox/README.md`
+
+Pages affected: `patterns/pattern-raw-inbox-workflow.md`
+
+## 2026-08-16 — Compiled `my-agents/gsd-ui-checker.md`
+
+Pages affected: `entities/gsd-ui-checker.md`
+
+## 2026-08-16 — Compiled `my-skills/web-design-guidelines-skill.md`
+
+Pages affected: `frameworks/web-interface-guidelines.md`, `recipes/web-design-guidelines-skill.md`
+
+## 2026-08-16 — Compiled `note/andrej-karpathy-thinks-rag-is-broken.md`
+
+Pages affected: `patterns/pattern-llm-wiki.md`, `summaries/summary-karpathy-llm-wiki.md`
+
+## 2026-08-16 — Compiled `reading-list.md`
+
+Pages affected: 
+
+## 2026-08-16 — Compiled `transcript/farzapedia-personal-wiki.md`
+
+Pages affected: `patterns/pattern-librarian-agent.md`, `summaries/summary-farzapedia-personal-wiki.md`
+
+## 2026-08-19 — Compiled `clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__0718b87f.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`
+
+## 2026-08-19 — Compiled `clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__57c523ba.md`
+
+Pages affected: `concepts/foundry-capture-pipeline.md`
+
+## 2026-08-19 — Compiled `clippings/2026-05-23T11-54-30__x-twitter__voxyz-ai-remember-cite-forget-memory-framework-hermes-critiq__fcf7a929.md`
+
+Pages affected: `frameworks/remember-cite-forget.md`, `concepts/agent-memory-architecture.md`
+
+## 2026-08-19 — Compiled `framework-docs/huggingface-agent-intrusion-technical-timeline.md`
+
+Pages affected: `summaries/summary-hf-agent-intrusion-technical-timeline.md`, `concepts/agent-evaluation-gaming.md`
+
+## 2026-08-19 — Compiled `framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md`
+
+Pages affected: `patterns/pattern-single-agent-front-door.md`, `summaries/summary-sierra-ai-pilling-lessons.md`, `entities/sierra-ai.md`
+
+## 2026-08-19 — Compiled `framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md`
+
+Pages affected: `patterns/pattern-embedded-graduation-model.md`
+
+## 2026-08-19 — Compiled `framework-docs/x-twitter-2066530299467706495.md`
+
+Pages affected: `entities/leann.md`, `concepts/local-rag-storage-optimization.md`
+
+## 2026-08-19 — Compiled `framework-docs/x-twitter-2085780032031760694.md`
+
+Pages affected: `concepts/managed-agents.md`, `summaries/summary-hwchase17-managed-agents-thesis.md`
+
+## 2026-08-18 — morning-review-daily apply pass
+
+Source: scheduled task `morning-review-daily`. Morning Review pipeline completed (`AppleScript timed out after 60 seconds` at step 1 → 0 notes; daily note written regardless).
+
+Staging: `sofie-watch-obsidian --once` staged 0 new meeting notes. Apple Notes `KB Inbox` held only the stale `test-capture-2026-05-16` note; `Snipd` empty. `ingest-dedup.mjs` ingested 0, skipped 16 (all hash-matched to prior runs).
+
+Compile gate (`compile-2source-gate.mjs --execute`): PROMOTE 30 · DEFER 167 · GRADUATE 0. Compiled 12 raw docs → 11 pages created, 3 updated. Four docs skipped with `JSON parse failed`: `framework-docs/llm-wiki-v2-gist-rohitg00.md`, `framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md`, `framework-docs/x-twitter-2084542353344282850.md`, `transcripts/nate-herk-llm-wiki.md`.
+
+Proposals: `foundry-propose.mjs --execute --top 3` appended `PROP-152 [HEAVY_BACKLOG]` (167 deferred vs threshold 50) to `wiki/_meta/proposals.md`.
+
+Pages created (manual, this pass): `wiki/syntheses/synthesis-headroom-compression-obsidian-wiki-vault.md` — closes the 10th and final pairwise edge of the five-node governance cluster (Headroom × obsidian-wiki). Born `reviewed: false`. Backlinks added from `frameworks/framework-headroom.md` and `frameworks/framework-obsidian-wiki.md`; row added to `wiki/index.md`.
+
+Contradictions flagged: none new. Three pre-existing unresolved tensions re-surfaced in today's intelligence (Headroom-vs-episodic-log fidelity; SkillOpt gate transplant; vault-write gate source). All three, plus today's new synthesis, share one unresolved empirical core — no deployment exists where compression, compile, and gate run over the same sources. Not resolvable by automation; left standing for human resolution.
+
+Query failures worth noting: `cli/kb.js query` for cross-domain connections failed `ETIMEDOUT`, then returned a truncated answer on retry. The candidates/graduation query returned retrieval sources but an empty answer body on both attempts. Both gaps are recorded in today's daily note; the connections analysis was completed deterministically by enumerating `wiki/syntheses/`.

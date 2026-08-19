@@ -1,5 +1,5 @@
 {
-  "last_run_timestamp": "2026-08-15T06:27:40-0700",
+  "last_run_timestamp": "2026-08-16T06:29:20-0700",
   "files_considered": [
     "AGENTS.md",
     "house-rules.md",
@@ -7,37 +7,44 @@
     "playbooks/editor-run.md",
     "wiki/log.md",
     ".night-shift/state/editor-state.json",
-    "wiki/syntheses/synthesis-skillopt-gate-obsidian-wiki-governance.md",
-    "wiki/syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail.md",
+    "wiki/syntheses/synthesis-headroom-compression-proof-of-work-receipts.md",
     "wiki/recently-added.md",
     "wiki/patterns/pattern-agent-proof-of-work-loop.md",
     "wiki/index.md",
-    "wiki/daily-systems/logs/2026-08-14.md",
+    "wiki/frameworks/framework-headroom.md",
     "wiki/candidates.md",
     "wiki/_meta/proposals.md",
     "wiki/_meta/compile-log.md",
-    "wiki/lint-report.md"
+    "wiki/lint-report.md",
+    "wiki/frameworks/framework-skillopt.md",
+    "wiki/syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail.md",
+    "wiki/syntheses/synthesis-skillopt-gate-obsidian-wiki-governance.md",
+    "wiki/syntheses/synthesis-skillopt-pow-writeback.md"
   ],
   "wiki_pages_changed_last_24h": [
-    "wiki/syntheses/synthesis-skillopt-gate-obsidian-wiki-governance.md",
-    "wiki/syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail.md",
+    "wiki/syntheses/synthesis-headroom-compression-proof-of-work-receipts.md",
     "wiki/recently-added.md",
     "wiki/patterns/pattern-agent-proof-of-work-loop.md",
     "wiki/log.md",
     "wiki/index.md",
-    "wiki/daily-systems/logs/2026-08-14.md",
+    "wiki/frameworks/framework-headroom.md",
     "wiki/candidates.md",
     "wiki/_meta/proposals.md",
     "wiki/_meta/compile-log.md",
     "wiki/lint-report.md"
   ],
   "outputs_written": [
-    "briefings/2026-08-15.md",
+    "wiki/syntheses/synthesis-headroom-compression-proof-of-work-receipts.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "briefings/2026-08-16.md",
     ".night-shift/state/editor-state.json"
   ],
-  "status": "completed_no_additional_editor_synthesis_change",
-  "briefing_path": "briefings/2026-08-15.md",
+  "status": "completed_targeted_existing_synthesis_linkage",
+  "briefing_path": "briefings/2026-08-16.md",
   "synthesis_created": [],
-  "synthesis_updated": [],
-  "notes": "Editor Run reviewed 11 wiki files changed in the last 24 hours. A real multi-source thread exists around the Headroom / SkillOpt / obsidian-wiki / episodic-judgment-log / proof-of-work cluster, but the morning-review apply pass already created synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail.md and added backlinks from pattern-agent-proof-of-work-loop.md and synthesis-skillopt-gate-obsidian-wiki-governance.md. No additional synthesis was created or edited to avoid duplicate synthesis churn. No raw files modified."
+  "synthesis_updated": [
+    "wiki/syntheses/synthesis-headroom-compression-proof-of-work-receipts.md"
+  ],
+  "notes": "Editor Run reviewed 10 wiki files changed in the last 24 hours. The current Headroom / SkillOpt / obsidian-wiki / episodic-log / proof-of-work cluster had one apparent missing edge, but the direct SkillOpt ↔ Proof-of-Work synthesis already existed as synthesis-skillopt-pow-writeback.md and was absent from the index/orphaned by lint. Updated today's Headroom/PoW synthesis with an inbound link and source entry, added the existing synthesis to wiki/index.md, appended wiki/log.md, and wrote this briefing. No new synthesis created to avoid duplication. No raw files modified."
 }

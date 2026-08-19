@@ -803,5 +803,207 @@
       "frameworks/headroom.md",
       "_meta/compile-log.md"
     ]
+  },
+  "articles/garrytan-meta-meta-prompting.md": {
+    "compiledAt": "2026-08-16T22:07:34.664Z",
+    "pagesAffected": [
+      "summaries/summary-garrytan-meta-meta-prompting.md"
+    ]
+  },
+  "articles/thariq-claude-code-html.md": {
+    "compiledAt": "2026-08-16T22:08:09.415Z",
+    "pagesAffected": [
+      "concepts/html-as-agent-output-format.md"
+    ]
+  },
+  "clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__28da9fb8.md": {
+    "compiledAt": "2026-08-16T22:08:55.379Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md"
+    ]
+  },
+  "clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__9930a08e.md": {
+    "compiledAt": "2026-08-16T22:09:24.267Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md"
+    ]
+  },
+  "clippings/2026-05-23T09-30-00__x-twitter__karpathy-claude-md-hits-100k-stars-on-github-trending__a0538da7.md": {
+    "compiledAt": "2026-08-16T22:10:17.432Z",
+    "pagesAffected": [
+      "concepts/claude-md-pattern.md",
+      "entities/andrej-karpathy.md"
+    ]
+  },
+  "clippings/2026-08-12T20-30-49__apple-notes__test-capture-2026-05-16__ee78ee45.md": {
+    "compiledAt": "2026-08-16T22:11:33.851Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md"
+    ]
+  },
+  "framework-docs/langchain-ai-rag-from-scratch.md": {
+    "compiledAt": "2026-08-16T22:13:05.764Z",
+    "pagesAffected": [
+      "summaries/summary-langchain-rag-from-scratch.md"
+    ]
+  },
+  "framework-docs/langsmith.md": {
+    "compiledAt": "2026-08-16T22:13:38.445Z",
+    "pagesAffected": [
+      "frameworks/langsmith.md"
+    ]
+  },
+  "framework-docs/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f.md": {
+    "compiledAt": "2026-08-16T22:14:21.399Z",
+    "pagesAffected": [
+      "patterns/pattern-forward-deployed-engineering.md"
+    ]
+  },
+  "framework-docs/linkedin-com-pulse-agentic-sdlc-how-ai-agents-reshaping-software-pavan-belagatti-rsthc.md": {
+    "compiledAt": "2026-08-16T22:14:56.454Z",
+    "pagesAffected": [
+      "concepts/agentic-sdlc.md"
+    ]
+  },
+  "framework-docs/mgechev-skills-best-practices.md": {
+    "compiledAt": "2026-08-16T22:16:43.187Z",
+    "pagesAffected": [
+      "patterns/pattern-agent-skill-authoring.md",
+      "concepts/progressive-disclosure.md"
+    ]
+  },
+  "framework-docs/microsoft-skillopt.md": {
+    "compiledAt": "2026-08-16T22:17:35.335Z",
+    "pagesAffected": [
+      "frameworks/skillopt.md",
+      "concepts/skill-optimization.md"
+    ]
+  },
+  "framework-docs/rohitg00-ai-engineering-from-scratch.md": {
+    "compiledAt": "2026-08-16T22:17:57.906Z",
+    "pagesAffected": []
+  },
+  "framework-docs/untrivial-ai-agent-orchestrator.md": {
+    "compiledAt": "2026-08-16T22:19:36.313Z",
+    "pagesAffected": [
+      "frameworks/agent-orchestrator.md"
+    ]
+  },
+  "framework-docs/www-linkedin-com-jobs-view-4438558062.md": {
+    "compiledAt": "2026-08-16T22:19:57.219Z",
+    "pagesAffected": []
+  },
+  "framework-docs/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-.md": {
+    "compiledAt": "2026-08-16T22:21:07.658Z",
+    "pagesAffected": []
+  },
+  "framework-docs/x-twitter-2075854920738021682.md": {
+    "compiledAt": "2026-08-16T22:23:29.021Z",
+    "pagesAffected": [
+      "patterns/pattern-credential-gateway.md",
+      "frameworks/openconnector.md"
+    ]
+  },
+  "framework-docs/x-twitter-2076018000570785847.md": {
+    "compiledAt": "2026-08-16T22:24:12.879Z",
+    "pagesAffected": [
+      "frameworks/hermes-desktop.md",
+      "concepts/context-management.md"
+    ]
+  },
+  "framework-docs/x-twitter-2076231055443440105.md": {
+    "compiledAt": "2026-08-16T22:24:36.435Z",
+    "pagesAffected": []
+  },
+  "inbox/README.md": {
+    "compiledAt": "2026-08-16T22:26:40.941Z",
+    "pagesAffected": [
+      "patterns/pattern-raw-inbox-workflow.md"
+    ]
+  },
+  "my-agents/gsd-ui-checker.md": {
+    "compiledAt": "2026-08-16T22:27:24.335Z",
+    "pagesAffected": [
+      "entities/gsd-ui-checker.md"
+    ]
+  },
+  "my-skills/web-design-guidelines-skill.md": {
+    "compiledAt": "2026-08-16T22:28:00.378Z",
+    "pagesAffected": [
+      "frameworks/web-interface-guidelines.md",
+      "recipes/web-design-guidelines-skill.md"
+    ]
+  },
+  "note/andrej-karpathy-thinks-rag-is-broken.md": {
+    "compiledAt": "2026-08-16T22:28:43.612Z",
+    "pagesAffected": [
+      "patterns/pattern-llm-wiki.md",
+      "summaries/summary-karpathy-llm-wiki.md"
+    ]
+  },
+  "reading-list.md": {
+    "compiledAt": "2026-08-16T22:29:04.870Z",
+    "pagesAffected": []
+  },
+  "transcript/farzapedia-personal-wiki.md": {
+    "compiledAt": "2026-08-16T22:29:51.489Z",
+    "pagesAffected": [
+      "patterns/pattern-librarian-agent.md",
+      "summaries/summary-farzapedia-personal-wiki.md"
+    ]
+  },
+  "clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__0718b87f.md": {
+    "compiledAt": "2026-08-19T00:42:58.174Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md"
+    ]
+  },
+  "clippings/2026-05-16T15-40-32__apple-notes__test-capture-2026-05-16__57c523ba.md": {
+    "compiledAt": "2026-08-19T00:43:23.682Z",
+    "pagesAffected": [
+      "concepts/foundry-capture-pipeline.md"
+    ]
+  },
+  "clippings/2026-05-23T11-54-30__x-twitter__voxyz-ai-remember-cite-forget-memory-framework-hermes-critiq__fcf7a929.md": {
+    "compiledAt": "2026-08-19T00:44:10.223Z",
+    "pagesAffected": [
+      "frameworks/remember-cite-forget.md",
+      "concepts/agent-memory-architecture.md"
+    ]
+  },
+  "framework-docs/huggingface-agent-intrusion-technical-timeline.md": {
+    "compiledAt": "2026-08-19T00:44:59.848Z",
+    "pagesAffected": [
+      "summaries/summary-hf-agent-intrusion-technical-timeline.md",
+      "concepts/agent-evaluation-gaming.md"
+    ]
+  },
+  "framework-docs/sierra-ai-blog-ai-pilling-our-company-lessons-learned.md": {
+    "compiledAt": "2026-08-19T00:46:54.274Z",
+    "pagesAffected": [
+      "patterns/pattern-single-agent-front-door.md",
+      "summaries/summary-sierra-ai-pilling-lessons.md",
+      "entities/sierra-ai.md"
+    ]
+  },
+  "framework-docs/www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc.md": {
+    "compiledAt": "2026-08-19T00:48:24.931Z",
+    "pagesAffected": [
+      "patterns/pattern-embedded-graduation-model.md"
+    ]
+  },
+  "framework-docs/x-twitter-2066530299467706495.md": {
+    "compiledAt": "2026-08-19T00:49:06.162Z",
+    "pagesAffected": [
+      "entities/leann.md",
+      "concepts/local-rag-storage-optimization.md"
+    ]
+  },
+  "framework-docs/x-twitter-2085780032031760694.md": {
+    "compiledAt": "2026-08-19T00:50:43.787Z",
+    "pagesAffected": [
+      "concepts/managed-agents.md",
+      "summaries/summary-hwchase17-managed-agents-thesis.md"
+    ]
   }
 }

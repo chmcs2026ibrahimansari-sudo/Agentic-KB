@@ -93,5 +93,6 @@ N/A — not yet used.
 
 - [[summaries/chopratejas-headroom]]
 - [[syntheses/synthesis-headroom-compression-proof-of-work-receipts]] — compression upstream of a verification step makes the resulting proof-of-work receipt unauditable
+- [[syntheses/synthesis-headroom-compression-obsidian-wiki-vault]] — compression upstream of a compile-once vault means CCR reversibility expires at the session boundary, leaving the page lossy with no record of it
 - Raw source: `raw/framework-docs/chopratejas-headroom.md`
 - GitHub: https://github.com/chopratejas/headroom

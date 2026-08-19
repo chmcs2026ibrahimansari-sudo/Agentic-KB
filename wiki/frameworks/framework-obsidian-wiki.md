@@ -70,3 +70,4 @@ After setup, open your agent and say **"set up my wiki"** to initialise.
 - [Agent Memory at Runtime](../concepts/agent-memory-runtime.md) — broader concept of how agents manage memory across sessions
 - [Agent Loops](../concepts/agent-loops.md) — the underlying read-act-write loop that skills plug into
 - [[syntheses/synthesis-skillopt-gate-obsidian-wiki-governance]] — how SkillOpt's held-out validation gate could close the quality-gate gap noted in Limitations
+- [[syntheses/synthesis-headroom-compression-obsidian-wiki-vault]] — why a compile-once vault built through a context-compression layer inherits lossy knowledge that the "no built-in validation" limitation guarantees nothing will catch

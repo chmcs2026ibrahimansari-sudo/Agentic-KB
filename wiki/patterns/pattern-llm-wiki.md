@@ -1,80 +1,53 @@
 ---
-id: 01KNNVX2R0ZVRQD3W9Q2W1PH27
-title: LLM-Maintained Wiki
+id: 01M06B21YTX39J394NNVXXAAHX
+title: "LLM Wiki Pattern"
 type: pattern
-tags: [knowledge-base, architecture, llm-wiki, karpathy]
-confidence: high
-sources:
-  - "[[summaries/karpathy-llm-wiki-gist]]"
+tags: [memory, knowledge-base, rag, retrieval, agents]
 created: 2026-04-07
 updated: 2026-04-07
-related:
-  - "[[concepts/memory-systems]]"
-  - "[[concepts/context-management]]"
-  - "[[concepts/task-decomposition]]"
-status: stable
+visibility: public
+confidence: medium
+source: note/andrej-karpathy-thinks-rag-is-broken.md
+related: [agent-memory-runtime, agent-observability, agent-loops]
 ---
 
-# LLM-Maintained Wiki
-
-## Intent
-Delegate the maintenance of a structured knowledge base entirely to LLMs, while humans retain control over curation, direction, and raw source ingestion.
-
-## Problem
-Manually maintaining a cross-referenced, internally consistent knowledge base is tedious and doesn't scale. Human-written wikis drift: links rot, contradictions accumulate, and updates lag behind new sources.
-
-## Solution
-Split responsibility by a hard boundary:
-
-```
-Raw Sources (human-curated, immutable)
-        ↓  [LLM reads]
-      Wiki (LLM-owned, never manually edited)
-        ↑  [governed by]
-    Schema / CLAUDE.md (co-evolves with project)
-```
-
-The LLM processes raw sources via defined workflows (Ingest, Query, Lint) and produces structured markdown pages. Humans feed in new sources and issue queries — they never write wiki content directly.
-
-## Structure
-- **`raw/`** — Immutable input files (papers, transcripts, docs, code). LLM reads only.
-- **`wiki/`** — LLM-owned output. Organized by type: concepts, patterns, summaries, syntheses, recipes, evaluations, personal.
-- **`wiki/index.md`** — Master catalog, LLM-maintained, always current.
-- **`wiki/log.md`** — Append-only operation log with parseable timestamps.
-- **`CLAUDE.md`** (or equivalent schema file) — Defines structure, workflows, naming conventions, and frontmatter schemas.
-
-## Core Workflows
-
-### INGEST
-Process one raw source at a time. For each source, create or update 10–15 wiki pages: a summary page (1:1 with the source), concept/pattern pages for new ideas, and update index + log.
-
-### QUERY
-Ask the LLM a question against the wiki. If the answer is good, file it back as a new synthesis or concept page — compounding the knowledge base.
-
-### LINT
-Periodic health check. The LLM scans for: contradictions between pages, orphaned pages with no inbound links, stale claims that conflict with newer sources, and gaps where coverage is thin.
+# LLM Wiki Pattern
 
 ## When to Use
-- Building a personal or team knowledge base over a sustained period.
-- When sources accumulate faster than manual summarization can keep up.
-- When cross-referencing and consistency are high-value but low-creativity tasks.
-- Up to ~100 articles / ~400K words before RAG becomes necessary.
+Use this pattern when an agent needs to accumulate and refine knowledge over time from a stream of incoming sources (papers, transcripts, notes, Slack threads, meeting recordings) rather than answering one-off queries against a static document store. It's suited to long-running personal knowledge management, ongoing research tracking, fan/reference wikis built while reading, and business contexts where source material (calls, meetings, docs) arrives continuously and must stay current.
 
-## When Not to Use
-- When the source corpus is static and small (a simple README suffices).
-- When real-time retrieval over millions of documents is required (use RAG instead).
-- When human editorial voice must be preserved throughout (LLM ownership conflicts with this).
+## Structure
+The pattern, popularized by Andrej Karpathy's "LLM Wiki" project (5,000 GitHub stars in 48 hours per the source note), inverts the standard retrieval flow:
 
-## Implementation Notes
-- Obsidian works well as a frontend: graph view, backlinks, and local file storage align with the pattern.
-- Git on the wiki directory provides version history for free.
-- The schema file should be intentionally minimal at first and co-evolve as you discover what works.
-- Frontmatter should be consistent across page types to enable programmatic queries.
+1. **Ingest**: A source (article, paper, transcript, notes) is dropped into a raw collection.
+2. **Compile**: An LLM reads the source, writes a summary, and updates a master index.
+3. **Propagate**: The LLM updates every relevant entity and topic page across the wiki — a single source can touch 10–15 pages simultaneously.
+4. **Cross-reference**: Links between pages are built automatically.
+5. **Flag**: Contradictions between sources are surfaced rather than silently overwritten.
+6. **Query & file-back**: Questions asked against the wiki that produce good answers get filed back in as new pages, so exploration itself compounds the knowledge base.
 
-## Known Variants
-- **Research wiki** — Ingests academic papers; produces concept, synthesis, and evaluation pages.
-- **Fiction bible** — Ingests story drafts; maintains character, theme, and world-building pages.
-- **Agentic engineering KB** — This KB. Ingests framework docs, transcripts, and personal patterns.
+Karpathy's framing: *"Obsidian is the IDE. The LLM is the programmer. The wiki is the codebase."* The human sources material and asks questions; the LLM does all the writing and maintenance.
 
-## Origin
-Originated by [[andrej-karpathy]]. See [[summaries/karpathy-llm-wiki-gist]].
+## Example
+Cited use cases from the source note:
+- **Personal**: File journal entries and articles to build a structured picture of yourself (goals, health, psychology) over time.
+- **Research**: Read papers for months, building a wiki with an evolving thesis.
+- **Reading a book**: Build a fan wiki as you go — characters, themes, plot threads, all cross-referenced.
+- **Business**: Feed it Slack threads, meeting transcripts, and customer calls so the wiki stays current without manual upkeep.
+
+This KB itself (Agentic KB) is effectively an implementation of this pattern — raw docs are compiled into structured pages with cross-references and contradiction flags, following the same compile → propagate → flag workflow.
+
+## Trade-offs
+- **Pro**: Knowledge compounds permanently instead of being re-derived (and forgotten) on every query — a key weakness of standard RAG.
+- **Pro**: Automatic cross-referencing and contradiction detection reduce manual curation burden.
+- **Con**: Requires an LLM compile step per source, which is more expensive and slower than simple vector-search retrieval.
+- **Con**: Quality depends heavily on the compiler's judgment (what counts as "relevant" pages to update); errors or hallucinated updates can silently corrupt the wiki over time if not reviewed.
+- **Con**: Touching 10–15 pages per source raises consistency and merge-conflict risks at scale.
+
+## Related Patterns
+- [Agent Memory & Runtime](../concepts/agent-memory-runtime.md) — the underlying persistent-state problem this pattern addresses.
+- [Agent Observability](../concepts/agent-observability.md) — relevant for tracking how/why wiki pages get updated.
+- [Agent Loops](../concepts/agent-loops.md) — the compile/query/file-back cycle is itself a loop.
+
+## See Also
+- [Summary: Karpathy's LLM Wiki](../summaries/summary-karpathy-llm-wiki.md)

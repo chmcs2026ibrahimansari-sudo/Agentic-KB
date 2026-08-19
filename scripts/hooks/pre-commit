@@ -57,8 +57,17 @@ PII_PATTERNS=(
   '\bpartner\b.{0,30}(home|kid|family|raising)'
   'my (kids|children|parents)\b'
 
-  # Therapy / mental health
-  '\btherap(y|ist)\b'
+  # Therapy / mental health.
+  # Requires first-person / personal framing. A bare '\btherap(y|ist)\b' was
+  # too broad: on 2026-08-18 it blocked wiki/summaries/summary-garrytan-meta-
+  # meta-prompting.md over a public quote about a hypothetical "$300/hour
+  # therapist" reading a book. Third-party commentary and topic-level mentions
+  # are not Jay's PII; his own therapy content always carries a possessive or
+  # an attendance verb.
+  '\b(my|our|jay.?s) therap(y|ist)\b'
+  '\b(in|start(ed|ing)?|going to|back in|quit|quitting) therapy\b'
+  '\b(saw|see|seeing|met with|talked to|talking to) (my|a) therapist\b'
+  '\btherap(y|ist) (appointment|session|homework)\b'
   '\bemdr\b'
 
   # Phone numbers (US)

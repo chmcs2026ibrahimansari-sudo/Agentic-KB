@@ -1413,11 +1413,11 @@ async function repoCmd(sub, rest) {
     if (!name) throw new Error('Usage: kb repo status <name>')
     const repo = rt.loadRepoMetadata(AGENT_KB_ROOT, name)
     if (!repo) throw new Error(`Repo not found: ${name}`)
-    console.log(`\nRepo: ${name}`)
+    console.log(`\nRepo: ${repo.repo_name || name}`)
     console.log(`  Status: ${repo.status || 'unknown'}`)
-    console.log(`  Last SHA: ${repo.lastSHA || 'never synced'}`)
-    console.log(`  Doc Count: ${repo.docCount || 0}`)
-    console.log(`  Last Sync: ${repo.lastSync || 'never'}`)
+    console.log(`  Last SHA: ${repo.last_synced_commit || repo.lastSHA || 'never synced'}`)
+    console.log(`  Doc Count: ${repo.docCount || repo.markdown_file_count || 0}`)
+    console.log(`  Last Sync: ${repo.last_sync_at || repo.lastSync || 'never'}`)
     console.log()
     return
   }

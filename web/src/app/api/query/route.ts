@@ -124,8 +124,15 @@ Focus on pages that would most directly answer the question. Return only paths t
     ],
   })
 
-  const firstBlock = response.content?.[0]
-  const text = firstBlock && firstBlock.type === 'text' ? firstBlock.text : ''
+  // Concatenate every text block rather than trusting content[0]. If the model
+  // leads with a non-text block (thinking, tool_use), content[0].text is
+  // undefined and this function used to silently return [] — no pages picked,
+  // no error, and the answer downstream came out blank with a normal-looking
+  // Sources footer. See wiki/log.md 2026-08-18.
+  const text = (response.content ?? [])
+    .filter(b => b.type === 'text')
+    .map(b => (b as { text: string }).text)
+    .join('')
 
   // Extract JSON array from response
   const jsonMatch = text.match(/\[[\s\S]*?\]/)
@@ -158,32 +165,86 @@ async function* synthesizeAnswer(
     .map(a => `<article path="${a.path}">\n${a.content}\n</article>`)
     .join('\n\n')
 
-  const stream = await client.messages.stream({
-    model: KB_MODEL,
-    // Models with extended thinking spend budget on reasoning before any text —
-    // 2048 produced empty/mid-sentence answers. 8192 leaves room for both.
-    max_tokens: 8192,
-    messages: [
-      {
-        role: 'user',
-        content: `You are an expert on agentic AI engineering. Answer the following question using the provided wiki articles.
+  const prompt = `You are an expert on agentic AI engineering. Answer the following question using the provided wiki articles.
 
 Question: ${question}
 
 Wiki Articles:
 ${articleTexts}
 
-Provide a comprehensive, well-structured answer. Use markdown formatting. Cite specific articles using their paths when making specific claims. Be precise and practical.`,
-      },
-    ],
-  })
+Provide a comprehensive, well-structured answer. Use markdown formatting. Cite specific articles using their paths when making specific claims. Be precise and practical.`
 
-  for await (const chunk of stream) {
-    if (
-      chunk.type === 'content_block_delta' &&
-      chunk.delta.type === 'text_delta'
-    ) {
-      yield chunk.delta.text
+  // A mid-stream socket stall used to surface as `read ETIMEDOUT` and kill the
+  // whole query, and a stream that died partway was indistinguishable from one
+  // that finished — the route walked on to send sources + done, so a truncated
+  // answer looked complete. Retry when nothing has reached the client yet;
+  // once bytes are out, fail loudly instead of silently truncating.
+  const MAX_ATTEMPTS = 3
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    let emitted = 0
+    try {
+      const stream = await client.messages.stream({
+        model: KB_MODEL,
+        // Models with extended thinking spend budget on reasoning before any text —
+        // 2048 produced empty/mid-sentence answers. 8192 leaves room for both.
+        max_tokens: 8192,
+        messages: [{ role: 'user', content: prompt }],
+      })
+
+      for await (const chunk of stream) {
+        if (
+          chunk.type === 'content_block_delta' &&
+          chunk.delta.type === 'text_delta'
+        ) {
+          emitted += chunk.delta.text.length
+          yield chunk.delta.text
+        }
+      }
+
+      const final = await stream.finalMessage()
+
+      // The loop above only understands text_delta. If the model returned text
+      // in a block shape this SDK version does not surface as a text_delta, we
+      // would yield nothing and report success. Recover it from the final
+      // message rather than returning a blank answer.
+      if (emitted === 0) {
+        const recovered = (final.content ?? [])
+          .filter(b => b.type === 'text')
+          .map(b => (b as { text: string }).text)
+          .join('')
+        if (recovered) {
+          emitted = recovered.length
+          yield recovered
+        }
+      }
+
+      if (emitted === 0) {
+        throw new Error(
+          `model returned no text (stop_reason: ${final.stop_reason ?? 'unknown'})`
+        )
+      }
+
+      // Never let a max_tokens cut-off masquerade as a finished answer.
+      if (final.stop_reason === 'max_tokens') {
+        yield '\n\n> ⚠️ **Answer truncated** — hit the 8192 max_tokens cap. Narrow the question or raise the cap.\n'
+      }
+
+      return
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+
+      // Retrying after partial output would duplicate the text already sent.
+      if (emitted > 0) {
+        throw new Error(
+          `stream failed after ${emitted} chars — the answer above is incomplete: ${msg}`
+        )
+      }
+      if (attempt === MAX_ATTEMPTS) {
+        throw new Error(`stream failed after ${MAX_ATTEMPTS} attempts: ${msg}`)
+      }
+      console.warn(`[query] synthesis attempt ${attempt} failed, retrying: ${msg}`)
+      await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** (attempt - 1)))
     }
   }
 }

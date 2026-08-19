@@ -53,7 +53,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Concepts (88)
+## Concepts (89)
 
 | Page | Type | Tags | Confidence | Description |
 |------|------|------|------------|-------------|
@@ -82,7 +82,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Patterns (76)
+## Patterns (78)
 
 | Page | Category | Problem | Confidence |
 |------|----------|---------|------------|
@@ -146,7 +146,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Recipes (19)
+## Recipes (20)
 
 | Page | Difficulty | Time | Description |
 |------|-----------|------|-------------|
@@ -176,7 +176,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Summaries (71)
+## Summaries (73)
 
 | Page | Source | Date Ingested | Key Concepts |
 |------|--------|--------------|-------------|

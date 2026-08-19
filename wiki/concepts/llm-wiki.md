@@ -1,74 +1,44 @@
 ---
-id: 01KNNVX2QGN219VVFN0GD8BJHG
-title: "LLM Wiki Pattern"
+id: 01M0BS7JQNDJJHNY7S493G38MT
+title: "LLM Wiki (Markdown Knowledge Base)"
 type: concept
-tags: [knowledge-base, llm, architecture, obsidian, workflow]
-created: 2025-01-01
-updated: 2026-04-07
+tags: [llm-wiki, knowledge-base, rag, obsidian, context, token-efficiency]
+created: 2026-04-25
+updated: 2026-04-25
 visibility: public
-confidence: high
-related: [pattern-llm-wiki, entities/andrej-karpathy, concepts/llm-wiki-pattern]
-source: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+confidence: medium
+related: [pattern-hot-cache, agent-memory-architecture]
+source: transcripts/nate-herk-llm-wiki.md
 ---
 
-# [[llm-wiki]] Pattern
-
-Originated by [[andrej-karpathy]]. A method for building and maintaining a personal or project knowledge base where LLMs do the maintenance work and humans retain editorial control.
+# LLM Wiki
 
 ## Definition
-
-A three-layer architecture:
-
-```
-Raw Sources → Wiki (LLM-generated markdown) → Schema (CLAUDE.md / system prompt)
-```
-
-- **Raw Sources**: Immutable inputs — papers, articles, notes, transcripts. The LLM reads these but never writes to them.
-- **Wiki**: Entirely LLM-owned structured markdown. Humans do not write wiki pages manually.
-- **Schema**: A co-evolving system prompt (e.g. `CLAUDE.md`) that defines page structure, naming conventions, tag vocabulary, and compile behaviour. Evolves as you learn what works.
+An LLM wiki is a lightweight knowledge base built entirely from markdown files organized into folders (typically `raw/`, `wiki/`, plus `CLAUDE.md`, `index.md`, and `log.md`), designed to be read directly by an LLM agent instead of retrieved via embeddings. Instead of similarity search over vector embeddings, an LLM wiki relies on explicit links between pages, index files, and a graph-like structure that an agent can traverse — reading indexes, following links, and searching only when necessary.
 
 ## Why It Matters
+The core pitch, per Nate Herk's walkthrough (building on [[andrej-karpathy]]'s viral post), is radical simplicity and cost efficiency:
 
-The pattern transfers tedious maintenance work — cross-references, consistency checks, updates, index management — to LLMs, while keeping intellectual work (curation, direction, analysis) with the human.
+> "You don't need a fancy vector database, embeddings, or complex infrastructure. It's literally just a folder with markdown files."
 
-> "Left vague so that you can hack it and customize it to your own project." — Andrej [[andrej-karpathy]]
+One cited case turned 383 scattered files and 100+ meeting transcripts into a compact wiki and dropped token usage by **95%** compared to querying with traditional RAG. The comparison breaks down as:
 
-At scale (~100 articles / ~400K words), no RAG pipeline is needed. The LLM can auto-maintain indexes and navigate the KB directly.
+| Dimension | LLM Wiki | Traditional RAG |
+|---|---|---|
+| Retrieval | Reads indexes, follows links | Similarity search |
+| Relationships | Explicit links | Implicit proximity |
+| Infrastructure | Markdown files | Vector DB + embeddings |
+| Cost | Tokens only | Compute + storage |
+| Maintenance | Run lint | Re-embed on change |
+| Scale | Hundreds of pages (fine) | Millions of docs |
 
-## Core Operations
+A key caveat: this approach scales to "hundreds of pages with good indexes" but traditional RAG is still preferred once a corpus reaches millions of documents.
 
-| Operation | Description |
-|---|---|
-| **Ingest** | Process one raw source at a time; update 10–15 wiki pages per document |
-| **Query** | Ask questions against the wiki; good answers get filed back as new pages |
-| **Lint** | Health check — surface contradictions, orphan pages, stale claims, and knowledge gaps |
+Maintenance happens via **linting** — running LLM-based health checks (weekly or on demand) to find inconsistent data, impute missing data via web search, and surface new article candidates from interesting connections.
 
-## Special Files
-
-- **`index.md`** — Catalog organized by category with one-line summaries of every page
-- **`log.md`** — Append-only chronological record of all compile operations, with parseable timestamps
-
-## Implementation Notes
-
-- Use **Obsidian** as the IDE/frontend — graph view reveals relationship clusters
-- Enable local image downloads to avoid broken URLs over time
-- **Git** provides version history for free — treat the wiki repo as a versioned artifact
-- No RAG needed at the ~100-article scale; structured indexes suffice
-
-## Example Use Cases (Community)
-
-- Research wikis (papers, theses)
-- Fiction writing (character and theme tracking)
-- Enterprise knowledge management
-- Personal second brains
-- Semiconductor and domain analysis
-- Trading strategy documentation
-- YouTube channel organization
+## Example
+A practical setup: an Obsidian vault split into a `raw/` folder (source transcripts/articles) and a `wiki/` folder (compiled pages), with a `CLAUDE.md` file pointing an agent at the vault path. The agent is instructed to read a [[pattern-hot-cache]] file first, then the top-level index, then a domain subindex, then search only if needed — with the explicit rule: "Don't read from the wiki unless you actually need it." One reported ingest: a single AI2027 article was compiled into 23 wiki pages (6 people, 5 orgs, 1 AI system profile, plus concepts and analysis) in about 10 minutes; 36 YouTube video transcripts were batch-ingested in 14 minutes.
 
 ## See Also
-
-- [LLM Wiki Pattern (patterns)](../patterns/pattern-llm-wiki.md)
-- [LLM Wiki Pattern (concept variant)](../concepts/llm-wiki-pattern.md)
-- [Andrej Karpathy (entity)](../entities/andrej-karpathy.md)
-- [Context Management](../concepts/context-management.md)
-- [Memory Systems](../concepts/memory-systems.md)
+- [[pattern-hot-cache]]
+- [Agent memory architecture](agent-memory-architecture.md)

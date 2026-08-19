@@ -1,84 +1,36 @@
 ---
-id: 01KQ302S13YKKHDS3XFHYDZ1TN
+id: 01M0BS4P3E6R3J803RXBSGHYPX
 title: "Agent Failure Modes"
 type: concept
-tags: [agents, safety, deployment, orchestration]
-created: 2026-04-25
-updated: 2026-04-25
+tags: [agents, safety, evaluation, prompting]
+created: 2026-07-10
+updated: 2026-07-10
 visibility: public
-confidence: high
-related: [agent-loops, agent-observability, human-in-the-loop, agentic-engineering-stack]
+confidence: medium
+related: [pattern-prompt-minimization, agent-evaluation, agent-loops]
 ---
 
 # Agent Failure Modes
 
-A taxonomy of the ways agentic systems fail in practice — spanning engineering errors, model errors, and systemic risks. Most production failures are engineering failures, not model failures.
-
----
-
 ## Definition
-
-Agent failure modes are the recurring categories of breakdowns that occur when LLM-based agents interact with tools, memory, and other agents. They can be grouped into: **loop/control failures**, **input/output validation failures**, **security failures**, and **operational failures**.
-
----
+Agent failure modes are the distinct ways an agentic system can produce incorrect, unsafe, or unhelpful behavior — ranging from loud, detectable errors (exceptions, timeouts) to quiet, undetectable ones that look like normal successful completions.
 
 ## Why It Matters
+Many production systems are built to catch failures by checking for explicit error states (exceptions, non-200 responses, empty outputs). A growing and easily-missed failure mode is the **silent refusal**: a model declines to do something benign, but returns that refusal as a well-formed, "successful" response rather than an error signal. If downstream code only checks for failures, these cases pass through undetected.
 
-Agents that can take real-world actions (send emails, call APIs, modify data) have a much higher blast radius than a standard LLM query. Identifying failure modes early — at design time — allows engineers to build in appropriate guardrails, circuit breakers, and human escalation paths.
+As discussed on a LinkedIn thread about Anthropic's newest Claude model and its minimized system prompt (see [prompt minimization](../patterns/pattern-prompt-minimization.md)), this issue is compounded when teams simultaneously shrink prompts and rely more on model reasoning — the smaller prompt means less explicit instruction to fall back on, and unexpected refusals become more likely to slip through:
 
----
-
-## Failure Mode Taxonomy
-
-### Loop & Control Failures
-- **Unbounded loops**: agent retries indefinitely without a max-step or time budget guard
-- **Repeated tool calls**: agent oscillates between the same two tools without progress; detectable via state counters
-- **Missing stop conditions**: agent continues past a valid terminal state
-- **Mitigation**: max steps + time budgets + stop conditions; watchdog node forcing escalation; guard edges in the graph
-
-### Input/Output Validation Failures
-- **Hallucinated tool parameters**: model generates plausible-but-wrong arguments for a tool call
-  - *Mitigation*: Pydantic schemas validated before execution; structured output with schema-gated tool dispatch
-- **Untyped state**: passing raw dicts through the agent graph makes failures invisible
-  - *Mitigation*: typed state objects throughout; fail fast on schema mismatch
-- **Malformed structured output**: downstream systems break when JSON is invalid or missing required fields
-
-### Security Failures
-- **Prompt injection**: malicious content in retrieved documents or tool outputs hijacks agent instructions
-  - *Mitigation*: treat retrieved text as untrusted; separate tool outputs from system instructions; content provenance tags; strict system policy
-- **PII leakage**: user data surfaces in logs, tool calls, or model inputs inappropriately
-- **Credential exposure**: secrets passed through uncontrolled tool parameters
-
-### Operational / Production Failures
-- **Missing timeouts**: tool calls hang indefinitely, blocking the agent loop
-- **Unbounded retries**: transient errors become infinite retry storms
-- **Global state**: shared mutable state across concurrent agent runs causes race conditions
-- **Mixed prompt/business logic**: tightly coupled code that can't be tested or evolved independently
-- **No observability**: failures are invisible until users report them (see [agent observability](agent-observability.md))
-- **Dependency drift**: unpinned library versions silently change tokenization or model behavior
-
-### Model-Level Failures
-- **Hallucination**: model asserts false facts confidently
-  - *Mitigation*: tools for factual queries, RAG + citations, constrained outputs, abstain rules, verification loops, second-pass critic
-- **Evaluation drift**: model behavior shifts over time without detection; requires ongoing golden-set evaluation
-
----
+> "fable can decline something that looks completely benign and it shows up as a normal successful response, not an error, so if your code only checks for failures you'll silently miss those cases... rebuilding your error handling around this model's quirks is the part that actually breaks things." — Nikhil Bhatia, commenting on Eduardo Ordax's LinkedIn post
 
 ## Example
+An agent pipeline asks a model to summarize a document. The model, for an opaque safety reason, returns a polite non-answer instead of a summary. The API call succeeds (200 OK), the output is well-formed text, and no exception is thrown — but the actual task was never completed. Without content-level validation (e.g., checking that the output actually addresses the input), this failure is invisible to standard error-handling logic.
 
-A research agent without loop prevention:
-1. Calls `search(query)` → gets ambiguous results
-2. Calls `search(refined_query)` → still ambiguous
-3. Loops back to step 1 indefinitely
-
-Fix: state counter tracking search attempts; guard edge at N=3 → escalate to human or return best-effort answer.
-
----
+## Pitfalls
+- Assuming "no exception" means "task succeeded"
+- Not validating output *content* against the original task intent
+- Cutting prompt/instruction size (see [prompt minimization](../patterns/pattern-prompt-minimization.md)) without simultaneously strengthening output verification
 
 ## See Also
-
-- [Agent Loops](agent-loops.md)
-- [Agent Observability](agent-observability.md)
-- [Human-in-the-Loop](human-in-the-loop.md)
-- [Guardrails](guardrails.md)
-- [Agentic Engineering Stack](agentic-engineering-stack.md)
+- [Prompt minimization](../patterns/pattern-prompt-minimization.md)
+- [Agent evaluation](agent-evaluation.md)
+- [Agent loops](agent-loops.md)

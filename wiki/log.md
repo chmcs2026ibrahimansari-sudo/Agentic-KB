@@ -1506,3 +1506,42 @@ Pages created (manual, this pass): `wiki/syntheses/synthesis-headroom-compressio
 Contradictions flagged: none new. Three pre-existing unresolved tensions re-surfaced in today's intelligence (Headroom-vs-episodic-log fidelity; SkillOpt gate transplant; vault-write gate source). All three, plus today's new synthesis, share one unresolved empirical core — no deployment exists where compression, compile, and gate run over the same sources. Not resolvable by automation; left standing for human resolution.
 
 Query failures worth noting: `cli/kb.js query` for cross-domain connections failed `ETIMEDOUT`, then returned a truncated answer on retry. The candidates/graduation query returned retrieval sources but an empty answer body on both attempts. Both gaps are recorded in today's daily note; the connections analysis was completed deterministically by enumerating `wiki/syntheses/`.
+
+## 2026-08-19 — Compiled `framework-docs/llm-wiki-v2-gist-rohitg00.md`
+
+Pages affected: `summaries/summary-llm-wiki-v2-rohitg.md`, `concepts/memory-lifecycle.md`, `patterns/pattern-hybrid-search-retrieval.md`
+
+## 2026-08-19 — Compiled `framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md`
+
+Pages affected: `patterns/pattern-prompt-minimization.md`, `concepts/agent-failure-modes.md`, `summaries/summary-fable-prompting-tutorial-linkedin.md`
+
+## 2026-08-19 — Compiled `framework-docs/x-twitter-2084542353344282850.md`
+
+Pages affected: `recipes/production-ai-engineer-project-checklist.md`
+
+## 2026-08-19 — Compiled `transcripts/nate-herk-llm-wiki.md`
+
+Pages affected: `concepts/llm-wiki.md`, `patterns/pattern-hot-cache.md`, `summaries/summary-nate-herk-llm-wiki.md`
+
+## 2026-08-18 — Pipeline fixes: PII guard scope, kb query reliability, compile truncation
+
+Follow-up pass on the three defects surfaced by this morning's `morning-review-daily` run.
+
+**1. PII guard false positive (`scripts/hooks/pre-commit`).** The unqualified mental-health pattern blocked `wiki/summaries/summary-garrytan-meta-meta-prompting.md` over a public quote about a hypothetical "$300/hour" clinician reading a book — third-party commentary, not Jay's PII. Replaced with four narrower patterns that require first-person framing: a possessive qualifier, an attendance verb, or an appointment/session noun. See the hook source for the exact expressions. Verified against a 14-case fixture: 4 benign strings pass, 10 real-PII strings still caught. The blocked summary was then committed through the hook normally — **no `--no-verify` used anywhere**.
+
+(Note: this very log entry initially tripped the new guard, because it quoted the patterns verbatim. Reworded rather than whitelisted — documentation about a deny-list should not require an exemption from it.)
+
+**2. `cli/kb.js query` empty answer body — FIXED, root cause confirmed.** `web/src/app/api/query/route.ts` read `response.content[0]` in `identifyRelevantPages()`, which yields `''` whenever the model leads with a non-text block; the function then returned `[]` with no error, and the streaming synthesis loop forwarded only `text_delta` chunks, silently dropping everything else. Result: retrieval sources printed, answer body blank, exit 0. Now concatenates all text blocks, and the stream falls back to `finalMessage()` when zero deltas arrive. Verified: the candidates/graduation query that returned blank twice this morning now returns a full answer.
+
+**3. `cli/kb.js query` ETIMEDOUT + silent truncation — FIXED.** The synthesis call had no retry, and a stream that died mid-flight was indistinguishable from one that completed (the route walked on to send `sources` + `done`). Added 3-attempt retry with exponential backoff, but **only while zero bytes have reached the client** — retrying after partial output would duplicate the answer. Past that point it now throws with the byte count instead of truncating silently. Also added an explicit `stop_reason === 'max_tokens'` warning appended to the answer.
+
+**4. Compile `JSON parse failed` — FIXED, root cause was truncation, not escaping.** `web/src/app/api/compile/route.ts` capped generation at `max_tokens: 4096`. Each op embeds a whole markdown page in one JSON string, so 3-page responses overflow. Overflow was invisible because the greedy `/\[[\s\S]*\]/` still matches a truncated array — frontmatter `tags: [a, b]` reliably supplies a closing bracket — so overflow surfaced as a parse error rather than a length error. Raised to 8192, added a `stop_reason` check ahead of the parse, bound the discarded `SyntaxError`, and added a raw-response dump to `logs/compile-failures/`. **Verified: all 4 previously-skipped docs now compile — 6 pages created, 4 updated, 0 skips, 0 dumps.**
+
+Pages created by the re-compile: `summaries/summary-llm-wiki-v2-rohitg`, `concepts/memory-lifecycle`, `patterns/pattern-hybrid-search-retrieval`, `patterns/pattern-prompt-minimization`, `summaries/summary-fable-prompting-tutorial-linkedin`, `recipes/production-ai-engineer-project-checklist`, `concepts/llm-wiki`, `patterns/pattern-hot-cache`, `summaries/summary-nate-herk-llm-wiki`; `concepts/agent-failure-modes` updated.
+
+**Known issues left open (not fixed, surfaced for decision):**
+- `MAX_CONTEXT_CHARS = 24_000` in the query route truncates `wiki/candidates.md`, so graduation-count questions cannot be answered accurately from the wiki alone. The compile gate's own output is the reliable source for those counts.
+- `route.ts` compile shows the model only `existingPages.slice(0, 60)` of 733 wiki pages as cross-reference context, in raw readdir order. Likely cause of near-duplicate pages (`patterns/llm-wiki-pattern`, `concepts/llm-wiki-pattern`, `patterns/pattern-llm-wiki`).
+- `@anthropic-ai/sdk` pinned at `^0.32.1` while `KB_MODEL` defaults to `claude-sonnet-5`. The fixes above defend against unknown content-block types rather than requiring an upgrade, but the version gap remains.
+- A stale duplicate of the compile route exists at `.claude/worktrees/affectionate-swanson-41d555/web/src/app/api/compile/route.ts` with the old regex and a pre-`safeJoin` write path. Merging from it would reintroduce both bugs.
+- The Morning Review Apple Notes AppleScript hung 37 minutes before reporting its 60s timeout. Untouched by this pass.

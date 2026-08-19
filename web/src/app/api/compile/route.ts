@@ -348,16 +348,36 @@ Rules:
 - Return ONLY the JSON array`
 
           let responseText = ''
+          let genStopReason: string | null = null
           try {
             const genResponse = await client.messages.create({
               model: KB_MODEL,
-              max_tokens: 4096,
+              // Each op crams an entire markdown page into a single JSON string
+              // value, so a 3-page response already runs ~2000 tokens. 4096 left
+              // too little headroom, and overflow was invisible: a truncated
+              // array still satisfies the greedy regex below, because frontmatter
+              // (`tags: [a, b]`) reliably supplies a closing bracket. Truncation
+              // therefore surfaced as an unexplained "JSON parse failed".
+              max_tokens: 8192,
               system: systemPrompt,
               messages: [{ role: 'user', content: genPrompt }],
             })
             responseText = textOf(genResponse)
+            genStopReason = genResponse.stop_reason ?? null
           } catch (err) {
             send({ type: 'error', file: relFile, message: String(err) }); continue
+          }
+
+          // Check this before parsing: a truncated response can still parse-fail
+          // in a way that looks like malformed escaping, sending you after the
+          // wrong bug.
+          if (genStopReason === 'max_tokens') {
+            send({
+              type: 'skip',
+              file: relFile,
+              reason: `generation hit max_tokens — response truncated at ${responseText.length} chars`,
+            })
+            continue
           }
 
           // Parse the JSON response
@@ -368,7 +388,31 @@ Rules:
 
           let ops: Array<{ op: string; path: string; content: string }> = []
           try { ops = JSON.parse(jsonMatch[0]) as typeof ops }
-          catch { send({ type: 'skip', file: relFile, reason: 'JSON parse failed' }); continue }
+          catch (err) {
+            // A bare `catch {}` here threw away the SyntaxError, which is the
+            // only thing that distinguishes truncation ("Unexpected end of JSON
+            // input") from bad escaping ("Bad control character in string
+            // literal at position N"). Keep the message, and dump the raw
+            // response so the failure is reproducible offline.
+            const detail = err instanceof Error ? err.message : String(err)
+            let dumpNote = ''
+            try {
+              const dumpDir = path.join(process.cwd(), 'logs', 'compile-failures')
+              fs.mkdirSync(dumpDir, { recursive: true })
+              const dumpFile = path.join(
+                dumpDir,
+                `${relFile.replace(/[/\\]/g, '__')}.${Date.now()}.txt`
+              )
+              fs.writeFileSync(dumpFile, responseText, 'utf-8')
+              dumpNote = ` (raw response: ${path.relative(process.cwd(), dumpFile)})`
+            } catch { /* diagnostics must never break the compile */ }
+            send({
+              type: 'skip',
+              file: relFile,
+              reason: `JSON parse failed — ${detail}${dumpNote}`,
+            })
+            continue
+          }
 
           const affectedPages: string[] = []
 

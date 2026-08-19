@@ -1005,5 +1005,35 @@
       "concepts/managed-agents.md",
       "summaries/summary-hwchase17-managed-agents-thesis.md"
     ]
+  },
+  "framework-docs/llm-wiki-v2-gist-rohitg00.md": {
+    "compiledAt": "2026-08-19T01:09:57.144Z",
+    "pagesAffected": [
+      "summaries/summary-llm-wiki-v2-rohitg.md",
+      "concepts/memory-lifecycle.md",
+      "patterns/pattern-hybrid-search-retrieval.md"
+    ]
+  },
+  "framework-docs/www-linkedin-com-posts-eordax-ai-claude-ugcpost-7480733978405109760-4xi.md": {
+    "compiledAt": "2026-08-19T01:11:01.999Z",
+    "pagesAffected": [
+      "patterns/pattern-prompt-minimization.md",
+      "concepts/agent-failure-modes.md",
+      "summaries/summary-fable-prompting-tutorial-linkedin.md"
+    ]
+  },
+  "framework-docs/x-twitter-2084542353344282850.md": {
+    "compiledAt": "2026-08-19T01:11:49.607Z",
+    "pagesAffected": [
+      "recipes/production-ai-engineer-project-checklist.md"
+    ]
+  },
+  "transcripts/nate-herk-llm-wiki.md": {
+    "compiledAt": "2026-08-19T01:12:36.859Z",
+    "pagesAffected": [
+      "concepts/llm-wiki.md",
+      "patterns/pattern-hot-cache.md",
+      "summaries/summary-nate-herk-llm-wiki.md"
+    ]
   }
 }

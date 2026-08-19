@@ -48,15 +48,23 @@ for (const sub of SCAN) {
   if (!fs.existsSync(base)) continue
   for (const abs of walk(base)) {
     const content = fs.readFileSync(abs, 'utf8')
-    const fmMatch = content.match(/^---\n([\s\S]*?)\n---/)
+    // \r?\n, not \n: a CRLF file (Windows-authored, or synced from GitHub
+    // into wiki/repos/*/repo-docs/) failed the LF-only match, fell into the
+    // "no frontmatter" branch and got a *second* frontmatter block prepended.
+    // parseFrontmatter then read only the injected block, so title/type/status
+    // were lost — and because the file now has a valid `id:`, a re-run skips
+    // it and the damage is permanent. Reconstruct with the file's own EOL so
+    // the rest of the bytes are untouched.
+    const eol = content.includes('\r\n') ? '\r\n' : '\n'
+    const fmMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
     if (fmMatch) {
       if (/^id:\s*\S/m.test(fmMatch[1])) { skipped++; continue }
-      const updated = `---\nid: ${ulid()}\n${fmMatch[1]}\n---${content.slice(fmMatch[0].length)}`
+      const updated = `---${eol}id: ${ulid()}${eol}${fmMatch[1]}${eol}---${content.slice(fmMatch[0].length)}`
       writeAtomic(abs, updated)
       added++
     } else {
       // prepend minimal frontmatter
-      const updated = `---\nid: ${ulid()}\n---\n\n${content}`
+      const updated = `---${eol}id: ${ulid()}${eol}---${eol}${eol}${content}`
       writeAtomic(abs, updated)
       noFm++
       added++

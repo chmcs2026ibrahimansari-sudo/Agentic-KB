@@ -105,6 +105,49 @@ test('saveRegistry writes atomically and preserves wrapper metadata', () => {
   assert.deepEqual(leftovers, [], 'no tmp files left behind by the atomic write')
 })
 
+test('upsertRepo serialises against a concurrent holder of the registry lock', () => {
+  // upsertRepo is a load -> mutate -> save over one shared file. Uncontended
+  // it is fine; with `POST /api/repos` racing syncRepo's markSynced the loser
+  // read a pre-update snapshot and wrote its own records array over the
+  // winner's, silently dropping a repo.
+  const root = makeFixture()
+  const regPath = path.join(root, 'config/repos/registry.json')
+
+  const HOLD_MS = 250
+  const locksMod = new URL('../../lib/agent-runtime/locks.mjs', import.meta.url).href
+  const regModUrl = new URL('../../lib/repo-runtime/registry.mjs', import.meta.url).href
+  // Child holds repo-registry, lands 'from-child', then releases.
+  const child = spawn(process.execPath, ['-e', `
+    Promise.all([
+      import(${JSON.stringify(locksMod)}),
+      import(${JSON.stringify(regModUrl)}),
+    ]).then(([{ acquireLock }, reg]) => {
+      const lock = acquireLock(${JSON.stringify(root)}, 'repo-registry')
+      reg.saveRegistry(${JSON.stringify(root)}, [{ repo_name: 'from-child', status: 'active' }])
+      setTimeout(() => { lock.release(); process.exit(0) }, ${HOLD_MS})
+    })
+  `], { stdio: ['ignore', 'pipe', 'pipe'] })
+
+  try {
+    const lockFile = path.join(root, '.locks', 'repo-registry.lock')
+    const deadline = Date.now() + 5000
+    while (!fs.existsSync(lockFile) && Date.now() < deadline) {
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 10)
+    }
+    assert.ok(fs.existsSync(lockFile), 'child never acquired the registry lock')
+
+    const started = Date.now()
+    repoRt.upsertRepo(root, { repo_name: 'from-parent', status: 'active' })
+    const waited = Date.now() - started
+
+    assert.ok(waited >= HOLD_MS / 2, `upsertRepo did not wait for the lock (${waited}ms)`)
+    const names = JSON.parse(fs.readFileSync(regPath, 'utf8')).repos.map(r => r.repo_name)
+    assert.deepEqual(names.sort(), ['from-child', 'from-parent'], 'neither write was lost')
+  } finally {
+    child.kill()
+  }
+})
+
 // ─── 2. Paths tests ──────────────────────────────────────────────────────
 
 test('repoWikiRoot returns correct path', () => {

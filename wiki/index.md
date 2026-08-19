@@ -53,7 +53,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Concepts (89)
+## Concepts (93)
 
 | Page | Type | Tags | Confidence | Description |
 |------|------|------|------------|-------------|
@@ -82,7 +82,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Patterns (78)
+## Patterns (83)
 
 | Page | Category | Problem | Confidence |
 |------|----------|---------|------------|
@@ -103,7 +103,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Frameworks (31)
+## Frameworks (42)
 
 | Page | Vendor | Version | Jay's Experience | Last Checked |
 |------|--------|---------|-----------------|--------------|
@@ -176,7 +176,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Summaries (73)
+## Summaries (75)
 
 | Page | Source | Date Ingested | Key Concepts |
 |------|--------|--------------|-------------|
@@ -267,7 +267,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (34)
+## Syntheses (35)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -299,6 +299,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-proof-of-work-receipts-obsidian-wiki-audit-trail]] | What gets permanently recorded when a gated vault write is accepted — and is the Proof-of-Work receipt schema the missing answer? | 2026-08-15 |
 | [[syntheses/synthesis-headroom-compression-proof-of-work-receipts]] | If Headroom compresses the tool outputs and transcripts an agent verifies against, is the resulting proof-of-work receipt still evidence of verification? | 2026-08-16 |
 | [[syntheses/synthesis-headroom-compression-obsidian-wiki-vault]] | If Headroom compresses the source material an agent compiles into an Obsidian vault, does the resulting wiki page record knowledge or a lossy impression of it? | 2026-08-18 |
+| [[syntheses/synthesis-headroom-compression-reciprocal-rank-fusion]] | If Headroom compresses RAG chunks before they reach the retrieval and scoring stages, is the resulting Reciprocal Rank Fusion ordering still a measure of retrieval quality? | 2026-08-19 |
 
 ---
 

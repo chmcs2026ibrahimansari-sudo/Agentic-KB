@@ -1035,5 +1035,111 @@
       "patterns/pattern-hot-cache.md",
       "summaries/summary-nate-herk-llm-wiki.md"
     ]
+  },
+  "framework-docs/anthropic-com-engineering-managed-agents.md": {
+    "compiledAt": "2026-08-19T13:11:09.946Z",
+    "pagesAffected": [
+      "frameworks/claude-managed-agents.md",
+      "patterns/pattern-decoupled-agent-architecture.md",
+      "summaries/summary-anthropic-managed-agents.md"
+    ]
+  },
+  "framework-docs/deepseek-ai-deepseek-harness.md": {
+    "compiledAt": "2026-08-19T13:11:49.093Z",
+    "pagesAffected": [
+      "frameworks/deepseek-harness.md"
+    ]
+  },
+  "framework-docs/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio.md": {
+    "compiledAt": "2026-08-19T13:12:46.142Z",
+    "pagesAffected": [
+      "frameworks/playwright.md",
+      "patterns/pattern-browser-automation-agent.md"
+    ]
+  },
+  "framework-docs/docs-langchain-com-langsmith-python-managed-deep-agents-overview.md": {
+    "compiledAt": "2026-08-19T13:14:35.399Z",
+    "pagesAffected": [
+      "frameworks/framework-managed-deep-agents.md",
+      "concepts/deep-agents-harness.md"
+    ]
+  },
+  "framework-docs/docs-langchain-com-oss-deepagents-code-overview.md": {
+    "compiledAt": "2026-08-19T13:15:12.979Z",
+    "pagesAffected": [
+      "frameworks/framework-deepagents-code.md"
+    ]
+  },
+  "framework-docs/handbook-vinodspattar-in-learn-modules-07-langgraph.md": {
+    "compiledAt": "2026-08-19T13:16:04.083Z",
+    "pagesAffected": [
+      "frameworks/langgraph.md",
+      "concepts/state-graph-checkpointing.md"
+    ]
+  },
+  "framework-docs/langchain-ai-open-swe.md": {
+    "compiledAt": "2026-08-19T13:16:45.820Z",
+    "pagesAffected": [
+      "frameworks/framework-open-swe.md"
+    ]
+  },
+  "framework-docs/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9.md": {
+    "compiledAt": "2026-08-19T13:18:20.834Z",
+    "pagesAffected": []
+  },
+  "framework-docs/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k.md": {
+    "compiledAt": "2026-08-19T13:19:23.227Z",
+    "pagesAffected": [
+      "patterns/pattern-minimal-context-setup.md",
+      "concepts/context-window-bloat.md"
+    ]
+  },
+  "framework-docs/lumay-ai.md": {
+    "compiledAt": "2026-08-19T13:20:07.203Z",
+    "pagesAffected": [
+      "frameworks/lumay-ai.md"
+    ]
+  },
+  "framework-docs/opensandbox-group-OpenSandbox.md": {
+    "compiledAt": "2026-08-19T13:20:47.756Z",
+    "pagesAffected": [
+      "frameworks/opensandbox.md"
+    ]
+  },
+  "framework-docs/opensourceprojects-dev-post-simba.md": {
+    "compiledAt": "2026-08-19T13:21:22.759Z",
+    "pagesAffected": [
+      "frameworks/simba.md"
+    ]
+  },
+  "framework-docs/x-twitter-2087607558626582741.md": {
+    "compiledAt": "2026-08-19T13:22:07.088Z",
+    "pagesAffected": [
+      "frameworks/simba.md"
+    ]
+  },
+  "framework-docs/x-twitter-2088359756096532965.md": {
+    "compiledAt": "2026-08-19T13:22:47.535Z",
+    "pagesAffected": [
+      "patterns/pattern-software-factory.md"
+    ]
+  },
+  "framework-docs/x-twitter-2088713006095994930.md": {
+    "compiledAt": "2026-08-19T13:23:11.394Z",
+    "pagesAffected": []
+  },
+  "framework-docs/x-twitter-2088782821535981815.md": {
+    "compiledAt": "2026-08-19T13:23:57.478Z",
+    "pagesAffected": [
+      "concepts/agent-harness-model-context.md",
+      "summaries/summary-harrison-chase-harness-model-context.md"
+    ]
+  },
+  "framework-docs/x-twitter-2089029054611837324.md": {
+    "compiledAt": "2026-08-19T13:24:46.112Z",
+    "pagesAffected": [
+      "frameworks/framework-deepagents.md",
+      "patterns/pattern-backend-sandbox-separation.md"
+    ]
   }
 }

@@ -146,6 +146,139 @@
       "captured_at": "2026-08-15T23:10:13-07:00",
       "sha256": "117d5a06df29ec59b6d46f4d1dc7d284b8f434b47a9c5614457f338d0d625ac2",
       "source_note": "Apple Notes 2026-08-05: production AI engineering project checklist; mine RAG citations, model routing, eval harnesses, observability, security guardrails, local-first dev, multi-tenant agent, CI/CD, vector DB scale, and memory-system patterns."
+    },
+    {
+      "url": "https://x.com/hwchase17/status/2089029054611837324",
+      "destination": "raw/framework-docs/x-twitter-2089029054611837324.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "32ca9ed3f934d4eba3d2c7546f6b270ba5d4a43df8276e3c1542ee4cc592de94",
+      "source_note": "Apple Notes 2026-08-16: DeepAgents architecture; mine backend/sandbox separation, filesystem-like agent state, local/cloud UI split, MCP/A2A deployment, and “brains vs hands” boundary."
+    },
+    {
+      "url": "https://www.anthropic.com/engineering/managed-agents",
+      "destination": "raw/framework-docs/anthropic-com-engineering-managed-agents.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "a10312a6ba66f91659d55fce7969b05707e145b4ae472a57552bffe23e4bdeb0",
+      "source_note": "Apple Notes 2026-08-16 via @hwchase17: managed agents architecture; compare against MissionControl worker lease/sandbox/context package model."
+    },
+    {
+      "url": "https://docs.langchain.com/oss/deepagents/code/overview",
+      "destination": "raw/framework-docs/docs-langchain-com-oss-deepagents-code-overview.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "0b66ed6d1dd1e884e161803d3fd2e2057a84933a68de8c22353bad7d8bbb1305",
+      "source_note": "Apple Notes 2026-08-16 via @hwchase17: DeepAgents code/TUI architecture; extract patterns for local coding-agent frontends backed by governed sandboxes."
+    },
+    {
+      "url": "https://github.com/langchain-ai/open-swe",
+      "destination": "raw/framework-docs/langchain-ai-open-swe.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "58ff0f46a348055c7af7f4ae67c2ace87f9560efd0234d9e35150560689f3ee4",
+      "source_note": "Apple Notes 2026-08-16 via @hwchase17: LangChain Open SWE; evaluate for cloud coding-agent control-plane patterns, not direct adoption."
+    },
+    {
+      "url": "https://docs.langchain.com/langsmith/python/managed-deep-agents-overview",
+      "destination": "raw/framework-docs/docs-langchain-com-langsmith-python-managed-deep-agents-overview.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "4c7556b780a6667157b2c70a1e111f4d04949cacdadcd235650d3732ffdd3a79",
+      "source_note": "Apple Notes 2026-08-16 via @hwchase17/@caspar_br: managed deep agents; mine deployment/runtime/sandbox/context patterns."
+    },
+    {
+      "url": "https://github.com/deepseek-ai/deepseek-harness",
+      "destination": "raw/framework-docs/deepseek-ai-deepseek-harness.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "1326a7634a80986f332160d475869b597fbe8c36beae480f230bc8472a7615f0",
+      "source_note": "Apple Notes 2026-08-16: plugin-based open coding-agent harness; inspect AGENTS.md, plugin runtime, swappable model/tool/session/agent-loop architecture."
+    },
+    {
+      "url": "https://github.com/opensandbox-group/OpenSandbox",
+      "destination": "raw/framework-docs/opensandbox-group-OpenSandbox.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "24b65571a70da32047013e9a3860bcfdf3c7563088ecac8e1acb360673eb2767",
+      "source_note": "Apple Notes 2026-08-16: agent sandbox/runtime; evaluate for MissionControl safe execution and worker isolation patterns."
+    },
+    {
+      "url": "https://x.com/vartekxx/status/2088782821535981815",
+      "destination": "raw/framework-docs/x-twitter-2088782821535981815.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "c98d320bfd8f91fcdded07f5ba600c9b141f5b95169ae7c7b297d790afea943f",
+      "source_note": "Apple Notes 2026-08-16: Harrison Chase harness/model/context taxonomy; mine for MissionControl context-engineering and factory-memory framing."
+    },
+    {
+      "url": "https://x.com/0xCodez/status/2088713006095994930",
+      "destination": "raw/framework-docs/x-twitter-2088713006095994930.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "43537fa4b1a637cce0653a7ef5829881f74c496347fdd46f8f5af52bc06fa702",
+      "source_note": "Apple Notes 2026-08-16: loops + graphs + MCP self-learning-agent framing; treat as secondary source and verify against primary Anthropic/MCP materials."
+    },
+    {
+      "url": "https://x.com/startupideaspod/status/2088359756096532965",
+      "destination": "raw/framework-docs/x-twitter-2088359756096532965.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "bcf0ffe01ec0713f722ac4e44962e61d69bc74cab236619029eae8005b579076",
+      "source_note": "Apple Notes 2026-08-15: software factory business pattern; mine primitives, promotion, memory, human-heavy loops, and speed compounding."
+    },
+    {
+      "url": "https://x.com/GithubProjects/status/2087607558626582741",
+      "destination": "raw/framework-docs/x-twitter-2087607558626582741.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "4c2a0619821664024833f1924421d4448541fbeef26692b4fbe7f65114e3fdd0",
+      "source_note": "Apple Notes 2026-08-15: Simba eval-first customer-service assistant pointer; mine eval-first RAG/customer-service pipeline patterns."
+    },
+    {
+      "url": "https://www.opensourceprojects.dev/post/simba",
+      "destination": "raw/framework-docs/opensourceprojects-dev-post-simba.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "9c2547fb88aa9802433ccb3f04e1f01b1617a789849252807f9382e2cad5075a",
+      "source_note": "Apple Notes 2026-08-15 via @GithubProjects: Simba project writeup; verify npm/package/repo and extract eval/retrieval/generation/latency metric design."
+    },
+    {
+      "url": "https://github.com/disler/super-simple-software-factory",
+      "destination": "raw/framework-docs/disler-super-simple-software-factory.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "af66981f7bcdfa008ff386f10a6407e8061c330f15e5219b9d379b0b7ef76c99",
+      "source_note": "Apple Notes 2026-08-15: simple software factory reference; mine UX mode toggle, factory primitives, and realistic E2E qualification scenario ideas."
+    },
+    {
+      "url": "https://dev.to/himanshuai/playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automation-2el5",
+      "destination": "raw/framework-docs/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "37d03c480c3c4f715f1cdf6701efd8dcb23337b088728375106e04f49cc4f52d",
+      "source_note": "Apple Notes 2026-08-14: Playwright AI agent guide; mine browser-agent autonomy, safety, verification, and test-harness patterns."
+    },
+    {
+      "url": "https://handbook.vinodspattar.in/learn/modules/07-langgraph/",
+      "destination": "raw/framework-docs/handbook-vinodspattar-in-learn-modules-07-langgraph.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "6375c5915b887559e60f25479eb02fb47c46a0903e625c7008d32698b17a116e",
+      "source_note": "Apple Notes 2026-08-13: LangGraph module; use as secondary LangGraph learning reference for graph/loop orchestration patterns."
+    },
+    {
+      "url": "https://www.linkedin.com/posts/danielnrocha_harness-meta-harness-self-improving-harness-share-7494046822647341056-q5N7/",
+      "destination": "raw/framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "a55cf2f26c7e60db9618e291c0d6974bce55a6f19420d5da07a20e0f4a39f376",
+      "source_note": "Apple Notes 2026-08-17: LinkedIn post slug suggests self-improving/meta-harness; extraction blocked during cron, preserve for authenticated/manual review."
+    },
+    {
+      "url": "https://www.linkedin.com/posts/reshmawithai_ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-W9cG/",
+      "destination": "raw/framework-docs/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "42c30095cdc156c16624c1cc1fe9aa53b3456f8ba3d4c1cc5bca99a7732b3eda",
+      "source_note": "Apple Notes 2026-08-14: enterprise AI failure/operating-model signal; extraction blocked, preserve for manual review."
+    },
+    {
+      "url": "https://www.linkedin.com/posts/ruben-hassid_stop-over-organizing-claude-it-slows-you-share-7493980931716939776-KWtr/",
+      "destination": "raw/framework-docs/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k.md",
+      "captured_at": "2026-08-18T23:09:03-0700",
+      "sha256": "087176c0e29adb3eb540ad491c3c4ad325bea173555460e8384a66fbe4b5b820",
+      "source_note": "Apple Notes 2026-08-14: Claude organization/context-management claim; extraction blocked, preserve for manual review."
+    },
+    {
+      "url": "https://www.lumay.ai/",
+      "destination": "raw/framework-docs/lumay-ai.md",
+      "captured_at": "2026-08-18T23:10:32-0700",
+      "sha256": "4fbba07e5a7c054a6c4807bec2c3b78103f2079fb824ec4245ea77eb80a5a16c",
+      "source_note": "Apple Notes 2026-08-14: Lumay AI company/site paired with enterprise AI adoption note; inspect for AI operating model patterns."
     }
   ]
 }

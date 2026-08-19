@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-19 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-headroom-compression-reciprocal-rank-fusion|Compression Upstream of Reciprocal Rank Fusion Corrupts Rank Order Without Changing the Fused List's Shape]] — extends the compression-vs-adjudication rule from receipts and freshness signals to a *ranking* signal: RRF is score-free, so a degraded retriever has no channel to signal low confidence, and a single shared compressor injects correlated bias that RRF's consensus math amplifies rather than averages away; conditional on an unverified fact about whether Headroom compresses before or after retrieval
+
 ## 2026-08-16 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-headroom-compression-proof-of-work-receipts|Context Compression Upstream of a Proof-of-Work Receipt Can Certify a Check That Never Really Happened]] — closes the 9th of 10 edges in the 5-node cluster: compression is safe for consumption and unsafe for adjudication, so a receipt that does not record its own `context_fidelity` cannot be audited; strong "verify against the cache" rule deferred pending a two-run comparison

@@ -1545,3 +1545,93 @@ Pages created by the re-compile: `summaries/summary-llm-wiki-v2-rohitg`, `concep
 - `@anthropic-ai/sdk` pinned at `^0.32.1` while `KB_MODEL` defaults to `claude-sonnet-5`. The fixes above defend against unknown content-block types rather than requiring an upgrade, but the version gap remains.
 - A stale duplicate of the compile route exists at `.claude/worktrees/affectionate-swanson-41d555/web/src/app/api/compile/route.ts` with the old regex and a pre-`safeJoin` write path. Merging from it would reintroduce both bugs.
 - The Morning Review Apple Notes AppleScript hung 37 minutes before reporting its 60s timeout. Untouched by this pass.
+
+## 2026-08-19 — Compiled `framework-docs/anthropic-com-engineering-managed-agents.md`
+
+Pages affected: `frameworks/claude-managed-agents.md`, `patterns/pattern-decoupled-agent-architecture.md`, `summaries/summary-anthropic-managed-agents.md`
+
+## 2026-08-19 — Compiled `framework-docs/deepseek-ai-deepseek-harness.md`
+
+Pages affected: `frameworks/deepseek-harness.md`
+
+## 2026-08-19 — Compiled `framework-docs/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio.md`
+
+Pages affected: `frameworks/playwright.md`, `patterns/pattern-browser-automation-agent.md`
+
+## 2026-08-19 — Compiled `framework-docs/docs-langchain-com-langsmith-python-managed-deep-agents-overview.md`
+
+Pages affected: `frameworks/framework-managed-deep-agents.md`, `concepts/deep-agents-harness.md`
+
+## 2026-08-19 — Compiled `framework-docs/docs-langchain-com-oss-deepagents-code-overview.md`
+
+Pages affected: `frameworks/framework-deepagents-code.md`
+
+## 2026-08-19 — Compiled `framework-docs/handbook-vinodspattar-in-learn-modules-07-langgraph.md`
+
+Pages affected: `frameworks/langgraph.md`, `concepts/state-graph-checkpointing.md`
+
+## 2026-08-19 — Compiled `framework-docs/langchain-ai-open-swe.md`
+
+Pages affected: `frameworks/framework-open-swe.md`
+
+## 2026-08-19 — Compiled `framework-docs/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9.md`
+
+Pages affected: 
+
+## 2026-08-19 — Compiled `framework-docs/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k.md`
+
+Pages affected: `patterns/pattern-minimal-context-setup.md`, `concepts/context-window-bloat.md`
+
+## 2026-08-19 — Compiled `framework-docs/lumay-ai.md`
+
+Pages affected: `frameworks/lumay-ai.md`
+
+## 2026-08-19 — Compiled `framework-docs/opensandbox-group-OpenSandbox.md`
+
+Pages affected: `frameworks/opensandbox.md`
+
+## 2026-08-19 — Compiled `framework-docs/opensourceprojects-dev-post-simba.md`
+
+Pages affected: `frameworks/simba.md`
+
+## 2026-08-19 — Compiled `framework-docs/x-twitter-2087607558626582741.md`
+
+Pages affected: `frameworks/simba.md`
+
+## 2026-08-19 — Compiled `framework-docs/x-twitter-2088359756096532965.md`
+
+Pages affected: `patterns/pattern-software-factory.md`
+
+## 2026-08-19 — Compiled `framework-docs/x-twitter-2088713006095994930.md`
+
+Pages affected: 
+
+## 2026-08-19 — Compiled `framework-docs/x-twitter-2088782821535981815.md`
+
+Pages affected: `concepts/agent-harness-model-context.md`, `summaries/summary-harrison-chase-harness-model-context.md`
+
+## 2026-08-19 — Compiled `framework-docs/x-twitter-2089029054611837324.md`
+
+Pages affected: `frameworks/framework-deepagents.md`, `patterns/pattern-backend-sandbox-separation.md`
+
+## 2026-08-19 — morning-review-daily apply pass
+
+**Compile gate:** `compile-2source-gate.mjs --execute` — 19 raw docs compiled, 22 pages created, 1 updated. PROMOTE 28 / DEFER 164 / GRADUATE 0.
+2 docs skipped on JSON parse failures (bad control character in model response):
+`framework-docs/disler-super-simple-software-factory.md`, `framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md`.
+Raw responses retained under `logs/compile-failures/`. Re-runnable — these docs remain uncompiled.
+
+**Proposals:** `foundry-propose.mjs --execute --top 3` — 1 new proposal persisted, PROP-153 [HEAVY_BACKLOG] (164 deferred themes vs. threshold 50).
+
+**Synthesis drafted:** `syntheses/synthesis-headroom-compression-reciprocal-rank-fusion.md` (`reviewed: false`) — top cross-domain connection of the day. Extends the cluster's "compression is safe for consumption, unsafe for adjudication" rule from training/freshness/receipt signals to a *ranking* signal. Inbound link added from `concepts/reciprocal-rank-fusion.md` (`related:`) to satisfy the no-orphan rule.
+
+**Contradictions flagged:** None new.
+
+**Contradiction status correction — log-vs-page drift.** Today's tensions query (reading `wiki/log.md` only) reported the `agentmemory` provenance gap as still unresolved, citing the 2026-05-27 entry. This is **stale**: both downstream pages were resolved on 2026-06-10 and carry `[PROVENANCE RESOLVED]` markers —
+`concepts/reciprocal-rank-fusion` closed via independent corroboration (Cormack/Clarke/Buettcher SIGIR 2009 + `summaries/siagian-agentic-engineer-roadmap-2026`), confidence restored to `high`;
+`patterns/pattern-per-claim-confidence` closed won't-fix, deliberately retained at `confidence: medium`, not verified.
+The resolutions were written to the pages but never appended to this log, so any log-only reader re-derives a closed contradiction as open. **No `[UNVERIFIED]` markers were added and no confidence values were downgraded today** — doing so would have regressed resolved work. Recording the resolution here to stop the drift recurring.
+
+**Still genuinely open:** obsidian-wiki `_raw/` promotion/removal behavior vs. Agentic-KB Rule 1 (raw immutability), flagged 2026-06-25, unrevisited. Resolves by inspecting the obsidian-wiki repo/config for an archive-preserving mode.
+
+Pages affected: `wiki/syntheses/synthesis-headroom-compression-reciprocal-rank-fusion.md`, `wiki/concepts/reciprocal-rank-fusion.md`, `wiki/index.md`, `wiki/recently-added.md`, `wiki/_meta/proposals.md`

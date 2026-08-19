@@ -1,0 +1,43 @@
+[
+  {
+    "op": "create",
+    "path": "patterns/pattern-code-owned-control-plane.md",
+    "content": "---\ntitle: \"Code-Owned Control Plane (Agent Proposes, Code Disposes)\"\ntype: pattern\ntags: [orchestration, agents, architecture, workflow, automation]\ncreated: 2026-08-19\nupdated: 2026-08-19\nvisibility: public\nconfidence: medium\nrelated: [agent-loops, agent-layer-architecture, agent-failure-modes, agent-evaluation]\nsource: framework-docs/disler-super-simple-software-factory.md\n---\n\n# Code-Owned Control Plane (Agent Proposes, Code Disposes)\n\n## When to Use\nUse this pattern when you need an agentic workflow to be **repeatable** — not just capable of producing a good result once, but capable of producing the same class of result reliably, with retries, auditability, and a clear definition of \"done.\" It is especially valuable for multi-step SDLC-style workflows (planning → building → testing → reviewing) where a single large agent loop with no phase boundaries makes failures untraceable and non-reproducible.
+
+Avoid it for one-off, low-stakes tasks where a single prompt-response is sufficient — the overhead of building phases, envelopes, and gates isn't worth it if you don't need to run the workflow more than once.
+
+## Structure
+The core idea, drawn from the "Super Simple Software Factory" (SSSF) project: **deterministic code owns the graph; coding agents are bounded nodes inside it.**
+
+- **Deterministic orchestrator script** (in SSSF, an "ADW" — AI Developer Workflow — script) owns sequencing, retries, and acceptance criteria. This is plain code, not a prompt.
+- **Named phases** are the unit of execution and of the trace — e.g. engineer, planner, builder, reviewer phases laid out on a timeline.
+- **Typed JSON envelopes** carry context across the seams between phases, rather than relying on an agent's own memory/transcript.
+- **Gates** define what \"done\" means for each phase — an explicit, checkable acceptance criterion rather than \"the agent stopped talking.\"
+- **Event stream to a trace store** (SQLite in SSSF) records every event as it happens, giving a queryable, replayable audit trail instead of a transcript you read like a novel.
+- **Correction is cheaper than restart**: because the session inside a phase stays alive, you can correct within a phase rather than cold-starting the whole run.
+
+## Example
+From the source project's framing: a single large agent given the whole SDLC has no phase boundary and no nameable acceptance criterion, so failures are invisible and reruns produce different systems each time. SSSF instead wraps this as one installable \"skill\" stamped into any repo, where an ADW script drives an engineer → planner → builder → reviewer sequence. Every phase transition and event streams into SQLite, and a UI polls that trace DB to show progress as a swimlane (one phase running, the next queued).
+
+> "A software factory does one thing: it gives you more leverage on your prompt... **Agent proposes, code disposes.**" — Super Simple Software Factory README
+
+## Trade-offs
+**Pros**
+- Failures are localized to a named phase instead of an opaque end-to-end run.
+- Retries/corrections resume rather than cold-start, preserving agent context already gained.
+- Acceptance criteria (gates) make \"done\" objective and auditable.
+- Full event trace enables debugging and post-hoc evaluation without re-reading transcripts.
+
+**Cons**
+- Requires upfront investment in building the orchestrator, envelope schemas, and gates — more engineering overhead than \"just prompt the agent.\"
+- Rigid phase boundaries can be a poor fit for genuinely exploratory or ill-defined tasks.
+- The pattern shifts control (and risk of bugs) into the deterministic code layer — that code itself now needs testing and maintenance.
+
+## Related Patterns\nSee [agent-loops](../concepts/agent-loops.md), [agent-layer-architecture](../concepts/agent-layer-architecture.md), and [agent-failure-modes](../concepts/agent-failure-modes.md) for related discussion of where control should live in an agent system and what happens when it doesn't. See also [agent-evaluation](../concepts/agent-evaluation.md) for how gates/acceptance criteria relate to evaluation.\n\n## See Also\n- [super-simple-software-factory](../frameworks/super-simple-software-factory.md)\n- [agent-loops](../concepts/agent-loops.md)\n- [agent-layer-architecture](../concepts/agent-layer-architecture.md)\n"
+  },
+  {
+    "op": "create",
+    "path": "frameworks/super-simple-software-factory.md",
+    "content": "---\ntitle: \"Super Simple Software Factory (SSSF)\"\ntype: framework\ntags: [frameworks, orchestration, agents, workflow, automation]\ncreated: 2026-08-19\nupdated: 2026-08-19\nvisibility: public\nconfidence: medium\nrelated: [agent-loops, agent-layer-architecture, agent-failure-modes]\nsource: framework-docs/disler-super-simple-software-factory.md\n---\n\n# Super Simple Software Factory (SSSF)\n\nAn open-source project (by GitHub user `disler`, MIT licensed, 697 stars at capture time) that packages a repeatable \"agents-plus-code\" workflow as a single installable skill that can be stamped into any repo.\n\n## What It Does\nSSSF gives an agentic coding workflow a **deterministic control plane**. Instead of handing a model the whole software development lifecycle and hoping for a repeatable result, an \"ADW\" (AI Developer Workflow) script — plain Python — owns sequencing, retries, and acceptance criteria. Coding agents only operate inside named, bounded phases (e.g. engineer, planner, builder, reviewer). Every event in a run streams into a SQLite trace database in real time, and a UI polls that DB to render progress as a swimlane diagram.\n\nThe project ships as a branch containing just the installable skill; a separate `example` branch shows the factory already stamped into a repo, including a demo app it planned, built, tested, reviewed, and documented, plus real execution traces.\n\n## Key Concepts\n- **ADW script**: the deterministic Python orchestrator that owns the graph of phases, retries, and gating.\n- **Bounded phases**: agents work only within a named phase, never across the whole SDLC unsupervised.\n- **Typed JSON envelopes**: the sole mechanism for passing context across phase seams — avoids relying on agent memory/transcripts.\n- **Gates**: explicit, checkable acceptance criteria that define \"done\" for a phase, replacing \"the agent stopped talking.\"\n- **Trace DB**: a SQLite database that every phase event streams into live, enabling replay/debugging instead of transcript-reading.\n- Core philosophy: **\"Agent proposes, code disposes.\"**\n\n## When to Use It\nUse SSSF (or its underlying pattern) when you want repeatable, auditable multi-phase agentic coding workflows — e.g. an automated pipeline that plans, builds, tests, reviews, and documents changes to a codebase — and you need the same run to be debuggable and rerunnable, not a one-off transcript. See the [code-owned control plane pattern](../patterns/pattern-code-owned-control-plane.md) for the general design this framework implements.\n\n## Limitations\n- Documentation captured here is from the README only; deeper implementation details (envelope schema specifics, gate definition mechanics) were not available in this excerpt.\n- The approach requires meaningful upfront engineering investment (building the ADW script, envelopes, gates) — it is explicitly positioned as the \"high end\" of agent leverage, not a quick win.\n- As a young project (README-stage documentation, single-repo skill), maturity and ecosystem support are unproven at this capture point.\n\n## See Also\n- [Code-Owned Control Plane pattern](../patterns/pattern-code-owned-control-plane.md)\n- [agent-loops](../concepts/agent-loops.md)\n- [agent-layer-architecture](../concepts/agent-layer-architecture.md)\n- [agent-failure-modes](../concepts/agent-failure-modes.md)\n"
+  }
+]

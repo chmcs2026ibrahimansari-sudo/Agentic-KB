@@ -13,6 +13,7 @@ related:
   - [[concepts/rag-systems]]
   - [[patterns/pattern-typed-knowledge-graph]]
   - [[syntheses/synthesis-rrf-as-rlm-fusion-stage]]
+  - [[syntheses/synthesis-headroom-compression-reciprocal-rank-fusion]]
 status: stable
 ---
 

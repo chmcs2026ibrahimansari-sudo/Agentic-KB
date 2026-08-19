@@ -591,6 +591,30 @@ test('loadRepoContext accepts MCP-style opts and includes targeted repo bus item
   assert.equal(result.trace.budget_bytes, 50000)
 })
 
+test('loadRepoContext path-glob include rules match .mdx docs, not just .md', () => {
+  // syncRepo imports *.mdx and importedDocPath keeps the extension, so a repo
+  // whose docs are .mdx got an empty bundle from a path-glob include rule
+  // while the identical .md doc was picked up.
+  const root = makeFixture()
+  const docs = path.join(root, 'wiki/repos/test-repo/repo-docs')
+  fs.mkdirSync(docs, { recursive: true })
+  fs.writeFileSync(path.join(docs, 'guide.md'), '---\ntitle: G\n---\nmd doc\n')
+  fs.writeFileSync(path.join(docs, 'api.mdx'), '---\ntitle: A\n---\nmdx doc\n')
+
+  const contract = {
+    agent_id: 'w1',
+    tier: 'worker',
+    domain: 'eng',
+    context_policy: {
+      budget_bytes: 50000,
+      include: [{ path: 'wiki/repos/{{repo}}/repo-docs/**', priority: 50 }],
+    },
+  }
+  const paths = repoRt.loadRepoContext(root, 'test-repo', contract).files.map(f => f.path)
+  assert.ok(paths.includes('wiki/repos/test-repo/repo-docs/guide.md'))
+  assert.ok(paths.includes('wiki/repos/test-repo/repo-docs/api.mdx'), '.mdx doc must be included')
+})
+
 test('loadRepoContext source_files rejects traversal segments but keeps clean paths', () => {
   const root = makeFixture()
   fs.mkdirSync(path.join(root, 'wiki/repos/test-repo/repo-docs'), { recursive: true })

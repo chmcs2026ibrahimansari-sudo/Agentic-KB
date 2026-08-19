@@ -143,7 +143,7 @@ Repo commands:
 Bus & Rewrite commands:
   kb bus list <name> <channel>               List bus items for a repo channel
   kb bus publish <name> <channel> --from <id> --body <text>  Publish bus item
-  kb bus transition <name> <channel> <id> <status>           Change item status
+  kb bus transition <name> <channel> <id> <status> [--actor <id>]  Change item status
   kb rewrite list <name>                     List rewrite artifacts for a repo
   kb canonical list <name>                   List canonical docs for a repo
   kb canonical show <name> <doc>             Show a canonical doc (e.g., PRD, TECH_STACK)
@@ -1518,7 +1518,11 @@ async function busCmd(sub, rest) {
     if (items.length === 0) { console.log(`No items in ${name}/${channel}`); return }
     console.log(`\n📨 Bus items in ${name}/${channel}:\n`)
     for (const it of items) {
-      console.log(`  ${it.id} [${it.status}] from=${it.from}`)
+      // listRepoBusItems returns { path, meta, body }; the id/status/from
+      // fields live on .meta, so reading them off the item itself printed
+      // "undefined [undefined] from=undefined" for every row.
+      const m = it.meta || {}
+      console.log(`  ${m.id} [${m.status}] from=${m.from}`)
       console.log(`    ${(it.body || '').trim().split('\n')[0].slice(0, 100)}`)
     }
     console.log()
@@ -1532,16 +1536,28 @@ async function busCmd(sub, rest) {
     const from = fromIdx >= 0 ? rest[fromIdx + 1] : null
     const body = bodyIdx >= 0 ? rest.slice(bodyIdx + 1).join(' ') : null
     if (!name || !channel || !from || !body) throw new Error('Usage: kb bus publish <name> <channel> --from <id> --body <text>')
-    const id = rt.publishRepoBusItem(AGENT_KB_ROOT, name, { channel, from, body })
+    // publishRepoBusItem returns { id, path } — interpolating the record
+    // itself printed "ID: [object Object]".
+    const published = rt.publishRepoBusItem(AGENT_KB_ROOT, name, { channel, from, body })
     console.log(`✅ Published to ${name}/${channel}`)
-    console.log(`   ID: ${id}`)
+    console.log(`   ID: ${published.id}`)
+    console.log(`   Path: ${published.path}`)
     return
   }
 
   if (sub === 'transition') {
-    const [name, channel, id, status] = rest
-    if (!name || !channel || !id || !status) throw new Error('Usage: kb bus transition <name> <channel> <id> <status>')
-    rt.transitionRepoBusItem(AGENT_KB_ROOT, name, channel, id, status)
+    const actorIdx = rest.indexOf('--actor')
+    const actor = actorIdx >= 0 ? rest[actorIdx + 1] : null
+    const positional = actorIdx >= 0
+      ? rest.filter((_, i) => i !== actorIdx && i !== actorIdx + 1)
+      : rest
+    const [name, channel, id, status] = positional
+    if (!name || !channel || !id || !status) throw new Error('Usage: kb bus transition <name> <channel> <id> <status> [--actor <id>]')
+    // transitionRepoBusItem's 6th parameter is the actor. Omitting it made
+    // state-machines.mjs fall back to `actor: 'unknown'` in status_history
+    // and write `actor: undefined` to the audit log, so every status change
+    // made from the CLI lost its provenance.
+    rt.transitionRepoBusItem(AGENT_KB_ROOT, name, channel, id, status, actor || `cli:${os.userInfo().username}`)
     console.log(`✅ Transitioned ${id} to ${status}`)
     return
   }

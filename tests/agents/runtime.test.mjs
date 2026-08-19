@@ -442,6 +442,41 @@ test('resolveIdentity falls back to anonymous when no headers', () => {
   assert.equal(identity.kind, 'human')
 })
 
+test('resolveIdentity never puts bearer token bytes in the identity id', () => {
+  const token = 'sk-live-0123456789abcdef'
+  const identity = rt.resolveIdentity({ authorization: `Bearer ${token}` })
+
+  assert.equal(identity.kind, 'service')
+  assert.equal(identity.source, 'token')
+  // The id lands in bus-item frontmatter (`from`, status_history actor) which
+  // is committed to git, so no prefix of the credential may survive into it.
+  assert.ok(!identity.id.includes(token.slice(0, 8)), `leaked token prefix: ${identity.id}`)
+  assert.match(identity.id, /^token:[0-9a-f]{12}$/)
+})
+
+test('resolveIdentity fingerprints a bearer token stably and distinctly', () => {
+  const a1 = rt.resolveIdentity({ authorization: 'Bearer token-a' })
+  const a2 = rt.resolveIdentity({ authorization: 'Bearer token-a' })
+  const b = rt.resolveIdentity({ authorization: 'Bearer token-b' })
+  assert.equal(a1.id, a2.id, 'same token must stay correlatable')
+  assert.notEqual(a1.id, b.id)
+})
+
+test('resolveIdentity reads headers case-insensitively from a Headers instance', () => {
+  const identity = rt.resolveIdentity(new Headers({ 'X-Agent-Id': 'w1' }))
+  assert.equal(identity.id, 'w1')
+  assert.equal(identity.kind, 'agent')
+  assert.equal(identity.source, 'x-agent-id')
+})
+
+test('resolveIdentity ignores an unrecognised x-identity-kind', () => {
+  // An unknown kind must not silently become a privileged identity; it falls
+  // through the remaining resolution steps to anonymous.
+  const identity = rt.resolveIdentity({ 'x-identity-kind': 'admin', 'x-identity-id': 'mallory' })
+  assert.equal(identity.id, 'anonymous')
+  assert.equal(identity.kind, 'human')
+})
+
 // ─── 9. State machines ────────────────────────────────────────────────────────
 
 test('standards state machine: draft → proposed → approved → active', () => {

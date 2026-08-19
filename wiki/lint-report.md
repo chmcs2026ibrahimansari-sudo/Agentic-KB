@@ -1,14 +1,14 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-18 14:22 | Vault: Agentic-KB | Pages scanned: 712
+> Generated: 2026-08-19 14:07 | Vault: Agentic-KB | Pages scanned: 761
 
 ## Summary
 
 | Check | Count | Severity |
 |---|---|---|
 | Contradictions | 0 | 🟢 Clear |
-| Orphaned pages | 69 | 🟡 Medium |
-| Stale pages | 293 | 🟡 Medium |
+| Orphaned pages | 85 | 🟡 Medium |
+| Stale pages | 307 | 🟡 Medium |
 | Knowledge gaps | 0 | 🟢 Clear |
 
 ## 🟡 Orphaned Pages (no inbound links)
@@ -19,6 +19,7 @@
 - `agents/leads/planning-agent/domain-standards.md` — Planning Agent — Domain Standards
 - `agents/leads/sofie/weekly-digest.md` — KB Digest — 2026-04-10
 - `candidates.md` — Compile Candidates
+- `concepts/agentic-engineering-stack.md` — Agentic AI Engineering Stack
 - `concepts/agentic-sdlc.md` — Agentic SDLC
 - `concepts/capture-pipeline.md` — Capture Pipeline (foundry-capture)
 - `concepts/compile-once-knowledge.md` — Compile-Once Knowledge (LLM Wiki Pattern)
@@ -38,19 +39,28 @@
 - `daily-systems/logs/2026-08-13.md` — 2026-08-13
 - `daily-systems/logs/2026-08-14.md` — 2026-08-14
 - `daily-systems/logs/2026-08-17.md` — 2026-08-17
+- `daily-systems/logs/2026-08-18.md` — 2026-08-18
 - `entities/gsd-ui-checker.md` — GSD UI Checker
 - `entities/hermes-agent.md` — Hermes Agent
 - `frameworks/agent-orchestrator.md` — Agent Orchestrator (Untrivial-ai)
+- `frameworks/deepseek-harness.md` — DeepSeek Harness (dsh)
+- `frameworks/framework-deepagents-code.md` — Deep Agents Code (dcode)
+- `frameworks/framework-open-swe.md` — Open SWE (LangChain)
 - `frameworks/headroom.md` — Headroom
+- `frameworks/lumay-ai.md` — LuMay AI
 - `frameworks/openconnector.md` — OpenConnector (OOMOL)
+- `frameworks/opensandbox.md` — OpenSandbox
+- `frameworks/simba.md` — Simba (Eval-First Customer Service Assistant)
 - `patterns/pattern-filesystem-context.md` — Filesystem-Based Context Pattern
 - `patterns/pattern-forward-deployed-engineering.md` — Forward Deployed Engineering for Production AI Agents
 - `patterns/pattern-morning-review.md` — Morning-Review Pipeline
 - `patterns/pattern-playwright-e2e.md` — Playwright E2E Testing Pattern
 - `patterns/pattern-raw-inbox-workflow.md` — Raw Inbox Workflow
 - `patterns/pattern-react-component-refactoring.md` — React Component Refactoring
+- `patterns/pattern-software-factory.md` — Software Factory Pattern
 - `recipes/five-agent-business-ops.md` — Five-Agent Business Operations System
 - `recipes/obsidian-smart-vault-setup.md` — Obsidian Smart Vault: Automated Capture-to-Insight Pipeline
+- `recipes/production-ai-engineer-project-checklist.md` — Production AI Engineer Project Checklist
 - `recipes/readwise-to-wikiwise-ingest.md` — Readwise Reader → Wikiwise Ingest
 - `recipes/recipe-prd-generator.md` — PRD Generator Skill
 - `reports/2026-06-18-nightly-ci-analysis.md` — 2026-06-18-nightly-ci-analysis
@@ -72,8 +82,14 @@
 - `reports/2026-08-12-nightly-ci-analysis.md` — 2026-08-12-nightly-ci-analysis
 - `reports/2026-08-13-nightly-ci-analysis.md` — 2026-08-13-nightly-ci-analysis
 - `reports/2026-08-14-nightly-ci-analysis.md` — 2026-08-14-nightly-ci-analysis
+- `reports/2026-08-17-nightly-ci-analysis.md` — 2026-08-17-nightly-ci-analysis
+- `reports/2026-08-18-nightly-ci-analysis.md` — 2026-08-18-nightly-ci-analysis
+- `reports/2026-08-19-nightly-ci-analysis.md` — 2026-08-19-nightly-ci-analysis
+- `summaries/summary-fable-prompting-tutorial-linkedin.md` — Summary: Fable Prompting Tutorial (LinkedIn thread, Eduardo Ordax)
 - `summaries/summary-garrytan-meta-meta-prompting.md` — Meta-Meta-Prompting: The Secret to Making AI Agents Work
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
+- `summaries/summary-harrison-chase-harness-model-context.md` — Summary: Harrison Chase on Harness, Model, Context
+- `summaries/summary-hwchase17-managed-agents-thesis.md` — Summary: Why Managed Agents Are the Next Big Thing in Agent Building
 - `summaries/summary-langchain-rag-from-scratch.md` — RAG From Scratch (LangChain AI)
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18
 - `syntheses/synthesis-provenance-freshness-infrastructure.md` — Delta Tracking and Provenance Tagging Operationalize the Freshness Policy
@@ -108,9 +124,10 @@
 - `agents/workers/perf-analyzer/profile.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `agents/workers/security-reviewer/profile.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/agent-evaluation.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `concepts/agent-failure-modes.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/agent-failure-modes.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/agent-layer-architecture.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/agent-loops.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/agent-memory-architecture.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/agent-memory-runtime.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/agent-observability.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/agent-resources-platform.md` — last updated: Mon Apr 20 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -129,6 +146,7 @@
 - `concepts/daily-note-template.md` — last updated: Mon Apr 20 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/enterprise-ai-governance.md` — last updated: Sun Apr 05 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/few-shot-prompting.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/foundry-capture-pipeline.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/frontend-code-review-skill.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/frontend-testing.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/goal-backward-verification.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -149,7 +167,9 @@
 - `concepts/llm-owned-wiki.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/llm-wiki-compile-pipeline.md` — last updated: Tue Apr 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/llm-wiki-pattern.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `concepts/llm-wiki.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/llm-wiki.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/local-rag-storage-optimization.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `concepts/memory-lifecycle.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/memory-systems.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/metadata-filtering.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `concepts/minimal-worker-context.md` — last updated: Thu Apr 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -198,12 +218,14 @@
 - `entities/jay-west-agent-stack.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/key-agentic-researchers.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/langchain-ecosystem.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `entities/leann.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/mcp-ecosystem.md` — last updated: Tue Apr 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/mission-control.md` — last updated: Mon Apr 20 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/model-landscape.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/oh-my-mermaid.md` — last updated: Tue Apr 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/openai.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `entities/seller-fi.md` — last updated: Mon Apr 20 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `entities/sierra-ai.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `evaluations/eval-memory-approaches.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `evaluations/eval-nous-research-hermes.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `evaluations/eval-orchestration-frameworks.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -217,6 +239,7 @@
 - `frameworks/inspect-ai.md` — last updated: Fri Apr 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/langsmith.md` — last updated: Fri Apr 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/promptfoo.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `frameworks/remember-cite-forget.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `frameworks/skillopt.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `home.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `mocs/advanced-techniques.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -251,7 +274,8 @@
 - `patterns/pattern-goal-backward-planning.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-grounded-generation.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-hosted-agent-infrastructure.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
-- `patterns/pattern-hot-cache.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `patterns/pattern-hot-cache.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `patterns/pattern-hybrid-search-retrieval.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-idempotent-tools.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-import-readwise-skill.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-ingest-tweets-skill.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -267,6 +291,7 @@
 - `patterns/pattern-pipeline.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-plan-execute-verify.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-playwright-e2e.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `patterns/pattern-prompt-minimization.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-react-component-refactoring.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-react.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-read-before-write.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -275,6 +300,7 @@
 - `patterns/pattern-safe-cli-document-fetch.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-scientific-debugging.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-shared-agent-workspace.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `patterns/pattern-single-agent-front-door.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-specialist-agent-team.md` — last updated: Fri Jul 10 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-staged-llm-pipeline.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `patterns/pattern-structured-assumptions.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
@@ -344,10 +370,14 @@
 - `summaries/nate-herk-llm-wiki.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/nvidia-gtc-2026-agentic-enterprise.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/private-test-note.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `summaries/summary-fable-prompting-tutorial-linkedin.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/summary-farzapedia-personal-wiki.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/summary-gsd-project-researcher.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/summary-karpathy-llm-wiki.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/summary-langchain-rag-from-scratch.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `summaries/summary-llm-wiki-v2-rohitg.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `summaries/summary-nate-herk-llm-wiki.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
+- `summaries/summary-sierra-ai-pilling-lessons.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `summaries/vault-3tier-architecture.md` — last updated: Wed Apr 08 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `syntheses/lint-2026-04-06.md` — last updated: Sun Apr 05 2026 17:00:00 GMT-0700 (Pacific Daylight Time)
 - `syntheses/lint-2026-04-12.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time)

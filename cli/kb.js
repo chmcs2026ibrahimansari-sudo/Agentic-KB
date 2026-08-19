@@ -1842,14 +1842,12 @@ try {
   } else if (command === 'session') {
     await sessionCmd(args[1], args.slice(2))
   } else if (command === 'bus') {
-    if (args[1] === 'list' || args[1] === 'publish' || args[1] === 'transition') {
-      // New repo-aware bus commands
-      await busCmd(args[1], args.slice(2))
-    } else {
-      // Legacy agent bus commands
-      await (await import(AGENT_RUNTIME_PATH)).busCmd?.(args[1], args.slice(2)) ||
-        console.error('Unknown bus subcommand')
-    }
+    // The old fallback branch here awaited `(await import(AGENT_RUNTIME_PATH)).busCmd?.(...)`.
+    // The agent runtime has never exported busCmd, so the optional call always
+    // short-circuited to undefined, `undefined || console.error(...)` printed
+    // "Unknown bus subcommand", and the process still exited 0 — an unknown
+    // subcommand looked like success to any script checking the status code.
+    await busCmd(args[1], args.slice(2))
   } else if (command === 'promote') {
     await promoteCmd(args.slice(1))
   } else if (command === 'repo') {

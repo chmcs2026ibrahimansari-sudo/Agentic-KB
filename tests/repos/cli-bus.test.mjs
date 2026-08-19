@@ -9,7 +9,7 @@ import fs from 'fs'
 import path from 'path'
 import os from 'os'
 import { fileURLToPath } from 'url'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 
@@ -70,4 +70,14 @@ test('kb bus transition without --actor is attributed to the CLI, never "unknown
   const raw = fs.readFileSync(path.join(root, 'wiki/repos/demo/bus/discovery', `${id}.md`), 'utf8')
   assert.match(raw, /"actor":"cli:[^"]+"/)
   assert.doesNotMatch(raw, /"actor":"unknown"/)
+})
+
+test('an unknown kb bus subcommand exits non-zero', () => {
+  const root = makeCliFixture()
+  const res = spawnSync(process.execPath, [path.join(root, 'cli/kb.js'), 'bus', 'bogus'], {
+    encoding: 'utf8',
+    env: { ...process.env, KB_API_URL: 'http://127.0.0.1:1', PRIVATE_PIN: '' },
+  })
+  assert.equal(res.status, 1, 'unknown subcommand must not look like success')
+  assert.match(res.stderr, /Unknown bus subcommand: bogus/)
 })

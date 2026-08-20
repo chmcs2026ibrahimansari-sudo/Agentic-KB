@@ -1635,3 +1635,39 @@ The resolutions were written to the pages but never appended to this log, so any
 **Still genuinely open:** obsidian-wiki `_raw/` promotion/removal behavior vs. Agentic-KB Rule 1 (raw immutability), flagged 2026-06-25, unrevisited. Resolves by inspecting the obsidian-wiki repo/config for an archive-preserving mode.
 
 Pages affected: `wiki/syntheses/synthesis-headroom-compression-reciprocal-rank-fusion.md`, `wiki/concepts/reciprocal-rank-fusion.md`, `wiki/index.md`, `wiki/recently-added.md`, `wiki/_meta/proposals.md`
+
+---
+
+## 2026-08-20 — morning-review-daily apply pass
+
+**Captures staged:** none. `sofie-watch-obsidian --once` found no new meeting notes. Apple Notes `KB Inbox` held only the long-standing `test-capture-2026-05-16` stub; `Snipd` folder empty. `ingest-dedup.mjs` reported 0 ingested / 16 skipped (all hash-matched to existing `raw/articles/` and `raw/conversations/` files) — no new material entered the KB today.
+
+**Housekeeping flag — leaky Apple Notes capture dedup.** `raw/clippings/` holds **11 copies of the same source note** (`test-capture-2026-05-16`), written across at least three capture runs (2026-05-16 ×10, 2026-08-12 ×1), each with a distinct sha256. The content-hash dedup in `scripts/lib/clipping-write.mjs` is evidently hashing something that varies per run (timestamp or provenance frontmatter) rather than the note body, so re-captures of an unchanged note are not deduped at write time — they are only caught later by `ingest-dedup.mjs`, after the duplicate file already exists. Not acted on today (deletion is out of scope for an apply pass); recorded for a maintenance decision.
+
+**Compile gate: FAILED at write phase — root cause identified.** `compile-2source-gate.mjs --execute` produced a plan of **PROMOTE: 28 / DEFER: 164 / GRADUATE: 0**, then aborted during compilation with:
+
+> `Error: 400 invalid_request_error — "Your credit balance is too low to access the Anthropic API."` (`request_id: req_011CeE4LwbxzptYFXq3q9wip`)
+
+**This resolves the standing operational discrepancy flagged 2026-05-23 and 2026-05-27** ("Same blockage pattern as 2026-05-23, then attributed to PIN; root cause likely separate. Needs investigation."). The root cause is **not PIN** — it is API credit exhaustion on the key used by the compile pipeline. The recurring "N promotions perma-pending" symptom is what an exhausted-credit failure looks like from the outside: the plan phase is local and always succeeds, the write phase needs the API and always dies, so the same promotion set re-plans identically on every run. Consider this contradiction closed pending one clean compile run after credits are restored.
+
+Note the compile key and the Morning Review key behave differently today: `morning-review/.env` completed 3 Anthropic calls successfully at 06:05 while the KB compile failed at 06:12. Either separate keys/orgs are in play or the balance was drained in between — worth confirming before assuming a single billing fix covers both.
+
+**Zero promotions applied.** No graduations, no page updates from the gate. The 28-item PROMOTE set (incl. `llm-wiki-pattern`, `compile-pipeline`, `rlm-pipeline`, `evaluation`, `llm-as-judge`, `trajectory-evaluation`, `plan-execute-verify`) remains pending and will re-plan identically until credits are restored.
+
+**Proposals:** `foundry-propose --execute --top 3` wrote **1 new proposal — PROP-154 [HEAVY_BACKLOG]** (164 deferred themes vs. threshold 50). 1 detector fired, 0 previously-proposed duplicates. Recorded in `wiki/_meta/proposals.md`.
+
+**Synthesis drafted:** `syntheses/synthesis-rrf-proof-of-work-receipts.md` (`reviewed: false`).
+
+**Correction to today's connections query — connection #1 was already written.** The query nominated SkillOpt-gate ↔ Proof-of-Work receipts as "the sole remaining gap, the 10th of 10 edges," citing `recently-added.md`. That premise is wrong: `syntheses/synthesis-skillopt-pow-writeback.md` has existed since 2026-07-11, and the 2026-08-16 receipts synthesis *explicitly corrects this same mistake in its own body* ("the direct SkillOpt ↔ Proof-of-Work edge is not actually unwritten"). The query re-derived a correction the KB had already made — a retrieval-recall failure, not a knowledge gap, and the second time a query has mis-read the cluster map from `recently-added.md` alone. Connection #1 was skipped per the no-duplicate guard and **connection #2 (RRF ↔ receipts) was drafted instead**, which retrieval confirmed genuinely has no synthesis page.
+
+The drafted page argues the RRF ↔ receipts pair is the one node in the cluster where the standard `context_fidelity` mitigation is unavailable: in the prior four cases the adjudicating stage had a channel and failed to use it, whereas RRF's score-blindness is the algorithm's defining property. Design correction proposed: emit retrieval receipts per-retriever upstream of fusion, and have the fusion stage record input receipt handles rather than an independent soundness claim. Inbound link added from `concepts/reciprocal-rank-fusion.md` (`related:`) to satisfy the no-orphan rule.
+
+**Contradictions flagged:** None new between sources. One operational contradiction **closed** (compile-write root cause, above).
+
+**Provenance edits:** none. Today's intelligence surfaced no page-level provenance gaps requiring `[UNVERIFIED]` markers or confidence downgrades. The `agentmemory` item the tensions query has previously re-raised remains resolved as recorded on 2026-06-10 — no regression applied.
+
+**Still genuinely open:** obsidian-wiki `_raw/` promotion/removal behavior vs. Rule 1 (raw immutability), flagged 2026-06-25, unrevisited. Resolves by inspecting the obsidian-wiki repo/config for an archive-preserving mode.
+
+**Today's high-leverage question (unchanged from the cluster's standing one):** does Headroom's ContentRouter compress RAG chunks *before* or *after* retrieval/fusion completes? Touches five headroom-compression syntheses plus `framework-headroom`, `concepts/reciprocal-rank-fusion`, `concepts/rlm-pipeline`, `framework-obsidian-wiki` — and now also the page drafted today, which is conditional on the same fact.
+
+Pages affected: `wiki/syntheses/synthesis-rrf-proof-of-work-receipts.md`, `wiki/concepts/reciprocal-rank-fusion.md`, `wiki/index.md`, `wiki/recently-added.md`, `wiki/_meta/proposals.md`

@@ -14,6 +14,7 @@ related:
   - [[patterns/pattern-typed-knowledge-graph]]
   - [[syntheses/synthesis-rrf-as-rlm-fusion-stage]]
   - [[syntheses/synthesis-headroom-compression-reciprocal-rank-fusion]]
+  - [[syntheses/synthesis-rrf-proof-of-work-receipts]]
 status: stable
 ---
 

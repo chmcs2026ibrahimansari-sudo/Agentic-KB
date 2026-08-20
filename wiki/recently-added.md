@@ -9,6 +9,10 @@ type: meta
 
 ---
 
+## 2026-08-20 (morning-review-daily apply pass)
+
+- [[wiki/syntheses/synthesis-rrf-proof-of-work-receipts|A Proof-of-Work Receipt Cannot Certify a Fused Ranking, Because RRF Discards the Only Channel a Receipt Could Read]] — the one place in the cluster where the standard `context_fidelity` mitigation fails: RRF's score-blindness is the algorithm's defining property, not a schema oversight, so there is no channel to annotate. Proposes moving retrieval receipts upstream to individual retrievers and having the fusion stage record input handles rather than an independent soundness claim.
+
 ## 2026-08-19 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-headroom-compression-reciprocal-rank-fusion|Compression Upstream of Reciprocal Rank Fusion Corrupts Rank Order Without Changing the Fused List's Shape]] — extends the compression-vs-adjudication rule from receipts and freshness signals to a *ranking* signal: RRF is score-free, so a degraded retriever has no channel to signal low confidence, and a single shared compressor injects correlated bias that RRF's consensus math amplifies rather than averages away; conditional on an unverified fact about whether Headroom compresses before or after retrieval

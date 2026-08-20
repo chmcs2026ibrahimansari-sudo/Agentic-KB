@@ -32,6 +32,22 @@ LINT_TIMEOUT="${LINT_TIMEOUT:-600}"
 cd "$REPO" || { echo "FATAL: cannot cd to $REPO"; exit 3; }
 mkdir -p "${REPO}/logs"
 
+# The daily commit is a heartbeat: it must happen even if this script dies on an
+# unexpected error. The first version aborted on an unbound variable partway
+# through and silently produced no commit at all, which is precisely the failure
+# the heartbeat exists to make visible.
+COMMITTED=""
+on_exit() {
+  local rc=$?
+  if [ -z "$COMMITTED" ]; then
+    echo "ALERT: script exited (rc=${rc}) before committing — writing marker"
+    git commit -q --allow-empty -m "chore: daily wiki lint $(date +%F) — SKIPPED (script aborted, rc=${rc})" 2>/dev/null \
+      && git push -q origin main 2>/dev/null \
+      && echo "pushed marker: $(git log -1 --format=%h)"
+  fi
+}
+trap on_exit EXIT
+
 http_code() { curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$1" 2>/dev/null || echo "000"; }
 
 # --- commit heartbeat -------------------------------------------------------
@@ -57,6 +73,7 @@ commit_and_push() {
   fi
 
   [ "$mode" = "empty" ] && git commit -q --allow-empty -m "$msg"
+  COMMITTED=1   # disarms the EXIT-trap heartbeat
 
   if git push -q origin main 2>&1; then
     echo "pushed: $(git log -1 --format=%h) $msg"
@@ -97,12 +114,20 @@ echo "$RESP" | jq -e '.ok == true' >/dev/null 2>&1 \
   || fail "lint call failed: ${RESP:0:400}" "lint API error"
 
 # --- 3. summarise -----------------------------------------------------------
-eval "$(echo "$RESP" | jq -r '@sh "
-  PAGES=\(.pagesScanned)      CONTRA=\(.contradictions)
-  ORPHANS=\(.orphans)         STALE=\(.stalePages)
-  GAPS=\(.gaps)               ODELTA=\(.orphanDelta)
-  DEGRADED=\(.degraded)       EXAMINED=\(.analysisWindow.examined)
-  REASON=\(.degradedReason // \"\")"')"
+# One jq call per field. A single @sh template is denser but nests shell quotes
+# inside a jq string literal, which is how the first version of this script
+# silently produced a compile error and skipped the heartbeat commit entirely.
+jqf() { echo "$RESP" | jq -r "${1} // ${2}" 2>/dev/null || echo "$2"; }
+
+PAGES=$(jqf '.pagesScanned' 0)
+CONTRA=$(jqf '.contradictions' 0)
+ORPHANS=$(jqf '.orphans' 0)
+STALE=$(jqf '.stalePages' 0)
+GAPS=$(jqf '.gaps' 0)
+ODELTA=$(jqf '.orphanDelta' 0)
+EXAMINED=$(jqf '.analysisWindow.examined' 0)
+DEGRADED=$(jqf '.degraded' false)
+REASON=$(echo "$RESP" | jq -r '.degradedReason // ""' 2>/dev/null | tr -d '\n' | cut -c1-200)
 
 echo "pages=${PAGES} contradictions=${CONTRA} orphans=${ORPHANS} (Δ${ODELTA}) stale=${STALE} gaps=${GAPS}"
 echo "analysis window: ${EXAMINED}/${PAGES} pages"

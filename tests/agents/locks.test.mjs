@@ -96,3 +96,37 @@ test('stale steal leaves no tomb files behind in .locks/', () => {
   const leftovers = fs.readdirSync(path.join(root, '.locks'))
   assert.deepEqual(leftovers, [], 'no .stale-* tombs or lock files should remain')
 })
+
+test('a live holder is not evicted just because its lock is older than maxAgeMs', () => {
+  const root = makeRoot()
+  fs.mkdirSync(path.join(root, '.locks'), { recursive: true })
+  // This process is unambiguously alive, and the record is far older than
+  // maxAgeMs. Age alone used to win, so the lock was stolen and a second
+  // holder acquired the same key while the first was still in its critical
+  // section.
+  const file = lockFile(root, 'agent-long')
+  fs.writeFileSync(file, JSON.stringify({ pid: process.pid, ts: Date.now() - 600_000, key: 'agent-long' }))
+  assert.throws(
+    () => acquireLock(root, 'agent-long', { maxAgeMs: 100, retries: 2, retryDelayMs: 10 }),
+    /lock busy/,
+  )
+  assert.ok(fs.existsSync(file), "a live holder's lock must survive")
+  const rec = JSON.parse(fs.readFileSync(file, 'utf8'))
+  assert.equal(rec.pid, process.pid, 'the original record must be untouched')
+})
+
+test('acquireLock gives up instead of spinning when the lock path is a dangling symlink', () => {
+  const root = makeRoot()
+  fs.mkdirSync(path.join(root, '.locks'), { recursive: true })
+  // openSync('wx') reports EEXIST on a symlink, but readFileSync and statSync
+  // both report ENOENT because the target is missing. tryClearStale therefore
+  // reports "cleared" on every pass; the retry loop used to `continue` past
+  // the deadline check and never terminate.
+  fs.symlinkSync(path.join(root, 'no-such-target'), lockFile(root, 'agent-dangle'))
+  const started = Date.now()
+  assert.throws(
+    () => acquireLock(root, 'agent-dangle', { retries: 2, retryDelayMs: 10, waitMs: 200 }),
+    /lock busy/,
+  )
+  assert.ok(Date.now() - started < 5_000, 'must respect the deadline rather than spin')
+})

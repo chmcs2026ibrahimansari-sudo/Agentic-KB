@@ -102,3 +102,31 @@ test('leading and trailing whitespace is preserved', () => {
   const original = { lead: '  indented', trail: 'trailing  ' }
   assert.deepEqual(parseFrontmatter(serializeFrontmatter(original, 'body')).data, original)
 })
+
+test('a UTF-8 BOM does not hide the frontmatter block', () => {
+  // A BOM-prefixed page failed startsWith('---\n'), parsed as data:{}, and
+  // every writer then prepended a second frontmatter block on top of the
+  // original -- same failure mode CRLF had.
+  const src = '\uFEFF---\ntitle: Guide\nmemory_class: hot\n---\n\n# Guide\n'
+  const { data, content } = parseFrontmatter(src)
+  assert.equal(data.title, 'Guide')
+  assert.equal(data.memory_class, 'hot')
+  assert.equal(content, parseFrontmatter(src.slice(1)).content, 'body identical to the BOM-less source')
+
+  const rewritten = updateFrontmatter(src, { status: 'active' })
+  assert.equal(rewritten.match(/^---$/gm).length, 2, 'exactly one frontmatter block')
+  assert.ok(!rewritten.includes('\uFEFF'), 'BOM must not survive into the body')
+})
+
+test('hyphenated frontmatter keys survive a parse/serialize round-trip', () => {
+  // review-cadence-days and source-trust are real wiki keys. The key class
+  // excluded '-', so the line was skipped and the next updateFrontmatter
+  // dropped the key from the file entirely.
+  const src = '---\ntitle: G\nreview-cadence-days: 30\n---\n\nbody\n'
+  const { data } = parseFrontmatter(src)
+  assert.equal(data['review-cadence-days'], 30)
+
+  const rewritten = updateFrontmatter(src, { status: 'active' })
+  assert.match(rewritten, /review-cadence-days: 30/)
+  assert.equal(parseFrontmatter(rewritten).data['review-cadence-days'], 30)
+})

@@ -18,8 +18,52 @@ import { resolveContentRoot } from '@/lib/articles'
 import { resolveVaultRoot } from '@/lib/vault'
 import { KB_MODEL } from '@/lib/model'
 import { appendAuditLog } from '@/lib/audit'
-import { buildInboundLinkMap, isOrphanCandidate, isStalePage } from '../../../../../lib/wiki-lint.mjs'
+import {
+  buildInboundLinkMap,
+  isOrphanCandidate,
+  isStalePage,
+  selectAnalysisPages,
+  reconcileFindings,
+  DEFAULT_ANALYSIS_BUDGET,
+  DEFAULT_STALE_AFTER_DAYS,
+} from '../../../../../lib/wiki-lint.mjs'
 import { pinMatches } from '@/lib/pin'
+
+/** Cursor + prior counts + open findings, persisted between runs. */
+interface LintState {
+  cursor: number
+  lastRunAt: string | null
+  counts: { pages: number; contradictions: number; orphans: number; stale: number; gaps: number } | null
+  openFindings: Array<Record<string, unknown>>
+}
+
+const EMPTY_STATE: LintState = { cursor: 0, lastRunAt: null, counts: null, openFindings: [] }
+
+function readLintState(vaultRoot: string): LintState {
+  try {
+    const raw = fs.readFileSync(path.join(vaultRoot, '_meta', 'lint-state.json'), 'utf8')
+    return { ...EMPTY_STATE, ...JSON.parse(raw) as Partial<LintState> }
+  } catch { return { ...EMPTY_STATE } }
+}
+
+function writeLintState(vaultRoot: string, state: LintState): void {
+  try {
+    const dir = path.join(vaultRoot, '_meta')
+    fs.mkdirSync(dir, { recursive: true })
+    const target = path.join(dir, 'lint-state.json')
+    const tmp = target + '.tmp-' + process.pid
+    fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8')
+    fs.renameSync(tmp, target)
+  } catch { /* state is an optimisation, never fail the run over it */ }
+}
+
+/** "+12" / "-3" / "±0" against the previous run, or '' when there is no prior. */
+function delta(current: number, prior: number | undefined): string {
+  if (typeof prior !== 'number') return '—'
+  const diff = current - prior
+  if (diff === 0) return '±0'
+  return diff > 0 ? `+${diff}` : `${diff}`
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -112,13 +156,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // Detect stale pages using per-page review cadence when present
   const stalePages = pages.filter(p => isStalePage(p))
 
+  // Pick this run's analysis window: pages changed since the last run, plus a
+  // rotating slice of the rest. See selectAnalysisPages in lib/wiki-lint.mjs
+  // for why the previous fixed slice(0, 40) made the AI checks a no-op.
+  const state = readLintState(vaultRoot)
+  const analysisBudget = Number(process.env.LINT_ANALYSIS_BUDGET) || DEFAULT_ANALYSIS_BUDGET
+  const window = selectAnalysisPages(pages, {
+    budget: analysisBudget,
+    cursor: state.cursor,
+    lastRunAt: state.lastRunAt,
+  })
+  const windowPages: PageSummary[] = window.selected
+  const examinedPaths = new Set(windowPages.map(p => p.relPath))
+
   // Build a concise wiki overview for Claude to detect contradictions + gaps
-  const overview = pages.slice(0, 40).map(p =>
+  const overview = windowPages.map(p =>
     `- **${p.title}** (${p.relPath}) | tags: ${p.tags.join(', ') || 'none'} | ${p.wordCount} words`
   ).join('\n')
 
-  // Sample content from top 20 pages for contradiction detection
-  const sampleContent = pages.slice(0, 20).map(p => {
+  // Sample content from the window for contradiction detection
+  const sampleContent = windowPages.slice(0, 24).map(p => {
     try {
       const raw = fs.readFileSync(path.join(wikiRoot, p.relPath), 'utf8')
       return `### ${p.title} (${p.relPath})\n${raw.slice(0, 800)}\n`
@@ -161,6 +218,7 @@ Be specific. Return ONLY the JSON object.`,
   })
 
   let aiText = ''
+  let degradedReason: string | null = null
   try {
     for await (const chunk of aiStream) {
       if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
@@ -168,12 +226,12 @@ Be specific. Return ONLY the JSON object.`,
       }
     }
   } catch (err) {
-    // Surface the failure as a clean JSON error instead of an unhandled 500 —
-    // the CLI/MCP callers print this body.
-    return NextResponse.json(
-      { error: `Claude analysis failed: ${(err as Error).message}` },
-      { status: 502 }
-    )
+    // Degrade, don't 502. Orphan and stale detection are pure local
+    // computation with no API cost, and they had already succeeded by this
+    // point — returning an error here threw away two of the four checks
+    // because of a failure in the other two. (2026-08-20: the whole nightly
+    // run was lost to an Anthropic credit-balance error this way.)
+    degradedReason = (err as Error).message
   }
 
   let contradictions: Array<{ pages: string[]; description: string }> = []
@@ -194,28 +252,86 @@ Be specific. Return ONLY the JSON object.`,
     }
   } catch { /* use empty arrays */ }
 
+  // Carry unresolved findings across window rotations. A contradiction found
+  // on day 3 must not vanish on day 4 just because the cursor moved past it —
+  // only a run that re-examined every page it references may clear it.
+  let openContradictions = contradictions
+  let openGaps = gaps
+  if (!degradedReason) {
+    const reconciledContradictions = reconcileFindings(
+      (state.openFindings || []).filter(f => Array.isArray((f as { pages?: unknown }).pages)),
+      contradictions,
+      examinedPaths,
+    )
+    const reconciledGaps = reconcileFindings(
+      (state.openFindings || []).filter(f => !Array.isArray((f as { pages?: unknown }).pages)),
+      gaps,
+      examinedPaths,
+    )
+    openContradictions = reconciledContradictions.open as typeof contradictions
+    openGaps = reconciledGaps.open as typeof gaps
+  } else {
+    // Nothing was analysed this run — preserve the ledger verbatim.
+    openContradictions = (state.openFindings || [])
+      .filter(f => Array.isArray((f as { pages?: unknown }).pages)) as typeof contradictions
+    openGaps = (state.openFindings || [])
+      .filter(f => !Array.isArray((f as { pages?: unknown }).pages)) as typeof gaps
+  }
+
   // Build lint report markdown
   const now = new Date().toISOString().slice(0, 16).replace('T', ' ')
+  const prior = state.counts
+  const coverage = window.total > 0 ? Math.round((windowPages.length / window.total) * 100) : 0
+  const cycleRuns = window.total > 0 ? Math.ceil(window.total / Math.max(1, windowPages.length)) : 0
+
   const reportLines = [
     `# Wiki Lint Report`,
     ``,
     `> Generated: ${now} | Vault: ${path.basename(vaultRoot)} | Pages scanned: ${pages.length}`,
     ``,
-    `## Summary`,
-    ``,
-    `| Check | Count | Severity |`,
-    `|---|---|---|`,
-    `| Contradictions | ${contradictions.length} | ${contradictions.length > 0 ? '🔴 High' : '🟢 Clear'} |`,
-    `| Orphaned pages | ${orphans.length} | ${orphans.length > 5 ? '🟡 Medium' : '🟢 Clear'} |`,
-    `| Stale pages | ${stalePages.length} | ${stalePages.length > 10 ? '🟡 Medium' : '🟢 Clear'} |`,
-    `| Knowledge gaps | ${gaps.length} | ${gaps.length > 0 ? '🟡 Medium' : '🟢 Clear'} |`,
-    ``,
   ]
 
-  if (contradictions.length > 0) {
+  if (degradedReason) {
+    reportLines.push(
+      `> ⚠️ **DEGRADED RUN** — contradiction and knowledge-gap analysis did not run.`,
+      `> Orphan and stale counts below are current and complete; contradiction and`,
+      `> gap sections are carried over from the last successful run.`,
+      `>`,
+      `> Reason: \`${degradedReason.slice(0, 300)}\``,
+      ``,
+    )
+  }
+
+  reportLines.push(
+    `## Summary`,
+    ``,
+    `| Check | Count | Δ vs last run | Severity |`,
+    `|---|---|---|---|`,
+    `| Contradictions | ${openContradictions.length} | ${delta(openContradictions.length, prior?.contradictions)} | ${openContradictions.length > 0 ? '🔴 High' : '🟢 Clear'} |`,
+    `| Orphaned pages | ${orphans.length} | ${delta(orphans.length, prior?.orphans)} | ${orphans.length > 5 ? '🟡 Medium' : '🟢 Clear'} |`,
+    `| Stale pages | ${stalePages.length} | ${delta(stalePages.length, prior?.stale)} | ${stalePages.length > 10 ? '🟡 Medium' : '🟢 Clear'} |`,
+    `| Knowledge gaps | ${openGaps.length} | ${delta(openGaps.length, prior?.gaps)} | ${openGaps.length > 0 ? '🟡 Medium' : '🟢 Clear'} |`,
+    ``,
+    degradedReason
+      ? `**Analysis window:** none (degraded run).`
+      : `**Analysis window:** ${windowPages.length} of ${window.total} pages (${coverage}%) — ` +
+        `${window.hotCount} changed since last run, ${window.coldCount} from the rotating cursor. ` +
+        `Full-vault coverage every ~${cycleRuns} runs.`,
+    ``,
+  )
+
+  if (openContradictions.length > 0) {
     reportLines.push(`## 🔴 Contradictions`, ``)
-    for (const c of contradictions) {
-      reportLines.push(`### ${c.pages.join(' vs ')}`, ``, c.description, ``, `**Pages:** ${c.pages.map(p => `\`${p}\``).join(', ')}`, ``)
+    for (const c of openContradictions) {
+      const seen = (c as { firstSeen?: string }).firstSeen
+      reportLines.push(
+        `### ${c.pages.join(' vs ')}`,
+        ``,
+        c.description,
+        ``,
+        `**Pages:** ${c.pages.map(p => `\`${p}\``).join(', ')}${seen ? ` | **Open since:** ${seen}` : ''}`,
+        ``,
+      )
     }
   }
 
@@ -228,17 +344,25 @@ Be specific. Return ONLY the JSON object.`,
   }
 
   if (stalePages.length > 0) {
-    reportLines.push(`## 🟡 Stale Pages (30+ days since update)`, ``)
+    // Header states the real rule: per-page review_cadence_days /
+    // stale_after_days front matter, falling back to the default. It used to
+    // hard-code "30+ days" regardless of what the logic actually applied.
+    reportLines.push(
+      `## 🟡 Stale Pages (past their review cadence; default ${DEFAULT_STALE_AFTER_DAYS} days)`,
+      ``,
+    )
     for (const p of stalePages) {
-      reportLines.push(`- \`${p.relPath}\` — last updated: ${p.updated}`)
+      const cadence = p.staleAfterDays ?? p.reviewCadenceDays ?? DEFAULT_STALE_AFTER_DAYS
+      reportLines.push(`- \`${p.relPath}\` — last updated: ${p.updated} (cadence: ${cadence}d)`)
     }
     reportLines.push(``)
   }
 
-  if (gaps.length > 0) {
+  if (openGaps.length > 0) {
     reportLines.push(`## 💡 Knowledge Gaps`, ``)
-    for (const g of gaps) {
-      reportLines.push(`### ${g.topic}`, ``, g.description, ``)
+    for (const g of openGaps) {
+      const seen = (g as { firstSeen?: string }).firstSeen
+      reportLines.push(`### ${g.topic}`, ``, g.description, seen ? `\n_Open since ${seen}._` : ``, ``)
     }
   }
 
@@ -256,23 +380,54 @@ Be specific. Return ONLY the JSON object.`,
   fs.writeFileSync(reportTmp, reportLines.join('\n'), 'utf8')
   fs.renameSync(reportTmp, reportPath)
 
+  // Persist cursor + counts + ledger for the next run. On a degraded run the
+  // cursor does NOT advance — the window was never analysed, so moving past it
+  // would punch a permanent hole in coverage.
+  writeLintState(vaultRoot, {
+    cursor: degradedReason ? state.cursor : window.nextCursor,
+    lastRunAt: new Date().toISOString(),
+    counts: {
+      pages: pages.length,
+      contradictions: openContradictions.length,
+      orphans: orphans.length,
+      stale: stalePages.length,
+      gaps: openGaps.length,
+    },
+    openFindings: [...openContradictions, ...openGaps] as Array<Record<string, unknown>>,
+  })
+
   appendAuditLog({
     op: 'lint',
     vault: path.basename(vaultRoot),
     pagesScanned: pages.length,
-    contradictions: contradictions.length,
+    contradictions: openContradictions.length,
     orphans: orphans.length,
-    gaps: gaps.length,
+    gaps: openGaps.length,
+    degraded: Boolean(degradedReason),
   })
+
+  const orphanDelta = typeof prior?.orphans === 'number' ? orphans.length - prior.orphans : 0
 
   return NextResponse.json({
     ok: true,
+    degraded: Boolean(degradedReason),
+    degradedReason,
     pagesScanned: pages.length,
-    contradictions: contradictions.length,
+    contradictions: openContradictions.length,
     orphans: orphans.length,
     stalePages: stalePages.length,
-    gaps: gaps.length,
+    gaps: openGaps.length,
+    orphanDelta,
+    analysisWindow: {
+      examined: windowPages.length,
+      total: window.total,
+      hot: window.hotCount,
+      cold: window.coldCount,
+      cursor: degradedReason ? state.cursor : window.nextCursor,
+    },
     reportPath: 'wiki/lint-report.md',
-    summary: `Lint complete: ${contradictions.length} contradictions, ${orphans.length} orphans, ${gaps.length} gaps found.`,
+    summary: degradedReason
+      ? `Lint DEGRADED (${degradedReason.slice(0, 120)}): ${orphans.length} orphans, ${stalePages.length} stale; contradiction/gap analysis skipped.`
+      : `Lint complete: ${openContradictions.length} contradictions, ${orphans.length} orphans, ${openGaps.length} gaps found.`,
   })
 }

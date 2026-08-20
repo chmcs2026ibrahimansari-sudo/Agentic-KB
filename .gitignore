@@ -15,6 +15,13 @@ logs/api-cost.log
 # Runtime file locks (lib/agent-runtime/locks.mjs) — per-process, never shared
 .locks/
 
+# Pristine pre-redaction originals kept by scripts/scrub-raw-pii.mjs.
+# Deliberately narrow — this ignores ONE subdirectory of backups, not raw/
+# broadly (the night-shift playbooks require raw/ itself to stay visible to
+# the dirty-worktree gate). Contents may carry contact PII by definition and
+# must never be committed.
+raw/_quarantine/
+
 # Graphify temp files
 .graphify_*
 

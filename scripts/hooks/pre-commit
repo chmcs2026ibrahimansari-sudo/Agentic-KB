@@ -29,6 +29,13 @@ set -euo pipefail
 WHITELIST_FILES=(
   "wiki/_private/"           # PIN-protected layer
   "logs/"                    # local-only logs (gitignored anyway)
+
+  # The files that *define* the deny-list necessarily contain the deny-list.
+  # Without these exemptions the hook blocks any edit to itself — including
+  # tightening a false-positive regex, which is exactly what its own docs tell
+  # you to do. Discovered 2026-08-20 while adding the scrubber.
+  "scripts/hooks/pre-commit"
+  "scripts/scrub-raw-pii.mjs"
 )
 
 # Patterns that indicate PII / sensitive personal context. Add over time.

@@ -39,18 +39,25 @@ interface LintState {
 
 const EMPTY_STATE: LintState = { cursor: 0, lastRunAt: null, counts: null, openFindings: [] }
 
+// Machine-local: logs/ is the established home for per-machine generated state
+// (see .gitignore). Keeping the cursor out of the tree means the daily commit
+// stages only lint-report.md and git status stays clean between runs. Losing
+// this file costs one run of deltas and resets the cursor — nothing worse.
+function lintStatePath(vaultRoot: string): string {
+  return path.join(vaultRoot, 'logs', 'lint-state.json')
+}
+
 function readLintState(vaultRoot: string): LintState {
   try {
-    const raw = fs.readFileSync(path.join(vaultRoot, '_meta', 'lint-state.json'), 'utf8')
+    const raw = fs.readFileSync(lintStatePath(vaultRoot), 'utf8')
     return { ...EMPTY_STATE, ...JSON.parse(raw) as Partial<LintState> }
   } catch { return { ...EMPTY_STATE } }
 }
 
 function writeLintState(vaultRoot: string, state: LintState): void {
   try {
-    const dir = path.join(vaultRoot, '_meta')
-    fs.mkdirSync(dir, { recursive: true })
-    const target = path.join(dir, 'lint-state.json')
+    const target = lintStatePath(vaultRoot)
+    fs.mkdirSync(path.dirname(target), { recursive: true })
     const tmp = target + '.tmp-' + process.pid
     fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8')
     fs.renameSync(tmp, target)

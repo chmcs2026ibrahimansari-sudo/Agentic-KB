@@ -16,11 +16,11 @@ logs/api-cost.log
 .locks/
 
 # Pristine pre-redaction originals kept by scripts/scrub-raw-pii.mjs.
-# Deliberately narrow — this ignores ONE subdirectory of backups, not raw/
-# broadly (the night-shift playbooks require raw/ itself to stay visible to
-# the dirty-worktree gate). Contents may carry contact PII by definition and
-# must never be committed.
-raw/_quarantine/
+# Lives outside raw/ on purpose: anything under raw/ gets indexed by the
+# compiler and the night-shift walkers, which would turn each preserved
+# original into a duplicate source. Contents carry contact PII by definition
+# and must never be committed.
+.pii-quarantine/
 
 # Graphify temp files
 .graphify_*
@@ -56,4 +56,6 @@ logs/web-server-error.log
 logs/web-server.log
 logs/audit.log
 logs/kb-dev-server.log
+# Daily lint cursor + open-findings ledger (per-machine generated state)
+logs/lint-state.json
 .env.bak*

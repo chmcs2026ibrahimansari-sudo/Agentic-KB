@@ -837,8 +837,14 @@ async function ingestFile(filePath, opts) {
   // Prepend minimal frontmatter
   const frontmatter = [
     '---',
-    `title: "${basename.replace(/"/g, "'")}"`,
-    `source_file: ${path.basename(resolved)}`,
+    // JSON.stringify produces a valid YAML double-quoted scalar and escapes
+    // quotes *and newlines* — the ingest-youtube/ingest-twitter siblings were
+    // hardened this way and ingest-file was missed. Escaping only `"` left a
+    // newline in the filename free to inject frontmatter keys into the
+    // generated doc (`visibility: public`, `vault: true`), which downstream
+    // compilation treats as authoritative.
+    'title: ' + JSON.stringify(basename),
+    'source_file: ' + JSON.stringify(path.basename(resolved)),
     `date_ingested: ${date}`,
     `tags: [${subdir}]`,
     '---',

@@ -6,7 +6,7 @@ captured_by: hermes-agentic-kb-scout
 word_count: 1046
 status: unprocessed
 pii_redacted: true
-pii_original: "raw/_quarantine/framework-docs/lumay-ai.md"
+pii_original: ".pii-quarantine/framework-docs/lumay-ai.md"
 pii_redacted_by: "scripts/scrub-raw-pii.mjs"
 pii_redacted_date: "2026-08-20"
 ---

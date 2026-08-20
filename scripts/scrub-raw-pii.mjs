@@ -39,9 +39,10 @@
  * ## Rule 1
  *
  * Before any in-place edit, the pristine original is copied to
- * `raw/_quarantine/` (gitignored). Nothing is destroyed — "raw is the source of
- * truth" is preserved byte-for-byte on disk, and the redacted file carries a
- * `pii_original:` pointer back to it.
+ * `.pii-quarantine/` (gitignored, and outside raw/ so no raw-walker indexes
+ * it). Nothing is destroyed — "raw is the source of truth" is preserved
+ * byte-for-byte on disk, and the redacted file carries a `pii_original:`
+ * pointer back to it.
  *
  * ## Coupling note
  *
@@ -73,7 +74,13 @@ const execFileAsync = promisify(execFile)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = path.resolve(__dirname, '..')
 const RAW_DIR = path.join(REPO_ROOT, 'raw')
-const QUARANTINE_REL = 'raw/_quarantine'
+// Deliberately OUTSIDE raw/. A first attempt used raw/_quarantine/ and the
+// compiler immediately picked the pristine copies up as new sources ("Found
+// 171 raw docs, compiling 3"), which would have produced duplicate summaries.
+// Every raw/ walker in the repo — compile, refinery, scout, ingest-dedup —
+// would need its own exclusion. Keeping the quarantine out of the tree is one
+// change instead of N, and cannot be forgotten by a future walker.
+const QUARANTINE_REL = '.pii-quarantine'
 const QUARANTINE_DIR = path.join(REPO_ROOT, QUARANTINE_REL)
 
 const REDACTION = '[PII-REDACTED]'

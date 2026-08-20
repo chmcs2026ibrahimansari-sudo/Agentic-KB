@@ -232,8 +232,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Payload too large' }, { status: 413 })
   }
 
-  // Reject only if: legacy secret is set AND doesn't match AND caller has no namespace token
-  if (identity.source === 'default' && !legacySecretOk(request, rawBody)) {
+  // Reject unless the caller either presented a valid namespace *token* or
+  // satisfied the legacy secret. This used to skip legacySecretOk for any
+  // identity.source !== 'default', which included 'header' — and
+  // resolveIdentity honours a bare X-KB-Namespace header whenever no tokens
+  // are configured, which is the default state (no namespaces.json in the
+  // tree). So `-H 'X-KB-Namespace: default'` resolved to source 'header' and
+  // skipped WEBHOOK_SECRET entirely. Only a verified bearer token may bypass
+  // the legacy secret.
+  if (identity.source !== 'token' && !legacySecretOk(request, rawBody)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

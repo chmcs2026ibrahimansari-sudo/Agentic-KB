@@ -80,6 +80,7 @@ updated: 2026-04-10
 - [[concepts/self-improving-harness]] — A harness that edits its own scaffolding from its own run history
 - [[frameworks/super-simple-software-factory]] — Disler's minimal software-factory harness
 - [[patterns/pattern-code-owns-control-plane]] — Keep orchestration in code; let the model own judgement, not control flow
+- [[frameworks/blume-codes]] — macOS sidecar that observes Claude Code / Cursor / Codex side by side and proposes rule, skill and hook changes from observed friction
 
 ---
 

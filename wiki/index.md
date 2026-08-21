@@ -103,7 +103,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Frameworks (43)
+## Frameworks (44)
 
 | Page | Vendor | Version | Jay's Experience | Last Checked |
 |------|--------|---------|-----------------|--------------|
@@ -267,7 +267,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (37)
+## Syntheses (38)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -302,6 +302,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-headroom-compression-reciprocal-rank-fusion]] | If Headroom compresses RAG chunks before they reach the retrieval and scoring stages, is the resulting Reciprocal Rank Fusion ordering still a measure of retrieval quality? | 2026-08-19 |
 | [[syntheses/synthesis-rrf-proof-of-work-receipts]] | If an agent emits a proof-of-work receipt for a retrieval step whose results were merged by Reciprocal Rank Fusion, does that receipt constitute evidence that the ranking was sound? | 2026-08-20 |
 | [[syntheses/synthesis-telephone-game-per-claim-confidence]] | Can the memory stack's per-claim confidence machinery detect Telephone Game corruption in supervisor-worker orchestration, rather than only routing around it? | 2026-08-21 |
+| [[syntheses/harness-vs-meta-harness-vs-self-improving-harness]] | What distinguishes a harness, meta-harness, and self-improving harness — and why are code-owned gates the practical harness layer before self-improvement? | 2026-08-21 |
 
 ---
 

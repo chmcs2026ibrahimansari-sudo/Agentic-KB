@@ -1156,5 +1156,11 @@
       "concepts/self-improving-harness.md",
       "syntheses/harness-vs-meta-harness-vs-self-improving-harness.md"
     ]
+  },
+  "framework-docs/blume-codes.md": {
+    "compiledAt": "2026-08-21T16:03:47.703Z",
+    "pagesAffected": [
+      "frameworks/blume-codes.md"
+    ]
   }
 }

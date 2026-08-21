@@ -1757,3 +1757,81 @@ Pages affected: `wiki/concepts/meta-harness.md`, `wiki/concepts/self-improving-h
 **Rule 3 compliance:** the new synthesis was linked from `mocs/orchestration.md` (Syntheses) and `mocs/memory.md` (new Syntheses section) on creation — 2 inbound links, reachable from `home.md` in 2 clicks. Not orphaned.
 
 Pages affected: `wiki/syntheses/synthesis-telephone-game-per-claim-confidence.md`, `wiki/index.md`, `wiki/recently-added.md`, `wiki/mocs/orchestration.md`, `wiki/mocs/memory.md`, `wiki/_meta/proposals.md`, `wiki/log.md`
+
+---
+
+## 2026-08-21 — Agentic-KB Editor Run
+
+**Trigger:** Scheduled `agentic-kb-editor-run` at 06:25 PDT.
+
+**Pages considered:** 16 wiki files changed in the last 24 hours, centered on the newly compiled harness/meta-harness/self-improving-harness cluster, the Super Simple Software Factory / code-owned-control-plane pair, and the morning Telephone Game ↔ per-claim confidence synthesis.
+
+**Thread updated:** `[[syntheses/harness-vs-meta-harness-vs-self-improving-harness]]` received a targeted Editor note connecting the abstract harness taxonomy to the independently captured Super Simple Software Factory rule: deterministic code owns sequencing, retries, acceptance gates, typed envelopes, and trace capture before self-improvement is meaningful.
+
+**Reason:** The Rocha harness taxonomy, Disler Super Simple Software Factory repo, and Harrison Chase harness/model/context triad form a real multi-source thread. The update avoids creating a duplicate synthesis and makes the existing harness synthesis cross-source instead of single-source.
+
+**Index:** `[[wiki/index]]` synthesis count corrected 37→38 and the existing harness synthesis added to the synthesis table.
+
+**Contradictions flagged:** None new.
+
+**Briefing:** `briefings/2026-08-21.md`.
+
+## 2026-08-21 — Compiled `framework-docs/blume-codes.md`
+
+Pages affected: `frameworks/blume-codes.md`
+
+
+---
+
+## 2026-08-21 — FIX: compile write-phase blockage root-caused; preflight exit-code conflation removed
+
+Follow-up to this morning's scheduled run, at Jay's request. Two defects, both now fixed and verified.
+
+### Defect 1 — the compile write phase was dead because the web server had no production build
+
+`kb compile`'s write phase is an HTTP POST to `${KB_API_URL}/api/compile`. Every route on the KB web server was returning **HTTP 500**. Root cause in `logs/web-server-error.log`:
+
+```
+Error: Cannot find module '/Users/jaywest/Agentic-KB/web/.next/server/middleware-manifest.json'
+```
+
+`web/.next/` contained **only** a `dev/` subdirectory — no production build at all. A `next dev` run had left the directory without the production artifacts, and the launchd job (`com.jaywest.agentic-kb-web`, `RunAtLoad` + `KeepAlive`) runs `next start`, which serves an error page for every route when the build is missing. Directory mtime was 2026-08-20 09:23.
+
+This was **never a PIN problem and never a credits problem** — the two diagnoses carried in this log since 2026-05-23 and 2026-05-27. It also explains the 2026-05-27 `Error: undefined`: before `cli/kb.js` gained its content-type guard, a non-SSE 500 body produced exactly that message.
+
+Fix: `cd web && npm run build`, then `launchctl kickstart -k gui/$(id -u)/com.jaywest.agentic-kb-web`.
+
+Verified end to end — `node cli/kb.js compile` ran clean and actually wrote:
+
+```
+i  Found 171 raw docs. Compiling 1 (new/uncompiled).
+.  framework-docs/blume-codes.md
+   [new] frameworks/blume-codes.md
+Done: ✅ Compiled 1 docs → 1 pages created, 0 updated
+```
+
+`/api/compile` now answers 405 to a GET (route mounted, POST-only) where it answered 500 before.
+
+**Port note:** `cli/kb.js` auto-loads `.env`, and `.env` line 17 sets `KB_API_URL=http://localhost:3009` — the `next dev` server — so the CLI does **not** talk to the launchd production server on 3002. Both are currently healthy. This split is worth an explicit decision: a compile that silently depends on a hand-started dev server is fragile.
+
+**Rule 3:** the new `frameworks/blume-codes` page was created with 0 inbound links, confirming the compiler-orphans defect logged 2026-08-20. Remediated manually — linked from the Harness Layer section of `mocs/orchestration.md`. The compiler behaviour is unchanged and will orphan the next page.
+
+### Defect 2 — preflight returned "degraded" for a dirty worktree
+
+`scripts/morning-review-preflight.sh` called `worse 1` on a dirty worktree, the same exit code that means "the compile/apply phase will fail." The script's own comment at that call site said *"Not fatal to this job, which commits at the end anyway."* This morning the tree was dirty, the API was healthy, and the caller correctly followed the documented branch and skipped a compile that would have worked.
+
+Changes:
+
+- Worktree dirtiness no longer touches the exit code. It emits a machine-readable `WARN: worktree-dirty` line instead. This job commits at the end (Step 5.8), so a dirty tree cannot stop it; it only threatens the night-shift jobs, which is a different audience.
+- `worse()` now takes a cause slug, and the RESULT line names it — `RESULT: degraded (kb-server-500)` rather than an unattributed "degraded".
+- **New check 2b:** probe `${KB_API_URL}/api/compile` with a GET. A healthy server answers 405, proving the exact route the write phase needs is mounted without triggering a compile; 5xx or no answer sets exit 1 with remediation instructions. This is the check that would have caught Defect 1 on day one — the existing credits check passes happily while the server is down, because the two are unrelated.
+
+Exit code 1 now means one thing only: the compile/apply phase cannot succeed.
+
+Verified: with a dirty tree and both servers healthy the script prints `WARN: worktree-dirty` and `RESULT: clear`, exit 0. `bash -n` clean. `npm test` 512/513 — the single failure (`tests/repos/repo-queries.test.mjs`, case-insensitive repo dir resolution) is pre-existing and unrelated.
+
+### Still open — needs Jay's call
+
+The 164 deferred themes are **not** blocked by any of this; they are correctly held at 1 source each, waiting for a second. The genuinely stuck set is the **28 PROMOTE themes** that already clear the 2-source bar. `scripts/compile-2source-gate.mjs` computes `decision.promote`, prints it, then calls `shellOutToCompile()`, which runs `kb compile` — a raw-source ingest that never receives the promote list. The promote count has been decorative in every run. Wiring it up would create or update ~28 pages in one pass and remains the open scope decision first logged 2026-08-20.
+
+Pages affected: `scripts/morning-review-preflight.sh`, `web/.next/` (rebuilt, untracked), `wiki/frameworks/blume-codes.md` (compiled), `wiki/mocs/orchestration.md`, `raw/.compiled-log.json`, `wiki/log.md`

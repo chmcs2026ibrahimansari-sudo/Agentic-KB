@@ -9,6 +9,12 @@ visibility: public
 confidence: medium
 related: [agent-harness-model-context, meta-harness, self-improving-harness, agent-failure-modes, agent-layer-architecture]
 source: https://www.linkedin.com/posts/danielnrocha_harness-meta-harness-self-improving-harness-share-7494046822647341056-q5N7/
+sources:
+  - raw/framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md
+  - raw/framework-docs/disler-super-simple-software-factory.md
+  - [[summaries/summary-harrison-chase-harness-model-context]]
+  - [[frameworks/super-simple-software-factory]]
+  - [[patterns/pattern-code-owns-control-plane]]
 ---
 
 # Harness vs Meta-Harness vs Self-Improving Harness
@@ -45,6 +51,11 @@ Teams frequently mistake adopting an orchestration/meta-harness layer for doing 
 > Build the harness when your agent fails in ways you can name. Add the meta-harness when someone [else needs to govern or audit across multiple harnesses/vendors].
 
 (Self-improving harness approaches are best considered once a team has enough failure-trace data and regression-test infrastructure to make automated scaffolding search viable — they are not a starting point for teams with sparse failure data.)
+
+## Editor note — the practical harness layer is code-owned gating
+The Disler Super Simple Software Factory source turns this taxonomy into an implementation rule: if a harness is the layer that turns model reasoning into reliable action, the highest-leverage harness work is not another orchestration wrapper but deterministic control code that owns sequencing, retries, acceptance gates, typed envelopes, and trace capture. The repo states this directly: "code owns sequencing, retries, and acceptance" while agents work only inside bounded phases (`raw/framework-docs/disler-super-simple-software-factory.md`). That corroborates the Rocha post's warning that a meta-harness solves sprawl, not quality, because portability above the tool does not verify the work inside the tool boundary (`raw/framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md`).
+
+The Harrison Chase harness/model/context triad sharpens the rule: failures are usually in context or harness, not the model, and model-specific tool-use conventions mean harnesses need adaptation rather than generic prompt copying ([[summaries/summary-harrison-chase-harness-model-context]]). The cross-source takeaway is: build [[patterns/pattern-code-owns-control-plane]] first when failures are local, add a meta-harness only when governance must span multiple harnesses, and consider self-improvement only after the trace/gate substrate exists. Without the trace/gate substrate, "self-improving" has no reliable fitness function.
 
 ## See Also
 - [Harness / Model / Context](agent-harness-model-context.md)

@@ -1118,3 +1118,24 @@ purpose: Append-only ledger of actionable proposals surfaced by /foundry-propose
 - run: 2026-08-20T13:12:31.539Z
 - recommendation: Latest compile deferred 164 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
 
+
+## 2026-08-21T13:10:08.495Z
+
+### PROP-155 [HEAVY_BACKLOG] backlog:2026-08-21T01:14:59.765Z
+
+- defer count: 164 (threshold 50)
+- run: 2026-08-21T01:14:59.765Z
+- recommendation: Latest compile deferred 164 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
+
+
+
+### PROP-156 [STALLED_LEVERAGE_QUESTION] leverage:headroom-compression-ordering
+
+- detector: manual (morning-review-daily, 2026-08-21) — leverage question recurrence guard
+- recurrence: 2026-08-18, 2026-08-20, 2026-08-21 daily notes all restate the same premise — Headroom-style compression sits upstream of verification, so receipts/rankings may certify degraded context silently.
+- status: this is no longer an open question, it is a stalled task. Restating it daily produces no new information.
+- concrete verification step: read Headroom's `ContentRouter` source directly and determine whether compression executes BEFORE or AFTER retrieval scoring and RRF fusion. Record the answer as a dated fact in `wiki/frameworks/framework-headroom.md` with a source link to the specific file and line range.
+- unblocks: `syntheses/synthesis-headroom-compression-reciprocal-rank-fusion`, `syntheses/synthesis-headroom-compression-obsidian-wiki-vault`, `syntheses/synthesis-headroom-compression-proof-of-work-receipts`, `syntheses/synthesis-headroom-compression-skillopt-signal`, `syntheses/synthesis-headroom-compression-episodic-judgment-signal`, `syntheses/synthesis-rrf-proof-of-work-receipts`
+- outcome if before: all six syntheses describe real, connected failure modes; proceed to the `context_fidelity` field proposal.
+- outcome if after: the cluster collapses to speculative first-principles argument and each page needs a scope downgrade.
+- owner: Jay (requires reading third-party source outside the KB)

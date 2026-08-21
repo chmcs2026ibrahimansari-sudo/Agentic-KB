@@ -301,6 +301,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-headroom-compression-obsidian-wiki-vault]] | If Headroom compresses the source material an agent compiles into an Obsidian vault, does the resulting wiki page record knowledge or a lossy impression of it? | 2026-08-18 |
 | [[syntheses/synthesis-headroom-compression-reciprocal-rank-fusion]] | If Headroom compresses RAG chunks before they reach the retrieval and scoring stages, is the resulting Reciprocal Rank Fusion ordering still a measure of retrieval quality? | 2026-08-19 |
 | [[syntheses/synthesis-rrf-proof-of-work-receipts]] | If an agent emits a proof-of-work receipt for a retrieval step whose results were merged by Reciprocal Rank Fusion, does that receipt constitute evidence that the ranking was sound? | 2026-08-20 |
+| [[syntheses/synthesis-telephone-game-per-claim-confidence]] | Can the memory stack's per-claim confidence machinery detect Telephone Game corruption in supervisor-worker orchestration, rather than only routing around it? | 2026-08-21 |
 
 ---
 

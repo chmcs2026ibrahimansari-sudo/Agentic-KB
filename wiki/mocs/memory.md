@@ -94,6 +94,12 @@ See [[system/policies/freshness-policy]] and [[system/policies/source-trust-poli
 
 ---
 
+## Syntheses
+
+- [[syntheses/synthesis-telephone-game-per-claim-confidence]] — Argues supervisor paraphrase corruption and lossy memory retrieval are the same failure mode, and that [[patterns/pattern-per-claim-confidence]] is portable across the orchestration boundary
+
+---
+
 ## Key Summaries
 
 - [[summaries/siagian-agentic-engineer-roadmap-2026]] — Memory section: summaries vs embeddings vs structured KV; checkpointing; context budgeting; failure modes; user corrections

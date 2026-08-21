@@ -1732,3 +1732,28 @@ Remediated manually for today's 5 pages: added a **Harness Layer** section to `m
 **Contradictions flagged:** None new between sources.
 
 Pages affected: `wiki/concepts/meta-harness.md`, `wiki/concepts/self-improving-harness.md`, `wiki/frameworks/super-simple-software-factory.md`, `wiki/patterns/pattern-code-owns-control-plane.md`, `wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md`, `wiki/mocs/orchestration.md`, `wiki/recently-added.md`, `wiki/index.md`, `wiki/candidates.md`, `wiki/_meta/compile-log.md`
+
+
+---
+
+## 2026-08-21 — morning-review-daily (scheduled run)
+
+**Preflight:** exit 1 (DEGRADED). Anthropic API reachable and funded; `raw/` clean of contact PII; **worktree dirty** — `M .night-shift/state/scout-processed.json`, `?? raw/framework-docs/blume-codes.md`. Per the skill's branch rule, exit 1 means SKIP the compile phase, so `scripts/compile-2source-gate.mjs --execute` was **not run today**. Note the degradation cause was tree cleanliness, not credits — the compile would likely have succeeded. Flagged for Jay: the preflight collapses two very different conditions (unfunded API vs. dirty tree) into one exit code, which costs a compile run on days like today.
+
+**Morning Review pipeline:** completed. 2 Apple Notes, 4 links crawled, 3 findings (2 auto-apply, 1 needs approval), 0 errors. No AppleScript timeout — the Notes read returned in 26s. Daily note written to `Daily Notes/2026-08-21.md`.
+
+**Staging:** `sofie-watch-obsidian.mjs --once` found no new meeting notes. Apple Notes `KB Inbox` contains only `test-capture-2026-05-16`, which already has **11 copies** in `raw/clippings/` from prior runs; skipped rather than writing a 12th. Snipd folder empty. `ingest-dedup.mjs` not run — nothing new to route.
+
+**Intelligence queries:** connections, tensions, leverage and proposals succeeded. The **patterns** query failed on first attempt (`stream failed after 3 attempts: model returned no text (stop_reason: max_tokens)`); retried once with a 400-word cap and an `wiki/index.md` + `wiki/hot.md` anchor, which succeeded.
+
+**Contradictions flagged:** None new. The tensions query re-reported the `agentmemory` provenance gap on `concepts/reciprocal-rank-fusion.md` and `patterns/pattern-per-claim-confidence.md` as open. **Both were resolved 2026-06-10** — RRF via Cormack/Clarke/Buettcher (SIGIR 2009) corroboration, per-claim-confidence as an explicit "retained at medium, won't-fix" decision. No provenance edits made; re-flagging would have regressed resolved work. The tensions query reads `wiki/log.md` without reading the pages themselves, which is why it keeps resurfacing closed items.
+
+**Leverage-question escalation:** the Headroom compression-ordering premise has now driven the leverage question on 2026-08-18, 2026-08-20 and 2026-08-21. Per the recurrence guard it was treated as a stalled task rather than restated: logged as **PROP-156 [STALLED_LEVERAGE_QUESTION]** in `wiki/_meta/proposals.md` with one concrete verification step — read Headroom's `ContentRouter` source directly to establish whether compression runs before or after retrieval scoring and RRF fusion, then record the answer as a dated fact in `frameworks/framework-headroom.md`. Six syntheses depend on the answer.
+
+**Proposals:** `foundry-propose.mjs --execute --top 3` wrote **PROP-155 [HEAVY_BACKLOG]** (164 deferred themes, threshold 50). Backlog has been static at 164 across three consecutive days — consistent with the still-unresolved compile write-phase blockage logged 2026-05-23/2026-05-27.
+
+**Synthesis drafted:** `wiki/syntheses/synthesis-telephone-game-per-claim-confidence.md` — the top verified-missing connection (Orchestration ↔ Memory). Verified absent by grepping `wiki/syntheses/` for both endpoints before drafting. Born `reviewed: false`. Argues the Telephone Game Problem is an instance of synthesis-layer fidelity loss and that `pattern-per-claim-confidence` can instrument the supervisor boundary rather than `forward_message` bypassing it. Counter-arguments section carries two `[UNVERIFIED]` markers: no measurement of supervisor corruption rates exists in the KB, and no raw source documents this transplant in production.
+
+**Rule 3 compliance:** the new synthesis was linked from `mocs/orchestration.md` (Syntheses) and `mocs/memory.md` (new Syntheses section) on creation — 2 inbound links, reachable from `home.md` in 2 clicks. Not orphaned.
+
+Pages affected: `wiki/syntheses/synthesis-telephone-game-per-claim-confidence.md`, `wiki/index.md`, `wiki/recently-added.md`, `wiki/mocs/orchestration.md`, `wiki/mocs/memory.md`, `wiki/_meta/proposals.md`, `wiki/log.md`

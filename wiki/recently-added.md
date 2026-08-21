@@ -9,6 +9,12 @@ type: meta
 
 ---
 
+## 2026-08-21 (morning-review-daily)
+
+- [[wiki/syntheses/synthesis-telephone-game-per-claim-confidence|The Telephone Game Problem Is a Retrieval-Fidelity Problem]] — argues supervisor paraphrase corruption and lossy memory retrieval are one failure mode, and that per-claim confidence should instrument the orchestration boundary rather than `forward_message` bypassing it
+
+---
+
 ## 2026-08-20 (compile — first successful write phase since credits were restored)
 
 - [[wiki/concepts/meta-harness|Meta-Harness]] — a harness that builds or configures other harnesses

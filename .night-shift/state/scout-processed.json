@@ -279,6 +279,13 @@
       "captured_at": "2026-08-18T23:10:32-0700",
       "sha256": "4fbba07e5a7c054a6c4807bec2c3b78103f2079fb824ec4245ea77eb80a5a16c",
       "source_note": "Apple Notes 2026-08-14: Lumay AI company/site paired with enterprise AI adoption note; inspect for AI operating model patterns."
+    },
+    {
+      "url": "https://blume.codes/",
+      "destination": "raw/framework-docs/blume-codes.md",
+      "captured_at": "2026-08-20T23:06:46-07:00",
+      "sha256": "f3045c975901494d6c72e31aa411b780718e49c0988552227e9133cdc52f9385",
+      "source_note": "Apple Notes 2026-08-16: local agent control plane / auto-improvement monitor; compare with Hermes/MissionControl observability and improvement recommendation loop."
     }
   ]
 }

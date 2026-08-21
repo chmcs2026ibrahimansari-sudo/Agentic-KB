@@ -8,6 +8,8 @@ import {
   selectAnalysisPages,
   reconcileFindings,
   findingKey,
+  rankOrphans,
+  rankStalePages,
 } from '../../lib/wiki-lint.mjs'
 
 test('normalizeLinkTarget strips wiki prefix, alias, anchors, and extension', () => {
@@ -133,4 +135,45 @@ test('reconcileFindings preserves firstSeen when a finding is re-reported', () =
   assert.equal(result.open.length, 1, 'page order must not create a duplicate finding')
   assert.equal(result.open[0].firstSeen, '2026-08-01')
   assert.equal(result.open[0].description, 'new wording')
+})
+
+test('rankOrphans surfaces substantial pages and drops stubs', () => {
+  const orphans = [
+    { relPath: 'stub.md', title: 'Stub', wordCount: 40 },
+    { relPath: 'big.md', title: 'Big', wordCount: 2000 },
+    { relPath: 'mid.md', title: 'Mid', wordCount: 300 },
+  ]
+
+  const ranked = rankOrphans(orphans, 10)
+  assert.deepEqual(ranked.map(p => p.relPath), ['big.md', 'mid.md'])
+})
+
+test('rankStalePages puts depended-on pages first and ignores leaves', () => {
+  const now = new Date('2026-08-20').getTime()
+  const stale = [
+    { relPath: 'leaf.md', updated: '2020-01-01' },   // ancient but nothing links to it
+    { relPath: 'hub.md', updated: '2026-05-01' },    // recent-ish but 3 dependents
+    { relPath: 'minor.md', updated: '2026-04-01' },  // 1 dependent
+  ]
+  const inbound = new Map([
+    ['leaf.md', []],
+    ['hub.md', ['a.md', 'b.md', 'c.md']],
+    ['minor.md', ['a.md']],
+  ])
+
+  const ranked = rankStalePages(stale, inbound, 10, now)
+  assert.deepEqual(ranked.map(x => x.page.relPath), ['hub.md', 'minor.md'])
+  assert.equal(ranked[0].inbound, 3)
+})
+
+test('rankStalePages breaks inbound ties by age', () => {
+  const now = new Date('2026-08-20').getTime()
+  const stale = [
+    { relPath: 'newer.md', updated: '2026-06-01' },
+    { relPath: 'older.md', updated: '2025-01-01' },
+  ]
+  const inbound = new Map([['newer.md', ['x.md']], ['older.md', ['y.md']]])
+
+  const ranked = rankStalePages(stale, inbound, 10, now)
+  assert.deepEqual(ranked.map(x => x.page.relPath), ['older.md', 'newer.md'])
 })

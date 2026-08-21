@@ -24,6 +24,8 @@ import {
   isStalePage,
   selectAnalysisPages,
   reconcileFindings,
+  rankOrphans,
+  rankStalePages,
   DEFAULT_ANALYSIS_BUDGET,
   DEFAULT_STALE_AFTER_DAYS,
 } from '../../../../../lib/wiki-lint.mjs'
@@ -326,6 +328,39 @@ Be specific. Return ONLY the JSON object.`,
         `Full-vault coverage every ~${cycleRuns} runs.`,
     ``,
   )
+
+  // Lead with the short actionable list. The exhaustive sections below are
+  // reference material; this is the part meant to be read and acted on.
+  const topOrphans = rankOrphans(orphans, 10)
+  const topStale = rankStalePages(stalePages, inboundMap, 10)
+
+  if (topOrphans.length > 0 || topStale.length > 0) {
+    reportLines.push(`## 🎯 Triage — start here`, ``)
+
+    if (topOrphans.length > 0) {
+      reportLines.push(
+        `**Substantial pages nothing links to** (≥100 words, largest first) — link these from a hub page or archive them:`,
+        ``,
+      )
+      for (const p of topOrphans) {
+        reportLines.push(`1. \`${p.relPath}\` — ${p.title} (${p.wordCount} words)`)
+      }
+      reportLines.push(``)
+    }
+
+    if (topStale.length > 0) {
+      reportLines.push(
+        `**Stale pages others depend on** (most inbound links first) — these propagate outdated information:`,
+        ``,
+      )
+      for (const s of topStale) {
+        reportLines.push(
+          `1. \`${s.page.relPath}\` — ${s.inbound} inbound link${s.inbound === 1 ? '' : 's'}, ${s.age} days old`,
+        )
+      }
+      reportLines.push(``)
+    }
+  }
 
   if (openContradictions.length > 0) {
     reportLines.push(`## 🔴 Contradictions`, ``)

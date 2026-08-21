@@ -50,6 +50,32 @@ trap on_exit EXIT
 
 http_code() { curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$1" 2>/dev/null || echo "000"; }
 
+# --- alerting ---------------------------------------------------------------
+# Deliberately zero-config and local. A daily job whose failures are only
+# visible by reading the scheduler's transcript is a job that fails unnoticed —
+# 2 of the 15 runs before 2026-08-20 were dead and nobody found out. macOS
+# notifications need no credentials and cannot spam anyone but the user.
+alert() {
+  local msg="$1"
+  echo "ALERT: ${msg}"
+  printf '%s\t%s\n' "$(date -Iseconds)" "$msg" >> "${REPO}/logs/lint-alerts.log"
+  osascript -e "display notification \"${msg//\"/}\" with title \"KB daily lint\"" 2>/dev/null || true
+}
+
+# Cheapest possible probe: 1 output token. Catches an exhausted credit balance
+# in ~1s instead of walking 763 pages and burning 30s to reach the same answer.
+# Mirrors the check in scripts/morning-review-preflight.sh.
+credits_exhausted() {
+  local key body
+  key="$(grep '^ANTHROPIC_API_KEY=' "${REPO}/web/.env.local" 2>/dev/null | cut -d= -f2- | tr -d '\r\n')"
+  [ -n "$key" ] || return 1   # can't tell; let the real call decide
+  body="$(curl -s --max-time 20 https://api.anthropic.com/v1/messages \
+    -H "x-api-key: ${key}" -H "anthropic-version: 2023-06-01" \
+    -H "content-type: application/json" \
+    -d '{"model":"claude-haiku-4-5-20251001","max_tokens":1,"messages":[{"role":"user","content":"hi"}]}' 2>/dev/null)"
+  printf '%s' "$body" | grep -qi 'credit balance is too low'
+}
+
 # --- commit heartbeat -------------------------------------------------------
 # Always leaves a commit on main. Success mode stages only the report.
 commit_and_push() {
@@ -105,6 +131,13 @@ if [ "$(http_code "${BASE}/api/pending-count")" != "200" ]; then
 fi
 
 # --- 2. run the lint --------------------------------------------------------
+# Fail fast on an exhausted balance. The lint would still produce valid orphan
+# and stale counts via the degraded path, so this is not a hard stop — but it
+# turns a vague 502 buried in JSON into an unambiguous "top up your credits".
+if credits_exhausted; then
+  alert "Anthropic credits exhausted — contradiction/gap analysis will be skipped. Top up at console.anthropic.com"
+fi
+
 PIN="$(grep '^PRIVATE_PIN=' "${REPO}/web/.env.local" 2>/dev/null | cut -d= -f2- | tr -d '\r\n')"
 RESP="$(curl -s --max-time "$LINT_TIMEOUT" -X POST \
   -H "Content-Type: application/json" \
@@ -134,11 +167,11 @@ echo "analysis window: ${EXAMINED}/${PAGES} pages"
 
 status=0
 if [ "$DEGRADED" = "true" ]; then
-  echo "ALERT: degraded run — ${REASON}"
+  alert "degraded run — ${REASON}"
   status=2
 else
-  [ "$CONTRA" -gt 0 ] && { echo "ALERT: ${CONTRA} open contradiction(s)"; status=1; }
-  [ "$ODELTA" -gt "$ORPHAN_ALERT" ] && { echo "ALERT: orphans grew by ${ODELTA} since last run"; status=1; }
+  [ "$CONTRA" -gt 0 ] && { alert "${CONTRA} open contradiction(s) in the wiki"; status=1; }
+  [ "$ODELTA" -gt "$ORPHAN_ALERT" ] && { alert "orphans grew by ${ODELTA} since the last run"; status=1; }
 fi
 
 # --- 4. commit --------------------------------------------------------------

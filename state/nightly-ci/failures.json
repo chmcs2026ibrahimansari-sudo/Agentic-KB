@@ -1,0 +1,17 @@
+{
+  "4a7e8e5e": {
+    "repo": "SellerFi",
+    "workflow": "Vercel Environment Check",
+    "error": "{\"error\":{\"code\":\"forbidden\",\"message\":\"Not authorized\",\"invalidToken\":true}}",
+    "first_seen": "2026-08-21",
+    "last_seen": "2026-08-21",
+    "count": 1,
+    "branches": [
+      "main"
+    ],
+    "status": "open",
+    "pr": null,
+    "category": "permissions/config",
+    "note": "VERCEL_TOKEN secret rejected by Vercel API (403, invalidToken). Tier B - secret rotation, report-only."
+  }
+}

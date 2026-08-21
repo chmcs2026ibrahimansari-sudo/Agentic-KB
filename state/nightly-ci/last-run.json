@@ -1,0 +1,17 @@
+{
+  "date": "2026-08-21",
+  "finished_at": "2026-08-21T16:04:46Z",
+  "status": "partial",
+  "repos_checked": [
+    "sellerfi",
+    "missioncontrol",
+    "twinz"
+  ],
+  "runs_total": 5,
+  "passed": 4,
+  "failed": 1,
+  "cancelled": 0,
+  "in_progress": 0,
+  "prs_opened": 0,
+  "note": "Cowork Linux sandbox failed to provision (useradd exit 12, /sessions). Run completed via operator-local shell fallback. Auto-fix held to report-only."
+}

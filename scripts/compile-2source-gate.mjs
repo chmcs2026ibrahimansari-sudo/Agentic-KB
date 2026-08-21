@@ -3,9 +3,24 @@
  * 2-source gate for /foundry-compile.
  *
  * Scans wiki/summaries/ for themes (key_concepts + related: wikilinks).
- * A theme with ≥2 backing summaries is PROMOTED (eligible to compile).
+ * A theme with ≥2 backing summaries is PROMOTED.
  * A theme with 1 summary is DEFERRED to wiki/candidates.md.
  * Themes that were candidates and now have ≥2 summaries are GRADUATED.
+ *
+ * ## PROMOTE is advisory. Nothing applies it. (documented 2026-08-21)
+ *
+ * `--execute` writes candidates.md, appends the compile log, then shells out to
+ * `kb compile` — which compiles *new raw/ documents* into wiki pages and never
+ * receives `decision.promote`. So a theme can clear the 2-source bar and be
+ * listed as PROMOTE on every run forever without any page being created or
+ * updated, which is exactly what happened: 17 consecutive runs reported
+ * "promote: 28-30, graduate: 0" and were read as work that had been applied.
+ *
+ * Building the generator that turns a promoted theme into a properly schema'd,
+ * non-orphan concept/pattern/framework page is real work, not a missing wire —
+ * there is no such machinery anywhere in the repo today. Tracked as PROP-157 in
+ * wiki/_meta/proposals.md. Until it exists, the plan output and the compile log
+ * both label the promote count ADVISORY so it stops being misread.
  *
  * Modes:
  *   --plan      Print the plan; touch nothing.
@@ -74,9 +89,20 @@ function fmtBlock(label, items, fmtItem) {
 
 function printPlan({ promote, defer, graduate }) {
   console.log('Compile plan (2-source gate):')
-  process.stdout.write(fmtBlock('PROMOTE',  promote,  (i) => `${i.theme} (sources: ${i.sources.join(', ')})${i.forced ? ' [FORCED]' : ''}${i.hasPage ? ' [update]' : ' [new]'}`))
+  // Keep the `PROMOTE: N` token exactly as-is — tests and downstream tooling
+  // grep for it. The advisory warning goes on its own line instead.
+  if (promote.length) console.log('  ⚠ PROMOTE is ADVISORY — nothing applies it (PROP-157)')
+  process.stdout.write(fmtBlock('PROMOTE', promote, (i) => `${i.theme} (sources: ${i.sources.join(', ')})${i.forced ? ' [FORCED]' : ''}${i.hasPage ? ' [update]' : ' [new]'}`))
   process.stdout.write(fmtBlock('DEFER',    defer,    (i) => `${i.theme} (sources: ${i.sources.join(', ')})`))
   process.stdout.write(fmtBlock('GRADUATE', graduate, (i) => `${i.theme} (now: ${i.sources.join(', ')})`))
+  if (promote.length) {
+    console.log(
+      `\n  NOTE: the ${promote.length} PROMOTE themes above are ADVISORY. Nothing applies them.\n` +
+      `  --execute writes candidates.md, appends the compile log, then runs \`kb compile\`,\n` +
+      `  which ingests new raw/ docs — it never receives this list. No page is created or\n` +
+      `  updated from a promote decision. Building that generator is tracked as PROP-157.\n`
+    )
+  }
 }
 
 async function writeCandidates(defer) {
@@ -97,7 +123,7 @@ async function writeCandidates(defer) {
 async function appendLog({ promote, defer, graduate }) {
   const ts = new Date().toISOString()
   const summary = `\n## ${ts}\n` +
-    `- promote: ${promote.length}${promote.some((p) => p.forced) ? ` (forced: ${promote.filter((p) => p.forced).length})` : ''}\n` +
+    `- promote: ${promote.length} (ADVISORY — not applied; see PROP-157)${promote.some((p) => p.forced) ? ` (forced: ${promote.filter((p) => p.forced).length})` : ''}\n` +
     `- defer:    ${defer.length}\n` +
     `- graduate: ${graduate.length}\n` +
     (graduate.length ? `- graduated: ${graduate.map((g) => g.theme).join(', ')}\n` : '')

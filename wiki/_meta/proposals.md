@@ -1139,3 +1139,19 @@ purpose: Append-only ledger of actionable proposals surfaced by /foundry-propose
 - outcome if before: all six syntheses describe real, connected failure modes; proceed to the `context_fidelity` field proposal.
 - outcome if after: the cluster collapses to speculative first-principles argument and each page needs a scope downgrade.
 - owner: Jay (requires reading third-party source outside the KB)
+
+
+### PROP-157 [PROMOTE_NEVER_APPLIED] gate:decision.promote-has-no-consumer
+
+- detector: manual (2026-08-21), while root-causing the compile write-phase blockage
+- finding: `scripts/compile-2source-gate.mjs` computes `decision.promote`, prints it, then calls `shellOutToCompile()` → `kb compile`, which ingests new `raw/` docs and never receives the promote list. No page has ever been created or updated from a promote decision.
+- evidence: `wiki/_meta/compile-log.md` shows 17 consecutive runs at `promote: 28-30, graduate: 0`. `web/src/app/api/compile/route.ts` takes only `{pin, mode, vault}` — it has no theme parameter and no theme-to-page code path. Nothing in `web/src/` or `scripts/` promotes a theme.
+- **this is not a missing wire.** There is no generator to connect. Building one means: for a theme with N citing summaries, choose the page type (concept / pattern / framework), read the N summaries, synthesize a page meeting the required-sections contract in CLAUDE.md — including the mandatory `Counter-arguments & Gaps` section — emit correct frontmatter born `reviewed: false`, and add ≥1 inbound link so it does not land orphaned.
+- blocked on first: the compiler-orphans defect (logged 2026-08-20). `kb compile` already creates pages with 0 inbound links; 72 orphans as of today's lint. Adding a second page-creating path before that is fixed multiplies the problem by 28.
+- proposed scope when picked up:
+  1. Fix the orphan defect first — every page-creating path adds a MoC backlink on write.
+  2. Add `--apply-promote --limit N` to the gate, default OFF, `[new]` themes only.
+  3. Run at `--limit 5` for a week and read the output before raising the cap.
+  4. Leave `[update]` themes (rewriting existing pages) out of scope entirely until step 3 has produced a quality signal.
+- interim (done 2026-08-21): plan output and compile log both label the promote count ADVISORY, so it stops reading as applied work. This does not fix anything, it stops the misdiagnosis.
+- owner: Jay — sizeable feature, needs a design call on page-type selection and prompt

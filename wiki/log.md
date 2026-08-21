@@ -1835,3 +1835,23 @@ Verified: with a dirty tree and both servers healthy the script prints `WARN: wo
 The 164 deferred themes are **not** blocked by any of this; they are correctly held at 1 source each, waiting for a second. The genuinely stuck set is the **28 PROMOTE themes** that already clear the 2-source bar. `scripts/compile-2source-gate.mjs` computes `decision.promote`, prints it, then calls `shellOutToCompile()`, which runs `kb compile` — a raw-source ingest that never receives the promote list. The promote count has been decorative in every run. Wiring it up would create or update ~28 pages in one pass and remains the open scope decision first logged 2026-08-20.
 
 Pages affected: `scripts/morning-review-preflight.sh`, `web/.next/` (rebuilt, untracked), `wiki/frameworks/blume-codes.md` (compiled), `wiki/mocs/orchestration.md`, `raw/.compiled-log.json`, `wiki/log.md`
+
+
+### 2026-08-21 addendum — the two follow-up calls
+
+**Port: moved to 3002.** `.env` now sets `KB_API_URL=http://localhost:3002`, the launchd-managed production server, instead of 3009 (`next dev`). A scheduled 3am compile must not depend on someone having left a dev server running; the launchd job has `RunAtLoad` + `KeepAlive` and restarts itself. Preflight confirms `http://localhost:3002, /api/compile → 405`.
+
+**Promote wiring: NOT built — the gate is now honest instead.** Investigated before committing to it and the premise was wrong: this is not a disconnected wire, there is no generator to connect. `web/src/app/api/compile/route.ts` accepts only `{pin, mode, vault}` and has no theme-to-page code path, and nothing in `scripts/` or `web/src/` promotes a theme. Applying 28 promotes means *building* a page synthesizer that picks a page type, reads N summaries, satisfies the required-sections contract including `Counter-arguments & Gaps`, and links itself — while the compiler-orphans defect is still live (72 orphans in today's lint). Creating 28 unreviewed orphan pages to clear a backlog number would trade a visible problem for a worse invisible one.
+
+So: the reporting lie is fixed, the feature is scoped and filed.
+
+- `scripts/compile-2source-gate.mjs` prints `⚠ PROMOTE is ADVISORY — nothing applies it (PROP-157)` above the block, plus an explanatory NOTE after it. The `PROMOTE: N` token is deliberately unchanged — tests and downstream tooling grep for it, and two tests failed when the label was altered inline.
+- `wiki/_meta/compile-log.md` entries now read `promote: N (ADVISORY — not applied; see PROP-157)`.
+- Module docstring records why the count was decorative for 17 runs.
+- **PROP-157** filed with a staged scope: fix the orphan defect first, then `--apply-promote --limit N` defaulting OFF, `[new]` themes only, run at 5/week and read the output before raising the cap. `[update]` themes out of scope until there is a quality signal.
+
+`npm test` 512/513 after the change (the one failure is the pre-existing `tests/repos/` case-sensitivity test).
+
+**Also worth a look, not touched:** `~/Library/LaunchAgents/com.jaywest.agentic-kb-web.plist` carries `ANTHROPIC_API_KEY` and `PRIVATE_PIN` in plaintext. It lives outside the repo so it is not committed, but any process that can read your home directory can read both.
+
+Pages affected: `.env` (untracked), `scripts/compile-2source-gate.mjs`, `wiki/_meta/proposals.md`, `wiki/log.md`

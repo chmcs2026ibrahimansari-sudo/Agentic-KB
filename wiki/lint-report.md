@@ -1,23 +1,23 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-21 01:14 | Vault: Agentic-KB | Pages scanned: 764
+> Generated: 2026-08-21 14:06 | Vault: Agentic-KB | Pages scanned: 770
 
 ## Summary
 
 | Check | Count | Δ vs last run | Severity |
 |---|---|---|---|
 | Contradictions | 0 | ±0 | 🟢 Clear |
-| Orphaned pages | 73 | ±0 | 🟡 Medium |
+| Orphaned pages | 72 | -1 | 🟡 Medium |
 | Stale pages | 307 | ±0 | 🟡 Medium |
 | Knowledge gaps | 0 | ±0 | 🟢 Clear |
 
-**Analysis window:** 60 of 764 pages (8%) — 0 changed since last run, 60 from the rotating cursor. Full-vault coverage every ~13 runs.
+**Analysis window:** 60 of 770 pages (8%) — 0 changed since last run, 60 from the rotating cursor. Full-vault coverage every ~13 runs.
 
 ## 🎯 Triage — start here
 
 **Substantial pages nothing links to** (≥100 words, largest first) — link these from a hub page or archive them:
 
-1. `_meta/proposals.md` — Foundry Proposals (5719 words)
+1. `_meta/proposals.md` — Foundry Proposals (5922 words)
 1. `syntheses/synthesis-repo-aware-system-implementation.md` — Repo-Aware Knowledge & Agent Memory System — Implementation Summary (1679 words)
 1. `reports/2026-08-18-nightly-ci-analysis.md` — 2026-08-18-nightly-ci-analysis (906 words)
 1. `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18 (897 words)
@@ -29,8 +29,8 @@
 
 **Stale pages others depend on** (most inbound links first) — these propagate outdated information:
 
-1. `concepts/agent-loops.md` — 87 inbound links, 139 days old
-1. `concepts/agent-failure-modes.md` — 73 inbound links, 42 days old
+1. `concepts/agent-loops.md` — 89 inbound links, 139 days old
+1. `concepts/agent-failure-modes.md` — 76 inbound links, 42 days old
 1. `concepts/multi-agent-systems.md` — 64 inbound links, 134 days old
 1. `entities/mcp-ecosystem.md` — 60 inbound links, 135 days old
 1. `concepts/human-in-the-loop.md` — 49 inbound links, 118 days old
@@ -105,7 +105,6 @@
 - `summaries/summary-fable-prompting-tutorial-linkedin.md` — Summary: Fable Prompting Tutorial (LinkedIn thread, Eduardo Ordax)
 - `summaries/summary-garrytan-meta-meta-prompting.md` — Meta-Meta-Prompting: The Secret to Making AI Agents Work
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
-- `summaries/summary-harrison-chase-harness-model-context.md` — Summary: Harrison Chase on Harness, Model, Context
 - `summaries/summary-hwchase17-managed-agents-thesis.md` — Summary: Why Managed Agents Are the Next Big Thing in Agent Building
 - `summaries/summary-langchain-rag-from-scratch.md` — RAG From Scratch (LangChain AI)
 - `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18

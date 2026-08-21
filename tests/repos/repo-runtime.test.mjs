@@ -875,3 +875,61 @@ test('appendRepoProgress serialises against a concurrent holder of the repo lock
     child.kill()
   }
 })
+
+test('loadRepoContext reports what the budget dropped instead of truncating silently', () => {
+  // loadRepoContext is a lossy channel: it takes the repo's docs, bus items
+  // and canonical pages and emits a byte-capped bundle a downstream agent
+  // reasons over. Before this, a truncated bundle and a complete one had the
+  // same trace shape, so the consumer could not tell them apart --- and
+  // `budget_remaining` is not a proxy, because a non-zero remainder is the
+  // normal result of dropping a file bigger than what was left.
+  const root = makeFixture()
+  const canon = path.join(root, 'wiki/repos/test-repo/canonical')
+  for (const n of ['a', 'b', 'c', 'd', 'e']) {
+    fs.writeFileSync(path.join(canon, `${n}.md`), `---\ntitle: ${n}\n---\n` + 'x'.repeat(2000) + '\n')
+  }
+
+  const full = repoRt.loadRepoContext(root, 'test-repo', { agent_id: 'w1', budget_bytes: 200000 })
+  assert.equal(full.files.length, 5)
+  assert.equal(full.trace.truncated, false, 'a complete bundle must say so explicitly')
+  assert.equal(full.trace.dropped_count, 0)
+  assert.deepEqual(full.trace.excluded, [], 'excluded is always present, never undefined')
+
+  const cut = repoRt.loadRepoContext(root, 'test-repo', { agent_id: 'w1', budget_bytes: 5000 })
+  assert.ok(cut.files.length < 5, 'fixture must actually exceed the budget')
+  assert.equal(cut.trace.truncated, true, 'a truncated bundle must be flagged')
+  assert.equal(cut.trace.dropped_count, 5 - cut.files.length)
+  // Not just a count: the consumer can name the pages it did not receive.
+  const droppedPaths = cut.trace.excluded.map(e => e.path)
+  const keptPaths = cut.files.map(f => f.path)
+  for (const p of droppedPaths) assert.ok(!keptPaths.includes(p), 'a file cannot be both kept and dropped')
+  assert.deepEqual(
+    [...droppedPaths, ...keptPaths].sort(),
+    ['a', 'b', 'c', 'd', 'e'].map(n => `wiki/repos/test-repo/canonical/${n}.md`),
+    'kept + dropped must account for every candidate',
+  )
+  for (const e of cut.trace.excluded) {
+    assert.equal(e.reason, 'budget')
+    assert.ok(Number.isFinite(e.bytes), 'each drop records the size that did not fit')
+  }
+})
+
+test('loadRepoContext records a rejected source_files path as a drop, not as silence', () => {
+  // The caller named these files explicitly. Dropping them without a word
+  // left "rejected as unsafe" indistinguishable from "does not exist".
+  const root = makeFixture()
+  fs.writeFileSync(path.join(root, 'wiki/repos/test-repo/repo-docs/README.md'), '---\ntitle: R\n---\nDoc\n')
+
+  const result = repoRt.loadRepoContext(root, 'test-repo', {
+    agent_id: 'w1',
+    budget_bytes: 50000,
+    source_files: ['README.md', '../../../etc/passwd', '/etc/shadow'],
+  })
+
+  assert.ok(result.files.map(f => f.path).includes('wiki/repos/test-repo/repo-docs/README.md'))
+  const unsafe = result.trace.excluded.filter(e => e.reason === 'unsafe source path')
+  assert.equal(unsafe.length, 2, `both traversal attempts must be reported: ${JSON.stringify(result.trace.excluded)}`)
+  // Rejected-as-unsafe is not budget pressure, so the bundle is not truncated.
+  assert.equal(result.trace.truncated, false)
+  assert.equal(result.trace.dropped_count, 2)
+})

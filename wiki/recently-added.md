@@ -9,6 +9,16 @@ type: meta
 
 ---
 
+## 2026-08-20 (compile — first successful write phase since credits were restored)
+
+- [[wiki/concepts/meta-harness|Meta-Harness]] — a harness that builds or configures other harnesses
+- [[wiki/concepts/self-improving-harness|Self-Improving Harness]] — a harness that edits its own scaffolding from its own run history
+- [[wiki/frameworks/super-simple-software-factory|Super Simple Software Factory]] — Disler's minimal software-factory harness
+- [[wiki/patterns/pattern-code-owns-control-plane|Code Owns the Control Plane]] — keep orchestration in code; let the model own judgement, not control flow
+- [[wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness|Harness vs Meta-Harness vs Self-Improving Harness]] — distinguishes the three layers and what each buys you
+
+Directly relevant to the "software factory vs harness" question in Jay's 2026-08-20 Apple Note, which the same morning's Morning Review flagged for research.
+
 ## 2026-08-20 (morning-review-daily apply pass)
 
 - [[wiki/syntheses/synthesis-rrf-proof-of-work-receipts|A Proof-of-Work Receipt Cannot Certify a Fused Ranking, Because RRF Discards the Only Channel a Receipt Could Read]] — the one place in the cluster where the standard `context_fidelity` mitigation fails: RRF's score-blindness is the algorithm's defining property, not a schema oversight, so there is no channel to annotate. Proposes moving retrieval receipts upstream to individual retrievers and having the fusion stage record input handles rather than an independent soundness claim.

@@ -1141,5 +1141,20 @@
       "frameworks/framework-deepagents.md",
       "patterns/pattern-backend-sandbox-separation.md"
     ]
+  },
+  "framework-docs/disler-super-simple-software-factory.md": {
+    "compiledAt": "2026-08-21T01:15:50.465Z",
+    "pagesAffected": [
+      "frameworks/super-simple-software-factory.md",
+      "patterns/pattern-code-owns-control-plane.md"
+    ]
+  },
+  "framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md": {
+    "compiledAt": "2026-08-21T01:16:53.239Z",
+    "pagesAffected": [
+      "concepts/meta-harness.md",
+      "concepts/self-improving-harness.md",
+      "syntheses/harness-vs-meta-harness-vs-self-improving-harness.md"
+    ]
   }
 }

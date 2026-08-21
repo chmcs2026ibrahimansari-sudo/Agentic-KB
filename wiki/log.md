@@ -1671,3 +1671,64 @@ The drafted page argues the RRF ↔ receipts pair is the one node in the cluster
 **Today's high-leverage question (unchanged from the cluster's standing one):** does Headroom's ContentRouter compress RAG chunks *before* or *after* retrieval/fusion completes? Touches five headroom-compression syntheses plus `framework-headroom`, `concepts/reciprocal-rank-fusion`, `concepts/rlm-pipeline`, `framework-obsidian-wiki` — and now also the page drafted today, which is conditional on the same fact.
 
 Pages affected: `wiki/syntheses/synthesis-rrf-proof-of-work-receipts.md`, `wiki/concepts/reciprocal-rank-fusion.md`, `wiki/index.md`, `wiki/recently-added.md`, `wiki/_meta/proposals.md`
+
+## 2026-08-21 — Compiled `framework-docs/disler-super-simple-software-factory.md`
+
+Pages affected: `frameworks/super-simple-software-factory.md`, `patterns/pattern-code-owns-control-plane.md`
+
+## 2026-08-21 — Compiled `framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md`
+
+Pages affected: `concepts/meta-harness.md`, `concepts/self-improving-harness.md`, `syntheses/harness-vs-meta-harness-vs-self-improving-harness.md`
+
+---
+
+## 2026-08-20 (evening) — credits restored; first successful compile write phase
+
+Jay topped up the Anthropic balance. The first API probe still returned the credit error; a retry ~45s later succeeded, so the earlier failures were real and the gap was propagation delay, not a stale check.
+
+**Correction to this morning's entry.** That entry speculated the KB and Morning Review might be using "separate keys/orgs" because Morning Review completed API calls at 06:05 while the compile failed at 06:12. That is wrong — both `/Users/jaywest/Agentic-KB/.env` and `/Users/jaywest/morning-review/.env` carry the *same* key (`sk-ant-api03-S…5pPAAA`). The balance simply ran out between 06:05 and 06:12. One billing fix covers both. (The morning-review file writes it as `export ANTHROPIC_API_KEY=…`; a naive `^ANTHROPIC_API_KEY=` grep misses it and reports the key as absent.)
+
+**Compile result — the write phase works again.** `compile-2source-gate.mjs --execute` exited **0** for the first time in 17 logged runs. Compiled 2 previously-uncompiled raw docs into **5 new pages**:
+
+- `concepts/meta-harness.md`
+- `concepts/self-improving-harness.md`
+- `frameworks/super-simple-software-factory.md`
+- `patterns/pattern-code-owns-control-plane.md`
+- `syntheses/harness-vs-meta-harness-vs-self-improving-harness.md`
+
+These land directly on the "software factory vs harness" question in Jay's 2026-08-20 Apple Note that the same morning's Morning Review flagged for research — the KB answered a question the daily job had just raised.
+
+---
+
+### Finding 1 — the 2-source gate's PROMOTE list is decorative and has never been applied
+
+`promote: 28–30` has been logged on every run since the log begins, and the number does not move because **nothing consumes it**. In `scripts/compile-2source-gate.mjs`:
+
+```js
+const decision = classify(themes, priorCandidates, existingPages)
+printPlan(decision)                     // reads decision.promote
+if (isPlan) return 0
+await writeCandidates(decision.defer)   // reads decision.defer
+await appendLog(decision)               // reads decision.promote (logging only)
+return await shellOutToCompile()        // ← does NOT receive decision.promote
+```
+
+`shellOutToCompile()` runs `cli/kb.js compile`, which walks `raw/` in incremental mode and processes *new or uncompiled raw docs*. It has no knowledge of the promote list. So PROMOTE is recomputed and printed every run, recorded in `_meta/compile-log.md`, and then discarded.
+
+Spot-check confirms it: of 7 sampled promote themes, `llm-wiki-pattern`, `vault-architecture`, `rlm-pipeline`, `evaluation` and `llm-as-judge` already exist as pages (so the `[new]`/`[update]` labels are stale), while `compile-pipeline` and `knowledge-graph` are genuinely absent after 17 runs of being listed for promotion.
+
+This is a *separate* failure from the credit exhaustion. Credits blocked compilation of new raw docs — now fixed, 5 pages proved it. The promote/graduate machinery has never worked at all, which is also why `graduate: 0` is unbroken across every logged run.
+
+Not fixed here: wiring `decision.promote` into an apply step would create or modify ~28 pages in one pass, including `[update]`s to existing pages. That is a large, partly-irreversible change and needs Jay's explicit call on scope and ordering.
+
+### Finding 2 — the compiler creates orphan pages, violating Rule 3
+
+All 5 pages created above had **0 inbound links** on creation. `cli/kb.js compile` writes pages but never adds a backlink from a MoC or index, so Rule 3 ("no orphan pages — every new page gets ≥1 inbound link before being filed") is violated by construction on every compile.
+
+This is the mechanism behind the orphan count the daily lint keeps reporting (73 orphans in today's DEGRADED lint, up from 45 on 2026-08-06). The lint has been correctly reporting a symptom whose cause is the compiler itself.
+
+Remediated manually for today's 5 pages: added a **Harness Layer** section to `mocs/orchestration.md` linking all four concept/pattern/framework pages, and listed the synthesis under that MoC's Syntheses section. All 5 now have ≥1 inbound link and are reachable from `home.md` in 2 clicks. The underlying compiler behavior is unchanged and will orphan the next batch.
+
+**Contradictions flagged:** None new between sources.
+
+Pages affected: `wiki/concepts/meta-harness.md`, `wiki/concepts/self-improving-harness.md`, `wiki/frameworks/super-simple-software-factory.md`, `wiki/patterns/pattern-code-owns-control-plane.md`, `wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md`, `wiki/mocs/orchestration.md`, `wiki/recently-added.md`, `wiki/index.md`, `wiki/candidates.md`, `wiki/_meta/compile-log.md`

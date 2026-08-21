@@ -74,8 +74,18 @@ updated: 2026-04-10
 
 ---
 
+## Harness Layer
+
+- [[concepts/meta-harness]] — A harness that builds or configures other harnesses
+- [[concepts/self-improving-harness]] — A harness that edits its own scaffolding from its own run history
+- [[frameworks/super-simple-software-factory]] — Disler's minimal software-factory harness
+- [[patterns/pattern-code-owns-control-plane]] — Keep orchestration in code; let the model own judgement, not control flow
+
+---
+
 ## Syntheses
 
+- [[syntheses/harness-vs-meta-harness-vs-self-improving-harness]] — Distinguishes the three layers and what each buys you
 - [[syntheses/oss-agent-ecosystem-map]] — Ecosystem map of 19 OSS agent repos
 - [[syntheses/synthesis-agentic-engineering-operating-model]] — Operating model for one visible orchestrator, backend agent lanes, artifact-native completion, system-of-record backends, and outcome metrics
 - [[summaries/2026-04-08-what-is-the-best-pattern-for-multi-agent-orchestration-in-cl]] — [[pattern-fan-out-worker]] Orchestrator-Worker as default; token multiplier; failure modes

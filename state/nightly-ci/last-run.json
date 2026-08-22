@@ -1,17 +1,18 @@
 {
-  "date": "2026-08-21",
-  "finished_at": "2026-08-21T16:04:46Z",
+  "date": "2026-08-22",
+  "finished_at": "2026-08-22T17:11:23Z",
   "status": "partial",
   "repos_checked": [
     "sellerfi",
     "missioncontrol",
-    "twinz"
+    "twinz",
+    "Agentic-KB",
+    "Agentic-Pi-Harness"
   ],
-  "runs_total": 5,
+  "runs_total": 7,
   "passed": 4,
   "failed": 1,
-  "cancelled": 0,
-  "in_progress": 0,
+  "skipped": 2,
   "prs_opened": 0,
-  "note": "Cowork Linux sandbox failed to provision (useradd exit 12, /sessions). Run completed via operator-local shell fallback. Auto-fix held to report-only."
+  "note": "Sandbox provisioning failed 3rd consecutive day; tracked in Agentic-KB#5. Completed via operator-local fallback. Auto-fix held to report-only."
 }

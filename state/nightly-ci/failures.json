@@ -4,14 +4,14 @@
     "workflow": "Vercel Environment Check",
     "error": "{\"error\":{\"code\":\"forbidden\",\"message\":\"Not authorized\",\"invalidToken\":true}}",
     "first_seen": "2026-08-21",
-    "last_seen": "2026-08-21",
-    "count": 1,
+    "last_seen": "2026-08-22",
+    "count": 2,
     "branches": [
       "main"
     ],
     "status": "open",
     "pr": null,
     "category": "permissions/config",
-    "note": "VERCEL_TOKEN secret rejected by Vercel API (403, invalidToken). Tier B - secret rotation, report-only."
+    "note": "VERCEL_TOKEN secret rejected by Vercel API (403, invalidToken). Tier B - secret rotation, report-only. 2nd consecutive day."
   }
 }

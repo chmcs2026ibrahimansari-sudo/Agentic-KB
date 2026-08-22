@@ -74,6 +74,46 @@ test('mergeRewrite rejects traversal rewritePath and canonicalPath', () => {
   )
 })
 
+test('promoteLearning rejects an in-vault targetPath outside wiki/', () => {
+  // Staying under kbRoot was not enough: config/agents/<id>.yaml holds an
+  // agent's allowed_writes/forbidden_paths, so a promotion that could land
+  // there rewrote the policy bounding the runtime. Same for namespaces.json
+  // (web RBAC) and logs/audit.log.
+  for (const bad of [
+    'config/agents/orchestrator.yaml',
+    'namespaces.json',
+    'logs/audit.log',
+    'CLAUDE.md',
+    'raw/notes/x.md',
+    'wikiception/x.md',
+  ]) {
+    assert.throws(
+      () => promoteLearning(makeRoot(), { channel: 'discovery', id: 'disc-0001', approver: 'jay', targetPath: bad }),
+      /invalid targetPath/,
+      `expected ${bad} to be rejected`,
+    )
+  }
+})
+
+test('promoteLearning rejects a non-markdown targetPath under wiki/', () => {
+  assert.throws(
+    () => promoteLearning(makeRoot(), { channel: 'discovery', id: 'disc-0001', approver: 'jay', targetPath: 'wiki/.obsidian/app.json' }),
+    /invalid targetPath/,
+  )
+})
+
+test('mergeRewrite rejects in-vault paths outside wiki/', () => {
+  const root = makeRoot()
+  assert.throws(
+    () => mergeRewrite(root, { rewritePath: 'config/agents/w1.yaml', canonicalPath: 'wiki/x.md', approver: 'jay' }),
+    /invalid rewritePath/,
+  )
+  assert.throws(
+    () => mergeRewrite(root, { rewritePath: 'wiki/r.md', canonicalPath: 'config/agents/w1.yaml', approver: 'jay' }),
+    /invalid canonicalPath/,
+  )
+})
+
 // ─── task ids ───────────────────────────────────────────────────────────
 
 test('workingMemoryPath rejects task ids with separators or dot-dot', () => {

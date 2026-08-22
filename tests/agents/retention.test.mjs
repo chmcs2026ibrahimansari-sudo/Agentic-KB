@@ -110,6 +110,31 @@ test('archiveCompletedTaskMemory archives only old completed files', () => {
   assert.ok(fs.existsSync(path.join(root, 'wiki/agents/workers/w1/working-memory/dateless-done.md')))
 })
 
+test('archiveCompletedTaskMemory never overwrites an existing archived record', () => {
+  // The archive is a flat namespace keyed by the working-memory filename, i.e.
+  // the caller-supplied task_id. startTask's exclusive-create guard only
+  // protects the *live* file, so once retention has archived it the same id can
+  // be started again — and archiving the second run used to silently replace
+  // the first run's only surviving copy.
+  const root = makeRoot()
+
+  writeWorkingMemory(root, 'w1', 'fix-auth.md', { status: 'completed', completed_at: isoDaysAgo(30) })
+  const first = archiveCompletedTaskMemory(root, 'w1', 'worker', { olderThanDays: 7 })
+  assert.deepEqual(first.archived, ['wiki/archive/task-memory/w1/fix-auth.md'])
+  fs.writeFileSync(path.join(root, first.archived[0]), 'FIRST RUN\n')
+
+  // Same task id reused after the live file was archived away.
+  writeWorkingMemory(root, 'w1', 'fix-auth.md', { status: 'completed', completed_at: isoDaysAgo(30) })
+  const second = archiveCompletedTaskMemory(root, 'w1', 'worker', { olderThanDays: 7 })
+
+  assert.deepEqual(second.archived, ['wiki/archive/task-memory/w1/fix-auth-2.md'])
+  // The first record is intact, and the reported path is where the file landed.
+  assert.equal(fs.readFileSync(path.join(root, 'wiki/archive/task-memory/w1/fix-auth.md'), 'utf8'), 'FIRST RUN\n')
+  assert.ok(fs.existsSync(path.join(root, second.archived[0])))
+  // The live file is still moved, not copied.
+  assert.equal(fs.existsSync(path.join(root, 'wiki/agents/workers/w1/working-memory/fix-auth.md')), false)
+})
+
 test('archiveAbandonedTaskMemory archives only old abandoned files', () => {
   const root = makeRoot()
   writeWorkingMemory(root, 'w1', 'old-abandoned.md', { status: 'abandoned', abandoned_at: isoDaysAgo(10) })

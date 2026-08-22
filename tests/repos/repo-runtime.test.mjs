@@ -875,3 +875,171 @@ test('appendRepoProgress serialises against a concurrent holder of the repo lock
     child.kill()
   }
 })
+
+test('loadRepoContext reports what the budget dropped instead of truncating silently', () => {
+  // loadRepoContext is a lossy channel: it takes the repo's docs, bus items
+  // and canonical pages and emits a byte-capped bundle a downstream agent
+  // reasons over. Before this, a truncated bundle and a complete one had the
+  // same trace shape, so the consumer could not tell them apart --- and
+  // `budget_remaining` is not a proxy, because a non-zero remainder is the
+  // normal result of dropping a file bigger than what was left.
+  const root = makeFixture()
+  const canon = path.join(root, 'wiki/repos/test-repo/canonical')
+  for (const n of ['a', 'b', 'c', 'd', 'e']) {
+    fs.writeFileSync(path.join(canon, `${n}.md`), `---\ntitle: ${n}\n---\n` + 'x'.repeat(2000) + '\n')
+  }
+
+  const full = repoRt.loadRepoContext(root, 'test-repo', { agent_id: 'w1', budget_bytes: 200000 })
+  assert.equal(full.files.length, 5)
+  assert.equal(full.trace.truncated, false, 'a complete bundle must say so explicitly')
+  assert.equal(full.trace.dropped_count, 0)
+  assert.deepEqual(full.trace.excluded, [], 'excluded is always present, never undefined')
+
+  const cut = repoRt.loadRepoContext(root, 'test-repo', { agent_id: 'w1', budget_bytes: 5000 })
+  assert.ok(cut.files.length < 5, 'fixture must actually exceed the budget')
+  assert.equal(cut.trace.truncated, true, 'a truncated bundle must be flagged')
+  assert.equal(cut.trace.dropped_count, 5 - cut.files.length)
+  // Not just a count: the consumer can name the pages it did not receive.
+  const droppedPaths = cut.trace.excluded.map(e => e.path)
+  const keptPaths = cut.files.map(f => f.path)
+  for (const p of droppedPaths) assert.ok(!keptPaths.includes(p), 'a file cannot be both kept and dropped')
+  assert.deepEqual(
+    [...droppedPaths, ...keptPaths].sort(),
+    ['a', 'b', 'c', 'd', 'e'].map(n => `wiki/repos/test-repo/canonical/${n}.md`),
+    'kept + dropped must account for every candidate',
+  )
+  for (const e of cut.trace.excluded) {
+    assert.equal(e.reason, 'budget')
+    assert.ok(Number.isFinite(e.bytes), 'each drop records the size that did not fit')
+  }
+})
+
+test('loadRepoContext records a rejected source_files path as a drop, not as silence', () => {
+  // The caller named these files explicitly. Dropping them without a word
+  // left "rejected as unsafe" indistinguishable from "does not exist".
+  const root = makeFixture()
+  fs.writeFileSync(path.join(root, 'wiki/repos/test-repo/repo-docs/README.md'), '---\ntitle: R\n---\nDoc\n')
+
+  const result = repoRt.loadRepoContext(root, 'test-repo', {
+    agent_id: 'w1',
+    budget_bytes: 50000,
+    source_files: ['README.md', '../../../etc/passwd', '/etc/shadow'],
+  })
+
+  assert.ok(result.files.map(f => f.path).includes('wiki/repos/test-repo/repo-docs/README.md'))
+  const unsafe = result.trace.excluded.filter(e => e.reason === 'unsafe source path')
+  assert.equal(unsafe.length, 2, `both traversal attempts must be reported: ${JSON.stringify(result.trace.excluded)}`)
+  // Rejected-as-unsafe is not budget pressure, so the bundle is not truncated.
+  assert.equal(result.trace.truncated, false)
+  assert.equal(result.trace.dropped_count, 2)
+})
+
+test('syncRepo reports a partial fetch instead of returning a clean-looking trace', async () => {
+  // fetchRepoMarkdown drops docs two ways: GitHub caps large tree listings,
+  // and any blob can fail on its own. Both were reported only via
+  // console.warn — stderr on a stdio MCP server — so a sync that lost a third
+  // of the repo returned errors: [] and stamped the short count into the
+  // registry, indistinguishable from a clean full sync.
+  const root = makeFixture()
+  repoRt.upsertRepo(root, { repo_name: 'test-repo', owner: 'o1', status: 'active', visibility: 'private' })
+
+  const tree = Array.from({ length: 10 }, (_, i) => ({ type: 'blob', path: `docs/f${i}.md`, sha: `sha${i}` }))
+  const origFetch = globalThis.fetch
+  try {
+    globalThis.fetch = async (url) => {
+      const u = String(url)
+      if (u.includes('/git/trees/')) return { ok: true, json: async () => ({ tree, truncated: true }) }
+      const m = u.match(/git\/blobs\/sha(\d+)$/)
+      if (m) {
+        if (Number(m[1]) < 3) return { ok: false, status: 502 }
+        return { ok: true, json: async () => ({ content: Buffer.from(`doc ${m[1]}`).toString('base64') }) }
+      }
+      if (u.includes('/commits/')) return { ok: true, json: async () => ({ sha: 'c1' }) }
+      throw new Error('unexpected fetch: ' + u)
+    }
+
+    const trace = await repoRt.syncRepo(root, 'test-repo', {})
+
+    assert.equal(trace.partial, true, 'an incomplete fetch must be flagged on the trace')
+    assert.equal(trace.source.listing_truncated, true, 'the capped tree listing is recorded')
+    assert.equal(trace.source.candidates, 10)
+    assert.equal(trace.source.fetched, 7)
+    assert.equal(trace.source.fetch_failures.length, 3, 'each dropped blob is named')
+    assert.deepEqual(
+      trace.source.fetch_failures.map(f => f.path).sort(),
+      ['docs/f0.md', 'docs/f1.md', 'docs/f2.md'],
+    )
+    // The registry count is a floor, and the record says so.
+    assert.equal(repoRt.getRepo(root, 'test-repo').partial_sync, true)
+  } finally {
+    globalThis.fetch = origFetch
+  }
+})
+
+test('a complete sync reports partial: false and no dropped blobs', async () => {
+  // The flag only helps if it distinguishes; a clean sync must say so
+  // explicitly rather than leave the field absent.
+  const root = makeFixture()
+  repoRt.upsertRepo(root, { repo_name: 'test-repo', owner: 'o1', status: 'active', visibility: 'private' })
+
+  const origFetch = globalThis.fetch
+  try {
+    globalThis.fetch = async (url) => {
+      const u = String(url)
+      if (u.includes('/git/trees/')) {
+        return { ok: true, json: async () => ({ tree: [{ type: 'blob', path: 'README.md', sha: 's1' }] }) }
+      }
+      if (u.includes('/git/blobs/')) return { ok: true, json: async () => ({ content: Buffer.from('# Hi\n').toString('base64') }) }
+      if (u.includes('/commits/')) return { ok: true, json: async () => ({ sha: 'c1' }) }
+      throw new Error('unexpected fetch: ' + u)
+    }
+
+    const trace = await repoRt.syncRepo(root, 'test-repo', {})
+    assert.equal(trace.partial, false)
+    assert.equal(trace.source.listing_truncated, false)
+    assert.equal(trace.source.candidates, 1)
+    assert.equal(trace.source.fetched, 1)
+    assert.deepEqual(trace.source.fetch_failures, [])
+    assert.equal(repoRt.getRepo(root, 'test-repo').partial_sync, false)
+  } finally {
+    globalThis.fetch = origFetch
+  }
+})
+
+test('a transient blob failure does not archive a doc that still exists upstream', async () => {
+  // "Removed upstream" was computed as "absent from the fetch result", and
+  // the fetch result is lossy. A 502 on one blob therefore made syncRepo
+  // unlink the local copy of a doc that was never deleted — the silent loss
+  // turning into real data loss one step downstream.
+  const root = makeFixture()
+  repoRt.upsertRepo(root, { repo_name: 'test-repo', owner: 'o1', status: 'active', visibility: 'private' })
+  const docsDir = path.join(root, 'wiki/repos/test-repo/repo-docs/docs')
+  fs.mkdirSync(docsDir, { recursive: true })
+  const keepMe = path.join(docsDir, 'keep.md')
+  fs.writeFileSync(keepMe, '---\nrepo_name: test-repo\n---\n\nStill upstream\n')
+
+  const origFetch = globalThis.fetch
+  try {
+    globalThis.fetch = async (url) => {
+      const u = String(url)
+      if (u.includes('/git/trees/')) {
+        return { ok: true, json: async () => ({ tree: [
+          { type: 'blob', path: 'docs/keep.md', sha: 'boom' },
+          { type: 'blob', path: 'docs/other.md', sha: 'ok' },
+        ] }) }
+      }
+      if (u.includes('/git/blobs/boom')) return { ok: false, status: 502 }
+      if (u.includes('/git/blobs/ok')) return { ok: true, json: async () => ({ content: Buffer.from('ok\n').toString('base64') }) }
+      if (u.includes('/commits/')) return { ok: true, json: async () => ({ sha: 'c1' }) }
+      throw new Error('unexpected fetch: ' + u)
+    }
+
+    const trace = await repoRt.syncRepo(root, 'test-repo', {})
+    assert.equal(trace.partial, true)
+    assert.match(trace.archive_skipped_reason, /blob fetch failure/)
+    assert.deepEqual(trace.archived, [], 'nothing may be archived off an incomplete listing')
+    assert.ok(fs.existsSync(keepMe), 'a doc that still exists upstream must survive a transient 502')
+  } finally {
+    globalThis.fetch = origFetch
+  }
+})

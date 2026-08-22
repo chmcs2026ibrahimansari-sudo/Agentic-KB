@@ -102,3 +102,71 @@ test('custom summarizer is used and recorded, empty output skips the write', () 
   assert.equal(r4.skipped, true)
   assert.equal(r4.reason, 'empty summary')
 })
+
+test('the digest records how much of hot.md it dropped', () => {
+  // summarizeHotToLearned is a summarization step between a producer (hot.md)
+  // and a consumer (an agent that later loads learned/ and never re-reads the
+  // source). A digest that kept 3 of 33 lines had the same frontmatter keys
+  // and the same shape as one that kept everything, so the consumer had no
+  // way to tell a faithful digest from a lossy one.
+  const bullets = ['- kept one', '- kept two', '- kept three'].join('\n')
+  const prose = Array.from({ length: 30 },
+    (_, i) => `The deploy step for service ${i} requires a manual approval.`).join('\n\n')
+  writeHot(`${bullets}\n\n${prose}\n`)
+
+  const r = summarizeHotToLearned(kbRoot, CONTRACT)
+  assert.ok(!r.skipped)
+  const { data } = parseFrontmatter(fs.readFileSync(path.join(kbRoot, r.learnedPath), 'utf8'))
+
+  assert.equal(data.source_lines, 33, 'every non-empty source line is counted')
+  assert.equal(data.digest_lines, 3, 'only the three bullets survived')
+  assert.equal(data.lines_dropped, 30)
+  assert.equal(data.truncated, true, 'a lossy digest must say so in structured frontmatter')
+  // Same values reach the caller, not only the written page.
+  assert.equal(r.lines_dropped, 30)
+  assert.equal(r.truncated, true)
+})
+
+test('a digest that lost nothing reports truncated: false', () => {
+  // The signal is only useful if it distinguishes. An all-bullet source under
+  // the line cap round-trips whole, and the digest must say so rather than
+  // omit the field — an absent flag would read as "no loss" by default.
+  const bullets = Array.from({ length: 10 },
+    (_, i) => `- an observed fact number ${i} about the system`).join('\n')
+  writeHot(`${bullets}\n`)
+
+  const r = summarizeHotToLearned(kbRoot, CONTRACT)
+  const { data } = parseFrontmatter(fs.readFileSync(path.join(kbRoot, r.learnedPath), 'utf8'))
+  assert.equal(data.source_lines, 10)
+  assert.equal(data.digest_lines, 10)
+  assert.equal(data.lines_dropped, 0)
+  assert.equal(data.truncated, false)
+})
+
+test('the 60-line cap is reported as loss, not applied silently', () => {
+  const bullets = Array.from({ length: 200 }, (_, i) => `- bullet ${i} with enough words to pass`).join('\n')
+  writeHot(`${bullets}\n`)
+
+  const r = summarizeHotToLearned(kbRoot, CONTRACT)
+  const { data } = parseFrontmatter(fs.readFileSync(path.join(kbRoot, r.learnedPath), 'utf8'))
+  assert.equal(data.source_lines, 200)
+  assert.equal(data.digest_lines, 60)
+  assert.equal(data.lines_dropped, 140)
+  assert.equal(data.truncated, true)
+})
+
+test('a custom summarizer is measured the same way as the default', () => {
+  // registerHotLearnedSummarizer accepts an arbitrary (potentially LLM)
+  // summarizer whose loss is unbounded and unknowable from inside. The
+  // measurement is taken outside the summarizer so it applies regardless.
+  const lines = Array.from({ length: 40 }, (_, i) => `- source line ${i} of the hot memory`).join('\n')
+  writeHot(`${lines}\n`)
+
+  registerHotLearnedSummarizer(() => 'one surviving line')
+  const r = summarizeHotToLearned(kbRoot, CONTRACT)
+  const { data } = parseFrontmatter(fs.readFileSync(path.join(kbRoot, r.learnedPath), 'utf8'))
+  assert.equal(data.summarizer, 'custom')
+  assert.equal(data.source_lines, 40)
+  assert.equal(data.digest_lines, 1)
+  assert.equal(data.truncated, true)
+})

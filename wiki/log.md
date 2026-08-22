@@ -1855,3 +1855,30 @@ So: the reporting lie is fixed, the feature is scoped and filed.
 **Also worth a look, not touched:** `~/Library/LaunchAgents/com.jaywest.agentic-kb-web.plist` carries `ANTHROPIC_API_KEY` and `PRIVATE_PIN` in plaintext. It lives outside the repo so it is not committed, but any process that can read your home directory can read both.
 
 Pages affected: `.env` (untracked), `scripts/compile-2source-gate.mjs`, `wiki/_meta/proposals.md`, `wiki/log.md`
+
+---
+
+## 2026-08-22 — morning-review-daily
+
+**Preflight:** RESULT clear (exit 0). API funded, KB web server reported healthy at 06:03, raw/ PII clean. WARN: worktree dirty (untracked `wiki/daily-systems/logs/2026-08-21.md`) — resolved by this run's commit.
+
+**Morning Review pipeline:** completed. 3 Apple Notes, 2 links crawled, 4 findings, 4 contradiction alerts, 1 promotion proposal, 248 stale alerts (229 action-required), 1 GitHub issue draft, 11 local actions, 3 patch proposals (0 auto-applied). Daily note + 8 wiki pages + 2 index pages written to the personal vault by the pipeline. No AppleScript timeout.
+
+**KB capture:** `sofie-watch-obsidian --once` no-op (0 new meeting notes). Apple Notes `KB Inbox` holds only `test-capture-2026-05-16`, already present 11× in `raw/clippings/` — capture SKIPPED to avoid a 12th duplicate (known write-time hash variance bug). Snipd folder empty. 0 new clippings, ingest-dedup not run.
+
+**FAILURE — compile gate:** `scripts/compile-2source-gate.mjs --execute` exited **1** on two independent attempts (06:07 and 06:10). Plan phase produced 28 PROMOTE / 164 DEFER / 0 GRADUATE, but the write phase aborted: `❌ KB API unreachable at http://localhost:3002 (UND_ERR_SOCKET)`. **Nothing was promoted.** Note the discrepancy with preflight, which probed the same endpoint at 06:03 and reported healthy (405); a manual `curl -X POST /api/compile` during the failure window returned **401**, not a socket error — so the endpoint is up and the failure is inside the script's client (auth/agent config), not server availability. This contradicts the 2026-05-23 PIN diagnosis and the 2026-05-27 `Error: undefined` variant; a third distinct signature for the same blockage. Needs investigation.
+
+**Proposals:** `foundry-propose --execute --top 3` wrote **PROP-158 [HEAVY_BACKLOG]** — 164 deferred candidates against a threshold of 50. 1 detector fired, 1 new.
+
+**Provenance:** No edits made. The tensions query re-reported the `agentmemory` provenance gap as open; `wiki/patterns/pattern-per-claim-confidence.md` line 28 records it **RESOLVED 2026-06-10 (won't-fix, retained at `confidence: medium`, not verified)**. Re-flagging would have regressed resolved work — deliberately skipped.
+
+**Pages created:**
+- `wiki/syntheses/synthesis-verifier-as-goal-completion-benchmark.md` — top verified-missing cross-domain connection (Orchestration ↔ Evaluation). Born `reviewed: false`. Verified absent before drafting: grepped `wiki/syntheses/` for both endpoints; existing hits (`synthesis-react-as-native-trajectory-eval`, `synthesis-deepeval-metrics-as-trajectory-vocabulary`) mention Plan-Execute-Verify only as a contrast case, none synthesize the pair.
+
+**Connections rejected as already-covered:** the query's #2 (agent-failure-modes ↔ benchmark-design) duplicates `synthesis-eval-metrics-to-failure-modes`; #3 (per-claim confidence ↔ llm-as-judge) is substantially covered by `synthesis-rag-eval-to-llm-judge` and `synthesis-judgment-events-as-confidence-labels`.
+
+**Query accuracy note:** the patterns query claimed `pattern-plan-execute-verify` and `pattern-supervisor-worker` have no pattern page. `wiki/patterns/pattern-plan-execute-verify.md` **does** exist (262 lines, `confidence: high`). The query was reasoning from a truncated `wiki/index.md` and said so. Treat its "missing page" list as unreliable until the retrieval budget covers the full 84-row Patterns table.
+
+**Stalled leverage question:** the Headroom-compression-upstream-of-receipts question has been the daily leverage question on 2026-08-18, 2026-08-20 and 2026-08-21 in variant form. Today's differs (Telephone Game / `forward_message` sufficiency), so no restatement occurred, but the compression question is logged as stalled — see PROP-158 context and the proposal note below.
+
+**Contradictions flagged:** 1 new (compile-blockage third signature, above). The obsidian-wiki `_raw/` immutability conflict from 2026-06-25 remains open and unaddressed by this run.

@@ -1155,3 +1155,23 @@ purpose: Append-only ledger of actionable proposals surfaced by /foundry-propose
   4. Leave `[update]` themes (rewriting existing pages) out of scope entirely until step 3 has produced a quality signal.
 - interim (done 2026-08-21): plan output and compile log both label the promote count ADVISORY, so it stops reading as applied work. This does not fix anything, it stops the misdiagnosis.
 - owner: Jay — sizeable feature, needs a design call on page-type selection and prompt
+
+## 2026-08-22T13:07:17.437Z
+
+### PROP-158 [HEAVY_BACKLOG] backlog:2026-08-22T13:07:15.200Z
+
+- defer count: 164 (threshold 50)
+- run: 2026-08-22T13:07:15.200Z
+- recommendation: Latest compile deferred 164 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
+
+### PROP-159 [STALLED_LEVERAGE_QUESTION] headroom-compression-fidelity:2026-08-22 (manual, morning-review-daily)
+
+- signal: the "does Headroom compression sit upstream of proof-of-work receipts / RRF scoring, and does that void their evidentiary value" question has been the daily high-leverage question on 2026-08-18, 2026-08-20 and 2026-08-21 in variant form. Three appearances without movement means it is a stalled task, not an open question.
+- pages: `wiki/syntheses/synthesis-headroom-compression-proof-of-work-receipts.md`, `wiki/syntheses/synthesis-headroom-compression-reciprocal-rank-fusion.md`, `wiki/syntheses/synthesis-rrf-proof-of-work-receipts.md`
+- concrete verification step (this is the whole proposal — one action, answerable in an hour):
+  Read Headroom's `ContentRouter` call site and record where in the pipeline it is invoked relative to retrieval and fusion. Specifically: does `ContentRouter` receive (a) raw chunks before scoring, (b) the fused/ranked list after RRF, or (c) only the final prompt assembly after selection? Write the answer as one line plus the file:line citation into a new section `## Resolved: compression pipeline position` on `synthesis-headroom-compression-reciprocal-rank-fusion.md`.
+  If Headroom source is not locally available, the fallback is equally concrete: instrument one KB query end-to-end, log chunk counts and token lengths at retrieval / post-fusion / pre-prompt, and infer the position from where the length drops.
+- why this and not more synthesis: all three pages already state the question. None states the answer. The blocker is a single empirical fact about call ordering, and no amount of additional synthesis will produce it.
+- owner: Jay — ~1 hour, unblocks three pages at once
+- status: open
+

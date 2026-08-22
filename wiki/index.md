@@ -303,6 +303,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-rrf-proof-of-work-receipts]] | If an agent emits a proof-of-work receipt for a retrieval step whose results were merged by Reciprocal Rank Fusion, does that receipt constitute evidence that the ranking was sound? | 2026-08-20 |
 | [[syntheses/synthesis-telephone-game-per-claim-confidence]] | Can the memory stack's per-claim confidence machinery detect Telephone Game corruption in supervisor-worker orchestration, rather than only routing around it? | 2026-08-21 |
 | [[syntheses/harness-vs-meta-harness-vs-self-improving-harness]] | What distinguishes a harness, meta-harness, and self-improving harness — and why are code-owned gates the practical harness layer before self-improvement? | 2026-08-21 |
+| [[syntheses/synthesis-verifier-as-goal-completion-benchmark]] | Is the Plan-Execute-Verify verifier the runtime implementation of goal-vs-task-completion, and can its acceptance criteria become a benchmark-design template? | 2026-08-22 |
 
 ---
 

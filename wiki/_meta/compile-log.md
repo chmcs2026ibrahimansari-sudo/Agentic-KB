@@ -94,3 +94,13 @@ id: 01KX98V9PCZ9ZH97GK569PR45B
 - promote: 28
 - defer:    164
 - graduate: 0
+
+## 2026-08-22T13:07:15.200Z
+- promote: 28 (ADVISORY — not applied; see PROP-157)
+- defer:    164
+- graduate: 0
+
+## 2026-08-22T13:07:43.343Z
+- promote: 28 (ADVISORY — not applied; see PROP-157)
+- defer:    164
+- graduate: 0

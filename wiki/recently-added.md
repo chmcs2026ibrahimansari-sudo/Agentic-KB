@@ -9,6 +9,12 @@ type: meta
 
 ---
 
+## 2026-08-22 (morning-review-daily)
+
+- [[syntheses/synthesis-verifier-as-goal-completion-benchmark|The PEV Verifier Is a Runtime Implementation of Goal-vs-Task Completion]] — bridges the Orchestration MoC's verifier role to the Evaluation MoC's goal-vs-task-completion concept, and proposes harvesting `acceptance_criteria` as Truth/Existence/Wiring benchmark items.
+
+---
+
 ## 2026-08-21 (morning-review-daily)
 
 - [[wiki/syntheses/synthesis-telephone-game-per-claim-confidence|The Telephone Game Problem Is a Retrieval-Fidelity Problem]] — argues supervisor paraphrase corruption and lossy memory retrieval are one failure mode, and that per-claim confidence should instrument the orchestration boundary rather than `forward_message` bypassing it

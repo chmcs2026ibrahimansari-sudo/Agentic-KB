@@ -53,6 +53,38 @@ test('loadRegistry returns empty on missing file', () => {
   assert.equal(records.length, 0)
 })
 
+test('a damaged registry throws instead of reading as empty', () => {
+  // Regression: loadRegistry used to `catch { return [] }`, so a truncated
+  // registry.json was indistinguishable from "no repos registered yet". The
+  // next upsertRepo then wrote a one-record registry over the damage and every
+  // other repo was gone — silently, exit status 0.
+  const root = makeFixture()
+  repoRt.upsertRepo(root, { repo_name: 'alpha', status: 'active' })
+  repoRt.upsertRepo(root, { repo_name: 'beta', status: 'active' })
+  repoRt.upsertRepo(root, { repo_name: 'gamma', status: 'active' })
+
+  const full = path.join(root, 'config/repos/registry.json')
+  const good = fs.readFileSync(full, 'utf8')
+  fs.writeFileSync(full, good.slice(0, Math.floor(good.length / 2)))
+
+  assert.throws(() => repoRt.loadRegistry(root), /not valid JSON/)
+  assert.throws(() => repoRt.listRepos(root), /not valid JSON/)
+  assert.throws(
+    () => repoRt.upsertRepo(root, { repo_name: 'delta', status: 'active' }),
+    /not valid JSON/,
+  )
+  // The damaged file must still be on disk, not replaced by a one-repo file.
+  assert.equal(fs.readFileSync(full, 'utf8'), good.slice(0, Math.floor(good.length / 2)))
+
+  // An unrecognised shape is damage too.
+  fs.writeFileSync(full, JSON.stringify({ version: '1.0', repos: 'nope' }))
+  assert.throws(() => repoRt.loadRegistry(root), /unrecognised shape/)
+
+  // A hand-initialised wrapper with no repos key is not damage.
+  fs.writeFileSync(full, JSON.stringify({ version: '1.0' }))
+  assert.deepEqual(repoRt.loadRegistry(root), [])
+})
+
 test('upsertRepo creates new entry', () => {
   const root = makeFixture()
   const repo = repoRt.upsertRepo(root, {

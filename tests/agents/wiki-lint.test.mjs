@@ -122,6 +122,58 @@ test('reconcileFindings keeps a finding open until its pages are re-examined', (
   assert.equal(cleared.resolved.length, 1)
 })
 
+test('reconcileFindings ages out a knowledge gap instead of pinning it open forever', () => {
+  // Regression: a gap has no `pages`, and the clearing rule required
+  // `refs.length > 0`, so no run could ever resolve one. Filling the gap did
+  // not clear it and neither did eleven consecutive full-vault runs — the
+  // persisted ledger grew a permanent tail of already-solved gaps.
+  const gap = () => [{
+    key: findingKey({ topic: 'vector search' }),
+    topic: 'vector search',
+    description: 'referenced but has no page',
+    firstSeen: '2026-08-01',
+  }]
+  const wholeVault = new Set(['a.md', 'b.md', 'c.md'])
+
+  // Default TTL: one run that examined something and did not re-report it.
+  const once = reconcileFindings(gap(), [], wholeVault)
+  assert.equal(once.resolved.length, 1)
+  assert.equal(once.open.length, 0)
+
+  // A run that examined nothing is not evidence of absence.
+  const empty = reconcileFindings(gap(), [], new Set())
+  assert.equal(empty.open.length, 1)
+  assert.equal(empty.resolved.length, 0)
+
+  // With the rotation length passed in, the gap survives until a full cycle
+  // of windows has gone by without re-reporting it.
+  let open = gap()
+  for (let run = 1; run <= 2; run++) {
+    const r = reconcileFindings(open, [], new Set(['a.md']), new Date(), { gapTtlRuns: 3 })
+    assert.equal(r.resolved.length, 0, `cleared too early on run ${run}`)
+    assert.equal(r.open.length, 1)
+    open = r.open
+  }
+  const final = reconcileFindings(open, [], new Set(['a.md']), new Date(), { gapTtlRuns: 3 })
+  assert.equal(final.resolved.length, 1)
+  assert.equal(final.open.length, 0)
+
+  // Re-reporting resets the clock.
+  let carried = gap()
+  carried = reconcileFindings(carried, [], new Set(['a.md']), new Date(), { gapTtlRuns: 3 }).open
+  assert.equal(carried[0].missedRuns, 1)
+  carried = reconcileFindings(
+    carried,
+    [{ topic: 'vector search', description: 'still missing' }],
+    new Set(['a.md']),
+    new Date(),
+    { gapTtlRuns: 3 },
+  ).open
+  assert.equal(carried.length, 1)
+  assert.equal(carried[0].firstSeen, '2026-08-01')
+  assert.ok(!carried[0].missedRuns, 'a re-reported gap must restart its age-out clock')
+})
+
 test('reconcileFindings preserves firstSeen when a finding is re-reported', () => {
   const open = [{
     key: findingKey({ pages: ['a.md', 'b.md'] }),

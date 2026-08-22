@@ -177,6 +177,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   })
   const windowPages: PageSummary[] = window.selected
   const examinedPaths = new Set(windowPages.map(p => p.relPath))
+  // Runs it takes the rotating window to cover the whole vault once. Reported
+  // below, and used as the age-out threshold for page-less findings.
+  const rotationRuns = window.total > 0
+    ? Math.ceil(window.total / Math.max(1, windowPages.length))
+    : 0
 
   // Build a concise wiki overview for Claude to detect contradictions + gaps
   const overview = windowPages.map(p =>
@@ -272,10 +277,16 @@ Be specific. Return ONLY the JSON object.`,
       contradictions,
       examinedPaths,
     )
+    // A gap references no page, so no run can ever "re-examine" it. Age it out
+    // over one full rotation of the analysis window instead: if the whole vault
+    // has been walked once since it was raised and nobody re-reported it, it is
+    // closed. Without this the ledger only ever grew.
     const reconciledGaps = reconcileFindings(
       (state.openFindings || []).filter(f => !Array.isArray((f as { pages?: unknown }).pages)),
       gaps,
       examinedPaths,
+      new Date(),
+      { gapTtlRuns: rotationRuns },
     )
     openContradictions = reconciledContradictions.open as typeof contradictions
     openGaps = reconciledGaps.open as typeof gaps
@@ -291,7 +302,7 @@ Be specific. Return ONLY the JSON object.`,
   const now = new Date().toISOString().slice(0, 16).replace('T', ' ')
   const prior = state.counts
   const coverage = window.total > 0 ? Math.round((windowPages.length / window.total) * 100) : 0
-  const cycleRuns = window.total > 0 ? Math.ceil(window.total / Math.max(1, windowPages.length)) : 0
+  const cycleRuns = rotationRuns
 
   const reportLines = [
     `# Wiki Lint Report`,

@@ -1882,3 +1882,19 @@ Pages affected: `.env` (untracked), `scripts/compile-2source-gate.mjs`, `wiki/_m
 **Stalled leverage question:** the Headroom-compression-upstream-of-receipts question has been the daily leverage question on 2026-08-18, 2026-08-20 and 2026-08-21 in variant form. Today's differs (Telephone Game / `forward_message` sufficiency), so no restatement occurred, but the compression question is logged as stalled — see PROP-158 context and the proposal note below.
 
 **Contradictions flagged:** 1 new (compile-blockage third signature, above). The obsidian-wiki `_raw/` immutability conflict from 2026-06-25 remains open and unaddressed by this run.
+
+---
+
+## 2026-08-22 — Agentic-KB Editor Run
+
+**Trigger:** Scheduled `agentic-kb-editor-run` at 06:25 PDT.
+
+**Pages considered:** 13 wiki files changed in the last 24 hours. The only fresh synthesis-grade cluster was the harness/meta-harness/self-improving-harness thread after `frameworks/blume-codes.md` landed.
+
+**Thread updated:** `[[syntheses/harness-vs-meta-harness-vs-self-improving-harness]]` received a targeted Editor note classifying Blume as a human-approved meta-harness / improvement queue rather than proof of a shipped self-improving harness. Sources added: `raw/framework-docs/blume-codes.md` and `[[frameworks/blume-codes]]`.
+
+**Reviewed but not duplicated:** `[[syntheses/synthesis-verifier-as-goal-completion-benchmark]]` already contained a real multi-source thread and was already listed in `[[wiki/index]]` and `[[wiki/recently-added]]`; no duplicate synthesis created.
+
+**Contradictions flagged:** No new Editor contradictions. Morning Review's compile-blockage third-signature contradiction remains the item Jay should resolve.
+
+**Briefing:** `briefings/2026-08-22.md`.

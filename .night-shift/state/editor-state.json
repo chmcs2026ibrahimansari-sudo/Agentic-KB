@@ -1,5 +1,5 @@
 {
-  "last_run_timestamp": "2026-08-21T06:25:38-0700",
+  "last_run_timestamp": "2026-08-22T06:27:31-0700",
   "files_considered": [
     "AGENTS.md",
     "house-rules.md",
@@ -7,56 +7,47 @@
     "playbooks/editor-run.md",
     "wiki/log.md",
     ".night-shift/state/editor-state.json",
+    "wiki/lint-report.md",
+    "wiki/reports/2026-08-21-nightly-ci-analysis.md",
+    "wiki/frameworks/blume-codes.md",
+    "wiki/mocs/orchestration.md",
+    "wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md",
     "wiki/_meta/compile-log.md",
     "wiki/_meta/proposals.md",
     "wiki/candidates.md",
-    "wiki/concepts/meta-harness.md",
-    "wiki/concepts/self-improving-harness.md",
-    "wiki/daily-systems/logs/2026-08-20.md",
-    "wiki/frameworks/super-simple-software-factory.md",
+    "wiki/daily-systems/logs/2026-08-21.md",
     "wiki/index.md",
-    "wiki/lint-report.md",
-    "wiki/mocs/memory.md",
-    "wiki/mocs/orchestration.md",
-    "wiki/patterns/pattern-code-owns-control-plane.md",
     "wiki/recently-added.md",
-    "wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md",
-    "wiki/syntheses/synthesis-telephone-game-per-claim-confidence.md",
-    "raw/framework-docs/disler-super-simple-software-factory.md",
-    "raw/framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md",
-    "wiki/summaries/summary-harrison-chase-harness-model-context.md",
-    "wiki/concepts/agent-harness-model-context.md"
+    "wiki/syntheses/synthesis-verifier-as-goal-completion-benchmark.md",
+    "wiki/mocs/evaluation.md",
+    "raw/framework-docs/blume-codes.md"
   ],
   "wiki_pages_changed_last_24h": [
+    "wiki/lint-report.md",
+    "wiki/reports/2026-08-21-nightly-ci-analysis.md",
+    "wiki/frameworks/blume-codes.md",
+    "wiki/mocs/orchestration.md",
+    "wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md",
     "wiki/_meta/compile-log.md",
     "wiki/_meta/proposals.md",
     "wiki/candidates.md",
-    "wiki/concepts/meta-harness.md",
-    "wiki/concepts/self-improving-harness.md",
-    "wiki/daily-systems/logs/2026-08-20.md",
-    "wiki/frameworks/super-simple-software-factory.md",
+    "wiki/daily-systems/logs/2026-08-21.md",
     "wiki/index.md",
-    "wiki/lint-report.md",
     "wiki/log.md",
-    "wiki/mocs/memory.md",
-    "wiki/mocs/orchestration.md",
-    "wiki/patterns/pattern-code-owns-control-plane.md",
     "wiki/recently-added.md",
-    "wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md",
-    "wiki/syntheses/synthesis-telephone-game-per-claim-confidence.md"
+    "wiki/syntheses/synthesis-verifier-as-goal-completion-benchmark.md"
   ],
   "outputs_written": [
     "wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md",
-    "wiki/index.md",
     "wiki/log.md",
-    "briefings/2026-08-21.md",
+    "briefings/2026-08-22.md",
     ".night-shift/state/editor-state.json"
   ],
   "status": "completed_targeted_existing_synthesis_update",
-  "briefing_path": "briefings/2026-08-21.md",
+  "briefing_path": "briefings/2026-08-22.md",
   "synthesis_created": [],
   "synthesis_updated": [
     "wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md"
   ],
-  "notes": "Editor Run reviewed 16 wiki files changed in the last 24 hours. The harness/meta-harness/self-improving-harness cluster had a real multi-source thread across Rocha, Disler Super Simple Software Factory, and Harrison Chase. Updated the existing harness synthesis with a targeted Editor note and source list rather than creating a duplicate. Also added the existing harness synthesis to wiki/index.md and appended wiki/log.md. No raw files modified."
+  "notes": "Editor Run reviewed 13 wiki files changed in the last 24 hours. Updated the existing harness/meta-harness/self-improving-harness synthesis with a targeted Blume note rather than creating a duplicate page. Reviewed the new verifier-as-goal-completion synthesis and left it unchanged because it already contains a real multi-source thread and is indexed. No raw files modified."
 }

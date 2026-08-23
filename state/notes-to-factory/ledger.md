@@ -48,3 +48,16 @@
 - 2026-08-23 — DECISION — 0 work orders. No item reached Small/Medium. Sizing bar not lowered.
 - 2026-08-23 — ACTION REQUIRED — Agentic-KB dirty-worktree gate has blocked refinery (x2), scout and editor since 2026-08-22; error briefings are themselves untracked, making the condition self-sustaining. Not acted on (other jobs' in-flight files).
 - 2026-08-23 — HYGIENE — 2 worktrees created, 2 removed. All 8 repos returned to baseline (Agentic-KB 3, MissionControl 89, Agentic-Pi-Harness 4, others 1 or 3). /tmp/ntf removed.
+
+### 2026-08-23 remediation (operator-instructed, same day)
+
+- 2026-08-23 — UNBLOCK — Agentic-KB dirty-worktree gate cleared. Root cause: the 2026-08-22 Editor Run produced its synthesis/log/briefing/state output and never committed it; briefings/errors/ is a tracked dir (115 files), so each blocked run's own briefing kept the tree dirty and guaranteed the next block. Nothing discarded. Commits 0639a14 (Editor Run output) and f09ed30 (error briefings + notes-to-factory state). Also rebased+pushed 7183dab (kb-daily-lint 2026-08-23, previously unpushed). Tree now 0 dirty, 0 ahead, 0 behind.
+- 2026-08-23 — GUARD — the PII pre-commit guard rejected this ledger because the entry QUOTED the deny-listed phrase while describing a rejection. Reworded to reference note ids only. --no-verify not used. Recorded in skillCorrectionsNeeded.
+- 2026-08-23 — MERGE — MissionControl PR #129 merged b3dfcee (merge commit, 12/12 checks). Human-authorized by Jay; repo governance "humans merge PRs" was satisfied, not bypassed. Revert: git -C /Users/jaywest/MissionControl revert -m 1 b3dfcee
+- 2026-08-23 — MERGE — SellerFi PR #203 merged 852ccb2 (SQUASH — main ruleset rejects merge commits despite repo settings allowing them). Revert: git -C /Users/jaywest/SellerFi revert 852ccb2
+- 2026-08-23 — STATE — docs/NIGHTLY-BACKLOG.md now present on origin/main in all 8 repos. Backlog dedup functional everywhere.
+- 2026-08-23 — HYGIENE — MissionControl worktrees 89 -> 55. Removed 34 classified SAFE (clean tree AND 0 commits ahead of origin/main), deepest-first; 0 failures. Protected 4 SAFE parents containing in-flight children. Left 15 DIRTY + 35 UNMERGED untouched. No branches deleted — removals reversible via git worktree add.
+- 2026-08-23 — HYGIENE — 191 gitignored .env/.env.local files (9 distinct variants) in removed worktrees backed up to /Users/jaywest/mission-control-worktree-env-backup-2026-08-23.tar.gz before removal.
+- 2026-08-23 — DISK — 46 GiB -> 63 GiB free (95% -> 93%). Cleared Yarn/go-build/pip/pypoetry caches (~12 GiB). Earlier 25 GiB worktree estimate was wrong: du -s double-counts nested worktrees; actual worktree reclaim ~5 GiB.
+- 2026-08-23 — OPEN — real disk consumer is ~/Library/Caches at 45.6 GiB (vs MissionControl's 19 GiB total). Left DeepSeekHarness 6.07, ms-playwright 5.13, com.openai.codex 2.69, Google 2.47, pnpm 1.98, ShipIt 1.72 GiB untouched — each has runtime implications. Also 8.09 GiB node_modules across 318 dirs in the 55 remaining (in-flight) worktrees. Needs Jay's call.
+- 2026-08-23 — OPEN — dirty-worktree gate will re-trigger whenever any job is blocked or interrupted, since a halted job leaves its briefing untracked. Durable fix is in each scheduled-task prompt (allow briefings/errors/, or commit the briefing before exiting on the blocked path), not in the repo.

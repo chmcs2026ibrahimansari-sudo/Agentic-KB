@@ -1966,3 +1966,33 @@ Pages affected: `concepts/agent-layer-architecture.md`, `concepts/multi-agent-or
 **Leverage question:** "Can RLM Stages 1–3 (BM25 fulltext, parallel vector+graph fanout, RRF merging) be implemented to unblock the retrieval pipeline the whole KB depends on?" Distinct from the prior three days' questions, so the stalled-task escalation rule did not fire.
 
 ---
+
+## 2026-08-25 — Compiled `clippings/2026-08-14T06-47-00__apple-notes__ideas-books-as-apps-agents-author-partnerships__127b331c.md`
+
+Pages affected: `personal/idea-books-as-agents-author-partnerships.md`
+
+---
+
+## 2026-08-25 — morning-review-daily (scheduled run)
+
+**Preflight:** `RESULT: clear` (exit 0). API funded, KB web server healthy, no raw/ contact PII. One warning: worktree dirty on entry (`wiki/daily-systems/logs/2026-08-24.md` untracked) — committed as part of this run.
+
+**Morning Review pipeline:** completed. 13 Apple Notes, 3 links crawled, 7 findings, 5 auto-applied, 0 needing approval, 0 errors. No AppleScript timeout. Daily note written to `Daily Notes/2026-08-25.md`.
+
+**KB capture (Step 2):** `sofie-watch-obsidian.mjs --once` staged 0 new meeting notes; `raw/transcripts/` has 0 pending. Apple Notes `KB Inbox` holds only the stale `test-capture-2026-05-16` note, which already has **11 duplicate copies** in `raw/clippings/` from the known write-time hash drift — deliberately NOT re-captured. Snipd folder empty. Net new clippings: 0.
+
+**Compile (2-source gate):** `compile-2source-gate.mjs --execute` → **exit 0**. Plan: 28 PROMOTE (advisory only — see PROP-157, no generator wired), 164 DEFER, 0 GRADUATE. Write phase (`kb compile`, incremental) ingested 1 new raw doc and created 1 page: `wiki/personal/idea-books-as-agents-author-partnerships.md`.
+
+**Proposals:** `foundry-propose.mjs --execute --top 3` fired 1 new detector → **PROP-161 [HEAVY_BACKLOG]** (164 deferred themes vs. threshold 50). Persisted to `wiki/_meta/proposals.md`.
+
+**Pages created:**
+- `wiki/syntheses/synthesis-harness-self-improvement-as-memory-promotion.md` (`reviewed: false`) — bridges Orchestration MoC (harness layer) and Memory MoC (policy layer). Argues the self-improving-harness edit loop and `learned → canonical` promotion are the same mechanism with different rigor; identifies contradiction blocking (Rule 6), audit trail (Rule 8), and freshness decay as the three missing gates. Inbound links added from `wiki/mocs/orchestration.md`, `wiki/mocs/memory.md`, `wiki/index.md`.
+- `wiki/personal/idea-books-as-agents-author-partnerships.md` (via compile).
+
+**Connection verification (Step 3 guard):** the connections query nominated 3 bridges. #1 (goal-backward verification ↔ `goal-vs-task-completion`) **rejected** — already covered by `wiki/syntheses/synthesis-verifier-as-goal-completion-benchmark.md`. #2 (per-claim confidence ↔ llm-as-judge) **rejected as near-duplicate** — `synthesis-judgment-events-as-confidence-labels.md` already answers the confidence-calibration question. #3 verified missing and drafted.
+
+**CONTRADICTIONS — correction, no new flags:** the tensions query re-reported two provenance gaps as open (obsidian-wiki `_raw/` mutation vs. raw-immutability; `agentmemory` attribution on RRF `k=60` / per-claim confidence). Both were **resolved on 2026-06-10** and the resolution notes are live on the pages — `wiki/concepts/reciprocal-rank-fusion.md` carries `[PROVENANCE RESOLVED — 2026-06-10]` at `confidence: high` (cleared via Cormack/Clarke/Buettcher 2009 + `siagian-agentic-engineer-roadmap-2026`, Rule 14 satisfied), and `wiki/patterns/pattern-per-claim-confidence.md` carries `[PROVENANCE RESOLVED — 2026-06-10, won't-fix]` at `confidence: medium`. **No `[UNVERIFIED]` markers were re-applied and no confidence was downgraded** — doing so would have regressed resolved work. Root cause of the false positive: the tensions query reads `wiki/log.md`, whose most recent entry before today was 2026-08-10, and the 2026-06-10 resolution is recorded on the pages but not surfaced in a way the query's 14-day window picks up.
+
+**Pattern query gap:** the "emerging patterns ready to graduate" query returned empty retrieval on both the initial run and the index/hot-anchored retry. Direct inspection of `wiki/candidates.md` (174 lines) confirms every deferred theme sits at exactly 1 source, so there is genuinely nothing at the 3+-summary threshold. Nothing to graduate.
+
+**Leverage question:** "Does file-based wiki memory (hot-cache + full-wiki) continue to scale, or does it hit a retrieval/context wall forcing hybrid/vector-graph retrieval — and at what threshold?" Related to but distinct from 2026-08-24's RLM Stages 1–3 question; not a 3-day repeat, so no escalation to `proposals.md`.

@@ -232,7 +232,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 - [[summaries/x-twitter-2076231055443440105|Jason Calacanis PODMEME — Personalized Podcast Topic Stream Tweet]] — Low-confidence tweet lead for topic-clustered podcast playback/media-ingest workflows.
 - [[summaries/www-linkedin-com-jobs-view-4438558062|Salesforce Director, Human-AI Collaboration — Job Description Capture]] — Job-market signal for human-AI collaboration, workforce transformation, HCI, job redesign, and KPI-linked adoption.
 
-## Personal (15)s (6) (Jay's patterns)
+## Personal (16)s (6) (Jay's patterns)
 
 | Page | Category | Confidence | Description |
 |------|----------|------------|-------------|
@@ -305,6 +305,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/harness-vs-meta-harness-vs-self-improving-harness]] | What distinguishes a harness, meta-harness, and self-improving harness — and why are code-owned gates the practical harness layer before self-improvement? | 2026-08-21 |
 | [[syntheses/synthesis-verifier-as-goal-completion-benchmark]] | Is the Plan-Execute-Verify verifier the runtime implementation of goal-vs-task-completion, and can its acceptance criteria become a benchmark-design template? | 2026-08-22 |
 | [[syntheses/synthesis-mcp-as-tool-vs-memory-interface]] | MCP exposes both callable actions and queryable memory over one contract — should memory-read servers inherit the same permission scrutiny as action servers? | 2026-08-24 |
+| [[syntheses/synthesis-harness-self-improvement-as-memory-promotion]] | Are a self-improving harness's scaffolding edits and the memory stack's learned→canonical promotion the same mechanism, and should they share one governance layer? | 2026-08-25 |
 
 ---
 

@@ -97,6 +97,7 @@ See [[system/policies/freshness-policy]] and [[system/policies/source-trust-poli
 ## Syntheses
 
 - [[syntheses/synthesis-telephone-game-per-claim-confidence]] — Argues supervisor paraphrase corruption and lossy memory retrieval are the same failure mode, and that [[patterns/pattern-per-claim-confidence]] is portable across the orchestration boundary
+- [[syntheses/synthesis-harness-self-improvement-as-memory-promotion]] — Argues a [[concepts/self-improving-harness|self-improving harness]]'s scaffolding edits are `learned → canonical` promotion by another name, and that [[system/policies/promotion-rules]] and [[system/policies/freshness-policy]] should govern harness structure as a distinct memory class
 
 ---
 

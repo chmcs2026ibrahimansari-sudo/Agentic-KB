@@ -91,6 +91,7 @@ updated: 2026-04-10
 - [[syntheses/synthesis-agentic-engineering-operating-model]] — Operating model for one visible orchestrator, backend agent lanes, artifact-native completion, system-of-record backends, and outcome metrics
 - [[summaries/2026-04-08-what-is-the-best-pattern-for-multi-agent-orchestration-in-cl]] — [[pattern-fan-out-worker]] Orchestrator-Worker as default; token multiplier; failure modes
 - [[syntheses/synthesis-telephone-game-per-claim-confidence]] — Reframes the Telephone Game Problem as synthesis-layer fidelity loss and proposes borrowing the memory stack's per-claim confidence machinery to detect it, not just bypass it
+- [[syntheses/synthesis-harness-self-improvement-as-memory-promotion]] — Maps the [[concepts/self-improving-harness|self-improving harness]] loop onto the Memory MoC's promotion and freshness policies; identifies contradiction blocking, audit trail, and decay as the three gates harness self-improvement is missing
 
 ---
 

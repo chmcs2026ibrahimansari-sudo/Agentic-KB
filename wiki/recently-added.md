@@ -9,6 +9,13 @@ type: meta
 
 ---
 
+## 2026-08-25 (morning-review-daily)
+
+- [[syntheses/synthesis-harness-self-improvement-as-memory-promotion|Self-Improving Harnesses Are Memory Promotion Under a Different Name]] — bridges the Orchestration MoC's harness layer to the Memory MoC's policy layer: a harness's failure-trace → edit → regression-test loop is structurally identical to `learned → canonical` promotion, but is missing contradiction blocking, an audit trail, and any decay function. Proposes a `harness` memory class with a half-life keyed to model version.
+- [[personal/idea-books-as-agents-author-partnerships|Books as Agents — Author Partnerships]] — compiled from `raw/clippings/` by the 2-source gate's incremental compile pass.
+
+---
+
 ## 2026-08-24 (morning-review-daily)
 
 - [[syntheses/synthesis-mcp-as-tool-vs-memory-interface|MCP Carries Two Consumption Patterns — Action Execution and Memory Retrieval]] — bridges the Tool Use MoC and the Memory MoC: MCP transports both imperative action calls and retrieval queries over one contract, but the permission vocabulary was built only for the action half. Proposes labelling memory-read servers as a distinct class rather than gating them.

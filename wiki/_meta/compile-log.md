@@ -1,106 +1,17 @@
 ---
-id: 01KX98V9PCZ9ZH97GK569PR45B
+id: 01M0V3JC8Q12146XQX76PQ1TJ6
+title: "Compile Log"
+type: personal
+tags: [knowledge-base]
+updated: 2026-08-19
+visibility: private
 ---
 
-<!-- append entry -->
+# Compile Log
 
-## 2026-06-18 — headroom framework page created
+## 2026-08-19
 
-- **Source:** `framework-docs/chopratejas-headroom.md`
-- **Created:** `frameworks/headroom.md`
-- **Notes:** Token-compression proxy/library. Jay flagged for Hermes evaluation. Cross-referenced `concepts/agent-memory-runtime.md` and `concepts/agent-resources-platform.md`.
-
-## 2026-08-08T14:20:10.935Z
-- promote: 29
-- defer:    137
-- graduate: 0
-
-## 2026-08-08T14:21:50.031Z
-- promote: 29
-- defer:    137
-- graduate: 0
-
-## 2026-08-09T17:12:06.508Z
-- promote: 29
-- defer:    137
-- graduate: 0
-
-## 2026-08-10T04:35:00.057Z
-- promote: 29
-- defer:    137
-- graduate: 0
-
-## 2026-08-10T04:49:55.315Z
-- promote: 29
-- defer:    137
-- graduate: 0
-
-## 2026-08-10T13:07:12.797Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-12T13:09:39.417Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-13T13:07:05.146Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-14T13:10:05.270Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-15T13:07:48.610Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-16T13:13:09.244Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-16T21:57:43.658Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-16T22:06:54.663Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-19T00:42:36.177Z
-- promote: 30
-- defer:    167
-- graduate: 0
-
-## 2026-08-19T13:10:01.949Z
-- promote: 28
-- defer:    164
-- graduate: 0
-
-## 2026-08-20T13:12:31.539Z
-- promote: 28
-- defer:    164
-- graduate: 0
-
-## 2026-08-21T01:14:59.765Z
-- promote: 28
-- defer:    164
-- graduate: 0
-
-## 2026-08-22T13:07:15.200Z
-- promote: 28 (ADVISORY — not applied; see PROP-157)
-- defer:    164
-- graduate: 0
-
-## 2026-08-22T13:07:43.343Z
-- promote: 28 (ADVISORY — not applied; see PROP-157)
-- defer:    164
-- graduate: 0
+- Source: `clippings/2026-08-19T00-45-01__apple-notes__mission-control-full-repository-audit-and-e2e-qualification-__cff88980.md`
+- Created `entities/mission-control.md` — new entity page for the Mission Control project (governed control plane for autonomous software delivery).
+- Created `patterns/pattern-governed-agent-lifecycle.md` — new pattern page capturing the Constitution → Mission → Specification → Plan → WorkOrder → Context → Execution → Independent Verification → PR → Human Acceptance → Factory Learning lifecycle.
+- Cross-referenced existing pages: `concepts/agent-evaluation.md`, `concepts/agent-failure-modes.md`, `concepts/agent-layer-architecture.md`, `concepts/agent-harness-model-context.md`, `concepts/agent-loops.md`, `concepts/agent-evaluation-gaming.md`, `agents/orchestrators/architecture-agent/profile.md`, `agents/workers/gsd-verifier/profile.md`.

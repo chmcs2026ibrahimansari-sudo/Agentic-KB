@@ -68,3 +68,4 @@ updated: 2026-04-10
 - [[concepts/observability]] — Tracing and logging tool call sequences
 - [[concepts/tool-design]] — Designing tools agents can use reliably
 - [[syntheses/synthesis-access-boundary-codesign]] — Retrieval and tool-access boundaries must be co-designed
+- [[syntheses/synthesis-mcp-as-tool-vs-memory-interface]] — MCP carries both action execution and memory retrieval; only the action half has a permission model

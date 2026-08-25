@@ -1175,3 +1175,12 @@ purpose: Append-only ledger of actionable proposals surfaced by /foundry-propose
 - owner: Jay — ~1 hour, unblocks three pages at once
 - status: open
 
+
+## 2026-08-24T23:56:12.002Z
+
+### PROP-160 [HEAVY_BACKLOG] backlog:2026-08-24T23:54:43.865Z
+
+- defer count: 164 (threshold 50)
+- run: 2026-08-24T23:54:43.865Z
+- recommendation: Latest compile deferred 164 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
+

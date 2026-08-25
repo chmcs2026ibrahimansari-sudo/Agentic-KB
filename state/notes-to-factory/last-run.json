@@ -1,63 +1,43 @@
 {
-  "lastRunAt": "2026-08-23T15:05:00Z",
+  "lastRunAt": "2026-08-24T16:55:00Z",
   "mode": "normal (scheduled 08:20 PDT)",
-  "window": "2026-08-22T20:40:00Z..2026-08-23T15:05:00Z + 15 previously-unseen ids",
-  "notesEvaluated": 20,
-  "notesIngested": 4,
+  "window": "2026-08-23T15:05:00Z..2026-08-24T16:55:00Z + 13 previously-unseen ids",
+  "notesEvaluated": 14,
+  "notesIngested": 1,
+  "notesSkippedEmptyBody": 7,
   "notesRefusedCredential": ["p1808", "p7005"],
-  "notesRefusedPiiGuard": ["p6818"],
-  "notesRefusedThirdPartyPersonalData": ["p6827"],
+  "notesRefusedThirdPartyPersonalData": ["p6335", "p7106", "p7108", "p7114", "p7082", "p7039"],
   "notesSeen": [
-    "p7068","p7063","p7062","p7061","p7060","p1808","p7049","p7047","p7043","p7040",
-    "p7039","p7037","p7025","p7018","p7015","p7013","p7010","p7007","p7005","p7003",
-    "p7001","p7000","p6989","p6982","p6978","p6973","p6972","p6971","p6968","p6957",
-    "p6952","p6950","p6940","p6938","p6936","p6934","p6931","p6927","p6926","p6925",
-    "p6922","p6918","p6915","p6913","p6912","p6911","p6909","p6907","p6905","p6901",
-    "p6900","p6898","p6878","p6877","p6873","p6869","p6868","p6867","p6866","p6865",
-    "p6862","p6855","p6848","p6845","p6842","p6839","p6838","p6829","p6827","p6826",
-    "p6825","p6820","p6819","p6818","p6815","p6808","p6795","p6792","p6759","p6648"
+    "p7114","p7113","p7111","p7108","p7106","p7088","p7083","p7082","p7079","p7077",
+    "p7074","p7069","p7068","p7063","p7062","p7061","p7060","p6335","p1808","p7049",
+    "p7047","p7043","p7040","p7039","p7037","p7025","p7018","p7015","p7013","p7010",
+    "p7007","p7005","p7003","p7001","p7000","p6989","p6982","p6978","p6973","p6972",
+    "p6971","p6968","p6957","p6952","p6950","p6940","p6938","p6936","p6934","p6931",
+    "p6927","p6926","p6925","p6922","p6918","p6915","p6913","p6912","p6911","p6909",
+    "p6907","p6905","p6901","p6900","p6898","p6878","p6877","p6873","p6869","p6868",
+    "p6867","p6866","p6865","p6862","p6855","p6848","p6845","p6842","p6839","p6838",
+    "p6829","p6827","p6826","p6825","p6820","p6819","p6818","p6815","p6808","p6795",
+    "p6792","p6759","p6648"
   ],
   "workOrders": 0,
-  "workOrdersNote": "No item reached Small or Medium sizing. Both surviving proposals were architecture/business-model notes, not implementation instructions. Sizing bar was not lowered.",
-  "merges": [
-    {
-      "repo": "Agentic-KB",
-      "sha": "2dff0ad",
-      "target": "main",
-      "method": "cherry-pick onto origin/main in isolated worktree, then push",
-      "source": "apple-notes p7068, p6759, p6826, p6819",
-      "gate": "PII pre-commit guard exit 0; frontmatter+markdown parse verified; +723 lines, 0 deletions",
-      "revert": "git -C /Users/jaywest/Agentic-KB revert 2dff0ad && git -C /Users/jaywest/Agentic-KB push"
-    }
-  ],
-  "pullRequests": [
-    {
-      "repo": "MissionControl",
-      "number": 129,
-      "url": "https://github.com/jaydubya818/MissionControl/pull/129",
-      "branch": "ntf/2026-08-22-notes-backlog-v2",
-      "newCommitThisRun": "5ad7a27",
-      "reason": "PR-only by repo governance (apple-note p6971). Appended 1 Open item (Book Factory vertical, p7068) to the existing open PR rather than opening a competing PR; commented on the PR to flag the branch move."
-    },
-    {
-      "repo": "SellerFi",
-      "number": 203,
-      "url": "https://github.com/jaydubya818/SellerFi/pull/203",
-      "branch": "ntf/2026-08-22-nightly-backlog",
-      "reason": "carried over from 2026-08-22; still OPEN and MERGEABLE, untouched this run"
-    }
-  ],
+  "workOrdersNote": "Zero items survived cheap filter 1 (actionable in code). No ImprovementProposal was written because none was warranted. Sizing bar not lowered; no work manufactured. Third consecutive zero-work-order run.",
+  "merges": [],
+  "pullRequests": [],
   "aborted": [],
   "branchesHeld": [],
+  "uncommittedLeftInPlace": [
+    "raw/clippings/2026-08-23T18-33-20__apple-notes__what-if-the-future-of-enterprise-ai-is-not-one-super-agent__7e77e67e.md (p7069 clipping, written not committed)",
+    "briefings/scout-2026-08-23.md (untracked, another job's output)"
+  ],
   "backlogFilePresentOnOrigin": {
-    "Agentic-KB": true,
-    "Agentic-Pi-Harness": true,
-    "hermes-harness-missioncontrol": true,
-    "twinz": true,
-    "morning-review": true,
-    "ai-software-factory-mastery": true,
-    "MissionControl": "pending PR #129",
-    "SellerFi": "pending PR #203"
+    "Agentic-KB": "68 lines",
+    "Agentic-Pi-Harness": "38 lines",
+    "hermes-harness-missioncontrol": "41 lines",
+    "twinz": "33 lines",
+    "morning-review": "33 lines",
+    "ai-software-factory-mastery": "33 lines",
+    "MissionControl": "38 lines (PR #129 merged 2026-08-23T19:09Z)",
+    "SellerFi": "38 lines (PR #203 merged 2026-08-23T19:09Z)"
   },
   "worktreeBaselines": {
     "Agentic-KB": 3,
@@ -66,26 +46,29 @@
     "Twinz": 1,
     "morning-review": 1,
     "ai-software-factory-mastery": 1,
-    "MissionControl": 89,
+    "MissionControl": 55,
     "SellerFi": 3
   },
+  "worktreesCreatedThisRun": 0,
   "worktreesReturnedToBaseline": true,
+  "resolvedSinceLastRun": [
+    "Agentic-KB dirty-worktree deadlock cleared; only briefings/scout-2026-08-23.md remains untracked.",
+    "Agentic-KB main in sync with origin/main; unpushed kb-daily-lint commit f9a6f65 no longer present.",
+    "MissionControl PR #129 and SellerFi PR #203 both merged 2026-08-23T19:09Z. Backlog dedup functional in all 8 repos.",
+    "MissionControl worktrees reduced 89 -> 55 externally."
+  ],
   "actionRequired": [
-    "Agentic-KB has been blocking four of its own scheduled jobs since 2026-08-22 on a dirty-worktree safety gate (refinery x2, scout, editor). The error briefings those jobs write are themselves untracked, so the condition is self-sustaining. Needs Jay to commit or discard: .night-shift/state/editor-state.json, wiki/log.md, wiki/syntheses/harness-vs-meta-harness-vs-self-improving-harness.md, briefings/2026-08-22.md, briefings/errors/*.",
-    "Local Agentic-KB main carries unpushed kb-daily-lint commit f9a6f65 (2026-08-23).",
-    "PRs #129 (MissionControl) and #203 (SellerFi) still open and awaiting review; backlog dedup non-functional in both repos until merged.",
-    "Data volume at 95% / 46 GiB free.",
-    "MissionControl at 89 worktrees, detached HEAD. Not acted on."
+    "Apple Note p7005 still carries a live OpenRouter API key AS ITS TITLE, so it leaks via list_notes metadata before any body screen can act. Note p1808 titled as an Anthropic key store. Rotate at openrouter.ai/keys and rename the note. Not fetched this run.",
+    "MissionControl at 55 worktrees, detached HEAD. Not acted on per the in-flight-work rule.",
+    "Data volume at 94% / 62 GiB free (improved from 46 GiB)."
   ],
   "skillCorrectionsNeeded": [
-    "Add a Screen 3 to Phase 1 for third-party personal data (named individuals' performance, coaching status, health, compensation). Neither the credential screen nor the Agentic-KB PII guard caught p6827; only judgment did.",
-    "Run scripts/hooks/pre-commit deny-list patterns against a candidate note body at triage time, before ingesting into Agentic-KB. Discovering a match at commit time costs a retry (p6818 this run). Note: the deny-list matches plain substrings, so job logs that merely DESCRIBE a rejection can also trip it — describe by note id, never by quoting the phrase.",
-    "Document the cherry-pick-into-worktree pattern as the required push path for Agentic-KB. Local main routinely sits behind origin and carries other jobs' commits, so a direct push from the checkout is never safe.",
-    "State whether appending to an already-open PR branch is permitted. This run did so for MissionControl #129 (additive, same file, commented on the PR) because the alternative was a competing PR on the same file."
+    "Backlog coverage probes must be run inline, not from a script file. Scripts launched via Desktop Commander start with an unusable PATH, so `git` is not found and every coverage check fails open to MISSING. This run's first probe reported all 8 repos missing; the seed work order is a whole-file write and would have destroyed 282 lines of backlog across the fleet. Add: verify at least one repo by hand before believing any MISSING result, and prefer inline for-loops over script files.",
+    "Formalize the Screen 3 proposed on 2026-08-23 (third-party personal data). It fired six times this run against interview-prep drafts and a named individual's talking scripts. Only judgment caught them; neither the credential screen nor the PII guard would have.",
+    "State whether a clipping written by clipping-write.mjs must be committed in the same run. This run left one uncommitted rather than pushing to main for a single file; the dedup is idempotent so either is safe, but the choice should not be re-litigated nightly."
   ],
   "openProposals": [
-    "Highest-leverage improvement is upstream of this job: give Jay a lightweight way to capture small, bounded requests (a dedicated Apple Notes folder, or a TODO: prefix convention) so the input stream contains anything that can clear the Small/Medium sizing gate. Two runs in a row have produced zero implementable items because Notes is used for architecture thinking, not ticket filing.",
-    "Add a `## Format` section documenting the `Source: apple-note <id>` provenance convention to the pre-existing backlog files in Agentic-KB, Agentic-Pi-Harness and hermes-harness-missioncontrol. Deferred again 2026-08-23: still cosmetic.",
-    "MissionControl carries 89 worktrees and is in detached HEAD. Cleanup needs Jay; do not prune in-flight work automatically."
+    "UNCHANGED AND NOW THREE RUNS OLD: the binding constraint is upstream. 72 notes evaluated across three runs, zero work orders. Notes is used for architecture thinking and document drafting, not ticket filing, so the input stream structurally cannot contain Small/Medium items. Needs a capture convention (dedicated Notes folder or TODO: title prefix) that this job reads preferentially, or an explicit reframing of the job's success criteria around triage rather than throughput.",
+    "Add a `## Format` section documenting the `Source: apple-note <id>` provenance convention to pre-existing backlog files. Deferred a third time 2026-08-24: still cosmetic."
   ]
 }

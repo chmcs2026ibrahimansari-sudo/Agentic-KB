@@ -9,6 +9,12 @@ type: meta
 
 ---
 
+## 2026-08-24 (morning-review-daily)
+
+- [[syntheses/synthesis-mcp-as-tool-vs-memory-interface|MCP Carries Two Consumption Patterns — Action Execution and Memory Retrieval]] — bridges the Tool Use MoC and the Memory MoC: MCP transports both imperative action calls and retrieval queries over one contract, but the permission vocabulary was built only for the action half. Proposes labelling memory-read servers as a distinct class rather than gating them.
+
+---
+
 ## 2026-08-22 (morning-review-daily)
 
 - [[syntheses/synthesis-verifier-as-goal-completion-benchmark|The PEV Verifier Is a Runtime Implementation of Goal-vs-Task Completion]] — bridges the Orchestration MoC's verifier role to the Evaluation MoC's goal-vs-task-completion concept, and proposes harvesting `acceptance_criteria` as Truth/Existence/Wiring benchmark items.

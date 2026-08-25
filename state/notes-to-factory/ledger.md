@@ -61,3 +61,17 @@
 - 2026-08-23 — DISK — 46 GiB -> 63 GiB free (95% -> 93%). Cleared Yarn/go-build/pip/pypoetry caches (~12 GiB). Earlier 25 GiB worktree estimate was wrong: du -s double-counts nested worktrees; actual worktree reclaim ~5 GiB.
 - 2026-08-23 — OPEN — real disk consumer is ~/Library/Caches at 45.6 GiB (vs MissionControl's 19 GiB total). Left DeepSeekHarness 6.07, ms-playwright 5.13, com.openai.codex 2.69, Google 2.47, pnpm 1.98, ShipIt 1.72 GiB untouched — each has runtime implications. Also 8.09 GiB node_modules across 318 dirs in the 55 remaining (in-flight) worktrees. Needs Jay's call.
 - 2026-08-23 — OPEN — dirty-worktree gate will re-trigger whenever any job is blocked or interrupted, since a halted job leaves its briefing untracked. Durable fix is in each scheduled-task prompt (allow briefings/errors/, or commit the briefing before exiting on the blocked path), not in the repo.
+
+## 2026-08-24 (scheduled 08:20 PDT)
+
+- Preflight: no HALT. Data volume 94%, 62 GiB free (improved from 46). Parallel subagents viable.
+- Harvest: 14 notes evaluated (13 unseen + p7039 modified). 7 skipped empty body (<120B). 6 refused third-party/personal data. 1 ingested (p7069).
+- Refused credential-titled notes again without fetching: p1808, p7005. p7005 still has a live OpenRouter key as its TITLE — leaks via list_notes metadata.
+- Refused third-party personal data: p6335 (named individual's talking scripts, title-screened, body never fetched); p7106/p7108/p7114/p7082/p7039 (five iterative drafts of Adobe recruiter-screen prep, naming a third-party talent partner and containing employer-internal platform detail).
+- Ingested p7069 -> raw/clippings/2026-08-23T18-33-20__apple-notes__what-if-the-future-of-enterprise-ai-is-not-one-super-agent__7e77e67e.md. Written to working tree, NOT committed; nothing pushed to any remote this run.
+- KB sources: wiki/candidates.md all single-source, none graduated. wiki/action-tracker.md empty in all three sections.
+- Triage: 0 items survived cheap filter 1. No ImprovementProposal written. Sizing bar not lowered, no work manufactured.
+- Work orders: 0. Merges: 0. PRs: 0. Worktrees created: 0; all counts at baseline.
+- NEAR MISS: first backlog-coverage probe reported all 8 repos MISSING. False — the probe ran from a script file with an unusable PATH, so `git` was not found and every check failed open. Verified by hand: all 8 repos HAVE the file on origin (282 lines total). The seed work order is a whole-file write and would have destroyed all of it. Fix: run coverage probes inline, never from a script file; verify one repo by hand before believing MISSING.
+- RESOLVED since last run: Agentic-KB dirty-worktree deadlock cleared; Agentic-KB main in sync with origin (f9a6f65 no longer unpushed); MissionControl PR #129 and SellerFi PR #203 both merged 2026-08-23T19:09Z; MissionControl worktrees 89 -> 55 externally.
+- Standing: third consecutive zero-work-order run, 72 notes cumulative. Constraint is upstream — Notes is used for thinking and drafting, not ticket filing. Recommend a capture convention or a reframing of success criteria around triage.

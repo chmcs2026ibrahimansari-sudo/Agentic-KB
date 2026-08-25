@@ -1162,5 +1162,73 @@
     "pagesAffected": [
       "frameworks/blume-codes.md"
     ]
+  },
+  "clippings/2026-07-30T20-38-18__apple-notes__strategy-and-vision-databricks-workspace-platform-role__d67bb4e5.md": {
+    "compiledAt": "2026-08-24T23:55:16.706Z",
+    "pagesAffected": [
+      "personal/databricks-workspace-platform-role.md"
+    ]
+  },
+  "clippings/2026-07-31T18-46-55__apple-notes__my-project-agentic-software-factory-business__c1f87145.md": {
+    "compiledAt": "2026-08-24T23:56:08.241Z",
+    "pagesAffected": [
+      "personal/jay-agentic-software-factory.md",
+      "recipes/recipe-graph-engineering-pipeline.md"
+    ]
+  },
+  "clippings/2026-07-31T19-55-22__apple-notes__the-opportunity-workday-agent-platform-sem-role__6c2ebbb6.md": {
+    "compiledAt": "2026-08-24T23:56:54.374Z",
+    "pagesAffected": [
+      "entities/workday-agent-platform.md",
+      "personal/workday-sem-opportunity.md"
+    ]
+  },
+  "clippings/2026-08-15T14-16-04__apple-notes__mission-control-factory-memory-context-intelligence-directiv__3096a740.md": {
+    "compiledAt": "2026-08-24T23:58:27.531Z",
+    "pagesAffected": [
+      "entities/mission-control.md",
+      "concepts/factory-memory-context-intelligence.md"
+    ]
+  },
+  "clippings/2026-08-15T20-57-05__apple-notes__software-factory-review-vs-super-simple-software-factory-tie__b1d28b23.md": {
+    "compiledAt": "2026-08-24T23:59:21.001Z",
+    "pagesAffected": [
+      "concepts/software-factory.md",
+      "summaries/summary-super-simple-software-factory.md",
+      "personal/jay-software-factory-tiered-ux.md"
+    ]
+  },
+  "clippings/2026-08-16T18-28-43__apple-notes__factory-learning-v1-sequencing-and-system-qualification-run__f651153f.md": {
+    "compiledAt": "2026-08-25T00:00:31.663Z",
+    "pagesAffected": [
+      "entities/mission-control-factory-system.md",
+      "patterns/pattern-factory-learning-loop.md",
+      "patterns/pattern-system-qualification-run.md"
+    ]
+  },
+  "clippings/2026-08-17T16-06-25__apple-notes__linkedin-reading-list-meta-harness-agentic-ai-roadmap__0d35bce2.md": {
+    "compiledAt": "2026-08-25T00:00:51.128Z",
+    "pagesAffected": []
+  },
+  "clippings/2026-08-19T00-45-01__apple-notes__mission-control-full-repository-audit-and-e2e-qualification-__cff88980.md": {
+    "compiledAt": "2026-08-25T00:01:52.920Z",
+    "pagesAffected": [
+      "entities/mission-control.md",
+      "patterns/pattern-governed-agent-lifecycle.md",
+      "_meta/compile-log.md"
+    ]
+  },
+  "clippings/2026-08-23T06-13-02__apple-notes__book-to-interactive-ip-platform-a-vertical-on-mission-contro__0de93c65.md": {
+    "compiledAt": "2026-08-25T00:02:34.762Z",
+    "pagesAffected": [
+      "personal/book-to-interactive-ip-platform.md"
+    ]
+  },
+  "clippings/2026-08-23T18-33-20__apple-notes__what-if-the-future-of-enterprise-ai-is-not-one-super-agent__7e77e67e.md": {
+    "compiledAt": "2026-08-25T00:03:16.910Z",
+    "pagesAffected": [
+      "concepts/agent-layer-architecture.md",
+      "concepts/multi-agent-orchestration.md"
+    ]
   }
 }

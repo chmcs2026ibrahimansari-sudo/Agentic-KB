@@ -1,61 +1,37 @@
 ---
-id: 01KX98MD1M1HQDB94788VKP88B
+id: 01M0V3MY6DE8P4PJRM4TRFS657
 title: "Agent Layer Architecture"
 type: concept
-tags: [agents, architecture, memory, evaluation, mcp]
-created: 2026-05-23
-updated: 2026-05-23
+tags: [architecture, agents, orchestration, enterprise, mcp]
+created: 2026-08-23
+updated: 2026-08-23
 visibility: public
 confidence: medium
-source: "x-twitter — voxyz_ai thread, captured 2026-05-23"
-related: [12-layer-agent-map, agent-memory-runtime, agent-evaluation, agent-observability]
+related: [multi-agent-orchestration, agent-loops, agent-harness-model-context]
+source: apple-notes (what-if-the-future-of-enterprise-ai-is-not-one-super-agent)
 ---
 
 # Agent Layer Architecture
 
 ## Definition
+Agent layer architecture describes enterprise agentic AI as a stack of connected responsibilities rather than a single model call. A recurring formulation (from an enterprise AI note) splits the stack into:
 
-Agent layer architecture is the practice of decomposing an AI agent system into **discrete functional layers**, each responsible for a specific concern. Rather than treating an agent as a single reasoning loop, this view recognises that production agents consist of separable subsystems that can be built, tested, swapped, and failed independently.
-
-Key named layers include:
-
-- **Reasoning Layer** — The LLM or inference engine; the cognitive core that interprets inputs and produces outputs.
-- **Protocol Layer** — Structured communication interfaces between agent components or external services (e.g. [MCP — Model Context Protocol](../concepts/mcp.md)).
-- **Memory Layer** — Persistence and retrieval of information across interactions; the agent's "notebook." See [Agent Memory at Runtime](../concepts/agent-memory-runtime.md).
-- **Evaluation Layer** — Assessment of agent outputs for correctness, safety, or quality; the "health check." See [Agent Evaluation](../concepts/agent-evaluation.md).
-- **Control Plane** — Authorization, orchestration, and access governance; the "keycard" that determines what the agent may do and when.
-
-These five are the most clearly articulated in the [12-Layer Agent Map](../frameworks/12-layer-agent-map.md); a full decomposition extends to tool use, planning, data/retrieval, identity, observability, and human-in-the-loop handoff.
+- **Experience layer** — user-facing interaction
+- **Specialized agents** — domain/business-function specific agents
+- **Orchestration** — planning, reasoning, memory, execution across agents
+- **MCP / protocols** — standardized access to tools, data, and APIs for system connectivity
+- **Enterprise data & infrastructure** — the systems of record underneath
+- **Security, governance, observability** — cross-cutting concerns spanning every layer
 
 ## Why It Matters
-
-**Most agent failures are boundary failures**, not model intelligence failures. When layers are implicit or undifferentiated, breakdowns at the seams — between memory and reasoning, between eval and control — are hard to detect, diagnose, or assign ownership to.
-
-Explicit layer architecture:
-1. Makes failure modes locatable (which layer broke?)
-2. Enables independent testing and verification of each layer
-3. Allows tooling to be compared and selected at the right level of abstraction
-4. Supports incremental system improvement without full rewrites
+As enterprise agent systems scale, the LLM itself becomes just one component. The dominant question shifts from *"Can the model answer this?"* to *"Can the entire system reason, connect, act, recover, observe, and remain secure?"* This reframes architecture decisions around orchestration, permissions, and observability rather than model capability alone. See [multi-agent-orchestration](multi-agent-orchestration.md) for the orchestration-specific challenges this raises, and [agent-harness-model-context](agent-harness-model-context.md) for how context/memory fits into this stack.
 
 ## Example
+An enterprise agent that can access 50 tools, 20 data sources, and 10 other agents needs a governance layer to decide what it's allowed to do — this is the security/governance layer sitting across the whole stack, not a bolt-on. The [MCP](../concepts/agent-harness-model-context.md) layer is what standardizes tool/data access so specialized agents don't each need bespoke integrations.
 
-A customer support agent might have:
-- **Reasoning**: Claude 3.5 Sonnet interpreting tickets
-- **Memory**: Vector store of past interactions + customer CRM data
-- **Protocol**: MCP exposing CRM read/write tools
-- **Eval**: Automated classifier checking response tone and policy compliance
-- **Control Plane**: Role-based permissions limiting which agents can issue refunds
-
-A failure where the agent gives incorrect refund amounts might be traced to the control plane (wrong permission scope) rather than the reasoning layer (the LLM answer was actually correct given what it could see).
-
-## ⚠️ Contradictions
-
-> ⚠️ **Contradiction**: Modern LLM products like ChatGPT increasingly bundle reasoning, memory, tool use, and self-evaluation into a single product surface. This blurs the clean layer separation that layer architecture proposes. The framework is most useful as an analytical and diagnostic lens rather than a strict implementation boundary.
+> "The next generation of AI architecture may not be defined by the smartest model. It may be defined by how well everything around the model works together."
 
 ## See Also
-
-- [12-Layer Agent Map](../frameworks/12-layer-agent-map.md)
-- [Agent Memory at Runtime](../concepts/agent-memory-runtime.md)
-- [Agent Evaluation](../concepts/agent-evaluation.md)
-- [Agent Failure Modes](../concepts/agent-failure-modes.md)
-- [Agent Observability](../concepts/agent-observability.md)
+- [multi-agent-orchestration](multi-agent-orchestration.md)
+- [agent-loops](agent-loops.md)
+- [agent-failure-modes](agent-failure-modes.md)

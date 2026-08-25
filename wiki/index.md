@@ -53,7 +53,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Concepts (95)
+## Concepts (98)
 
 | Page | Type | Tags | Confidence | Description |
 |------|------|------|------------|-------------|
@@ -82,7 +82,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Patterns (84)
+## Patterns (87)
 
 | Page | Category | Problem | Confidence |
 |------|----------|---------|------------|
@@ -131,7 +131,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Entities (17)
+## Entities (19)
 
 | Page | Category | Description |
 |------|----------|-------------|
@@ -146,7 +146,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Recipes (20)
+## Recipes (21)
 
 | Page | Difficulty | Time | Description |
 |------|-----------|------|-------------|
@@ -176,7 +176,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Summaries (75)
+## Summaries (76)
 
 | Page | Source | Date Ingested | Key Concepts |
 |------|--------|--------------|-------------|
@@ -232,7 +232,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 - [[summaries/x-twitter-2076231055443440105|Jason Calacanis PODMEME — Personalized Podcast Topic Stream Tweet]] — Low-confidence tweet lead for topic-clustered podcast playback/media-ingest workflows.
 - [[summaries/www-linkedin-com-jobs-view-4438558062|Salesforce Director, Human-AI Collaboration — Job Description Capture]] — Job-market signal for human-AI collaboration, workforce transformation, HCI, job redesign, and KPI-linked adoption.
 
-## Personal (10)s (6) (Jay's patterns)
+## Personal (15)s (6) (Jay's patterns)
 
 | Page | Category | Confidence | Description |
 |------|----------|------------|-------------|
@@ -267,7 +267,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (38)
+## Syntheses (40)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -304,6 +304,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-telephone-game-per-claim-confidence]] | Can the memory stack's per-claim confidence machinery detect Telephone Game corruption in supervisor-worker orchestration, rather than only routing around it? | 2026-08-21 |
 | [[syntheses/harness-vs-meta-harness-vs-self-improving-harness]] | What distinguishes a harness, meta-harness, and self-improving harness — and why are code-owned gates the practical harness layer before self-improvement? | 2026-08-21 |
 | [[syntheses/synthesis-verifier-as-goal-completion-benchmark]] | Is the Plan-Execute-Verify verifier the runtime implementation of goal-vs-task-completion, and can its acceptance criteria become a benchmark-design template? | 2026-08-22 |
+| [[syntheses/synthesis-mcp-as-tool-vs-memory-interface]] | MCP exposes both callable actions and queryable memory over one contract — should memory-read servers inherit the same permission scrutiny as action servers? | 2026-08-24 |
 
 ---
 

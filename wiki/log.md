@@ -1898,3 +1898,71 @@ Pages affected: `.env` (untracked), `scripts/compile-2source-gate.mjs`, `wiki/_m
 **Contradictions flagged:** No new Editor contradictions. Morning Review's compile-blockage third-signature contradiction remains the item Jay should resolve.
 
 **Briefing:** `briefings/2026-08-22.md`.
+
+## 2026-08-24 — Compiled `clippings/2026-07-30T20-38-18__apple-notes__strategy-and-vision-databricks-workspace-platform-role__d67bb4e5.md`
+
+Pages affected: `personal/databricks-workspace-platform-role.md`
+
+## 2026-08-24 — Compiled `clippings/2026-07-31T18-46-55__apple-notes__my-project-agentic-software-factory-business__c1f87145.md`
+
+Pages affected: `personal/jay-agentic-software-factory.md`, `recipes/recipe-graph-engineering-pipeline.md`
+
+## 2026-08-24 — Compiled `clippings/2026-07-31T19-55-22__apple-notes__the-opportunity-workday-agent-platform-sem-role__6c2ebbb6.md`
+
+Pages affected: `entities/workday-agent-platform.md`, `personal/workday-sem-opportunity.md`
+
+## 2026-08-24 — Compiled `clippings/2026-08-15T14-16-04__apple-notes__mission-control-factory-memory-context-intelligence-directiv__3096a740.md`
+
+Pages affected: `entities/mission-control.md`, `concepts/factory-memory-context-intelligence.md`
+
+## 2026-08-24 — Compiled `clippings/2026-08-15T20-57-05__apple-notes__software-factory-review-vs-super-simple-software-factory-tie__b1d28b23.md`
+
+Pages affected: `concepts/software-factory.md`, `summaries/summary-super-simple-software-factory.md`, `personal/jay-software-factory-tiered-ux.md`
+
+## 2026-08-25 — Compiled `clippings/2026-08-16T18-28-43__apple-notes__factory-learning-v1-sequencing-and-system-qualification-run__f651153f.md`
+
+Pages affected: `entities/mission-control-factory-system.md`, `patterns/pattern-factory-learning-loop.md`, `patterns/pattern-system-qualification-run.md`
+
+## 2026-08-25 — Compiled `clippings/2026-08-17T16-06-25__apple-notes__linkedin-reading-list-meta-harness-agentic-ai-roadmap__0d35bce2.md`
+
+Pages affected: 
+
+## 2026-08-25 — Compiled `clippings/2026-08-19T00-45-01__apple-notes__mission-control-full-repository-audit-and-e2e-qualification-__cff88980.md`
+
+Pages affected: `entities/mission-control.md`, `patterns/pattern-governed-agent-lifecycle.md`, `_meta/compile-log.md`
+
+## 2026-08-25 — Compiled `clippings/2026-08-23T06-13-02__apple-notes__book-to-interactive-ip-platform-a-vertical-on-mission-contro__0de93c65.md`
+
+Pages affected: `personal/book-to-interactive-ip-platform.md`
+
+## 2026-08-25 — Compiled `clippings/2026-08-23T18-33-20__apple-notes__what-if-the-future-of-enterprise-ai-is-not-one-super-agent__7e77e67e.md`
+
+Pages affected: `concepts/agent-layer-architecture.md`, `concepts/multi-agent-orchestration.md`
+
+## 2026-08-24 — morning-review-daily apply pass
+
+**Preflight:** `morning-review-preflight.sh` → exit 0 (clear). API reachable and funded; KB web server healthy; no uncommittable contact PII in `raw/`; worktree clean.
+
+**Morning Review pipeline:** completed. 11 notes, 10 links, 1 finding (0 auto-apply / 1 needs-approval), 0 errors. 267 stale alerts (231 action-required), 0 GitHub issue drafts, 1 local action, 23 issue drafts / 0 patch proposals. Daily note + 2 wiki pages + 2 index pages written to the personal vault. **No AppleScript timeout** this run. One non-fatal `src.classifier.engine` LLM call timed out and was handled.
+
+**Captures:** sofie-watch staged 0 meetings. Apple Notes `KB Inbox` held only the `test-capture-2026-05-16` fixture (already staged 14+ times under distinct hashes — capture deliberately not re-run per the standing dedup-drift note of 2026-08-16); `Snipd` empty. 0 pending transcripts. → 0 new clippings, `ingest-dedup` not run.
+
+**Intelligence queries:** connections, tensions, leverage and proposals returned on the first pass. **Patterns failed on the first pass** — not empty retrieval this time but `stream failed after 3 attempts: model returned no text (stop_reason: max_tokens)`. Succeeded on the retry re-anchored on `index.md` + `hot.md` + `candidates.md` with an explicit "top 5" bound. Note the failure mode differs from the 2026-08-15/16 empty-retrieval pattern: this was an output-length blowout, and capping the requested list length fixed it.
+
+**Compile gate:** `compile-2source-gate.mjs --execute` → **exit 0**. Plan phase: PROMOTE 28 / DEFER 164 / GRADUATE 0. Write phase: **succeeded** — `kb compile` ingested 11 new raw docs → **15 pages created, 4 updated**. This is the first clean write phase since the credit-exhaustion root cause was identified; the recurring "N promotions perma-pending" symptom did not recur. **The 28 PROMOTE themes were NOT applied** — the tool prints this itself: promote decisions are advisory and never reach `kb compile`. Building that generator remains PROP-157. 1 doc skipped: `clippings/2026-08-14…ideas-books-as-apps…` failed JSON parse at position 1356 (raw response saved under `logs/compile-failures/`).
+
+**Pages created by compile:** `personal/databricks-workspace-platform-role`, `personal/jay-agentic-software-factory`, `recipes/recipe-graph-engineering-pipeline`, `entities/workday-agent-platform`, `personal/workday-sem-opportunity`, `entities/mission-control`, `concepts/factory-memory-context-intelligence`, `concepts/software-factory`, `summaries/summary-super-simple-software-factory`, `personal/jay-software-factory-tiered-ux`, `entities/mission-control-factory-system`, `patterns/pattern-factory-learning-loop`, `patterns/pattern-system-qualification-run`, `patterns/pattern-governed-agent-lifecycle`, `personal/book-to-interactive-ip-platform`, `concepts/multi-agent-orchestration`; updated `concepts/agent-layer-architecture`, `_meta/compile-log`.
+
+**New synthesis:** [[syntheses/synthesis-mcp-as-tool-vs-memory-interface]] (born `reviewed: false`). The day's top connection — [[mocs/tool-use]] and [[mocs/memory]] both document [[frameworks/framework-mcp]], as an action-exposure protocol and as a memory-retrieval interface respectively, and neither page acknowledges the other. Argues the permission vocabulary in [[concepts/permission-modes]] was built only for the action half, and that memory-read servers need labelling as a distinct class rather than action-style approval gates. Backlink added from [[mocs/tool-use]]; `index.md` and `recently-added.md` updated.
+
+**Connection #1 rejected by the verify-before-drafting guard.** The connections query nominated "PEV verifier ↔ goal-vs-task-completion" as its strongest un-synthesised link, but [[syntheses/synthesis-verifier-as-goal-completion-benchmark]] was created 2026-08-22 covering exactly that. Third occurrence of this failure mode — the query reads `recently-added.md` but does not check `wiki/syntheses/` itself. Worth fixing at the query level rather than relying on the human/agent guard each morning.
+
+**Provenance edits:** none. Today's tensions query correctly reported "no contradictions flagged in the 14-day window" from `log.md`'s own accounting, then surfaced three synthesis-level tensions from `recently-added.md` (Headroom compression pipeline position; receipts over compressed cache; agent-emitted vs. human-emitted episodic log authority). All three are already recorded as standing open items and are framed as open empirical questions on their own pages — no page makes an unsupported claim that warrants an `[UNVERIFIED]` marker or a confidence downgrade. Checked [[frameworks/framework-obsidian-wiki]] directly for the standing (B) contradiction: the page makes no `_raw/` mutability claim at all, so there is nothing on it to mark.
+
+**Contradictions flagged:** none new. Still open: **(B)** obsidian-wiki `_raw/` mutation vs. Agentic-KB raw-immutability (2026-06-25, still unadjudicated — needs a design decision, not more evidence); **(D)** embedded-graduation vs. permanent orchestration scope note (2026-08-16). **(C)** compile write-phase root cause is now **closed by observation** — today's run completed the write phase cleanly with credits funded, confirming the credit-exhaustion diagnosis of 2026-08-21.
+
+**Proposals:** `foundry-propose --execute --top 3` wrote **`PROP-160 [HEAVY_BACKLOG]`** (164 deferred > 50 threshold) to `wiki/_meta/proposals.md`. 1 detector fired, 1 new. Ninth-ish consecutive firing of the same detector; with the compile write phase now healthy, the backlog is a genuine finding again rather than a symptom of the block.
+
+**Leverage question:** "Can RLM Stages 1–3 (BM25 fulltext, parallel vector+graph fanout, RRF merging) be implemented to unblock the retrieval pipeline the whole KB depends on?" Distinct from the prior three days' questions, so the stalled-task escalation rule did not fire.
+
+---

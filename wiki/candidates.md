@@ -1,7 +1,7 @@
 ---
 title: Compile Candidates
 type: meta
-updated: 2026-08-22
+updated: 2026-08-24
 ---
 
 # Compile Candidates

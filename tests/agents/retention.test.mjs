@@ -83,6 +83,35 @@ test('runBusTTL skips items with unparseable created_at', () => {
   assert.ok(fs.existsSync(path.join(root, item.path)))
 })
 
+test('runBusTTL sees the oldest items on a channel larger than the list window', () => {
+  // listBusItems sorts newest-first and then truncates to `limit`. runBusTTL
+  // asked for 1000, so on a channel with more than 1000 items it was handed the
+  // newest 1000 — precisely the items that are *not* past TTL — and the genuinely
+  // stale ones at the tail were never even examined. The sweep returned an empty
+  // `archived`, which reads exactly like "nothing was due".
+  const root = makeRoot()
+  const dir = path.join(root, 'wiki', 'system', 'bus', 'discovery')
+  fs.mkdirSync(dir, { recursive: true })
+
+  // Written directly rather than via publishBusItem: id allocation rescans the
+  // directory per publish, which is quadratic at this count.
+  const writeItem = (id, createdAt) =>
+    fs.writeFileSync(
+      path.join(dir, `${id}.md`),
+      serializeFrontmatter({ id, channel: 'discovery', status: 'open', created_at: createdAt }, 'body\n')
+    )
+
+  writeItem('disc-ancient', isoDaysAgo(400))
+  for (let i = 0; i < 1000; i++) writeItem(`disc-fresh-${String(i).padStart(4, '0')}`, isoDaysAgo(0))
+
+  const { archived } = runBusTTL(root, { ttlDays: 30 })
+
+  assert.deepEqual(archived, [`wiki/archive/bus/discovery/${new Date(Date.now() - 400 * 86400000).getFullYear()}/disc-ancient.md`])
+  assert.equal(fs.existsSync(path.join(dir, 'disc-ancient.md')), false)
+  // Every fresh item is left alone.
+  assert.equal(fs.readdirSync(dir).length, 1000)
+})
+
 // ─── working-memory archival ────────────────────────────────────────────
 
 function writeWorkingMemory(root, agentId, name, fm) {

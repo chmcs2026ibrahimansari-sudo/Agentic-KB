@@ -42,9 +42,24 @@ const fmEnd = text.indexOf('\n---', 4)
 const body = fmEnd > 0 ? text.slice(fmEnd + 4) : text
 
 // Parse: lines like "- theme-slug  (1 source: summary-name)"
+//
+// The slug class has to include `/`. compile-2source-gate.mjs writes each theme
+// straight from a wikilink / key_concepts target, and those are routinely
+// namespaced — `concepts/llm-wiki`, `patterns/pattern-fan-out-worker`. Without
+// the slash the capture stopped at `concepts`, `\(` then had to match `/`, the
+// line failed to match and was skipped. Every namespaced candidate was therefore
+// invisible to this script: never tracked, never aged, never expired, and not
+// counted in the "Candidates: N total" line — a clean-looking run that had
+// silently exempted a whole class of candidates from the TTL it exists to apply.
+//
+// Both the parse below and the rewrite filter at the bottom must use this same
+// class: if they disagree, a theme can expire and be archived while its line
+// survives the rewrite, and it is resurrected on the next run.
+const THEME_SLUG = '[a-z0-9][a-z0-9/-]*'
+
 const themes = []
 for (const line of body.split('\n')) {
-  const m = line.match(/^-\s+([a-z0-9][a-z0-9-]*)\s*\((\d+)\s+sources?:\s*(.+)\)/)
+  const m = line.match(new RegExp(`^-\\s+(${THEME_SLUG})\\s*\\((\\d+)\\s+sources?:\\s*(.+)\\)`))
   if (!m) continue
   themes.push({ name: m[1], count: parseInt(m[2], 10), sources: m[3].trim() })
 }
@@ -101,6 +116,10 @@ function writeAtomic(target, content) {
 // and expires again must not overwrite its earlier archive record.
 function writeUniqueArchive(name, content) {
   let target = path.join(ARCHIVE_DIR, `${name}.md`)
+  // A namespaced theme (`concepts/llm-wiki`) archives into a matching
+  // subdirectory. THEME_SLUG excludes `.`, so a name can never contain `..`
+  // and this cannot escape ARCHIVE_DIR.
+  fs.mkdirSync(path.dirname(target), { recursive: true })
   for (let i = 2; i < 1000; i++) {
     try {
       fs.writeFileSync(target, content, { encoding: 'utf8', flag: 'wx' })
@@ -139,7 +158,7 @@ const fmEndIdx = text.indexOf('\n---', 4)
 const fmBlock = fmEndIdx > 0 ? text.slice(0, fmEndIdx + 4) : '---\ntitle: Compile Candidates\ntype: meta\n---'
 const updatedFm = fmBlock.replace(/updated:\s*[\d-]+/, `updated: ${today}`)
 const newBody = body.split('\n').filter(line => {
-  const m = line.match(/^-\s+([a-z0-9][a-z0-9-]*)\s*\(/)
+  const m = line.match(new RegExp(`^-\\s+(${THEME_SLUG})\\s*\\(`))
   return !m || !expired.some(e => e.name === m[1])
 }).join('\n')
 writeAtomic(CANDIDATES, updatedFm + '\n' + newBody.replace(/^\n+/, '\n'))

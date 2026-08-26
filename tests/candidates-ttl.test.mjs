@@ -90,6 +90,39 @@ describe('candidates-ttl', () => {
     assert.match(fs.readFileSync(ARCHIVE('old-theme-2.md'), 'utf8'), /first_seen: 2021-01-01/)
   })
 
+  it('tracks and expires namespaced themes, not just flat slugs', () => {
+    // compile-2source-gate writes each theme straight from a wikilink target, so
+    // `concepts/llm-wiki` is the ordinary shape, not an edge case. The slug class
+    // used to stop at the slash, so every namespaced candidate was skipped: not
+    // counted, not tracked, and permanently exempt from the TTL.
+    writeCandidates([
+      '- concepts/llm-wiki  (1 source: karpathy-llm-wiki-video)',
+      '- flat-theme  (1 source: fresh-note)',
+    ])
+    fs.writeFileSync(
+      TRACKER(),
+      JSON.stringify({ 'concepts/llm-wiki': { first_seen: '2020-01-01' } }, null, 2)
+    )
+
+    const dry = run()
+    assert.match(dry.stdout, /Candidates: 2 total/)
+    assert.match(dry.stdout, /Expired .*: 1/)
+    assert.match(dry.stdout, /concepts\/llm-wiki/)
+
+    run(['--apply'])
+    // Archived under a matching subdirectory rather than crashing on ENOENT.
+    const archived = fs.readFileSync(ARCHIVE(path.join('concepts', 'llm-wiki.md')), 'utf8')
+    assert.match(archived, /first_seen: 2020-01-01/)
+    // The rewrite filter has to recognise the same slug class the parser does,
+    // or the expired line survives and the theme is resurrected next run.
+    const remaining = fs.readFileSync(CANDIDATES(), 'utf8')
+    assert.ok(!remaining.includes('concepts/llm-wiki'))
+    assert.ok(remaining.includes('flat-theme'))
+    const tracker = JSON.parse(fs.readFileSync(TRACKER(), 'utf8'))
+    assert.ok(!tracker['concepts/llm-wiki'])
+    assert.ok(tracker['flat-theme'])
+  })
+
   it('is a no-op without a candidates file', () => {
     fs.rmSync(CANDIDATES())
     const r = run()

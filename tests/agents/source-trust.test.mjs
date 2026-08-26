@@ -65,6 +65,34 @@ test('scoreTrust: contract weight override wins over defaults', () => {
   assert.ok(Math.abs(r.classWeight - 0.5) < 1e-9)
 })
 
+test('scoreTrust: an [UNVERIFIED] marker in the body applies the 0.80 penalty', () => {
+  // The penalty used to be gated on `fm.body`, but `fm` is the frontmatter data
+  // map and the document text is discarded — so the branch was dead. In this
+  // vault `[UNVERIFIED]` is an inline body marker, never a tag, so the penalty
+  // had never applied to anything.
+  const root = makeRoot()
+  const full = path.join(root, 'wiki/concepts/marked.md')
+  fs.mkdirSync(path.dirname(full), { recursive: true })
+  fs.writeFileSync(full, '---\nconfidence: high\n---\n\n- [UNVERIFIED] no source measures this.\n')
+  writePage(root, 'wiki/concepts/clean.md', 'confidence: high')
+
+  const marked = scoreTrust(root, 'wiki/concepts/marked.md')
+  const clean = scoreTrust(root, 'wiki/concepts/clean.md')
+
+  assert.ok(Math.abs(marked.score - clean.score * 0.80) < 1e-9,
+    `expected the marked page to score 0.80x the clean one, got ${marked.score} vs ${clean.score}`)
+  assert.ok(marked.score < clean.score)
+})
+
+test('scoreTrust: [UNVERIFIED] in tags still applies the penalty', () => {
+  const root = makeRoot()
+  writePage(root, 'wiki/concepts/tagged.md', 'confidence: high\ntags: ["[UNVERIFIED]"]')
+  writePage(root, 'wiki/concepts/plain.md', 'confidence: high')
+  const tagged = scoreTrust(root, 'wiki/concepts/tagged.md')
+  const plain = scoreTrust(root, 'wiki/concepts/plain.md')
+  assert.ok(Math.abs(tagged.score - plain.score * 0.80) < 1e-9)
+})
+
 test('frontmatter cache invalidates when the file changes on disk', () => {
   const root = makeRoot()
   const full = writePage(root, 'wiki/concepts/d.md', 'confidence: low')

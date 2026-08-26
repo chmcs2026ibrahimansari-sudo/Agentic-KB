@@ -2012,3 +2012,34 @@ Pages affected: `personal/idea-books-as-agents-author-partnerships.md`
 **Contradictions flagged:** No new Editor contradictions. No `[FRICTION]` blocks found in the changed wiki pages.
 
 **Briefing:** `briefings/2026-08-25.md`.
+
+---
+
+## 2026-08-26 — morning-review-daily
+
+**Trigger:** Scheduled `morning-review-daily`, run manually after the 09:30 automated attempt aborted on a tool-permission error before Step 0.
+
+**Preflight:** exit 0 (clear). API funded, KB web server reachable, `raw/` clean of contact PII. One warning: worktree dirty (`state/notes-to-factory/ledger.md`).
+
+**Morning Review pipeline:** completed, 0 errors. 5 Apple Notes, 2 links crawled, 8 findings, 3 auto-apply / 5 needs-approval. Daily note written to `Daily Notes/2026-08-26.md` plus 5 wiki pages and 2 index pages. No AppleScript timeout (Apple Notes read took 29s, well inside the 60s ceiling). Contradiction detector raised 44 alerts (all vs open findings, 0 vs decisions/assumptions); lifecycle check raised 282 stale alerts (231 action-required).
+
+**Capture:** `sofie-watch-obsidian --once` clean, no new meeting notes. Apple Notes capture SKIPPED — the sole note in `KB Inbox` (`test-capture-2026-05-16`) already exists in `raw/clippings/` **11 times** under 11 different hashes. This confirms the known write-time hash instability; re-capturing would have made it 12. Snipd folder empty. Nothing new staged.
+
+**❌ COMPILE FAILED — nothing promoted.** `scripts/compile-2source-gate.mjs --execute` returned **exit 1** on two consecutive attempts. The reported error, `KB API unreachable at http://localhost:3002 (UND_ERR_SOCKET)`, is misleading: the server was listening and healthy throughout. A direct `POST /api/compile` returns **HTTP 401 — "🔒 Compile requires a valid PIN."** The client mis-renders the 401 stream close as a socket error. Compile requires `AGENTIC_KB_PIN`, which is not available to the scheduled task. The plan phase printed 28 PROMOTE / 164 DEFER / 0 GRADUATE — **none of it was applied.** Not worked around; needs Jay.
+
+**⚠️ Preflight gap identified:** the preflight's KB-server check issues a GET and accepts `405 Method Not Allowed` as healthy. That proves only that the route exists — it cannot detect the PIN requirement that fails every actual POST. The preflight reported "clear" on a run whose compile could not possibly succeed.
+
+**Proposals:** `foundry-propose --execute --top 3` wrote 1 new proposal, **PROP-162 [HEAVY_BACKLOG]** — 164 deferred themes against a threshold of 50.
+
+**Page created:** `[[syntheses/synthesis-promotion-scoring-without-a-judge]]` — bridges the Evaluation MoC (judge/rubric scoring) to the Memory MoC (promotion policy). Argues all six terms of the promotion score formula are provenance metadata, so a well-documented wrong claim clears the `≥ 0.75` canonical gate while a correct single-source claim is deferred. Born `reviewed: false`.
+
+**Contradiction flagged:** `[[mocs/evaluation]]` frames its System Policies section as "Promotion as Eval," asserting the promotion scorer is an inline evaluation mechanism. The new synthesis contests exactly that. A `[FRICTION]` block was added to `mocs/evaluation.md` pointing at the synthesis; **the existing claim was not overwritten.** Resolution requires the 20-page judge-vs-human calibration study proposed in the synthesis.
+
+**Verification pass on the connections query:** of 3 nominated connections, **1 was rejected as already-synthesised** — the verifier↔judge pairing is already covered by `[[syntheses/synthesis-verifier-as-goal-completion-benchmark]]` (2026-08-22). A second (tool permissioning ↔ supervisor-worker) is adjacent to two existing permissions syntheses but distinct; deferred, not drafted. Only the Evaluation↔Memory promotion connection was verified genuinely missing and drafted. This is the third consecutive run where the pre-draft verification guard caught a false nomination.
+
+**Query failures:** the `patterns` query failed on first attempt (`max_tokens`, no text returned after 3 stream retries) and succeeded on an anchored, length-constrained retry. The `tensions` query truncated against the 8192 max_tokens cap mid-answer and returned no complete contradiction list — recorded as a gap, no provenance edits were made on the strength of a truncated answer.
+
+**Self-referential evidence warning:** the patterns query nominated `headroom-compression` (5 citing summaries), `proof-of-work-receipts` (4), and `obsidian-wiki-gate` (4) as ready to graduate. Every citing "summary" is a synthesis authored by this same scheduled task. The recurrence is real; the source independence it implies is not. These need concept pages backed by `raw/` sources, not further syntheses. Noted in the daily note.
+
+**Provenance edits:** none. The tensions query returned truncated and inconclusive, and `wiki/log.md`'s most recent contradiction line reads "None new." Flagging on that basis risked regressing already-resolved work.
+

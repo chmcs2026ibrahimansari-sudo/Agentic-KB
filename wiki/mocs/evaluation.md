@@ -71,6 +71,15 @@ The V2 runtime uses promotion scoring as an inline evaluation mechanism:
 - [[system/policies/freshness-policy]] — Freshness as a quality signal for canonical knowledge
 - [[system/policies/contradiction-policy]] — Contradiction detection as an eval gate before promotion
 
+> **[FRICTION] The "Promotion as Eval" framing above is contested.** [[syntheses/synthesis-promotion-scoring-without-a-judge]] (2026-08-26) argues all six terms of the promotion formula are provenance metadata — none read the claim — so promotion scoring is not an evaluation mechanism in the sense [[concepts/llm-as-judge]] means it. Unresolved; resolution requires the 20-page judge-vs-human calibration study proposed in that synthesis.
+
+---
+
+## Syntheses
+
+- [[syntheses/synthesis-promotion-scoring-without-a-judge]] — Argues the promotion scorer measures how well a claim is documented, never whether it is true, leaving [[concepts/llm-as-judge]] unwired to the canonical gate it was built for
+- [[syntheses/synthesis-verifier-as-goal-completion-benchmark]] — Argues the Plan-Execute-Verify verifier is the runtime implementation of goal-vs-task completion, convertible into a benchmark-design template
+
 ---
 
 ## Key Summaries

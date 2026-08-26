@@ -9,6 +9,12 @@ type: meta
 
 ---
 
+## 2026-08-26 (morning-review-daily)
+
+- [[syntheses/synthesis-promotion-scoring-without-a-judge|Promotion Scoring Measures Everything About a Claim Except Whether It Is True]] — bridges the Evaluation MoC's judge machinery to the Memory MoC's promotion policy: all six terms of the promotion score formula are provenance metadata, so a well-cited wrong claim clears the `≥ 0.75` canonical gate. Proposes a 20-page judge-vs-human calibration study before any formula change.
+
+---
+
 ## 2026-08-25 (morning-review-daily)
 
 - [[syntheses/synthesis-harness-self-improvement-as-memory-promotion|Self-Improving Harnesses Are Memory Promotion Under a Different Name]] — bridges the Orchestration MoC's harness layer to the Memory MoC's policy layer: a harness's failure-trace → edit → regression-test loop is structurally identical to `learned → canonical` promotion, but is missing contradiction blocking, an audit trail, and any decay function. Proposes a `harness` memory class with a half-life keyed to model version.

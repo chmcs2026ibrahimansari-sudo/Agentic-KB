@@ -1996,3 +1996,19 @@ Pages affected: `personal/idea-books-as-agents-author-partnerships.md`
 **Pattern query gap:** the "emerging patterns ready to graduate" query returned empty retrieval on both the initial run and the index/hot-anchored retry. Direct inspection of `wiki/candidates.md` (174 lines) confirms every deferred theme sits at exactly 1 source, so there is genuinely nothing at the 3+-summary threshold. Nothing to graduate.
 
 **Leverage question:** "Does file-based wiki memory (hot-cache + full-wiki) continue to scale, or does it hit a retrieval/context wall forcing hybrid/vector-graph retrieval — and at what threshold?" Related to but distinct from 2026-08-24's RLM Stages 1–3 question; not a 3-day repeat, so no escalation to `proposals.md`.
+
+---
+
+## 2026-08-25 — Agentic-KB Editor Run
+
+**Trigger:** Scheduled `agentic-kb-editor-run` at 06:25 PDT.
+
+**Pages considered:** 30 wiki files changed in the last 24 hours from commits `3ac7375`, `a7adc05`, and `f68aa35`, plus recent `wiki/log.md` entries and `.night-shift/state/editor-state.json`.
+
+**Thread updated:** `[[syntheses/synthesis-harness-self-improvement-as-memory-promotion]]` received a targeted Editor note adding the newly compiled Mission Control pages as the concrete governance implementation of the harness-memory-class idea. The note adds `[[patterns/pattern-factory-learning-loop]]`, `[[patterns/pattern-system-qualification-run]]`, and `[[patterns/pattern-governed-agent-lifecycle]]`, with raw citations to `raw/clippings/2026-08-16T18-28-43__apple-notes__factory-learning-v1-sequencing-and-system-qualification-run__f651153f.md` and `raw/clippings/2026-08-19T00-45-01__apple-notes__mission-control-full-repository-audit-and-e2e-qualification-__cff88980.md`.
+
+**Editorial judgment:** No new synthesis page created. The real multi-source thread was already represented by the 2026-08-25 synthesis; the Editor pass tightened it rather than duplicating it.
+
+**Contradictions flagged:** No new Editor contradictions. No `[FRICTION]` blocks found in the changed wiki pages.
+
+**Briefing:** `briefings/2026-08-25.md`.

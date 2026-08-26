@@ -75,3 +75,13 @@
 - NEAR MISS: first backlog-coverage probe reported all 8 repos MISSING. False — the probe ran from a script file with an unusable PATH, so `git` was not found and every check failed open. Verified by hand: all 8 repos HAVE the file on origin (282 lines total). The seed work order is a whole-file write and would have destroyed all of it. Fix: run coverage probes inline, never from a script file; verify one repo by hand before believing MISSING.
 - RESOLVED since last run: Agentic-KB dirty-worktree deadlock cleared; Agentic-KB main in sync with origin (f9a6f65 no longer unpushed); MissionControl PR #129 and SellerFi PR #203 both merged 2026-08-23T19:09Z; MissionControl worktrees 89 -> 55 externally.
 - Standing: third consecutive zero-work-order run, 72 notes cumulative. Constraint is upstream — Notes is used for thinking and drafting, not ticket filing. Recommend a capture convention or a reframing of success criteria around triage.
+
+## 2026-08-25
+- HARVEST: 8 new notes; 2 empty-body, 3 refused Screen 3 (third-party personal data: p7124/p7122/p7119), 3 read and not code-actionable (p7125/p7120/p7117). 0 ingested. 0 credential-shaped notes fetched.
+- COVERAGE: docs/NIGHTLY-BACKLOG.md verified HAS on origin for all 8 repos (inline probe, explicit PATH). No seed work order.
+- KB: candidates.md all at 1 source, nothing at graduation threshold. action-tracker Open empty. PROP-160/161 read and NOT routed — KB's own detector, gated on PROP-157, Large, already recorded in wiki/_meta/proposals.md.
+- PROPOSAL: "a second clipping writer bypasses clipping-write.mjs dedup" (Agentic-KB) → BACKLOG. sofie-watch-obsidian.mjs does not route through clipping-write.mjs and carries no source-id; 11 duplicate test-capture-2026-05-16 clippings on disk. Not Small; second half is a raw/-immutability call for Jay. Source: KB wiki/log.md 2026-08-25.
+- MERGE: Agentic-KB a147272 (docs-only, backlog persistence not a work order). Revert: git -C /Users/jaywest/Agentic-KB revert -m 1 a147272 && git push
+- WORK ORDERS: 0. Fourth consecutive zero — correct for this input stream, not a shortfall.
+- HYGIENE: 1 worktree created and removed; all 8 repos confirmed at baseline. No pre-existing worktree or branch touched. Other jobs' uncommitted Agentic-KB work left in place.
+- ACTION REQUIRED: p7005 OpenRouter key still live in a note title (4th run unchanged); MissionControl 55 worktrees; raw/-immutability ruling needed on the 11 duplicates.

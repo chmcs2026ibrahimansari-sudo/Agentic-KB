@@ -7,6 +7,9 @@ sources:
   - "[[system/policies/promotion-rules]]"
   - "[[system/policies/freshness-policy]]"
   - "[[frameworks/blume-codes]]"
+  - "[[patterns/pattern-factory-learning-loop]]"
+  - "[[patterns/pattern-system-qualification-run]]"
+  - "[[patterns/pattern-governed-agent-lifecycle]]"
 question: "Are a self-improving harness's scaffolding edits and the memory stack's learned→canonical promotion the same mechanism, and should they share one governance layer?"
 tags: [orchestration, memory, agentic, evaluation, self-improving-harness, knowledge-management]
 created: 2026-08-25
@@ -32,6 +35,14 @@ The [[system/policies/freshness-policy|Freshness Policy]] exposes the second mis
 [[frameworks/blume-codes|Blume]] is the concrete proof that this convergence is already happening in the wild, and that it stops short. Blume mines agent conversation history for recurring correction "signals," clusters them, and proposes rule/skill/hook edits with evidence attached — "in 4 conversations you asked agents to run tests." That evidence count is Rule 3's recurrence test (`insight recurred in 2+ sessions`) and Rule 4's `evidence_count ≥ 2` reimplemented independently, in a different codebase, with a different threshold and no vocabulary in common. Blume also gates on human preview-and-approve, which is Rule 5's treatment of personal-preference items — and note that Blume's signals are almost entirely personal preferences, the exact class Promotion Rules says "cannot auto-promote to canonical via the scorer alone." Blume built the right gate by instinct and has no way to say so in the KB's terms.
 
 The practical consequence: the KB should treat harness scaffolding as a memory class, not a separate artifact type. A harness edit gets `created_by`, `created_at`, `confidence`, `sources` (the failure traces), a class, a half-life, and a contradiction pre-check. The immediate payoff is that scaffolding stops being write-only.
+
+## Editor note — Mission Control makes the governance gate concrete
+
+The 2026-08-25 Editor pass adds one important constraint from the newly compiled Mission Control pages: the `harness` memory class should not promote learning signals directly into configuration. [[patterns/pattern-factory-learning-loop]] gives the operational sequence — signals → clustering → improvement candidates → human review → governed experiment → promotion recommendation — and its source note explicitly hardens the loop so it "can't self-authorize," "can't directly mutate governance," and "can't bypass verification" (`raw/clippings/2026-08-16T18-28-43__apple-notes__factory-learning-v1-sequencing-and-system-qualification-run__f651153f.md`). That is not just another example of self-improvement; it is the missing authorization boundary between observation and durable write.
+
+[[patterns/pattern-system-qualification-run]] supplies the verification side of the same boundary. Its qualification scenario forces a single Mission through the full pipeline — Mission → Plan → Factory Version → Context Package → execution Attempt → independent verification Attempt → receipts → human acceptance → Factory Learning signal → improvement candidate → experiment proposal — then injects faults, including a candidate/PR-head mismatch, verification failure, context miss, sandbox orphan, and an Improvement Candidate that cannot change production/config without a governed WorkOrder. That makes the regression gate broader than the generic [[concepts/self-improving-harness]] page: the test is not "did this edit pass a benchmark," it is "did the factory preserve authority, lineage, verification, and rollback invariants across subsystem boundaries."
+
+[[patterns/pattern-governed-agent-lifecycle]] generalizes the same shape at the product level: Constitution → Mission → Specification → Plan → WorkOrder → Context → Execution → Independent Verification → PR → Human Acceptance → Factory Learning. The raw audit directive states the operating principles directly: "Humans retain consequential authority," "Agents execute bounded work," and "Agent completion does not equal verified success" (`raw/clippings/2026-08-19T00-45-01__apple-notes__mission-control-full-repository-audit-and-e2e-qualification-__cff88980.md`). Net update to this synthesis: the proposed `harness` memory class needs two gates, not one — a **learning-to-candidate** gate that clusters signals, and a **candidate-to-config** gate that requires WorkOrder authorization, independent verification, receipts, and human acceptance before any durable harness/config mutation.
 
 ## Evidence
 
@@ -79,3 +90,8 @@ The mechanisms are the same and the KB should say so, but the correct move is no
 - [[frameworks/blume-codes]]
 - [[mocs/orchestration]]
 - [[mocs/memory]]
+- [[patterns/pattern-factory-learning-loop]]
+- [[patterns/pattern-system-qualification-run]]
+- [[patterns/pattern-governed-agent-lifecycle]]
+- `raw/clippings/2026-08-16T18-28-43__apple-notes__factory-learning-v1-sequencing-and-system-qualification-run__f651153f.md`
+- `raw/clippings/2026-08-19T00-45-01__apple-notes__mission-control-full-repository-audit-and-e2e-qualification-__cff88980.md`

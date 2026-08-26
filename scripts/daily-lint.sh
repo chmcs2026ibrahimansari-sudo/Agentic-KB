@@ -37,12 +37,28 @@ mkdir -p "${REPO}/logs"
 # through and silently produced no commit at all, which is precisely the failure
 # the heartbeat exists to make visible.
 COMMITTED=""
+
+# A second writer pushed to main between runs on 2026-08-26 and the daily push
+# died on a non-fast-forward, which would have silently broken the heartbeat for
+# every run after it. Our commit is always a single report-or-marker commit, so
+# rebasing it onto whatever landed remotely is safe and mechanical. One retry,
+# never a force-push: if the rebase itself conflicts, that needs a human.
+push_main() {
+  git push -q origin main 2>/dev/null && return 0
+  echo "push rejected — rebasing onto origin/main and retrying"
+  if ! git pull --rebase --autostash -q origin main 2>&1; then
+    git rebase --abort 2>/dev/null || true   # also restores the autostash
+    return 1
+  fi
+  git push -q origin main 2>/dev/null
+}
+
 on_exit() {
   local rc=$?
   if [ -z "$COMMITTED" ]; then
     echo "ALERT: script exited (rc=${rc}) before committing — writing marker"
     git commit -q --allow-empty -m "chore: daily wiki lint $(date +%F) — SKIPPED (script aborted, rc=${rc})" 2>/dev/null \
-      && git push -q origin main 2>/dev/null \
+      && push_main \
       && echo "pushed marker: $(git log -1 --format=%h)"
   fi
 }
@@ -101,9 +117,10 @@ commit_and_push() {
   [ "$mode" = "empty" ] && git commit -q --allow-empty -m "$msg"
   COMMITTED=1   # disarms the EXIT-trap heartbeat
 
-  if git push -q origin main 2>&1; then
+  if push_main; then
     echo "pushed: $(git log -1 --format=%h) $msg"
   else
+    alert "push failed even after rebase onto origin/main — resolve manually"
     echo "PUSH FAILED (not force-pushing; resolve manually): $msg"
   fi
 }

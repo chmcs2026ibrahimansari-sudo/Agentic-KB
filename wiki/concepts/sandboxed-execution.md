@@ -14,6 +14,7 @@ related:
   - "[[concepts/guardrails]]"
   - "[[concepts/agent-failure-modes]]"
   - "[[concepts/permission-modes]]"
+  - "[[syntheses/synthesis-sandbox-safety-is-policy-not-place]]"
 status: evolving
 ---
 
@@ -63,6 +64,7 @@ Thread-scoped sandboxes are automatically destroyed after a configurable TTL, pr
 - [[summaries/huggingface-agent-intrusion-technical-timeline]] provides an incident-backed cautionary case for sandbox escape and lateral movement.
 
 ## Related
+- [[syntheses/synthesis-sandbox-safety-is-policy-not-place]] — Editor synthesis framing sandbox safety as a policy boundary across credentials, egress, approvals, and traces
 - [[concepts/guardrails]] — rate limiting and middleware complement sandbox isolation
 - [[concepts/permission-modes]] — permission layers operate above the sandbox boundary
 - [[concepts/agent-failure-modes]] — sandbox escapes and resource exhaustion are production failure modes

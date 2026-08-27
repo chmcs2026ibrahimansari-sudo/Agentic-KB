@@ -9,6 +9,12 @@ type: meta
 
 ---
 
+## 2026-08-27 (agentic-kb-editor-run)
+
+- [[syntheses/synthesis-sandbox-safety-is-policy-not-place|A Sandbox Is a Policy Boundary, Not a Place to Run Code]] — bridges OpenSandbox Credential Vault/default-deny egress, DeepAgents remote/managed runtimes, and the Hugging Face agent-intrusion incident. The takeaway: sandbox safety is the policy envelope around credentials, network, approvals, file transfer, and traces — not merely an isolated place to execute code.
+
+---
+
 ## 2026-08-27 (morning-review-daily)
 
 - [[syntheses/synthesis-failure-escalation-as-mistake-log-trigger|The Mistake Log Only Records Failures a Human Noticed]] — bridges the Orchestration MoC's GSD escalation rule ("3 failed fix attempts → document and move on") to the Memory MoC's [[patterns/pattern-mistake-log]]: the log's write-trigger is a user correction, so self-detected fix-loop abandonment and silent refusals never reach it. Leaves the sink question (mistake-log vs. [[patterns/pattern-episodic-judgment-log]]) explicitly open.

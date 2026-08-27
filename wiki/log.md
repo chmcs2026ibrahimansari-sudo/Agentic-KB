@@ -2123,3 +2123,19 @@ Pages affected: `personal/idea-books-as-agents-author-partnerships.md`
 **Contradictions flagged:** None new.
 
 **Guards honored:** no pages deleted; no `reviewed:` flag flipped; no writes to the personal Obsidian vault outside today's daily note; pre-commit PII guard not bypassed.
+
+---
+
+## 2026-08-27 — Agentic-KB Editor Run
+
+**Trigger:** Scheduled `agentic-kb-editor-run` at 06:25 PDT.
+
+**Pages considered:** 35 wiki files changed in the last 24 hours from commits `dddf9ae`, `1cd501e`, and `4f9500d`, plus recent `wiki/log.md` entries and `.night-shift/state/editor-state.json`.
+
+**Synthesis created:** `[[syntheses/synthesis-sandbox-safety-is-policy-not-place]]` — bridges OpenSandbox Credential Vault/default-deny egress, the Hugging Face agent-intrusion incident, DeepAgents `dcode` remote sandboxes, Managed Deep Agents runtime boundaries, [[patterns/pattern-credential-gateway]], [[patterns/pattern-backend-sandbox-separation]], and [[concepts/agent-observability]]. The editorial position is that a sandbox is not safety by itself; the credential, egress, approval, file-transfer, and trace policies around it are the safety boundary.
+
+**Backlinks / index:** `[[concepts/sandboxed-execution]]` now links to the new synthesis; `[[wiki/index]]` synthesis count updated 41→42; `[[wiki/recently-added]]` has an Editor Run entry.
+
+**Contradictions Jay should resolve:** no new Editor contradiction. Carry-forward from the 2026-08-26 morning run: `[[mocs/evaluation]]` contains a `[FRICTION]` block contesting its "Promotion as Eval" framing via `[[syntheses/synthesis-promotion-scoring-without-a-judge]]`.
+
+**Briefing:** `briefings/2026-08-27.md`.

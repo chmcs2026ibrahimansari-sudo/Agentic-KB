@@ -85,3 +85,32 @@
 - WORK ORDERS: 0. Fourth consecutive zero — correct for this input stream, not a shortfall.
 - HYGIENE: 1 worktree created and removed; all 8 repos confirmed at baseline. No pre-existing worktree or branch touched. Other jobs' uncommitted Agentic-KB work left in place.
 - ACTION REQUIRED: p7005 OpenRouter key still live in a note title (4th run unchanged); MissionControl 55 worktrees; raw/-immutability ruling needed on the 11 duplicates.
+
+## 2026-08-25 (addendum — Jay-directed, same day)
+- CONTEXT: Jay asked what was committed today and asked for more daily throughput. Fleet committed 20 times; this job 2 (docs only).
+- FINDING: at least 4 scheduled jobs shared the git author "Jay West (notes-to-factory)". The 06:10, 07:06, 22:45-23:17 commits carried this job's name and were not its work. `git log --author` could not answer Jay's question.
+- SKILL CHANGE 1: added Phase 2e — drain existing backlogs when the harvest yields <2 work orders. Target 1-3/run. Merge gate UNCHANGED. Agentic-KB Open items noted as all-Large; real Small stock is in Agentic-Pi-Harness and hermes-harness-missioncontrol.
+- SKILL CHANGE 2: git identity is now `notes-to-factory <jaydubya818+notes-to-factory@gmail.com>`. Other jobs still need the same treatment.
+- SKILL CHANGE 3: recorded that NODE_ENV=production is exported globally, so plain `npm ci` yields no node_modules/.bin and test steps fail with "vitest: command not found". Use `NODE_ENV=development npm ci --include=dev`. Other nightly jobs may be silently running dev-dep-free installs with non-functioning test gates.
+- DRAIN #1: Agentic-Pi-Harness 9e4db95 — metrics.json now canonical-sorted. Full gate met with observed evidence: identical counters in opposite increment orders now produce byte-identical output (cmp exit 0, matching sha256), pre-change control differs at char 11. Suite 373 -> 374 pass. Backlog item moved Open -> Closed. Revert: git -C /Users/jaywest/Agentic-Pi-Harness revert -m 1 9e4db95 && git push
+- UNFILED, for next run: Agentic-Pi-Harness writes metrics.json as a bare counters record while src/schemas/metricsSnapshot.ts defines {schemaVersion, sessionId, counters, capturedAt}. Real discrepancy, deliberately not folded into the drain, not yet in any backlog.
+
+## 2026-08-26 (scheduled 08:20 PDT)
+
+- 2026-08-26 — preflight — HALT absent; disk 45 GiB free (95% used, down 29 GiB in a day, still above the 30 GiB wave-split threshold); backlog coverage re-derived against origin, 8/8 HAS.
+- 2026-08-26 — harvest — 6 notes in window, 0 ingested, 0 work orders. Fifth consecutive zero harvest and correct each time.
+- 2026-08-26 — p7169 — SKIP — Screen 2, body is two LinkedIn short-links, ~55 bytes of plaintext.
+- 2026-08-26 — p7168 — REFUSE — Screen 3, draft message addressed to a named recruiter. Not fetched.
+- 2026-08-26 — p7124 — REFUSE — Screen 3, re-modified in window, disposition unchanged from prior run.
+- 2026-08-26 — p7167 — NOT_ACTIONABLE — 23 KB interview debrief naming a third party throughout.
+- 2026-08-26 — p7134 — NOT_ACTIONABLE — verbatim Adobe job description.
+- 2026-08-26 — p7120 — NOT_ACTIONABLE — re-read in full after a 15:55Z re-modification; conceptual harness-vs-factory explainer written for a personal, non-repo purpose [personal context redacted per PII guard]. No request, no repo reference, no defect claim.
+- 2026-08-26 — Phase 2e engaged (harvest under 2 work orders). Drained hermes-harness-missioncontrol; Twinz `## Open` is genuinely empty, Agentic-Pi-Harness deliberately skipped (three unmerged nightly branches whose own merge note tells later runs to stack rather than branch from main).
+- 2026-08-26 — hermes-harness-missioncontrol — IMPLEMENT → MERGED `62369e1` — console "Execute current step" / "Mark step complete" gated on the current step via a new tested `isCurrentStepActionable` in api.ts, following the 2026-08-25 `isStepRetryable` precedent. Full gate: typecheck 0, no lint script exists, suite 271→275 13/13, build 0, failing-then-passing verified red, acceptance evidence observed, fresh clone clean. Source: backlog 2026-08-26.
+- 2026-08-26 — hermes-harness-missioncontrol — IMPLEMENT → PR #19 — hydration normalization of legacy persisted runs (closes 2026-08-21 timestamps + 2026-08-23 artifact dedupe). Gate green, 271→272, both halves of acceptance evidence observed (200-stale → 201-new on an id-less artifact POST). Not merged: the fix made an existing test fail — the one pinning the closed 2026-08-21 date-filter item — because `run.updated_at` is now always populated and `inDateRange`'s no-value branch became unreachable. Retiring an assertion that pins an earlier closed finding is a human call. Merge-gate condition 6 doing its job.
+- 2026-08-26 — hermes-harness-missioncontrol — BACKLOG (annotated, merged `dd0fd3f`) — `safeRelativePath` `.` normalization. Its only consumer is `assertAllowedRepoWrite`, a write-authorization gate → unconditionally on the auto-merge exclusion list. Separately, naive `..` stripping would loosen the gate (`a/../../etc` → `a/etc`). Both reasons written into the entry so no later run re-derives them or plans an auto-merge that cannot happen.
+- 2026-08-26 — hermes-harness-missioncontrol — BACKLOG — approvals `actor` filter. Self-declared blocked on a design decision. Phase 2e rule 3.
+- 2026-08-26 — Agentic-Pi-Harness — BACKLOG — `SessionMetricsSchema` has no producer or consumer. Self-declared blocked: wants a ruling on whether `metrics.json` is Tier A contract surface.
+- 2026-08-26 — Agentic-Pi-Harness — NOT_APPLICABLE (this run) — persist `LoopResult.sanitizations`. Viable, but landing it means stacking on an unmerged nightly branch, i.e. gating against unreviewed code.
+- 2026-08-26 — hygiene — 5 worktrees created, 5 removed, count returned to baseline 1; `/tmp/ntf` deleted. No pre-existing worktree or branch pruned. `origin/nightly/2026-08-26-improvements` left untouched.
+- 2026-08-26 — 1 subagent dispatched, 1 returned. Nothing silently dropped.

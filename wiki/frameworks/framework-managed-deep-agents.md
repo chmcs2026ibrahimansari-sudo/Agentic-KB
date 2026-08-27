@@ -4,10 +4,10 @@ title: "Managed Deep Agents (LangChain)"
 type: framework
 tags: [frameworks, agents, deployment, orchestration, mcp]
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-27
 visibility: public
 confidence: high
-source: docs-langchain-com-langsmith-python-managed-deep-agents-overview
+source: [[summaries/docs-langchain-com-langsmith-python-managed-deep-agents-overview]]
 related: [deep-agents-harness, agent-loops, agent-layer-architecture]
 ---
 
@@ -42,6 +42,7 @@ Developers write the agent's intelligence; MDA supplies the [Deep Agents harness
 - No information in this source on how skills are selected/ranked at runtime, or how subagent delegation is scoped — flagged as open questions for a future source.
 
 ## See Also
+- [[summaries/docs-langchain-com-langsmith-python-managed-deep-agents-overview]]
 - [Deep Agents Harness](../concepts/deep-agents-harness.md)
 - [Agent Loops](../concepts/agent-loops.md)
 - [Agent Layer Architecture](../concepts/agent-layer-architecture.md)

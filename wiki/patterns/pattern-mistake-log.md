@@ -21,6 +21,7 @@ related:
   - [[patterns/pattern-episodic-judgment-log]]
   - [[concepts/memory-systems]]
   - [[concepts/agent-failure-modes]]
+  - [[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]]
 ---
 
 # Pattern: Mistake Log

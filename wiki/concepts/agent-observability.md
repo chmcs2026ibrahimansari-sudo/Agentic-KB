@@ -6,8 +6,9 @@ tags: [agentic, observability, production, monitoring, debugging]
 confidence: medium
 sources:
   - [[summaries/19-oss-agent-repos-curated]]
+  - [[summaries/huggingface-agent-intrusion-technical-timeline]]
 created: 2026-04-07
-updated: 2026-04-07
+updated: 2026-08-27
 related:
   - [[concepts/agent-failure-modes]]
   - [[concepts/human-in-the-loop]]
@@ -26,7 +27,7 @@ Unlike stateless API calls, agents execute multi-step, often branching workflows
 ## Core Dimensions
 
 ### 1. Session Replay
-Full reconstruction of an agent's execution trace: every LLM call, tool invocation, input/output, and branching decision. Enables post-hoc debugging of unexpected behaviors.
+Full reconstruction of an agent's execution trace: every LLM call, tool invocation, input/output, and branching decision. Enables post-hoc debugging of unexpected behaviors. The Hugging Face July 2026 intrusion is a high-stakes example: defenders reconstructed about 17,600 source-reported agent actions across shell commands, payloads, platform logs, Kubernetes events, and dead-drop channels. Observability for agents needs action-level traces and cross-system correlation, not just aggregate success/failure counters. See [[summaries/huggingface-agent-intrusion-technical-timeline]].
 
 ### 2. Cost Tracking
 Token usage and API cost attribution per step, per session, per agent. Critical for production cost control and identifying runaway loops.

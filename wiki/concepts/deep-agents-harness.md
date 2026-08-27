@@ -4,10 +4,10 @@ title: "Deep Agents Harness"
 type: concept
 tags: [agents, orchestration, architecture, tools, memory]
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-27
 visibility: public
 confidence: high
-source: docs-langchain-com-langsmith-python-managed-deep-agents-overview
+source: [[summaries/docs-langchain-com-langsmith-python-managed-deep-agents-overview]]
 related: [framework-managed-deep-agents, agent-loops, agent-memory-architecture]
 ---
 
@@ -33,6 +33,7 @@ From the source, a research-assistant agent is composed of:
 The harness is what actually runs this composition as a live agent loop — deciding when to invoke the skill, call the tool, or delegate — while the developer only declared the pieces.
 
 ## See Also
+- [[summaries/docs-langchain-com-langsmith-python-managed-deep-agents-overview]]
 - [Managed Deep Agents (LangChain)](../frameworks/framework-managed-deep-agents.md)
 - [Agent Loops](agent-loops.md)
 - [Agent Memory Architecture](agent-memory-architecture.md)

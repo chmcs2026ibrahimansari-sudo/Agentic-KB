@@ -4,11 +4,11 @@ title: "Credential Gateway Pattern"
 type: pattern
 tags: [agents, tools, safety, mcp, architecture]
 created: 2026-07-23
-updated: 2026-07-23
+updated: 2026-08-27
 visibility: public
 confidence: medium
 related: [concepts/agent-observability, concepts/agent-failure-modes]
-source: x-twitter-2075854920738021682.md
+source: [[summaries/x-twitter-2075854920738021682]], [[summaries/opensandbox-group-OpenSandbox]]
 ---
 
 # Credential Gateway Pattern
@@ -33,6 +33,8 @@ OOMOL's **OpenConnector** is an open-source, self-hostable implementation of thi
 
 OpenConnector advertises MCP-native support and integration with 1,000+ apps, letting teams route agent tool calls through a credential-holding gateway rather than distributing raw keys into agent configs or prompts. This is conceptually adjacent to Hermes MCP's tool credential isolation approach and to "MissionControl"-style human approval boundaries, both of which aim to keep destructive or sensitive actions gated behind a control layer rather than embedded directly in agent context.
 
+OpenSandbox's Credential Vault is a sandbox-level variant: the host writes real credentials to an egress sidecar while the sandbox sees fake or empty credential values; matching outbound HTTPS requests receive injected auth headers or scoped substitutions. This keeps real secrets out of sandbox environment variables, files, command lines, and logs, but makes the sidecar and outbound policy part of the trust boundary. See [[summaries/opensandbox-group-OpenSandbox]].
+
 ## Trade-offs
 **Pros:**
 - Removes raw secrets from agent context/prompts, reducing leak surface (prompt injection, log exposure, model output leakage).
@@ -51,5 +53,6 @@ OpenConnector advertises MCP-native support and integration with 1,000+ apps, le
 - MCP-based tool mediation layers
 
 ## See Also
+- [[summaries/opensandbox-group-OpenSandbox]]
 - [agent-observability](../concepts/agent-observability.md)
 - [agent-failure-modes](../concepts/agent-failure-modes.md)

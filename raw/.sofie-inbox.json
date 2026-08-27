@@ -1,0 +1,14 @@
+{
+  "pending": [
+    {
+      "id": "sofie-1787835842688",
+      "timestamp": "2026-08-27T13:04:02.688Z",
+      "type": "ingest-complete",
+      "summary": "1 daily note ingested",
+      "files": [
+        "obsidian-2026-04-21-2026-03-24.md"
+      ],
+      "action": null
+    }
+  ]
+}

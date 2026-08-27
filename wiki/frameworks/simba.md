@@ -4,11 +4,11 @@ title: "Simba (Eval-First Customer Service Assistant)"
 type: framework
 tags: [rag, evaluation, tools, deployment, automation]
 created: 2026-08-18
-updated: 2026-08-18
+updated: 2026-08-27
 visibility: public
 confidence: medium
-related: [agent-evaluation]
-source: https://x.com/GithubProjects/status/2087607558626582741
+related: [agent-evaluation, rag-systems]
+source: [[summaries/x-twitter-2087607558626582741]], [[summaries/opensourceprojects-dev-post-simba]]
 ---
 
 # Simba (Eval-First Customer Service Assistant)
@@ -34,10 +34,12 @@ Useful as a reference implementation or starting point when building a customer-
 
 ## Limitations
 
-- Source information comes from a single promotional social post (low editorial detail); no benchmark numbers, architecture diagrams, or independent evaluation of claims are available yet.
+- Initial source information came from a single promotional social post; [[summaries/opensourceprojects-dev-post-simba]] adds more concrete architecture details (`simba-core`, Next.js dashboard, `simba-chat-widget`, Docker CPU/GPU setup), but the primary GitHub README/docs still need ingestion before raising confidence.
 - Unclear how the evaluation metrics are computed, what datasets/harnesses are used, or how it compares to other eval-first RAG frameworks.
 - Flagged for follow-up: mine for eval-first RAG/customer-service pipeline patterns as more source material becomes available.
 
 ## See Also
+- [[summaries/x-twitter-2087607558626582741]]
+- [[summaries/opensourceprojects-dev-post-simba]]
 - [agent-evaluation](../concepts/agent-evaluation.md)
 - [agent-evaluation-gaming](../concepts/agent-evaluation-gaming.md)

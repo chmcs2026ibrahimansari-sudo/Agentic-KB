@@ -8,7 +8,7 @@ language: any
 license: open-source
 github: "https://github.com/modelcontextprotocol/typescript-sdk"
 tags: [mcp, anthropic, tool-use, agentic, extensibility, integration]
-last_checked: 2026-04-04
+last_checked: 2026-08-27
 jay_experience: moderate
 ---
 
@@ -117,6 +117,10 @@ Register [[mcp-ecosystem]] servers in `~/.claude/mcp_servers.json` (global) or `
 - **Versioning complexity**: server API changes can silently break agent behavior
 - **Security surface**: each server is an attack surface; malicious tool results can contain prompt injections
 - **stdio limitation**: local stdio servers aren't horizontally scalable; HTTP servers add deployment complexity
+
+### 2026 social-source production/security lead
+
+[[summaries/x-twitter-2088713006095994930]] is a low-confidence social capture that frames production MCP around auth, validation of model-generated tool inputs, least privilege, rate limiting, invocation logging, and precise tool descriptions. It also claims a July 28, 2026 stateless-core/extension/Enterprise Managed Authorization revision; do not treat that as canonical until primary MCP spec/docs are captured.
 
 ---
 
@@ -311,3 +315,4 @@ Jay runs several [[mcp-ecosystem]] servers including his [[llm-wiki]] KB server 
 - [[entities/mcp-ecosystem]]
 - [[entities/anthropic]]
 - [[recipes/recipe-mcp-server]]
+- [[summaries/x-twitter-2088713006095994930]] — social-source lead; spec/adoption claims need primary-source verification.

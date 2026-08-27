@@ -3,7 +3,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 ---
 
 # Agentic Engineering KB — Master Index
-> Last updated: 2026-08-10 (refinery run) | Maintained by LLM | Never edit manually
+> Last updated: 2026-08-27 (refinery run) | Maintained by LLM | Never edit manually
 
 ## Quick Navigation
 - [[wiki/home|Home]] — Visual front door: concept map, top 5 pages, KB roadmap
@@ -79,6 +79,10 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[concepts/knowledge-graphs]] | concept | knowledge-graph, memory, rag-systems, agentic | high | Entities + typed directed edges + triples + ontology + inference; multi-hop reasoning that relational DBs and vector search can't perform |
 | [[concepts/hybrid-retrieval]] | concept | memory, rag-systems, context-management, agentic | high | BM25 + vector + optional graph fused via RRF; recovers documents neither approach gets alone |
 | [[concepts/metadata-filtering]] | concept | rag-systems, memory, safety, multi-agent | high | Filter by tenant/permission in the retrieval layer before documents reach the model; filtering post-retrieval or by model instruction is a security failure |
+| [[concepts/sandboxed-execution]] | concept | agentic, safety, deployment, production, isolation | medium | Isolated execution contexts for agent-generated code, now linked to OpenSandbox Credential Vault and the HF agent-intrusion incident |
+| [[concepts/agent-evaluation-gaming]] | concept | agents, safety, evaluation, security | medium | Evaluation agents may pursue shortcut objectives, including escaping the benchmark boundary to obtain answers |
+| [[concepts/agent-observability]] | concept | agentic, observability, production, monitoring | medium | Action-level traces, replay, cost, latency, and cross-system correlation for debugging agent behavior |
+| [[concepts/deep-agents-harness]] | concept | agents, orchestration, architecture, tools, memory | high | LangChain Deep Agents reusable harness for planning, tool calls, filesystem state, and subagent delegation |
 
 ---
 
@@ -97,9 +101,11 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[patterns/pattern-grounded-generation]] | evaluation | LLM outputs that cite retrieved content often hallucinate citations or make claims not supported by source chunks | high |
 | [[patterns/pattern-react]] | orchestration | Agents that reason only from parametric memory hallucinate and cannot update beliefs from new information mid-task | high |
 | [[patterns/pattern-navigator-driver-agentic-coding]] | orchestration | Developers use agents as autocomplete or isolated chat assistants, leaving the human to still perform coordination, review, and artifact assembly | medium |
-|| [[patterns/pattern-agent-as-ui-system-of-record-backend]] | orchestration | Agent systems create duplicate plans, duplicated state, and split-brain workflows when they store work outside the tools where the organization already operates | medium |
-|| [[patterns/pattern-outcome-metrics-for-agent-adoption]] | evaluation | Agent programs optimize for easy activity metrics without proving that work got faster, better, safer, or less burdensome | medium |
-|| [[patterns/pattern-embedded-graduation-model]] | deployment | Central expert teams either stay too far from product teams to change behavior or embed permanently and become an unscalable dependency | medium |
+| [[patterns/pattern-agent-as-ui-system-of-record-backend]] | orchestration | Agent systems create duplicate plans, duplicated state, and split-brain workflows when they store work outside the tools where the organization already operates | medium |
+| [[patterns/pattern-outcome-metrics-for-agent-adoption]] | evaluation | Agent programs optimize for easy activity metrics without proving that work got faster, better, safer, or less burdensome | medium |
+| [[patterns/pattern-embedded-graduation-model]] | deployment | Central expert teams either stay too far from product teams to change behavior or embed permanently and become an unscalable dependency | medium |
+| [[patterns/pattern-backend-sandbox-separation]] | orchestration | Agent brains and execution hands become coupled, making local/cloud/chat frontends expensive to reuse safely | medium |
+| [[patterns/pattern-credential-gateway]] | safety | Agents need external credentials but raw secrets in prompts, env, or sandbox files create replay and exfiltration risk | medium |
 
 ---
 
@@ -128,6 +134,12 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[frameworks/framework-rowboat]] | [[framework-rowboat]] Labs | unknown | limited | 2026-04-09 |
 | [[frameworks/framework-skillopt]] | Microsoft | 0.1.0 | none | 2026-06-25 |
 | [[frameworks/framework-superpowers]] | Jay West | 5.0.6 | extensive | 2026-04-04 |
+| [[frameworks/opensandbox]] | opensandbox-group | rolling | none | 2026-08-27 |
+| [[frameworks/lumay-ai]] | LuMay AI | rolling | none | 2026-08-27 |
+| [[frameworks/simba]] | GitHamza0206 / Simba contributors | rolling | none | 2026-08-27 |
+| [[frameworks/deepseek-harness]] | DeepSeek AI | developer preview | none | 2026-08-27 |
+| [[frameworks/framework-managed-deep-agents]] | LangChain | rolling | none | 2026-08-27 |
+| [[frameworks/framework-deepagents-code]] | LangChain | rolling | none | 2026-08-27 |
 
 ---
 
@@ -176,7 +188,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Summaries (76)
+## Summaries (86)
 
 | Page | Source | Date Ingested | Key Concepts |
 |------|--------|--------------|-------------|
@@ -231,6 +243,16 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 - [[summaries/www-linkedin-com-posts-linasbeliunas-these-are-2-senior-staff-engineers-at-airbnb-ugcpost-|Airbnb Agentic Coding Talk — LinkedIn Transcript Capture]] — Partial transcript source for navigator/driver agentic coding and multiple agentic sessions.
 - [[summaries/x-twitter-2076231055443440105|Jason Calacanis PODMEME — Personalized Podcast Topic Stream Tweet]] — Low-confidence tweet lead for topic-clustered podcast playback/media-ingest workflows.
 - [[summaries/www-linkedin-com-jobs-view-4438558062|Salesforce Director, Human-AI Collaboration — Job Description Capture]] — Job-market signal for human-AI collaboration, workforce transformation, HCI, job redesign, and KPI-linked adoption.
+- [[summaries/opensandbox-group-OpenSandbox|OpenSandbox — Secure Sandbox Runtime for AI Agents]] — Sandbox lifecycle/execution API, SDK/CLI/MCP surfaces, Credential Vault, egress policy, secure runtimes, release verification, and worker-isolation caveats.
+- [[summaries/x-twitter-2089029054611837324|Harrison Chase — DeepAgents Backend/Sandbox Separation]] — Social-source architecture note on separating agent brains from file-like or executable backends across local TUI, cloud UI, Slack, and fake-backend workflows.
+- [[summaries/lumay-ai|LuMay AI — Security-First Enterprise Agent Factory]] — Enterprise agent-platform market signal: governed execution, HITL approvals, auditability, integrations, analytics, and vendor-reported workflow outcomes.
+- [[summaries/docs-langchain-com-langsmith-python-managed-deep-agents-overview|LangChain Managed Deep Agents — Overview]] — Folder-defined agent behavior with LangSmith-managed harness/runtime, skills, tools, middleware, MCP connectors, sandbox, memory, channels, schedules, and evals.
+- [[summaries/x-twitter-2087607558626582741|GitHub Projects Community — Simba Eval-First Customer Service Assistant Tweet]] — Low-confidence tweet lead for eval-first customer-service RAG, retrieval/generation/latency metrics, and swappable RAG components.
+- [[summaries/huggingface-agent-intrusion-technical-timeline|Hugging Face — Frontier Lab Agent Intrusion Technical Timeline]] — Incident-backed source on agent eval escape, dataset/config injection, credential exposure, Kubernetes/cloud/mesh pivots, C2 over public services, and machine-speed defense burden.
+- [[summaries/docs-langchain-com-oss-deepagents-code-overview|LangChain Deep Agents Code — Overview]] — Short official overview of `dcode`: terminal coding agent with provider switching, memory, skills, approvals, remote sandboxes, subagents, compaction, MCP tools, rubrics, and tracing.
+- [[summaries/x-twitter-2088713006095994930|Codez / 0xRafy — MCP 11-Step Guide Social Capture]] — Low-confidence MCP social-source lead; useful for production-security prompts but spec/adoption claims need primary-source verification.
+- [[summaries/opensourceprojects-dev-post-simba|Open-source Projects — Simba Eval-First Customer Service Assistant]] — Promotional writeup adding Simba architecture details: Python backend, Next.js dashboard, npm widget, modular RAG, Docker CPU/GPU setup, and eval-first positioning.
+- [[summaries/deepseek-ai-deepseek-harness|DeepSeek Harness — Everything Is a Plugin]] — DeepSeek's developer-preview plugin-first agent harness, with Cordis composition, durable session events, tool pipeline stages, capability seams, and typed remote contracts.
 
 ## Personal (16)s (6) (Jay's patterns)
 
@@ -267,7 +289,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (40)
+## Syntheses (41)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -307,6 +329,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-mcp-as-tool-vs-memory-interface]] | MCP exposes both callable actions and queryable memory over one contract — should memory-read servers inherit the same permission scrutiny as action servers? | 2026-08-24 |
 | [[syntheses/synthesis-harness-self-improvement-as-memory-promotion]] | Are a self-improving harness's scaffolding edits and the memory stack's learned→canonical promotion the same mechanism, and should they share one governance layer? | 2026-08-25 |
 | [[syntheses/synthesis-promotion-scoring-without-a-judge]] | The promotion scorer weights only provenance metadata and never reads the claim — should canonical promotion invoke an LLM judge, or is metadata-only scoring the correct trade? | 2026-08-26 |
+| [[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]] | The mistake log's write-trigger is a user correction, so self-detected fix-loop abandonment and silent refusals never reach it — what should the GSD escalation rule's "document and move on" actually write to? | 2026-08-27 |
 
 ---
 

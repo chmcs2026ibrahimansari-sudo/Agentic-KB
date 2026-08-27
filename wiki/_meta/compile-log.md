@@ -30,3 +30,14 @@ visibility: private
 - promote: 28 (ADVISORY — not applied; see PROP-157)
 - defer:    164
 - graduate: 0
+
+## 2026-08-27T13:15:33.661Z
+- promote: 29 (ADVISORY — not applied; see PROP-157)
+- defer:    195
+- graduate: 4
+- graduated: skills, agent-evaluation, credential-gateway, mcp
+
+## 2026-08-27T13:16:45.150Z
+- promote: 33 (ADVISORY — not applied; see PROP-157)
+- defer:    195
+- graduate: 0

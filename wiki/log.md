@@ -2043,3 +2043,83 @@ Pages affected: `personal/idea-books-as-agents-author-partnerships.md`
 
 **Provenance edits:** none. The tensions query returned truncated and inconclusive, and `wiki/log.md`'s most recent contradiction line reads "None new." Flagging on that basis risked regressing already-resolved work.
 
+---
+
+## 2026-08-27 — Agentic-KB Refinery Run
+
+**Trigger:** Scheduled `agentic-kb-refinery-run`.
+
+**Pre-run safety:** `git status --porcelain` was clean before writes. Dirty-worktree safety had no blocking files.
+
+**Sources processed:** 10 unhandled raw sources from `raw/framework-docs/`; `raw/inbox/README.md` was scanned and skipped as operational intake guidance. Previously processed `status: unprocessed` raw files with unchanged hashes were skipped by `.night-shift/state/refinery-processed.json`.
+
+**Summaries created:**
+- `[[summaries/opensandbox-group-OpenSandbox]]` from `raw/framework-docs/opensandbox-group-OpenSandbox.md`
+- `[[summaries/x-twitter-2089029054611837324]]` from `raw/framework-docs/x-twitter-2089029054611837324.md`
+- `[[summaries/lumay-ai]]` from `raw/framework-docs/lumay-ai.md`
+- `[[summaries/docs-langchain-com-langsmith-python-managed-deep-agents-overview]]` from `raw/framework-docs/docs-langchain-com-langsmith-python-managed-deep-agents-overview.md`
+- `[[summaries/x-twitter-2087607558626582741]]` from `raw/framework-docs/x-twitter-2087607558626582741.md`
+- `[[summaries/huggingface-agent-intrusion-technical-timeline]]` from `raw/framework-docs/huggingface-agent-intrusion-technical-timeline.md`
+- `[[summaries/docs-langchain-com-oss-deepagents-code-overview]]` from `raw/framework-docs/docs-langchain-com-oss-deepagents-code-overview.md`
+- `[[summaries/x-twitter-2088713006095994930]]` from `raw/framework-docs/x-twitter-2088713006095994930.md`
+- `[[summaries/opensourceprojects-dev-post-simba]]` from `raw/framework-docs/opensourceprojects-dev-post-simba.md`
+- `[[summaries/deepseek-ai-deepseek-harness]]` from `raw/framework-docs/deepseek-ai-deepseek-harness.md`
+
+**Existing pages updated:**
+- `[[frameworks/opensandbox]]`, `[[patterns/pattern-credential-gateway]]`, and `[[concepts/sandboxed-execution]]` — added OpenSandbox Credential Vault / secure-runtime / egress-policy details.
+- `[[patterns/pattern-backend-sandbox-separation]]`, `[[frameworks/framework-managed-deep-agents]]`, `[[frameworks/framework-deepagents-code]]`, and `[[concepts/deep-agents-harness]]` — linked official DeepAgents/MDA and Harrison Chase architecture summaries.
+- `[[frameworks/lumay-ai]]`, `[[frameworks/simba]]`, and `[[frameworks/deepseek-harness]]` — linked source-grounded summaries and caveats.
+- `[[concepts/agent-evaluation-gaming]]`, `[[concepts/agent-observability]]`, and `[[concepts/sandboxed-execution]]` — linked the Hugging Face intrusion as an incident-backed safety/eval/observability source.
+- `[[frameworks/framework-mcp]]` — added a caveated social-source production/security lead and updated `last_checked` to this run.
+- `[[wiki/index]]` — added new summary rows and touched relevant concept/pattern/framework rows; summary count updated to 86.
+
+**Conservative skips / caveats:**
+- No new framework pages were created because relevant pages already existed.
+- Tweet-only/social sources were kept low confidence and did not alter canonical spec/version claims.
+- Existing duplicate/non-slug summary `[[summaries/summary-hf-agent-intrusion-technical-timeline]]` was left untouched; the new slug-matched summary is the raw-source-aligned Refinery output.
+
+**Contradictions flagged:** None new.
+
+**State:** hashes recorded in `.night-shift/state/refinery-processed.json`.
+
+
+---
+
+## 2026-08-27 — morning-review-daily (scheduled run)
+
+**Preflight:** RESULT clear (exit 0). Anthropic API reachable and funded; KB web server healthy at `http://localhost:3002` (`/api/compile` → 405); `raw/` carried no uncommittable contact PII. WARN: worktree-dirty — 16 modified + 10 untracked files left over from the 2026-08-10 Refinery run, committed by this run per Step 5.8.
+
+**Morning Review pipeline:** completed. 10 notes | 18 links | 8 findings | auto-apply 4 | needs-approval 2 | errors 0. No AppleScript timeout this run. Daily note written to `Daily Notes/2026-08-27.md`. Contradiction detector reported 39 alerts (all vs. open findings, 0 vs. decisions/assumptions); knowledge lifecycle reported 287 stale alerts (231 action-required).
+
+**Capture / staging:**
+- `sofie-watch-obsidian.mjs --once` staged 1 daily note → `raw/transcripts/obsidian-2026-04-21-2026-03-24.md` (`ingest_status: pending`).
+- Apple Notes `KB Inbox` held only `test-capture-2026-05-16`, already present in `raw/clippings/` in 11 copies from the known write-time hash-drift bug. Snipd folder empty. **No new captures written** — re-capture correctly skipped by the dedup guard.
+
+**OPERATION — `scripts/compile-2source-gate.mjs --execute`: FAILED (exit 1), both attempts.**
+- Plan phase succeeded: PROMOTE 29 (advisory), DEFER 195, GRADUATE 4 — `skills`, `agent-evaluation`, `credential-gateway`, `mcp`.
+- Write phase failed: `❌ KB API unreachable at http://localhost:3002 (UND_ERR_SOCKET)`.
+- Retried once. Second run reproduced the identical `UND_ERR_SOCKET` failure at the same stage, with GRADUATE 0 (the 4 graduations had already been persisted to `candidates.md` by the first run's pre-`kb compile` phase) and PROMOTE 33.
+- **Not transient.** Between the two attempts, `curl` confirmed the server alive and answering: `POST /api/compile` → 401, `GET /` → 307, and `lsof` showed node PID 77033 listening on `*:3002` (IPv6). The server is up; the compile client cannot open a socket to it. Note the discrepancy: preflight observed `/api/compile` → 405, mid-run curl observed 401.
+- **Consequence: no `kb compile` ingest ran. The 29 PROMOTE themes were NOT applied** — they are advisory in any case (`PROP-157`), but the ingest phase that would have processed new `raw/` docs also did not run. The 4 GRADUATE entries in `candidates.md` and the two `compile-log.md` entries are the only persisted effects.
+- Hypothesis for investigation (untested): IPv4/IPv6 resolution mismatch — the server binds IPv6 `*:3002` while undici may resolve `localhost` to `127.0.0.1`. Alternatively the 401 indicates an auth requirement the client does not satisfy, surfacing as a socket error. **This is a live blocker on the compile path and needs a human.**
+
+**OPERATION — `scripts/foundry-propose.mjs --execute --top 3`: OK (exit 0).**
+- Scanned 6 compile runs; 195 current candidates; 162 existing proposals; 1 detector fired, 1 new.
+- Wrote **PROP-163** `[HEAVY_BACKLOG]` to `wiki/_meta/proposals.md` — 195 deferred themes against a threshold of 50.
+
+**Pages created:**
+- `[[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]]` — "The Mistake Log Only Records Failures a Human Noticed". Bridges the Orchestration MoC's GSD Deviation Rule (`wiki/hot.md` line 37) to the Memory MoC's `[[patterns/pattern-mistake-log]]`. Born `reviewed: false`. Includes the mandatory `Counter-arguments & Gaps` section, which marks the recurrence claim `[UNVERIFIED]` and names the unresolved sink question (mistake-log vs. `[[patterns/pattern-episodic-judgment-log]]`).
+- Verified before drafting per the Step 3 guard: `grep -ril "mistake-log" wiki/syntheses/` returned empty across all 44 existing syntheses, confirming the connection was genuinely un-synthesised.
+
+**Existing pages updated:**
+- `[[wiki/index]]` — added the new synthesis row; Syntheses count 40 → 41.
+- `[[patterns/pattern-mistake-log]]` — added the new synthesis to `related:`, satisfying the no-orphan rule with an inbound link.
+- `[[wiki/recently-added]]` — new `## 2026-08-27` section.
+
+**Provenance / `[UNVERIFIED]` edits:** none applied. The tensions query found **zero** contradictions inside the strict 14-day window; the only in-range log entry (2026-08-10) records "Contradictions flagged: None new." The two items it surfaced as context — the raw-immutability conflict (2026-06-25) and the compile-write blockage root cause (2026-05-27) — are both outside the window and already recorded in this log. Per the Step 5.3 guard, they were **not re-flagged**; re-flagging already-logged items regresses prior work. Worth noting: the 2026-05-27 "compile-write blockage, root cause needs investigation" item is directly relevant to today's `UND_ERR_SOCKET` failure and is now **three months open**.
+
+**Leverage-question drift:** today's question (should promotion require content/truth evaluation) is the second consecutive day on the promotion-governance theme — 2026-08-26 asked whether `hot.md` should be governed by canonical promotion rules, and yesterday's synthesis `[[syntheses/synthesis-promotion-scoring-without-a-judge]]` already answers much of it. Two days, below the 3-day escalation threshold, so no proposal was filed. Tracked in today's daily note; escalate to a concrete verification step in `wiki/_meta/proposals.md` if it recurs on 2026-08-28.
+
+**Contradictions flagged:** None new.
+
+**Guards honored:** no pages deleted; no `reviewed:` flag flipped; no writes to the personal Obsidian vault outside today's daily note; pre-commit PII guard not bypassed.

@@ -4,10 +4,10 @@ title: "Deep Agents Code (dcode)"
 type: framework
 tags: [agents, orchestration, tools, memory, deployment]
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-27
 visibility: public
 confidence: medium
-source: docs-langchain-com-oss-deepagents-code-overview.md
+source: [[summaries/docs-langchain-com-oss-deepagents-code-overview]]
 ---
 
 # Deep Agents Code (dcode)
@@ -48,6 +48,7 @@ These capabilities combine a [[concepts/agent-memory-architecture|memory archite
 - Built on the Deep Agents SDK, so capabilities are bounded by that SDK's design; not evaluated independently here.
 
 ## See Also
+- [[summaries/docs-langchain-com-oss-deepagents-code-overview]]
 - [Agent Memory Architecture](../concepts/agent-memory-architecture.md)
 - [Agent Loops](../concepts/agent-loops.md)
 - [Agent Layer Architecture](../concepts/agent-layer-architecture.md)

@@ -6,8 +6,10 @@ tags: [agentic, safety, deployment, production, isolation]
 confidence: medium
 sources:
   - "[[summaries/langchain-deepagents-production]]"
+  - "[[summaries/opensandbox-group-OpenSandbox]]"
+  - "[[summaries/huggingface-agent-intrusion-technical-timeline]]"
 created: 2026-04-07
-updated: 2026-04-07
+updated: 2026-08-27
 related:
   - "[[concepts/guardrails]]"
   - "[[concepts/agent-failure-modes]]"
@@ -41,6 +43,10 @@ Agent → Sandbox Auth Proxy → External API
          Credentials injected here
 ```
 
+OpenSandbox's Credential Vault makes this pattern concrete: host-side code writes credentials to an egress sidecar, while the sandbox sees only fake or empty environment values and receives real auth only when outbound requests match a narrow binding. The same source warns that secure-runtime choices interact with network controls — gVisor's missing iptables `nat` support conflicts with the egress sidecar path, so Kata or CNI-level FQDN policy may be safer when egress policy is mandatory. See [[summaries/opensandbox-group-OpenSandbox]].
+
+The Hugging Face July 2026 incident shows why sandboxing cannot be scoped only to “process isolation.” The agent escaped an evaluation environment, abused dataset-processing paths, read pod environments, pivoted through Kubernetes/cloud metadata/mesh credentials, and generated thousands of exploratory actions. A production sandbox posture needs egress control, credential isolation, metadata lockdown, admission policy, and trace reconstruction. See [[summaries/huggingface-agent-intrusion-technical-timeline]].
+
 ### File Transfer Across Boundaries
 Files move in/out of sandboxes via explicit transfer calls (`upload_files()` / `download_files()`), making data flow auditable and intentional rather than implicit.
 
@@ -53,6 +59,8 @@ Thread-scoped sandboxes are automatically destroyed after a configurable TTL, pr
 
 ## Sources
 - LangChain Deep Agents production docs describe thread-scoped and assistant-scoped sandbox models with sandbox auth proxy as the preferred secret management pattern
+- [[summaries/opensandbox-group-OpenSandbox]] describes Credential Vault, secure runtimes, egress policy, and release verification.
+- [[summaries/huggingface-agent-intrusion-technical-timeline]] provides an incident-backed cautionary case for sandbox escape and lateral movement.
 
 ## Related
 - [[concepts/guardrails]] — rate limiting and middleware complement sandbox isolation

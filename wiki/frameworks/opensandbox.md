@@ -4,10 +4,10 @@ title: "OpenSandbox"
 type: framework
 tags: [agents, deployment, architecture, safety, orchestration]
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-27
 visibility: public
 confidence: medium
-source: opensandbox-group/OpenSandbox (GitHub README)
+source: [[summaries/opensandbox-group-OpenSandbox]]
 ---
 
 # OpenSandbox
@@ -24,7 +24,7 @@ Core capabilities called out in the README:
 - **Sandbox Protocol**: a defined spec for sandbox lifecycle and execution APIs, enabling custom/extensible sandbox runtime implementations.
 - **Sandbox Runtime**: built-in lifecycle management with Docker for lightweight use and Kubernetes for high-performance, scaled deployments.
 
-Additional documented capabilities (from doc index) include a credential vault, secure container guides, release verification for supply-chain trust, a code-interpreter example, an all-in-one ("aio") sandbox example, agent-sandbox example, and volume-mounting patterns (PVC and OSSFS) for persistent/shared storage in Kubernetes.
+Additional documented capabilities (from doc index) include a credential vault, secure container guides, release verification for supply-chain trust, a code-interpreter example, an all-in-one ("aio") sandbox example, agent-sandbox example, and volume-mounting patterns (PVC and OSSFS) for persistent/shared storage in Kubernetes. The Refinery summary at [[summaries/opensandbox-group-OpenSandbox]] adds a source-backed caveat: Credential Vault relies on an egress sidecar and explicit outbound policy, and gVisor's missing iptables `nat` table can conflict with that sidecar; use Kata or CNI-level FQDN policy when both stronger isolation and egress control are required.
 
 ## Key Concepts
 
@@ -48,6 +48,7 @@ This is directly relevant to worker isolation and safe-execution concerns — e.
 
 ## See Also
 
+- [[summaries/opensandbox-group-OpenSandbox]]
 - [Agent Loops](../concepts/agent-loops.md)
 - [Agent Failure Modes](../concepts/agent-failure-modes.md)
 - [Agent Layer Architecture](../concepts/agent-layer-architecture.md)

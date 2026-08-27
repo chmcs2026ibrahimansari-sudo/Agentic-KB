@@ -4,10 +4,10 @@ title: "DeepSeek Harness (dsh)"
 type: framework
 tags: [agents, frameworks, orchestration, tools, deployment]
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-27
 visibility: public
 confidence: medium
-source: https://github.com/deepseek-ai/deepseek-harness
+source: [[summaries/deepseek-ai-deepseek-harness]]
 ---
 
 # DeepSeek Harness (dsh)
@@ -46,8 +46,11 @@ The harness is powered by [Cordis](https://github.com/cordiverse/cordis), a fram
 - Documentation captured is partial (README, contributing guide, dev/architecture docs, AGENTS.md, agent-lifecycle docs, API gateway docs were found, but deeper architecture and plugin API details were not included in this excerpt).
 - No benchmark or evaluation data available yet to compare it against other agent harnesses.
 
+The 2026-08-27 Refinery summary adds concrete architecture signals from the captured docs: durable `session/event` logs are the source for model-visible context/replay; live `agent/*` events coordinate inbox/status/requests/errors; tool calls pass through pre/execute/post stages; and capability seams model filesystem, subprocess, sandbox, terminal, jobs, commands, settings, and remotes as swappable services. See [[summaries/deepseek-ai-deepseek-harness]].
+
 ## See Also
 
+- [[summaries/deepseek-ai-deepseek-harness]]
 - [agent-loops](../concepts/agent-loops.md)
 - [agent-layer-architecture](../concepts/agent-layer-architecture.md)
 - [agent-memory-architecture](../concepts/agent-memory-architecture.md)

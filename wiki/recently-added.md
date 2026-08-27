@@ -9,6 +9,12 @@ type: meta
 
 ---
 
+## 2026-08-27 (morning-review-daily)
+
+- [[syntheses/synthesis-failure-escalation-as-mistake-log-trigger|The Mistake Log Only Records Failures a Human Noticed]] — bridges the Orchestration MoC's GSD escalation rule ("3 failed fix attempts → document and move on") to the Memory MoC's [[patterns/pattern-mistake-log]]: the log's write-trigger is a user correction, so self-detected fix-loop abandonment and silent refusals never reach it. Leaves the sink question (mistake-log vs. [[patterns/pattern-episodic-judgment-log]]) explicitly open.
+
+---
+
 ## 2026-08-26 (morning-review-daily)
 
 - [[syntheses/synthesis-promotion-scoring-without-a-judge|Promotion Scoring Measures Everything About a Claim Except Whether It Is True]] — bridges the Evaluation MoC's judge machinery to the Memory MoC's promotion policy: all six terms of the promotion score formula are provenance metadata, so a well-cited wrong claim clears the `≥ 0.75` canonical gate. Proposes a 20-page judge-vs-human calibration study before any formula change.

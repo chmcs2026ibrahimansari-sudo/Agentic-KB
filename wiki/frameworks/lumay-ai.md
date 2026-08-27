@@ -4,10 +4,10 @@ title: "LuMay AI"
 type: framework
 tags: [agents, orchestration, enterprise, governance, deployment]
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-27
 visibility: public
 confidence: medium
-source: framework-docs/lumay-ai.md
+source: [[summaries/lumay-ai]]
 ---
 
 # LuMay AI
@@ -48,5 +48,6 @@ Consider LuMay for enterprises in regulated verticals that need governed, audita
 
 ## See Also
 
+- [[summaries/lumay-ai]]
 - [Agent Layer Architecture](../concepts/agent-layer-architecture.md)
 - [Agent Evaluation](../concepts/agent-evaluation.md)

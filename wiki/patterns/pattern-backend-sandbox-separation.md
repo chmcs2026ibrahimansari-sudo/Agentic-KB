@@ -4,11 +4,11 @@ title: "Backend/Sandbox Separation (Brains vs. Hands)"
 type: pattern
 tags: [agents, architecture, orchestration, deployment, mcp]
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-08-27
 visibility: public
 confidence: medium
 related: [framework-deepagents, agent-layer-architecture, agent-loops, agent-memory-architecture]
-source: x-twitter-2089029054611837324.md
+source: [[summaries/x-twitter-2089029054611837324]]
 ---
 
 # Backend/Sandbox Separation (Brains vs. Hands)
@@ -32,13 +32,14 @@ This mirrors the architecture described in Anthropic's [managed agents](https://
 2. **Cloud coding agent**: DeepAgents deployed on LangSmith deployments, connected to a remote sandbox (Modal, Daytona, or E2B); both a web UI and Slack connect to the same backend, allowing users to switch surfaces seamlessly (e.g., open-swe).
 3. **Non-coding agent**: swap in a "fake" backend for file-like context management without needing a full sandbox, when code execution is overkill.
 
-Because DeepAgents is LangGraph-based, the backend/agent-loop split also enables standard deployment via MCP and A2A endpoints.
+Because DeepAgents is LangGraph-based, the backend/agent-loop split also enables standard deployment via MCP and A2A endpoints. The captured source is summarized at [[summaries/x-twitter-2089029054611837324]]; treat it as medium-confidence design intent and corroborate implementation details against official docs before depending on API behavior.
 
 ## Trade-offs
 - **Pros**: portability across environments; a single agent implementation can serve local dev, cloud production, and chat surfaces; enables safer sandboxing since execution is isolated from reasoning; simplifies swapping infrastructure providers (e.g., different sandbox vendors) without touching agent logic.
 - **Cons**: adds an abstraction layer and integration surface (backend must faithfully implement the expected filesystem-like API); state synchronization between agent loop and backend needs careful design; choosing a "fake" backend risks under-provisioning capabilities if the agent's needs grow to require real execution later.
 
 ## Related Patterns
+- [[summaries/x-twitter-2089029054611837324]]
 - [agent-layer-architecture](../concepts/agent-layer-architecture.md)
 - [agent-loops](../concepts/agent-loops.md)
 - [agent-memory-architecture](../concepts/agent-memory-architecture.md)

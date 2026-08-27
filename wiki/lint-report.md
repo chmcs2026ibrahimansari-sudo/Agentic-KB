@@ -1,23 +1,23 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-26 14:06 | Vault: Agentic-KB | Pages scanned: 791
+> Generated: 2026-08-27 14:07 | Vault: Agentic-KB | Pages scanned: 806
 
 ## Summary
 
 | Check | Count | Δ vs last run | Severity |
 |---|---|---|---|
 | Contradictions | 0 | ±0 | 🟢 Clear |
-| Orphaned pages | 80 | ±0 | 🟡 Medium |
-| Stale pages | 309 | ±0 | 🟡 Medium |
+| Orphaned pages | 75 | -5 | 🟡 Medium |
+| Stale pages | 306 | -3 | 🟡 Medium |
 | Knowledge gaps | 0 | ±0 | 🟢 Clear |
 
-**Analysis window:** 60 of 791 pages (8%) — 0 changed since last run, 60 from the rotating cursor. Full-vault coverage every ~14 runs.
+**Analysis window:** 60 of 806 pages (7%) — 13 changed since last run, 47 from the rotating cursor. Full-vault coverage every ~14 runs.
 
 ## 🎯 Triage — start here
 
 **Substantial pages nothing links to** (≥100 words, largest first) — link these from a hub page or archive them:
 
-1. `_meta/proposals.md` — Foundry Proposals (6602 words)
+1. `_meta/proposals.md` — Foundry Proposals (6694 words)
 1. `syntheses/synthesis-repo-aware-system-implementation.md` — Repo-Aware Knowledge & Agent Memory System — Implementation Summary (1679 words)
 1. `reports/2026-08-18-nightly-ci-analysis.md` — 2026-08-18-nightly-ci-analysis (906 words)
 1. `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18 (897 words)
@@ -29,16 +29,16 @@
 
 **Stale pages others depend on** (most inbound links first) — these propagate outdated information:
 
-1. `concepts/agent-loops.md` — 98 inbound links, 144 days old
-1. `concepts/agent-failure-modes.md` — 81 inbound links, 47 days old
-1. `concepts/multi-agent-systems.md` — 62 inbound links, 139 days old
-1. `entities/mcp-ecosystem.md` — 60 inbound links, 140 days old
-1. `concepts/context-management.md` — 53 inbound links, 34 days old
-1. `concepts/human-in-the-loop.md` — 50 inbound links, 123 days old
-1. `concepts/agent-observability.md` — 47 inbound links, 141 days old
-1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 144 days old
-1. `patterns/pattern-hot-cache.md` — 44 inbound links, 123 days old
-1. `entities/anthropic.md` — 41 inbound links, 144 days old
+1. `concepts/agent-loops.md` — 98 inbound links, 145 days old
+1. `concepts/agent-failure-modes.md` — 81 inbound links, 48 days old
+1. `concepts/multi-agent-systems.md` — 63 inbound links, 140 days old
+1. `entities/mcp-ecosystem.md` — 61 inbound links, 141 days old
+1. `concepts/context-management.md` — 53 inbound links, 35 days old
+1. `concepts/human-in-the-loop.md` — 50 inbound links, 124 days old
+1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 145 days old
+1. `patterns/pattern-hot-cache.md` — 44 inbound links, 124 days old
+1. `entities/anthropic.md` — 42 inbound links, 145 days old
+1. `frameworks/framework-langgraph.md` — 38 inbound links, 144 days old
 
 ## 🟡 Orphaned Pages (no inbound links)
 
@@ -62,14 +62,9 @@
 - `entities/hermes-agent.md` — Hermes Agent
 - `entities/seller-fi.md` — SellerFi
 - `frameworks/agent-orchestrator.md` — Agent Orchestrator (Untrivial-ai)
-- `frameworks/deepseek-harness.md` — DeepSeek Harness (dsh)
-- `frameworks/framework-deepagents-code.md` — Deep Agents Code (dcode)
 - `frameworks/framework-open-swe.md` — Open SWE (LangChain)
 - `frameworks/headroom.md` — Headroom
-- `frameworks/lumay-ai.md` — LuMay AI
 - `frameworks/openconnector.md` — OpenConnector (OOMOL)
-- `frameworks/opensandbox.md` — OpenSandbox
-- `frameworks/simba.md` — Simba (Eval-First Customer Service Assistant)
 - `patterns/pattern-filesystem-context.md` — Filesystem-Based Context Pattern
 - `patterns/pattern-forward-deployed-engineering.md` — Forward Deployed Engineering for Production AI Agents
 - `patterns/pattern-morning-review.md` — Morning-Review Pipeline
@@ -152,7 +147,6 @@
 - `concepts/agent-loops.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/agent-memory-architecture.md` — last updated: Fri May 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/agent-memory-runtime.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
-- `concepts/agent-observability.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/agent-resources-platform.md` — last updated: Mon Apr 20 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/agent-sandboxing.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/agent-vault.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
@@ -215,7 +209,6 @@
 - `concepts/react-nextjs-performance.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/reciprocal-rank-fusion.md` — last updated: Tue Jun 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/rlm-pipeline.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
-- `concepts/sandboxed-execution.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/self-critique.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/server-sent-events-streaming.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `concepts/skill-optimization.md` — last updated: Wed Jun 17 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
@@ -291,7 +284,6 @@
 - `patterns/pattern-clarification-task.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-compounding-loop.md` — last updated: Thu Apr 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-confirm-before-destructive.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
-- `patterns/pattern-credential-gateway.md` — last updated: Wed Jul 22 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-deviation-rules.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-episodic-judgment-log.md` — last updated: Wed Apr 08 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-external-memory.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)

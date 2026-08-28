@@ -1,23 +1,23 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-27 14:07 | Vault: Agentic-KB | Pages scanned: 806
+> Generated: 2026-08-28 14:07 | Vault: Agentic-KB | Pages scanned: 804
 
 ## Summary
 
 | Check | Count | Δ vs last run | Severity |
 |---|---|---|---|
 | Contradictions | 0 | ±0 | 🟢 Clear |
-| Orphaned pages | 75 | -5 | 🟡 Medium |
-| Stale pages | 306 | -3 | 🟡 Medium |
+| Orphaned pages | 75 | ±0 | 🟡 Medium |
+| Stale pages | 306 | ±0 | 🟡 Medium |
 | Knowledge gaps | 0 | ±0 | 🟢 Clear |
 
-**Analysis window:** 60 of 806 pages (7%) — 13 changed since last run, 47 from the rotating cursor. Full-vault coverage every ~14 runs.
+**Analysis window:** 60 of 804 pages (7%) — 2 changed since last run, 58 from the rotating cursor. Full-vault coverage every ~14 runs.
 
 ## 🎯 Triage — start here
 
 **Substantial pages nothing links to** (≥100 words, largest first) — link these from a hub page or archive them:
 
-1. `_meta/proposals.md` — Foundry Proposals (6694 words)
+1. `_meta/proposals.md` — Foundry Proposals (6740 words)
 1. `syntheses/synthesis-repo-aware-system-implementation.md` — Repo-Aware Knowledge & Agent Memory System — Implementation Summary (1679 words)
 1. `reports/2026-08-18-nightly-ci-analysis.md` — 2026-08-18-nightly-ci-analysis (906 words)
 1. `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18 (897 words)
@@ -29,16 +29,16 @@
 
 **Stale pages others depend on** (most inbound links first) — these propagate outdated information:
 
-1. `concepts/agent-loops.md` — 98 inbound links, 145 days old
-1. `concepts/agent-failure-modes.md` — 81 inbound links, 48 days old
-1. `concepts/multi-agent-systems.md` — 63 inbound links, 140 days old
-1. `entities/mcp-ecosystem.md` — 61 inbound links, 141 days old
-1. `concepts/context-management.md` — 53 inbound links, 35 days old
-1. `concepts/human-in-the-loop.md` — 50 inbound links, 124 days old
-1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 145 days old
-1. `patterns/pattern-hot-cache.md` — 44 inbound links, 124 days old
-1. `entities/anthropic.md` — 42 inbound links, 145 days old
-1. `frameworks/framework-langgraph.md` — 38 inbound links, 144 days old
+1. `concepts/agent-loops.md` — 98 inbound links, 146 days old
+1. `concepts/agent-failure-modes.md` — 82 inbound links, 49 days old
+1. `concepts/multi-agent-systems.md` — 62 inbound links, 141 days old
+1. `entities/mcp-ecosystem.md` — 60 inbound links, 142 days old
+1. `concepts/context-management.md` — 53 inbound links, 36 days old
+1. `concepts/human-in-the-loop.md` — 50 inbound links, 125 days old
+1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 146 days old
+1. `patterns/pattern-hot-cache.md` — 44 inbound links, 125 days old
+1. `entities/anthropic.md` — 41 inbound links, 146 days old
+1. `frameworks/framework-langgraph.md` — 38 inbound links, 145 days old
 
 ## 🟡 Orphaned Pages (no inbound links)
 

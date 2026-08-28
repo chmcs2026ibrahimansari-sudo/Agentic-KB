@@ -143,7 +143,23 @@ export function canonicalHash({ source, sourceId = '', author = '', ts = '', tex
 }
 
 export function buildFilename({ ts, source, slug, hash }) {
-  const tsPart = ts ? new Date(ts).toISOString().replace(/[:.]/g, '-').slice(0, 19) : 'now'
+  // normalizeTs deliberately passes an unparseable --ts through verbatim so the
+  // canonical hash stays defined (see its docstring, and the yamlScalar comment
+  // below which states "--ts is not safe by construction"). That value reaches
+  // here, and `new Date(<unparseable>).toISOString()` throws RangeError — which
+  // aborted the entire capture in buildBody before a single byte was written,
+  // reporting only "error: Invalid time value" with no mention of --ts. The raw
+  // value survives in `captured_at`, so the filename degrades to a sentinel
+  // rather than taking the clipping down with it. Distinct from the absent-ts
+  // sentinel: "no timestamp given" and "timestamp given but unreadable" are
+  // different facts and the filename is the only place either is visible.
+  let tsPart = 'now'
+  if (ts) {
+    const d = new Date(ts)
+    tsPart = Number.isNaN(d.getTime())
+      ? 'undated'
+      : d.toISOString().replace(/[:.]/g, '-').slice(0, 19)
+  }
   return `${tsPart}__${source}__${slug}__${hash.slice(0, 8)}.md`
 }
 

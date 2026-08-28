@@ -174,6 +174,43 @@ describe('buildFilename', () => {
     const f = buildFilename({ source: 'slack', slug: 'hello', hash: 'deadbeefxxxxxxxx' })
     assert.match(f, /^now__slack__hello__deadbeef\.md$/)
   })
+
+  // normalizeTs contracts to pass an unparseable --ts through verbatim so the
+  // canonical hash stays defined. buildFilename then fed that value to
+  // `new Date(x).toISOString()`, which throws RangeError — so the documented
+  // pass-through terminated the capture instead of surviving it.
+  it('an unparseable ts yields a sentinel instead of throwing RangeError', () => {
+    const f = buildFilename({
+      ts: normalizeTs('Aug 27, 2026 at 3:40 PM'),
+      source: 'apple-notes',
+      slug: 'hello',
+      hash: 'deadbeefxxxxxxxx',
+    })
+    assert.match(f, /^undated__apple-notes__hello__deadbeef\.md$/)
+  })
+
+  it('an unparseable ts is distinguishable from an absent one', () => {
+    const absent = buildFilename({ source: 'slack', slug: 'x', hash: 'aaaaaaaabbbb' })
+    const bad = buildFilename({ ts: 'not-a-date', source: 'slack', slug: 'x', hash: 'aaaaaaaabbbb' })
+    assert.notEqual(absent, bad)
+  })
+
+})
+
+describe('buildBody composition', () => {
+  // buildFrontmatter is already tested with an unparseable ts and passes, but
+  // buildBody crashed before ever reaching it — the pieces were covered, the
+  // composition was not.
+  it('survives the Apple Notes human-readable timestamp end to end', () => {
+    const r = buildBody({
+      source: 'apple-notes',
+      ts: 'Aug 27, 2026 at 3:40 PM',
+      text: 'hello world',
+    })
+    assert.ok(r.filename.endsWith('.md'))
+    assert.match(r.body, /^captured_at: "Aug 27, 2026 at 3:40 PM"$/m)
+  })
+
 })
 
 describe('buildFrontmatter', () => {

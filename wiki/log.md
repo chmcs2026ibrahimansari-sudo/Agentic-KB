@@ -2139,3 +2139,29 @@ Pages affected: `personal/idea-books-as-agents-author-partnerships.md`
 **Contradictions Jay should resolve:** no new Editor contradiction. Carry-forward from the 2026-08-26 morning run: `[[mocs/evaluation]]` contains a `[FRICTION]` block contesting its "Promotion as Eval" framing via `[[syntheses/synthesis-promotion-scoring-without-a-judge]]`.
 
 **Briefing:** `briefings/2026-08-27.md`.
+
+---
+
+## 2026-08-28 — morning-review-daily
+
+**Trigger:** Scheduled `morning-review-daily` at 06:03 PDT.
+
+**Preflight:** `RESULT: clear` (exit 0). Warning: worktree dirty on entry (`state/notes-to-factory/ledger.md` modified, `wiki/daily-systems/logs/2026-08-27.md` untracked) — carried into this run's commit.
+
+**Morning Review pipeline:** completed. 3 Apple Notes, 10 links crawled, 8 findings (5 auto-apply, 3 needs-approval), 0 errors. No AppleScript timeout. Daily note written to `Obsidian Vault/Daily Notes/2026-08-28.md`; KB Intelligence section appended once.
+
+**Capture:** `sofie-watch-obsidian --once` staged 0 new meeting notes. Apple Notes `KB Inbox` holds only the stale `test-capture-2026-05-16` note, which already has 12+ duplicate copies in `raw/clippings/` from the known write-time-hash-varies bug — deliberately NOT re-captured. Snipd folder empty. `raw/transcripts/` still has 1 file with `ingest_status: pending`.
+
+**Pages created:** `[[syntheses/synthesis-proof-of-work-receipts-vs-trajectory-eval]]` — bridges [[patterns/pattern-agent-proof-of-work-loop]] (Orchestration/Evaluation) to [[concepts/trajectory-evaluation]] and [[concepts/llm-as-judge]]. Position: receipts and trajectory eval collect the same evidence and differ only in authorship; receipts catch omission, trajectory eval catches fabrication. Born `reviewed: false`.
+
+**Connections verified and rejected:** the query's top-ranked candidate (`concepts/agent-failure-modes` ↔ `patterns/pattern-mistake-log`) was rejected — already fully covered by `[[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]]` (2026-08-27). Third candidate (`pattern-shared-agent-workspace` ↔ `pattern-supervisor-worker`) verified as genuinely missing and left for a future run.
+
+**Backlinks / index:** `[[wiki/index]]` synthesis table + `[[mocs/evaluation]]` Syntheses section + `[[wiki/recently-added]]` all updated for the new page.
+
+**Proposals:** `foundry-propose --execute --top 3` wrote 1 new proposal, `PROP-164 [HEAVY_BACKLOG]` — 195 deferred candidates against a threshold of 50.
+
+**RUN FAILURE — compile gate:** `scripts/compile-2source-gate.mjs --execute` exited **1** on two consecutive attempts. Analysis phase completed (33 PROMOTE advisory, 195 DEFER, 0 GRADUATE) but the write phase failed: `❌ KB API unreachable at http://localhost:3002 (UND_ERR_SOCKET)`. **Nothing was promoted.** The server is in fact listening (node pid 77033, IPv6 *:3002) but now answers `POST /api/compile` with **401**, where the preflight check expects 405. `cli/kb.js` sends no `Authorization` header (`KB_API_URL` is the only API env var it reads). Diagnosis: the KB web server gained an auth requirement that the CLI does not satisfy; undici surfaces the rejected request as a socket error. Needs a human fix — either restore the unauthenticated local endpoint or teach `cli/kb.js` to send a token.
+
+**Contradictions flagged:** None new. The tensions query re-reported two items (sandbox-isolation-vs-policy; mistake-log write-trigger blindness) that are already documented as explicitly unresolved inside `[[syntheses/synthesis-sandbox-safety-is-policy-not-place]]` and `[[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]]`, both `reviewed: false` with their own gap sections. No new `[UNVERIFIED]` markers or confidence downgrades applied — re-flagging would regress already-recorded work.
+
+**Query health:** the `patterns` query failed on first attempt (`max_tokens`, no text returned) and succeeded on one retry anchored on `wiki/index.md` + `wiki/hot.md` + `wiki/candidates.md`. Top ungraduated themes: proof-of-work receipts as a canonical primitive, RRF score-blindness, and the validation-gate mechanism shared by the episodic-judgment and mistake logs.

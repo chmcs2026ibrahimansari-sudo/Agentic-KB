@@ -9,6 +9,12 @@ type: meta
 
 ---
 
+## 2026-08-28 (morning-review-daily)
+
+- [[syntheses/synthesis-proof-of-work-receipts-vs-trajectory-eval|Proof-of-Work Receipts Are Self-Reported Trajectories, and That Is Exactly Their Weakness]] — bridges the Orchestration MoC's [[patterns/pattern-agent-proof-of-work-loop]] to the Evaluation MoC's [[concepts/trajectory-evaluation]] and [[concepts/llm-as-judge]]: both collect the same evidence and differ only in who authors it, so receipts catch omission cheaply but are structurally blind to fabrication (hallucinated tool calls, silent refusals). Proposes a routing rule and one adversarial fixture that would test it.
+
+---
+
 ## 2026-08-27 (agentic-kb-editor-run)
 
 - [[syntheses/synthesis-sandbox-safety-is-policy-not-place|A Sandbox Is a Policy Boundary, Not a Place to Run Code]] — bridges OpenSandbox Credential Vault/default-deny egress, DeepAgents remote/managed runtimes, and the Hugging Face agent-intrusion incident. The takeaway: sandbox safety is the policy envelope around credentials, network, approvals, file transfer, and traces — not merely an isolated place to execute code.

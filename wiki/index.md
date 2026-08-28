@@ -331,6 +331,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-promotion-scoring-without-a-judge]] | The promotion scorer weights only provenance metadata and never reads the claim — should canonical promotion invoke an LLM judge, or is metadata-only scoring the correct trade? | 2026-08-26 |
 | [[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]] | The mistake log's write-trigger is a user correction, so self-detected fix-loop abandonment and silent refusals never reach it — what should the GSD escalation rule's "document and move on" actually write to? | 2026-08-27 |
 | [[syntheses/synthesis-sandbox-safety-is-policy-not-place]] | Recent OpenSandbox, DeepAgents, and Hugging Face intrusion sources show that sandbox safety is the policy boundary around credentials, egress, approvals, and traces — not merely the place code runs. | 2026-08-27 |
+| [[syntheses/synthesis-proof-of-work-receipts-vs-trajectory-eval]] | Proof-of-work receipts and trajectory evaluation collect the same evidence and differ only in authorship — receipts catch omission, trajectory eval catches fabrication. Which one should run where? | 2026-08-28 |
 
 ---
 

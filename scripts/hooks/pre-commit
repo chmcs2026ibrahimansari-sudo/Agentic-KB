@@ -36,6 +36,12 @@ WHITELIST_FILES=(
   # you to do. Discovered 2026-08-20 while adding the scrubber.
   "scripts/hooks/pre-commit"
   "scripts/scrub-raw-pii.mjs"
+  # 2026-08-28: the file that *tests* the deny-list is in the same category as
+  # the files that *define* it — a probe asserting "this string is blocked"
+  # must contain that string. Its fixtures are synthetic by construction and
+  # the file says so at the top; that constraint is what keeps this exemption
+  # narrow. Without it, the deny-list cannot have a regression test at all.
+  "tests/pii-pattern-probe.sh"
 )
 
 # Patterns that indicate PII / sensitive personal context. Add over time.
@@ -46,11 +52,31 @@ PII_PATTERNS=(
   'hiring manager interview'
   'interview cycle'
   'interview cheat ?sheet'
-  'interview prep'
+  # 'interview prep' was a bare noun phrase until 2026-08-28. It fired on any
+  # text that merely *names the category*, which made this repo's own audit
+  # records uncommittable: notes-to-factory's ledger explains why it refused a
+  # note, and the honest reason is the category name. A tracked file that
+  # cannot be committed leaves the tree permanently dirty, and on 2026-08-28 at
+  # 06:25 that dirty file tripped agentic-kb-editor-run's pre-run safety gate
+  # and aborted it. One control disabled another.
+  #
+  # Narrowed the same way the therapy patterns were on 2026-08-18: require
+  # personal framing or a concrete referent, which is what actual prep content
+  # always carries. This is not a coverage loss — the real incident class is
+  # still caught by 'interview cheat ?sheet', 'interview cycle', 'hiring
+  # manager interview' and the company+interview pattern below, all unchanged.
+  # Verified against the real note titles that motivated this list.
+  '\b(my|our|his|her|jay.?s) interview prep\b'
+  'interview prep (for|with|at|sheet|notes|doc|document)\b'
   'hiring manager round'
 
   # Companies in the context of active interviews (not as topic / case study)
-  '(netflix|google|meta|amazon|apple|microsoft|openai|anthropic).{0,40}(interview|hiring|offer|recruit)'
+  # 2026-08-28: added 'adobe'. Found by the probe written for the narrowing
+  # above — "Adobe interview loop" passed this list cleanly while Jay has had
+  # an active Adobe cycle running across roughly fifteen notes since 08-23,
+  # which is the exact scenario this pattern exists for. Pre-existing gap,
+  # unrelated to the narrowing; adding it is a coverage increase.
+  '(netflix|google|meta|amazon|apple|microsoft|openai|anthropic|adobe).{0,40}(interview|hiring|offer|recruit)'
 
   # Compensation
   '\b(comp|compensation|salary|stock options|equity)\b.{0,80}(negotiat|offer|range|\$[0-9])'

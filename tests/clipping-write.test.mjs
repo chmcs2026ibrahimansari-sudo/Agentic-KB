@@ -195,6 +195,26 @@ describe('buildFilename', () => {
     assert.notEqual(absent, bad)
   })
 
+  // `source` was interpolated raw into a name that is path.join()ed onto
+  // raw/clippings/, so `../` in it escaped the directory.
+  it('a traversing source cannot introduce a path separator', () => {
+    const f = buildFilename({
+      ts: '2026-04-25T17:00:00.000Z',
+      source: '../../../../../etc/pwned',
+      slug: 'hello',
+      hash: 'deadbeefxxxxxxxx',
+    })
+    assert.ok(!f.includes('/'), `filename must be one path segment, got: ${f}`)
+    assert.ok(!f.includes('..'), `filename must not contain a traversal, got: ${f}`)
+    assert.equal(path.basename(f), f)
+  })
+
+  it('leaves the real source names byte-identical', () => {
+    for (const source of ['slack', 'apple-notes', 'gmail']) {
+      const f = buildFilename({ ts: '2026-04-25T17:00:00.000Z', source, slug: 'x', hash: 'abcd1234eeee' })
+      assert.match(f, new RegExp(`__${source}__`))
+    }
+  })
 })
 
 describe('buildBody composition', () => {
@@ -211,6 +231,14 @@ describe('buildBody composition', () => {
     assert.match(r.body, /^captured_at: "Aug 27, 2026 at 3:40 PM"$/m)
   })
 
+  it('a traversing source still produces a single-segment filename', () => {
+    const r = buildBody({
+      source: '../../../../../tmp/pwned',
+      ts: '2026-04-25T17:00:00Z',
+      text: 'hello world',
+    })
+    assert.equal(path.basename(r.filename), r.filename)
+  })
 })
 
 describe('buildFrontmatter', () => {

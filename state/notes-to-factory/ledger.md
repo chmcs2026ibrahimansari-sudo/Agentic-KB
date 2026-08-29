@@ -164,3 +164,18 @@ Jay asked for more commits and authorized three things by name: drain all 8 unme
 - CONTENTION — another scheduled job held its own `npm ci` in `/tmp/agentic-pi-work` throughout, on the same default npm cache. Retrying with an isolated cache did not help, so the cause is the network rather than the cache lock. Disk fell to **29 GiB free, below the 30 GiB wave-split threshold** for the first time; parallel installs are no longer safe here.
 - STANDING POLICY ADOPTED — split bundled backlog entries and implement the code half, *after reading the code rather than the entry*. That qualifier is not decoration: this same day's earlier session proved a three-times-proposed "takeable half" rested on a false premise.
 - HYGIENE — 3 worktrees created across the session, all removed and pruned; `/tmp/ntf` and the scratch npm cache deleted. Agentic-KB back to baseline 3, hermes back to baseline 1. Both trees clean. Three merged hermes remote branches deleted; no branch this job did not create was touched.
+
+## 2026-08-29
+
+- Preflight: kill switch absent; disk 67 GiB free (up from 40, two-day decline reversed); no wave split needed.
+- Backlog coverage re-derived against origin: 8/8 HAS. Fifth consecutive run.
+- Notes enumeration: prescribed osascript patterns do not terminate; replaced with three bulk property fetches filtered in-memory (~85s). Script at /tmp/ntf-enum4.scpt.
+- list_notes id unreliability reproduced: it attributes a substantive note's title to p7216, which is actually a bare link dump; the real id is p7039.
+- Harvest: 4 notes in window. 3 bare-URL link dumps under 120 bytes, skipped. 1 substantive (p7039), read, not actionable in code.
+- p7039 ingest DECLINED on repo-visibility grounds: Agentic-KB is public and the note's subject matter is personally sensitive. New screen needed; escalated to Jay.
+- Phase 2e: two subagents surveyed 8 repos. 48 Open items evaluated. Three "takeable half" claims checked against source; all three failed.
+- IMPLEMENT x1: Agentic-KB bus comparator, backlog entry dated 2026-08-25. Merged 28ce480 (fix e82692c). Baseline 536/536, post-change 542/542, 4 of 6 new tests red against pre-change tree, preflight clear. Rebased onto 59361a8 mid-run and re-gated before push.
+- Gate deviation on 28ce480: one new exported symbol. Exclusion list names exported-interface changes. Additive only; self-flagged; escalated rather than papered over.
+- Docs-only triage records pushed: Agentic-Pi-Harness c95cff2, hermes-harness-missioncontrol 165cd56. No test suite run in either, so no green claim made about either default branch.
+- Worktrees: 3 created, 3 removed, all eight repos confirmed back at baseline. /tmp/ntf empty. No ntf/* heads left on any origin.
+- Branch pileup now spans three repos and is the standing top code finding.

@@ -2165,3 +2165,18 @@ Pages affected: `personal/idea-books-as-agents-author-partnerships.md`
 **Contradictions flagged:** None new. The tensions query re-reported two items (sandbox-isolation-vs-policy; mistake-log write-trigger blindness) that are already documented as explicitly unresolved inside `[[syntheses/synthesis-sandbox-safety-is-policy-not-place]]` and `[[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]]`, both `reviewed: false` with their own gap sections. No new `[UNVERIFIED]` markers or confidence downgrades applied — re-flagging would regress already-recorded work.
 
 **Query health:** the `patterns` query failed on first attempt (`max_tokens`, no text returned) and succeeded on one retry anchored on `wiki/index.md` + `wiki/hot.md` + `wiki/candidates.md`. Top ungraduated themes: proof-of-work receipts as a canonical primitive, RRF score-blindness, and the validation-gate mechanism shared by the episodic-judgment and mistake logs.
+
+## 2026-08-29 — Compiled `clippings/2026-08-27T19-33-06__apple-notes__tony__b825219b.md`
+
+Pages affected: `personal/roofclaim-recovery-business-plan.md`
+
+## 2026-08-29 — morning-review-daily
+
+- Preflight: clear (exit 0). API funded, KB web server healthy, raw/ PII clean, worktree clean.
+- Morning Review pipeline: completed. 4 notes, 15 links, 9 findings, 0 errors. Daily note written to vault.
+- Captures: sofie-watch-obsidian no-op. Apple Notes `KB Inbox` held only the known `test-capture-2026-05-16` (already in raw/clippings/ ×3 — dedup hash instability, unfixed). Snipd folder empty. Nothing new staged.
+- KB queries: connections OK, tensions OK, leverage OK, proposals OK. **patterns query FAILED** — `stream failed after 3 attempts: model returned no text (stop_reason: max_tokens)`. Gap recorded in today's daily note.
+- Compile (`compile-2source-gate.mjs --execute`): exit 0. Plan showed 33 PROMOTE / 195 DEFER / 0 GRADUATE, but per the script's own notice those promotes are ADVISORY and nothing applies them (tracked as PROP-157). The `kb compile` write phase compiled 1 new raw doc → 1 page created: `wiki/personal/roofclaim-recovery-business-plan.md`.
+- Proposals: PROP-165 [HEAVY_BACKLOG] persisted by foundry-propose. PROP-166 [STALLED_LEVERAGE_QUESTION] added manually per the escalation guard.
+- Synthesis drafted: [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]] (reviewed: false). Bridges Memory MoC ↔ Evaluation MoC. Verified no existing synthesis covered it; the other two candidate connections were rejected as already covered by `synthesis-permissions-as-single-compiled-policy` / `synthesis-retrieval-and-tool-permissions-as-co-enforced-boundary` and by `synthesis-verifier-as-goal-completion-benchmark` / `synthesis-proof-of-work-receipts-vs-trajectory-eval`.
+- Contradictions: **no provenance edits made.** The tensions query re-reported the `agentmemory` provenance gap as open, but `[[concepts/reciprocal-rank-fusion]]` carries a `[PROVENANCE RESOLVED — 2026-06-10]` block and confidence was already restored to `high`. Re-flagging would have regressed resolved work. `[[patterns/pattern-per-claim-confidence]]` is already `confidence: medium`, the correct downgraded state. The obsidian-wiki raw-immutability conflict and the 2026-05-27 compile root-cause question remain genuinely open — neither is actionable without human decision.

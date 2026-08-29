@@ -254,13 +254,14 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 - [[summaries/opensourceprojects-dev-post-simba|Open-source Projects — Simba Eval-First Customer Service Assistant]] — Promotional writeup adding Simba architecture details: Python backend, Next.js dashboard, npm widget, modular RAG, Docker CPU/GPU setup, and eval-first positioning.
 - [[summaries/deepseek-ai-deepseek-harness|DeepSeek Harness — Everything Is a Plugin]] — DeepSeek's developer-preview plugin-first agent harness, with Cordis composition, durable session events, tool pipeline stages, capability seams, and typed remote contracts.
 
-## Personal (16)s (6) (Jay's patterns)
+## Personal (17)s (6) (Jay's patterns)
 
 | Page | Category | Confidence | Description |
 |------|----------|------------|-------------|
 | [[personal/personal-agent-design-observations]] | pattern | medium | 10 observed patterns across Jay's 32 agent definitions |
 | [[personal/personal-jays-framework-philosophy]] | decision | high | Three-framework selection system (GSD/[[framework-superpowers]]/[[framework-bmad]]) with decision tree |
 | [[personal/hermes-operating-context]] | pattern | high | Hermes orchestrator session-start memory: portfolio state, active priorities, routing defaults, durable lessons |
+| [[personal/roofclaim-recovery-business-plan]] | decision | medium | Venture concept notes: public-adjusting + AI claim recovery for residential roofing insurance claims |
 
 ---
 
@@ -289,7 +290,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (42)
+## Syntheses (45)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -332,6 +333,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]] | The mistake log's write-trigger is a user correction, so self-detected fix-loop abandonment and silent refusals never reach it — what should the GSD escalation rule's "document and move on" actually write to? | 2026-08-27 |
 | [[syntheses/synthesis-sandbox-safety-is-policy-not-place]] | Recent OpenSandbox, DeepAgents, and Hugging Face intrusion sources show that sandbox safety is the policy boundary around credentials, egress, approvals, and traces — not merely the place code runs. | 2026-08-27 |
 | [[syntheses/synthesis-proof-of-work-receipts-vs-trajectory-eval]] | Proof-of-work receipts and trajectory evaluation collect the same evidence and differ only in authorship — receipts catch omission, trajectory eval catches fabrication. Which one should run where? | 2026-08-28 |
+| [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]] | The hot cache's Letta-over-Mem0 default rests on a self-flagged-stale LoCoMo result, and no page defines the re-verification procedure its own caveat demands. | 2026-08-29 |
 
 ---
 

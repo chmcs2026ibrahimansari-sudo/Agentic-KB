@@ -99,6 +99,7 @@ See [[system/policies/freshness-policy]] and [[system/policies/source-trust-poli
 - [[syntheses/synthesis-telephone-game-per-claim-confidence]] — Argues supervisor paraphrase corruption and lossy memory retrieval are the same failure mode, and that [[patterns/pattern-per-claim-confidence]] is portable across the orchestration boundary
 - [[syntheses/synthesis-harness-self-improvement-as-memory-promotion]] — Argues a [[concepts/self-improving-harness|self-improving harness]]'s scaffolding edits are `learned → canonical` promotion by another name, and that [[system/policies/promotion-rules]] and [[system/policies/freshness-policy]] should govern harness structure as a distinct memory class
 - [[syntheses/synthesis-promotion-scoring-without-a-judge]] — Argues every term in [[system/policies/promotion-rules]]' score formula is provenance metadata, so promotion measures how well a claim is documented and never whether it is true; proposes a calibration study against [[concepts/llm-as-judge]] before changing the formula
+- [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]] — Argues the Memory Systems Quick Guide in `wiki/hot.md` compresses a scoped finding from [[evaluations/eval-memory-approaches]] into an unscoped default, and that its "re-verify" caveat is an instruction with no procedure attached
 
 ---
 

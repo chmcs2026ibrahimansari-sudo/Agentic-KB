@@ -277,3 +277,8 @@ Directly relevant to the "software factory vs harness" question in Jay's 2026-08
 - `wiki/_meta/proposals.md` — new entry `PROP-152 [HEAVY_BACKLOG]` (167 deferred themes vs threshold 50).
 - `wiki/_meta/compile-log.md` — 2-source gate run: 30 promote, 167 defer, 0 graduate; 12 raw docs compiled → 11 pages created, 3 updated.
 - New pages from the compile gate: `concepts/foundry-capture-pipeline`, `frameworks/remember-cite-forget`, `concepts/agent-memory-architecture`, `summaries/summary-hf-agent-intrusion-technical-timeline`, `concepts/agent-evaluation-gaming`, `patterns/pattern-single-agent-front-door`, `summaries/summary-sierra-ai-pilling-lessons`, `entities/sierra-ai`, `patterns/pattern-embedded-graduation-model`, `entities/leann`, `concepts/local-rag-storage-optimization`, `concepts/managed-agents`, `summaries/summary-hwchase17-managed-agents-thesis`.
+
+## 2026-08-29
+
+- [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol|Memory-System Selection Rests on a Benchmark With No Re-Verification Protocol]] — the hot cache's Letta-over-Mem0 default rests on a self-flagged-stale LoCoMo number that no page defines a procedure to re-verify.
+- [[personal/roofclaim-recovery-business-plan|RoofClaim Recovery — Business Plan Notes]] — compiled from Apple Notes clipping; public-adjusting + AI claim-recovery venture concept.

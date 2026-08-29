@@ -80,6 +80,7 @@ The V2 runtime uses promotion scoring as an inline evaluation mechanism:
 - [[syntheses/synthesis-promotion-scoring-without-a-judge]] — Argues the promotion scorer measures how well a claim is documented, never whether it is true, leaving [[concepts/llm-as-judge]] unwired to the canonical gate it was built for
 - [[syntheses/synthesis-verifier-as-goal-completion-benchmark]] — Argues the Plan-Execute-Verify verifier is the runtime implementation of goal-vs-task completion, convertible into a benchmark-design template
 - [[syntheses/synthesis-proof-of-work-receipts-vs-trajectory-eval]] — Argues [[patterns/pattern-agent-proof-of-work-loop]] receipts are self-authored trajectories: they catch omission cheaply but are structurally blind to fabrication, which is what [[concepts/trajectory-evaluation]] and [[concepts/llm-as-judge]] exist to catch
+- [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]] — Argues `wiki/hot.md`'s memory tiering advice cites a self-flagged-stale LoCoMo result with no attached re-verification procedure, leaving [[concepts/benchmark-design]] unwired to [[evaluations/eval-memory-approaches]]
 
 ---
 

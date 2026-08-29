@@ -1220,3 +1220,23 @@ purpose: Append-only ledger of actionable proposals surfaced by /foundry-propose
 - run: 2026-08-28T13:12:00.864Z
 - recommendation: Latest compile deferred 195 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
 
+
+## 2026-08-29T17:17:21.912Z
+
+### PROP-165 [HEAVY_BACKLOG] backlog:2026-08-29T17:16:00.744Z
+
+- defer count: 195 (threshold 50)
+- run: 2026-08-29T17:16:00.744Z
+- recommendation: Latest compile deferred 195 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
+
+
+### PROP-166 [STALLED_LEVERAGE_QUESTION] leverage:locomo-staleness
+
+- detector: manual (morning-review-daily escalation guard)
+- run: 2026-08-29
+- observation: The leverage question "is the LoCoMo 74% / 68.5% Letta-vs-Mem0 result still valid?" has recurred in daily notes on 2026-05-13, 2026-05-16, 2026-07-09, 2026-08-08, 2026-08-10, 2026-08-15, 2026-08-16. Seven appearances with no movement. It is a stalled task, not an open question.
+- concrete verification step: Decide between (a) and (b), then execute one.
+  (a) Re-run a LoCoMo-style comparison against pinned current releases of Letta and Mem0, recording task suite, sample size, and judge protocol per `[[concepts/benchmark-design]]`; attach the protocol to `[[evaluations/eval-memory-approaches]]` and have `wiki/hot.md` cite it.
+  (b) Strip the two percentages from `wiki/hot.md`'s Memory Systems Quick Guide, retaining only the qualitative finding ("tool complexity matters less than reliable retrieval"), which survives version drift.
+- recommendation: (b) is ~10 minutes and closes the flag; (a) is the durable fix. Do (b) now, track (a). Either resolves it — leaving it open is the only outcome that does not.
+- context: [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]]

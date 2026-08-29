@@ -9,9 +9,25 @@
     "branches": [
       "main"
     ],
-    "status": "open",
+    "status": "fixed",
     "pr": null,
     "category": "permissions/config",
-    "note": "VERCEL_TOKEN secret rejected by Vercel API (403, invalidToken). Tier B - secret rotation, report-only. 2nd consecutive day."
+    "note": "VERCEL_TOKEN secret rejected by Vercel API (403, invalidToken). RESOLVED: 'Vercel Environment Check' passed on main 2026-08-28T12:53:56Z (23s). Token appears to have been rotated. No action needed.",
+    "resolved_on": "2026-08-29"
+  },
+  "e90110b2": {
+    "repo": "twinz",
+    "workflow": "Auto Version Bump",
+    "error": "remote: Write access to repository not granted. / fatal: ... error: 403",
+    "first_seen": "2026-05-28",
+    "last_seen": "2026-08-22",
+    "count": 2,
+    "branches": [
+      "master"
+    ],
+    "status": "pr_open",
+    "pr": "https://github.com/jaydubya818/twinz/pull/7",
+    "category": "permissions/config",
+    "note": "version-bump.yml declares no permissions: block, so GITHUB_TOKEN is read-only and 'git push origin master' 403s. Fix ALREADY WRITTEN in PR #7 (open since 2026-05-20, unreviewed 101 days). Failure recurred 2026-08-22 BECAUSE #7 was never merged. Out of 24h window (twinz dormant since 2026-08-22) - surfaced via unfiltered check. No new PR opened: \u00a75 dedupe = open PR -> skip."
   }
 }

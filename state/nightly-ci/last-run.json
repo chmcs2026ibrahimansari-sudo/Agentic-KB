@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-22",
-  "finished_at": "2026-08-22T17:11:23Z",
+  "date": "2026-08-29",
+  "finished_at": "2026-08-29T03:12:53Z",
   "status": "partial",
   "repos_checked": [
     "sellerfi",
     "missioncontrol",
-    "twinz",
-    "Agentic-KB",
-    "Agentic-Pi-Harness"
+    "twinz"
   ],
-  "runs_total": 7,
-  "passed": 4,
-  "failed": 1,
+  "runs_total": 3,
+  "passed": 1,
+  "failed": 0,
   "skipped": 2,
+  "in_progress": 0,
   "prs_opened": 0,
-  "note": "Sandbox provisioning failed 3rd consecutive day; tracked in Agentic-KB#5. Completed via operator-local fallback. Auto-fix held to report-only."
+  "report_only": 1,
+  "note": "Sandbox provisioning failed 3x identically (useradd exit 12) - 5th+ occurrence since 2026-08-20, tracked in Agentic-KB#5. Completed via operator-local fallback (Desktop Commander on jays-MacBook-Pro). Auto-fix held to report-only due to changed execution environment. Heartbeat had been stale since 2026-08-22 (7 days dark)."
 }

@@ -179,3 +179,13 @@ Jay asked for more commits and authorized three things by name: drain all 8 unme
 - Docs-only triage records pushed: Agentic-Pi-Harness c95cff2, hermes-harness-missioncontrol 165cd56. No test suite run in either, so no green claim made about either default branch.
 - Worktrees: 3 created, 3 removed, all eight repos confirmed back at baseline. /tmp/ntf empty. No ntf/* heads left on any origin.
 - Branch pileup now spans three repos and is the standing top code finding.
+
+### Addendum, post-run at Jay's direction
+
+- ai-software-factory-mastery: MERGED 81eccac (fix 374d2d1). Canonical glossary +86 lines, 15 new terms in two new sections (context/configuration, factory learning). Glossary 72 -> 87 terms. Terms derived from MissionControl implementation, not invented. Vacuous-green gate: frontmatter intact, fences and bold markers balanced, zero duplicate terms, README links to file not sections so no index change. Revert: git -C /Users/jaywest/ai-software-factory-mastery revert -m 1 81eccac && git push
+- ai-software-factory-mastery frontmatter (last_verified, mission_control_commit) deliberately NOT bumped: only the 15 added terms were verified, not all 87. Flagged to Jay.
+- MissionControl: PR #140 opened, NOT merged. Adds docs/FACTORY_VOCABULARY.md (133 lines). PR rather than direct push because MissionControl is PR-only by its own governance invariant; Jay can override but not by my inference. Branched from origin/main, local was detached HEAD at 4700573.
+- MissionControl had 72 docs and no glossary at all. Docs-only gate: all 9 cited paths verified to exist; acceptanceAuthority literal false confirmed at 5 sites; all enumerations read from source.
+- Doc includes a "Terms deliberately not defined here" section: governed experiment and promotion recommendation are in the guide and the backlog but return 0 matches in the tree, so they are named as unimplemented rather than described as shipping.
+- INCIDENTAL FINDING, not addressed: MissionControl's Factory Learning V1 backlog item is Open, but factory-learning-v1 ships as a scanner version with real enumerations, a 30-day window and a 200-row cap. Backlog entry and implementation appear to have drifted. Flagged in the PR body.
+- Hygiene: 2 worktrees created and removed, /tmp/ntf empty. MissionControl baseline moved 58 -> 56 because the prescribed `git worktree prune` cleared two stale ADMIN entries whose directories no longer existed. No live worktree touched, nothing deleted from disk. All other baselines unchanged.

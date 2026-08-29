@@ -20,6 +20,7 @@ export function validateCloseTaskPayload(kbRoot: string, contract: any, payload:
 export function publishBusItem(kbRoot: string, opts: any): { id: string; path: string }
 export function readBusItem(kbRoot: string, channel: string, id: string): any
 export function listBusItems(kbRoot: string, channel: string, opts?: Record<string, any>): any[]
+export function compareBusItemsByCreatedAt(a: any, b: any): number
 export function transitionBusItem(kbRoot: string, channel: string, id: string, toState: string, actor: string): any
 
 export function promoteLearning(kbRoot: string, opts: any): { source: string; target: string; id: string }

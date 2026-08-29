@@ -1,6 +1,6 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-28 14:07 | Vault: Agentic-KB | Pages scanned: 804
+> Generated: 2026-08-29 17:08 | Vault: Agentic-KB | Pages scanned: 804
 
 ## Summary
 
@@ -8,10 +8,10 @@
 |---|---|---|---|
 | Contradictions | 0 | ±0 | 🟢 Clear |
 | Orphaned pages | 75 | ±0 | 🟡 Medium |
-| Stale pages | 306 | ±0 | 🟡 Medium |
+| Stale pages | 307 | +1 | 🟡 Medium |
 | Knowledge gaps | 0 | ±0 | 🟢 Clear |
 
-**Analysis window:** 60 of 804 pages (7%) — 2 changed since last run, 58 from the rotating cursor. Full-vault coverage every ~14 runs.
+**Analysis window:** 60 of 804 pages (7%) — 0 changed since last run, 60 from the rotating cursor. Full-vault coverage every ~14 runs.
 
 ## 🎯 Triage — start here
 
@@ -29,16 +29,16 @@
 
 **Stale pages others depend on** (most inbound links first) — these propagate outdated information:
 
-1. `concepts/agent-loops.md` — 98 inbound links, 146 days old
-1. `concepts/agent-failure-modes.md` — 82 inbound links, 49 days old
-1. `concepts/multi-agent-systems.md` — 62 inbound links, 141 days old
-1. `entities/mcp-ecosystem.md` — 60 inbound links, 142 days old
-1. `concepts/context-management.md` — 53 inbound links, 36 days old
-1. `concepts/human-in-the-loop.md` — 50 inbound links, 125 days old
-1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 146 days old
-1. `patterns/pattern-hot-cache.md` — 44 inbound links, 125 days old
-1. `entities/anthropic.md` — 41 inbound links, 146 days old
-1. `frameworks/framework-langgraph.md` — 38 inbound links, 145 days old
+1. `concepts/agent-loops.md` — 98 inbound links, 147 days old
+1. `concepts/agent-failure-modes.md` — 82 inbound links, 50 days old
+1. `concepts/multi-agent-systems.md` — 62 inbound links, 142 days old
+1. `entities/mcp-ecosystem.md` — 60 inbound links, 143 days old
+1. `concepts/context-management.md` — 53 inbound links, 37 days old
+1. `concepts/human-in-the-loop.md` — 50 inbound links, 126 days old
+1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 147 days old
+1. `patterns/pattern-hot-cache.md` — 44 inbound links, 126 days old
+1. `entities/anthropic.md` — 41 inbound links, 147 days old
+1. `frameworks/framework-langgraph.md` — 38 inbound links, 146 days old
 
 ## 🟡 Orphaned Pages (no inbound links)
 
@@ -335,6 +335,7 @@
 - `patterns/vitest-best-practices.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/wiki-ingest-workflow.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `personal/agentic-pi-harness-project-plan.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
+- `personal/databricks-workspace-platform-role.md` — last updated: Wed Jul 29 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `prompt-library/index.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `recipes/five-agent-business-ops.md` — last updated: Fri Jul 10 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `recipes/obsidian-smart-vault-setup.md` — last updated: Fri Jul 10 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)

@@ -21,6 +21,74 @@
     {
       "date": "2026-08-22",
       "seconds": 404
+    },
+    {
+      "date": "2026-08-23",
+      "seconds": 391
+    },
+    {
+      "date": "2026-08-23",
+      "seconds": 324
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 408
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 387
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 392
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 459
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 391
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 421
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 413
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 393
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 311
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 350
+    },
+    {
+      "date": "2026-08-27",
+      "seconds": 412
+    },
+    {
+      "date": "2026-08-27",
+      "seconds": 428
+    },
+    {
+      "date": "2026-08-27",
+      "seconds": 390
+    },
+    {
+      "date": "2026-08-27",
+      "seconds": 411
+    },
+    {
+      "date": "2026-08-27",
+      "seconds": 298
     }
   ],
   "Agentic-KB/test": [
@@ -43,6 +111,38 @@
     {
       "date": "2026-08-29",
       "seconds": 23
+    },
+    {
+      "date": "2026-08-27",
+      "seconds": 17
+    },
+    {
+      "date": "2026-08-26",
+      "seconds": 18
+    },
+    {
+      "date": "2026-08-25",
+      "seconds": 18
+    },
+    {
+      "date": "2026-08-24",
+      "seconds": 19
+    },
+    {
+      "date": "2026-08-23",
+      "seconds": 19
+    }
+  ],
+  "sellerfi/Production Validation": [
+    {
+      "date": "2026-08-23",
+      "seconds": 162
+    }
+  ],
+  "sellerfi/Test Suite": [
+    {
+      "date": "2026-08-23",
+      "seconds": 713
     }
   ]
 }

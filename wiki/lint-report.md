@@ -1,6 +1,6 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-29 17:08 | Vault: Agentic-KB | Pages scanned: 804
+> Generated: 2026-08-30 14:07 | Vault: Agentic-KB | Pages scanned: 826
 
 ## Summary
 
@@ -8,37 +8,37 @@
 |---|---|---|---|
 | Contradictions | 0 | ±0 | 🟢 Clear |
 | Orphaned pages | 75 | ±0 | 🟡 Medium |
-| Stale pages | 307 | +1 | 🟡 Medium |
+| Stale pages | 311 | +4 | 🟡 Medium |
 | Knowledge gaps | 0 | ±0 | 🟢 Clear |
 
-**Analysis window:** 60 of 804 pages (7%) — 0 changed since last run, 60 from the rotating cursor. Full-vault coverage every ~14 runs.
+**Analysis window:** 60 of 826 pages (7%) — 4 changed since last run, 56 from the rotating cursor. Full-vault coverage every ~14 runs.
 
 ## 🎯 Triage — start here
 
 **Substantial pages nothing links to** (≥100 words, largest first) — link these from a hub page or archive them:
 
-1. `_meta/proposals.md` — Foundry Proposals (6740 words)
+1. `_meta/proposals.md` — Foundry Proposals (6996 words)
 1. `syntheses/synthesis-repo-aware-system-implementation.md` — Repo-Aware Knowledge & Agent Memory System — Implementation Summary (1679 words)
+1. `reports/2026-08-28-nightly-ci-analysis-backfill.md` — 2026-08-28-nightly-ci-analysis-backfill (1025 words)
 1. `reports/2026-08-18-nightly-ci-analysis.md` — 2026-08-18-nightly-ci-analysis (906 words)
 1. `syntheses/lint-2026-04-18.md` — Lint Report — 2026-04-18 (897 words)
+1. `reports/2026-08-29-nightly-ci-analysis.md` — 2026-08-29-nightly-ci-analysis (867 words)
 1. `reports/2026-08-21-nightly-ci-analysis.md` — 2026-08-21-nightly-ci-analysis (707 words)
 1. `reports/2026-08-17-nightly-ci-analysis.md` — 2026-08-17-nightly-ci-analysis (684 words)
 1. `concepts/agentic-engineering-stack.md` — Agentic AI Engineering Stack (682 words)
-1. `concepts/react-nextjs-performance.md` — React & Next.js Performance Optimization (682 words)
-1. `patterns/pattern-filesystem-context.md` — Filesystem-Based Context Pattern (657 words)
 
 **Stale pages others depend on** (most inbound links first) — these propagate outdated information:
 
-1. `concepts/agent-loops.md` — 98 inbound links, 147 days old
-1. `concepts/agent-failure-modes.md` — 82 inbound links, 50 days old
-1. `concepts/multi-agent-systems.md` — 62 inbound links, 142 days old
-1. `entities/mcp-ecosystem.md` — 60 inbound links, 143 days old
-1. `concepts/context-management.md` — 53 inbound links, 37 days old
-1. `concepts/human-in-the-loop.md` — 50 inbound links, 126 days old
-1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 147 days old
-1. `patterns/pattern-hot-cache.md` — 44 inbound links, 126 days old
-1. `entities/anthropic.md` — 41 inbound links, 147 days old
-1. `frameworks/framework-langgraph.md` — 38 inbound links, 146 days old
+1. `concepts/agent-loops.md` — 100 inbound links, 148 days old
+1. `concepts/agent-failure-modes.md` — 86 inbound links, 51 days old
+1. `concepts/multi-agent-systems.md` — 63 inbound links, 143 days old
+1. `entities/mcp-ecosystem.md` — 61 inbound links, 144 days old
+1. `concepts/context-management.md` — 56 inbound links, 38 days old
+1. `concepts/human-in-the-loop.md` — 54 inbound links, 127 days old
+1. `patterns/pattern-hot-cache.md` — 45 inbound links, 127 days old
+1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 148 days old
+1. `entities/anthropic.md` — 42 inbound links, 148 days old
+1. `patterns/pattern-supervisor-worker.md` — 40 inbound links, 142 days old
 
 ## 🟡 Orphaned Pages (no inbound links)
 
@@ -62,11 +62,9 @@
 - `entities/hermes-agent.md` — Hermes Agent
 - `entities/seller-fi.md` — SellerFi
 - `frameworks/agent-orchestrator.md` — Agent Orchestrator (Untrivial-ai)
-- `frameworks/framework-open-swe.md` — Open SWE (LangChain)
 - `frameworks/headroom.md` — Headroom
 - `frameworks/openconnector.md` — OpenConnector (OOMOL)
 - `patterns/pattern-filesystem-context.md` — Filesystem-Based Context Pattern
-- `patterns/pattern-forward-deployed-engineering.md` — Forward Deployed Engineering for Production AI Agents
 - `patterns/pattern-morning-review.md` — Morning-Review Pipeline
 - `patterns/pattern-playwright-e2e.md` — Playwright E2E Testing Pattern
 - `patterns/pattern-raw-inbox-workflow.md` — Raw Inbox Workflow
@@ -105,6 +103,8 @@
 - `reports/2026-08-19-nightly-ci-analysis.md` — 2026-08-19-nightly-ci-analysis
 - `reports/2026-08-21-nightly-ci-analysis.md` — 2026-08-21-nightly-ci-analysis
 - `reports/2026-08-22-nightly-ci-analysis.md` — 2026-08-22-nightly-ci-analysis
+- `reports/2026-08-28-nightly-ci-analysis-backfill.md` — 2026-08-28-nightly-ci-analysis-backfill
+- `reports/2026-08-29-nightly-ci-analysis.md` — 2026-08-29-nightly-ci-analysis
 - `summaries/summary-fable-prompting-tutorial-linkedin.md` — Summary: Fable Prompting Tutorial (LinkedIn thread, Eduardo Ordax)
 - `summaries/summary-garrytan-meta-meta-prompting.md` — Meta-Meta-Prompting: The Secret to Making AI Agents Work
 - `summaries/summary-gsd-project-researcher.md` — GSD Project Researcher Agent — Role Definition
@@ -242,6 +242,7 @@
 - `entities/openai.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `entities/seller-fi.md` — last updated: Mon Apr 20 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `entities/sierra-ai.md` — last updated: Thu Jul 09 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
+- `entities/workday-agent-platform.md` — last updated: Thu Jul 30 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `evaluations/eval-memory-approaches.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `evaluations/eval-nous-research-hermes.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `evaluations/eval-orchestration-frameworks.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
@@ -336,10 +337,13 @@
 - `patterns/wiki-ingest-workflow.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `personal/agentic-pi-harness-project-plan.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `personal/databricks-workspace-platform-role.md` — last updated: Wed Jul 29 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
+- `personal/jay-agentic-software-factory.md` — last updated: Thu Jul 30 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
+- `personal/workday-sem-opportunity.md` — last updated: Thu Jul 30 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `prompt-library/index.md` — last updated: Sun Apr 12 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `recipes/five-agent-business-ops.md` — last updated: Fri Jul 10 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `recipes/obsidian-smart-vault-setup.md` — last updated: Fri Jul 10 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `recipes/readwise-to-wikiwise-ingest.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
+- `recipes/recipe-graph-engineering-pipeline.md` — last updated: Thu Jul 30 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `recipes/recipe-prd-generator.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `repos/agentic-kb/CLAUDE.md` — last updated: Wed Apr 08 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `repos/agentic-kb/canonical/APP_FLOW.md` — last updated: Wed Apr 08 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)

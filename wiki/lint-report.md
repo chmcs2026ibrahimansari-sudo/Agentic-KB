@@ -1,17 +1,17 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-30 14:07 | Vault: Agentic-KB | Pages scanned: 826
+> Generated: 2026-08-30 17:50 | Vault: Agentic-KB | Pages scanned: 821
 
 ## Summary
 
 | Check | Count | Δ vs last run | Severity |
 |---|---|---|---|
 | Contradictions | 0 | ±0 | 🟢 Clear |
-| Orphaned pages | 75 | ±0 | 🟡 Medium |
-| Stale pages | 311 | +4 | 🟡 Medium |
+| Orphaned pages | 75 | -1 | 🟡 Medium |
+| Stale pages | 312 | ±0 | 🟡 Medium |
 | Knowledge gaps | 0 | ±0 | 🟢 Clear |
 
-**Analysis window:** 60 of 826 pages (7%) — 4 changed since last run, 56 from the rotating cursor. Full-vault coverage every ~14 runs.
+**Analysis window:** 60 of 821 pages (7%) — 0 changed since last run, 60 from the rotating cursor. Full-vault coverage every ~14 runs.
 
 ## 🎯 Triage — start here
 
@@ -26,18 +26,19 @@
 1. `reports/2026-08-21-nightly-ci-analysis.md` — 2026-08-21-nightly-ci-analysis (707 words)
 1. `reports/2026-08-17-nightly-ci-analysis.md` — 2026-08-17-nightly-ci-analysis (684 words)
 1. `concepts/agentic-engineering-stack.md` — Agentic AI Engineering Stack (682 words)
+1. `concepts/react-nextjs-performance.md` — React & Next.js Performance Optimization (682 words)
 
 **Stale pages others depend on** (most inbound links first) — these propagate outdated information:
 
 1. `concepts/agent-loops.md` — 100 inbound links, 148 days old
-1. `concepts/agent-failure-modes.md` — 86 inbound links, 51 days old
-1. `concepts/multi-agent-systems.md` — 63 inbound links, 143 days old
-1. `entities/mcp-ecosystem.md` — 61 inbound links, 144 days old
+1. `concepts/agent-failure-modes.md` — 85 inbound links, 51 days old
+1. `concepts/multi-agent-systems.md` — 62 inbound links, 143 days old
+1. `entities/mcp-ecosystem.md` — 60 inbound links, 144 days old
 1. `concepts/context-management.md` — 56 inbound links, 38 days old
 1. `concepts/human-in-the-loop.md` — 54 inbound links, 127 days old
 1. `patterns/pattern-hot-cache.md` — 45 inbound links, 127 days old
 1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 148 days old
-1. `entities/anthropic.md` — 42 inbound links, 148 days old
+1. `entities/anthropic.md` — 41 inbound links, 148 days old
 1. `patterns/pattern-supervisor-worker.md` — 40 inbound links, 142 days old
 
 ## 🟡 Orphaned Pages (no inbound links)
@@ -65,6 +66,7 @@
 - `frameworks/headroom.md` — Headroom
 - `frameworks/openconnector.md` — OpenConnector (OOMOL)
 - `patterns/pattern-filesystem-context.md` — Filesystem-Based Context Pattern
+- `patterns/pattern-incremental-compile-pipeline.md` — Incremental Compile Pipeline
 - `patterns/pattern-morning-review.md` — Morning-Review Pipeline
 - `patterns/pattern-playwright-e2e.md` — Playwright E2E Testing Pattern
 - `patterns/pattern-raw-inbox-workflow.md` — Raw Inbox Workflow
@@ -297,6 +299,7 @@
 - `patterns/pattern-hybrid-search-retrieval.md` — last updated: Fri May 15 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-idempotent-tools.md` — last updated: Fri Apr 03 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-import-readwise-skill.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
+- `patterns/pattern-incremental-compile-pipeline.md` — last updated: Tue Apr 07 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-ingest-tweets-skill.md` — last updated: Fri Apr 24 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-layered-injection-hierarchy.md` — last updated: Sat Apr 11 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)
 - `patterns/pattern-librarian-agent.md` — last updated: Mon Apr 06 2026 17:00:00 GMT-0700 (Pacific Daylight Time) (cadence: 30d)

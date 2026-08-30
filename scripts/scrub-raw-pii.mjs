@@ -118,7 +118,15 @@ function parseArgs(argv) {
 
 /** Dirty (untracked or modified) files under raw/, per git. */
 async function dirtyRawFiles() {
-  const { stdout } = await execFileAsync('git', ['status', '--porcelain', '--', 'raw'], {
+  // `--untracked-files=all` is load-bearing. Porcelain's default (`normal`)
+  // collapses a wholly-untracked directory to a single entry ending in `/` —
+  // a capture into a new `raw/<category>/` reports as `?? raw/<category>/`,
+  // which fails the `.md` extension test below and is dropped. Every file in
+  // that directory then goes unscanned and the script prints "raw/ has no
+  // dirty files" and exits 0, which is the exact deadlock it exists to
+  // prevent. `=all` lists each file individually.
+  const args = ['status', '--porcelain', '--untracked-files=all', '--', 'raw']
+  const { stdout } = await execFileAsync('git', args, {
     cwd: REPO_ROOT,
     maxBuffer: 10 * 1024 * 1024,
   })

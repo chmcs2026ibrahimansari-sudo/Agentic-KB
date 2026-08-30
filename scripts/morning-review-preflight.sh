@@ -177,6 +177,38 @@ else
   worktree_dirty=0
 fi
 
+# --- 5. Concurrent runner check ---------------------------------------------
+# On 2026-08-30 the launchd agent com.morningreview.daily fired at 06:00 and
+# this job launched a second pipeline at 06:03. Two concurrent runs append to
+# the same daily note. The collision was caught by chance; make it structural.
+running=$(pgrep -f 'src\.main' 2>/dev/null | wc -l | tr -d ' ')
+if [ "${running:-0}" -gt 0 ]; then
+  note "! a Morning Review pipeline is ALREADY RUNNING (${running} process(es)):"
+  pgrep -f 'src\.main' 2>/dev/null | while read -r p; do
+    printf '    pid %s started %s\n' "$p" "$(ps -o lstart= -p "$p" 2>/dev/null | xargs)"
+  done
+  note "  → do NOT launch another; poll the existing one or abort"
+  worse 2 concurrent-run
+else
+  note "✓ no Morning Review pipeline currently running"
+fi
+
+# --- 6. Web server error log ------------------------------------------------
+# The compile route logged `Controller is already closed` on every incremental
+# run from May to 2026-08-30 while three separate investigations chased a
+# phantom outage. Nobody read this file. Surface it so that cannot recur.
+weblog="$REPO/logs/web-server-error.log"
+if [ -f "$weblog" ]; then
+  recent_errs=$(find "$weblog" -newermt '24 hours ago' 2>/dev/null | wc -l | tr -d ' ')
+  if [ "${recent_errs:-0}" -gt 0 ] && grep -qE '⨯|Error|TypeError' "$weblog" 2>/dev/null; then
+    note "! web-server-error.log has recent entries — last 3 distinct:"
+    grep -E '⨯|TypeError' "$weblog" 2>/dev/null | tail -3 | sed 's/^/    /'
+    note "  → read these BEFORE diagnosing any API failure as 'server down'"
+  else
+    note "✓ web-server-error.log quiet"
+  fi
+fi
+
 [ "$worktree_dirty" -eq 1 ] && echo "WARN: worktree-dirty"
 
 case "$status" in

@@ -2296,3 +2296,15 @@ TypeError: Invalid state: Controller is already closed
 
 **Briefing:** `briefings/2026-08-30.md`.
 
+
+---
+
+## 2026-08-30 — promote-to-pages
+
+Ran the PROMOTE→page generator (PROP-157). Pages created: 2 (cap: 3).
+
+- `concepts/outcome-metrics.md` — 5 sources: linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f, linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9, lumay-ai, sierra-ai-blog-ai-pilling-our-company-lessons-learned, www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc; linked from [[mocs/evaluation]]
+- `concepts/eval-first-rag.md` — 2 sources: opensourceprojects-dev-post-simba, x-twitter-2087607558626582741; linked from [[mocs/automation]]
+
+Eligible but not created this run (cap): 0. All pages born `reviewed: false`, `confidence: medium`, with verbatim-only evidence and an explicitly empty Counter-arguments & Gaps section for a human to complete.
+

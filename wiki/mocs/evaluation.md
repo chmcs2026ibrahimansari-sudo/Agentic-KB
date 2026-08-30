@@ -93,3 +93,10 @@ The V2 runtime uses promotion scoring as an inline evaluation mechanism:
 - [[summaries/deepeval-framework-docs]] — DeepEval (Confident AI): 50+ metrics, named agent metrics, Pytest-native
 - [[summaries/promptfoo-framework-docs]] — promptfoo ([[openai]]-owned, MIT): declarative YAML, red-team first-class, CI/CD native
 - [[summaries/langsmith-framework-docs]] — LangSmith (LangChain): trace-to-dataset workflow, unified eval + observability
+
+## Generated Drafts (unreviewed)
+
+> Pages the 2-source gate promoted automatically. Each needs a human pass
+> before its claims can be relied on.
+
+- [[concepts/outcome-metrics]] — Outcome Metrics _(generated draft, unreviewed)_

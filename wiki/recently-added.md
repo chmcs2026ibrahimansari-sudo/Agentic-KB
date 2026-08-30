@@ -9,6 +9,13 @@ type: meta
 
 ---
 
+## 2026-08-30 (promote-to-pages)
+
+- [[concepts/outcome-metrics|Outcome Metrics]] — generated draft from 5 sources (linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f, linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9, lumay-ai, sierra-ai-blog-ai-pilling-our-company-lessons-learned, www-linkedin-com-pulse-copy-netflix-ntech-sre-purpose-built-approach-reliability-scale-ozc). Unreviewed.
+- [[concepts/eval-first-rag|Eval First RAG]] — generated draft from 2 sources (opensourceprojects-dev-post-simba, x-twitter-2087607558626582741). Unreviewed.
+
+---
+
 ## 2026-08-30 (morning-review-daily)
 
 - [[syntheses/synthesis-forward-message-is-a-permissions-decision|`forward_message` Is a Permissions Decision Wearing an Orchestration Costume]] — bridges the Orchestration MoC's [[patterns/pattern-supervisor-worker]] to the Tool Use MoC's [[patterns/pattern-minimal-permissions]] and [[concepts/tool-design]]: the Telephone Game bypass removes the only step where a worker's raw output is read before reaching the caller, which is a permissions change nobody has scored. Proposes a "forwarded unreviewed" provenance marker and names the trace study that would settle whether supervisor synthesis performs any review function at all.

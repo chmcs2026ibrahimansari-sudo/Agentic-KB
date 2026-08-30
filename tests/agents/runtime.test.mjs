@@ -776,6 +776,30 @@ test('dryRunCloseTask reports rejected ops when write would be forbidden', () =>
   assert.ok(dry.rejected.length > 0)
 })
 
+test('closeTask dry run reports ok:false when the plan would be rejected', () => {
+  const root = makeFixture()
+  const c = rt.loadContract(root, 'w1')
+  c.close_policy = {
+    required_fields: ['taskLogEntry'],
+    at_least_one_of: ['gotcha', 'discoveries', 'escalations', 'rewrites'],
+    require_active_task: false,
+  }
+
+  const result = rt.closeTask(root, c, { project: 'p1', dryRun: true })
+
+  // `ok` must agree with `wouldSucceed` — a caller branching on `.ok` must not
+  // be told a wholly rejected plan is fine.
+  assert.equal(result.dryRun, true)
+  assert.equal(result.wouldSucceed, false)
+  assert.equal(result.ok, false)
+  assert.equal(result.error, 'close-policy')
+  assert.ok(result.rejected.length >= 2)
+
+  // Nothing should actually be written
+  assert.equal(fs.existsSync(path.join(root, 'wiki/agents/workers/w1/task-log.md')), false)
+  assert.equal(fs.existsSync(path.join(root, 'logs/agent-runtime-trace.jsonl')), false)
+})
+
 test('closeTask enforces close_policy required_fields and at_least_one_of', () => {
   const root = makeFixture()
   const c = rt.loadContract(root, 'w1')

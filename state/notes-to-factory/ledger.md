@@ -189,3 +189,14 @@ Jay asked for more commits and authorized three things by name: drain all 8 unme
 - Doc includes a "Terms deliberately not defined here" section: governed experiment and promotion recommendation are in the guide and the backlog but return 0 matches in the tree, so they are named as unimplemented rather than described as shipping.
 - INCIDENTAL FINDING, not addressed: MissionControl's Factory Learning V1 backlog item is Open, but factory-learning-v1 ships as a scanner version with real enumerations, a 30-day window and a 200-row cap. Backlog entry and implementation appear to have drifted. Flagged in the PR body.
 - Hygiene: 2 worktrees created and removed, /tmp/ntf empty. MissionControl baseline moved 58 -> 56 because the prescribed `git worktree prune` cleared two stale ADMIN entries whose directories no longer existed. No live worktree touched, nothing deleted from disk. All other baselines unchanged.
+
+## 2026-08-30
+
+- Harvest: 19 notes in window, 0 ingested. 2 empty bodies; 17 refused as active-job-application preparation (not actionable in code, plus repo-visibility and third-party-personal-data screens). Ninth consecutive zero-harvest run, correctly so.
+- Phase 2e drained 1 item. Agentic-KB `a39df62` (`14c1748` fix+test, `a9bd72c` docs) — closeTask dry-run `ok` no longer hardcoded true when the plan would be rejected. Source: backlog 2026-08-25, second defect of a two-defect entry; the first defect is a governance question and stays Open.
+- Gate: 542/542 → 543/543, tsc 0, build 0, failing-then-passing verified red first, acceptance evidence observed via preflight (exit 0) and a direct probe. Deviation: merged with `web/` lint red — pre-existing 2026-08-22 condition, self-flagged, escalated.
+- Revert: `git -C /Users/jaywest/Agentic-KB revert -m 1 a39df62 && git -C /Users/jaywest/Agentic-KB push`
+- Backlog coverage 8/8 HAS on origin, sixth consecutive run. No sweep lines appended to Pi-Harness or hermes: reject reasons unchanged from 08-29, and a near-duplicate paragraph nightly is the noise those files exist to prevent.
+- Hygiene: 1 worktree created, 1 removed, Agentic-KB count returned to baseline 3, `/tmp/ntf` empty, merge branch deleted. No pre-existing worktree or branch touched.
+- Escalated: rule on additive exports; add Screen 4 to skill text; decide what the gate means when a repo's lint is permanently red; two credential-titled notes still unrotated (ninth ask).
+- Standing concern raised: all 33 remaining Open items across Pi-Harness, hermes and MissionControl are decisions awaiting an owner rather than code. Phase 2e's runway is finite.

@@ -1,17 +1,17 @@
 # Wiki Lint Report
 
-> Generated: 2026-08-30 17:50 | Vault: Agentic-KB | Pages scanned: 821
+> Generated: 2026-08-30 18:15 | Vault: Agentic-KB | Pages scanned: 829
 
 ## Summary
 
 | Check | Count | Δ vs last run | Severity |
 |---|---|---|---|
 | Contradictions | 0 | ±0 | 🟢 Clear |
-| Orphaned pages | 75 | -1 | 🟡 Medium |
+| Orphaned pages | 75 | ±0 | 🟡 Medium |
 | Stale pages | 312 | ±0 | 🟡 Medium |
 | Knowledge gaps | 0 | ±0 | 🟢 Clear |
 
-**Analysis window:** 60 of 821 pages (7%) — 0 changed since last run, 60 from the rotating cursor. Full-vault coverage every ~14 runs.
+**Analysis window:** 60 of 829 pages (7%) — 0 changed since last run, 60 from the rotating cursor. Full-vault coverage every ~14 runs.
 
 ## 🎯 Triage — start here
 
@@ -31,14 +31,14 @@
 **Stale pages others depend on** (most inbound links first) — these propagate outdated information:
 
 1. `concepts/agent-loops.md` — 100 inbound links, 148 days old
-1. `concepts/agent-failure-modes.md` — 85 inbound links, 51 days old
-1. `concepts/multi-agent-systems.md` — 62 inbound links, 143 days old
-1. `entities/mcp-ecosystem.md` — 60 inbound links, 144 days old
+1. `concepts/agent-failure-modes.md` — 86 inbound links, 51 days old
+1. `concepts/multi-agent-systems.md` — 63 inbound links, 143 days old
+1. `entities/mcp-ecosystem.md` — 61 inbound links, 144 days old
 1. `concepts/context-management.md` — 56 inbound links, 38 days old
 1. `concepts/human-in-the-loop.md` — 54 inbound links, 127 days old
 1. `patterns/pattern-hot-cache.md` — 45 inbound links, 127 days old
 1. `patterns/pattern-fan-out-worker.md` — 44 inbound links, 148 days old
-1. `entities/anthropic.md` — 41 inbound links, 148 days old
+1. `entities/anthropic.md` — 42 inbound links, 148 days old
 1. `patterns/pattern-supervisor-worker.md` — 40 inbound links, 142 days old
 
 ## 🟡 Orphaned Pages (no inbound links)

@@ -200,3 +200,14 @@ Jay asked for more commits and authorized three things by name: drain all 8 unme
 - Hygiene: 1 worktree created, 1 removed, Agentic-KB count returned to baseline 3, `/tmp/ntf` empty, merge branch deleted. No pre-existing worktree or branch touched.
 - Escalated: rule on additive exports; add Screen 4 to skill text; decide what the gate means when a repo's lint is permanently red; two credential-titled notes still unrotated (ninth ask).
 - Standing concern raised: all 33 remaining Open items across Pi-Harness, hermes and MissionControl are decisions awaiting an owner rather than code. Phase 2e's runway is finite.
+
+### 2026-08-30 addendum — proactive drain, authorized by Jay mid-run
+
+- Agentic-KB `b8464f7` — `web/` ESLint 9 flat config replaces the removed `next lint`. Lint now exits 0 and was proven to actually fire via a deliberate violation probe. 3 rules downgraded to warn (application code out of scope); 16 pre-existing problems recorded. Closes the 2026-08-22 entry and retires today's earlier gate exception.
+- Agentic-Pi-Harness `71eb1d6` (drained `nightly/2026-08-26`, hook run summaries) and `11b274c` (drained `nightly/2026-08-27`, compaction inflation + approval fail-closed). Tests 380 → 382 → 386; typecheck/lint/build/check:secrets + all 7 golden-proof steps exit 0. Both remote branches deleted after ancestor check.
+- hermes `5eff17f` (drained `nightly/2026-08-29`, audit-timeline actor filter). Tests 283 → 284.
+- hermes **PR #20** opened, not merged — `nightly/2026-08-30` is credential handling (`VITE_OPERATOR_TOKEN` `.env` guard hole) and sits on the auto-merge exclusion list. Green at 290 tests. Leak reproduced end to end before the fix.
+- PR #19 evaluated, not merged. The artifact-id half is separable and should be dropped; the timestamp half is uniquely its own. Measured finding: the `inDateRange` assertion question does NOT evaporate — the 2026-08-28 advice was wrong on that point. One decision left for Jay.
+- Corrections found by doing rather than reasoning: Pi-Harness had three nightlies not two (`nightly/2026-08-30` is now largely redundant and needs a rebase); a Pi-Harness entry claimed six failing cases where two exist; Pi-Harness has seven golden steps not six; hermes' primary checkout is on a feature branch so its backlog is absent from the working tree.
+- All nine hermes remote heads examined and tabulated for the first time. Eight of nine already have an open PR — a review queue, not lost work. `feat/factory-v0.1-contract-foundation` is the only head with no PR. `pi-agent-review` is 0-ahead and safe to delete.
+- Hygiene: 4 worktrees created, 4 removed, all three repos returned to baseline. No pre-existing worktree or branch touched. `.github/workflows/` never opened. 3 subagents dispatched, 3 returned.

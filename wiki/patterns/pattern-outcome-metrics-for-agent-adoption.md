@@ -109,6 +109,7 @@ For a brand-new pilot, activity metrics may be acceptable for a short habit-form
 
 ## Related Patterns
 
+- [[summaries/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9]]
 - [[syntheses/synthesis-agentic-engineering-operating-model]]
 - [[patterns/pattern-agent-proof-of-work-loop]]
 - [[patterns/pattern-embedded-graduation-model]]

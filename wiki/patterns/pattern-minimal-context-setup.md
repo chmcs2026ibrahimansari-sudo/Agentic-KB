@@ -48,4 +48,5 @@ The author's summary: "One file. 6 habits. 0 folders."
 - [Context window bloat](../concepts/context-window-bloat.md)
 
 ## See Also
+- [Refinery summary: Ruben Hassid — Stop Over-Organizing Claude](../summaries/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k.md)
 - [Agent failure modes](../concepts/agent-failure-modes.md)

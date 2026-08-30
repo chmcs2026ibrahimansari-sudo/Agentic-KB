@@ -34,6 +34,7 @@ Use Managed Agents when building long-running, tool-using Claude agents where yo
 - Confidence on some architectural details is based on a partial capture of the source article.
 
 ## See Also
+- [Refinery summary: Anthropic — Scaling Managed Agents](../summaries/anthropic-com-engineering-managed-agents.md)
 - [Decoupled Agent Architecture pattern](../patterns/pattern-decoupled-agent-architecture.md)
 - [Agent loops](../concepts/agent-loops.md)
 - [Agent layer architecture](../concepts/agent-layer-architecture.md)

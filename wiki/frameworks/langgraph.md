@@ -42,6 +42,7 @@ Use LangGraph when you need any of the properties checkpointing unlocks: crash r
 A `StateGraph` is not inherently better than a hand-rolled agent loop for the same observe-decide-act shape — it's simply more code and concepts to learn. If you don't need persistence, resumability, or human-in-the-loop pausing, the hand-rolled loop from [agent loops](../concepts/agent-loops.md) is a perfectly reasonable choice. The append-reducer footgun on list-valued state keys is a known source of subtle bugs (see [agent failure modes](../concepts/agent-failure-modes.md)).
 
 ## See Also
+- [Refinery summary: Principal AI Engineer Handbook — Module 7 LangGraph](../summaries/handbook-vinodspattar-in-learn-modules-07-langgraph.md)
 - [Agent Loops](../concepts/agent-loops.md)
 - [State Graph Checkpointing](../concepts/state-graph-checkpointing.md)
 - [Agent Failure Modes](../concepts/agent-failure-modes.md)

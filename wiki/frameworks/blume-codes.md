@@ -41,6 +41,7 @@ Useful for teams or individuals running multiple coding-agent harnesses simultan
 - No public detail yet on how corrections are diffed against team-shared config in multi-user setups (positioned as future "central domain model").
 
 ## See Also
+- [Refinery summary: Blume Sidecar](../summaries/blume-codes.md)
 - [agent-harness-model-context](../concepts/agent-harness-model-context.md)
 - [agent-loops](../concepts/agent-loops.md)
 - [agent-evaluation](../concepts/agent-evaluation.md)

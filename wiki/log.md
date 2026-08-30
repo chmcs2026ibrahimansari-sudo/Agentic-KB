@@ -2180,3 +2180,71 @@ Pages affected: `personal/roofclaim-recovery-business-plan.md`
 - Proposals: PROP-165 [HEAVY_BACKLOG] persisted by foundry-propose. PROP-166 [STALLED_LEVERAGE_QUESTION] added manually per the escalation guard.
 - Synthesis drafted: [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]] (reviewed: false). Bridges Memory MoC ↔ Evaluation MoC. Verified no existing synthesis covered it; the other two candidate connections were rejected as already covered by `synthesis-permissions-as-single-compiled-policy` / `synthesis-retrieval-and-tool-permissions-as-co-enforced-boundary` and by `synthesis-verifier-as-goal-completion-benchmark` / `synthesis-proof-of-work-receipts-vs-trajectory-eval`.
 - Contradictions: **no provenance edits made.** The tensions query re-reported the `agentmemory` provenance gap as open, but `[[concepts/reciprocal-rank-fusion]]` carries a `[PROVENANCE RESOLVED — 2026-06-10]` block and confidence was already restored to `high`. Re-flagging would have regressed resolved work. `[[patterns/pattern-per-claim-confidence]]` is already `confidence: medium`, the correct downgraded state. The obsidian-wiki raw-immutability conflict and the 2026-05-27 compile root-cause question remain genuinely open — neither is actionable without human decision.
+
+---
+
+## 2026-08-30 — Agentic-KB Refinery Run
+
+**Trigger:** Scheduled `agentic-kb-refinery-run`.
+
+**Pre-run safety:** `git status --porcelain` was clean. No dirty files outside expected Refinery write paths; the run proceeded.
+
+**Sources processed:** 10 raw files marked `status: unprocessed`; `raw/inbox/README.md` skipped as operational intake guidance. Raw originals were not modified.
+
+**Summaries created:**
+- `[[summaries/anthropic-com-engineering-managed-agents]]` from `raw/framework-docs/anthropic-com-engineering-managed-agents.md`
+- `[[summaries/blume-codes]]` from `raw/framework-docs/blume-codes.md`
+- `[[summaries/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio]]` from `raw/framework-docs/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio.md`
+- `[[summaries/disler-super-simple-software-factory]]` from `raw/framework-docs/disler-super-simple-software-factory.md`
+- `[[summaries/handbook-vinodspattar-in-learn-modules-07-langgraph]]` from `raw/framework-docs/handbook-vinodspattar-in-learn-modules-07-langgraph.md`
+- `[[summaries/langchain-ai-open-swe]]` from `raw/framework-docs/langchain-ai-open-swe.md`
+- `[[summaries/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105]]` from `raw/framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md`
+- `[[summaries/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f]]` from `raw/framework-docs/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f.md`
+- `[[summaries/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9]]` from `raw/framework-docs/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9.md`
+- `[[summaries/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k]]` from `raw/framework-docs/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k.md`
+
+**Atomic-page handling:** No new atomic pages created. Existing compiler-created pages already covered the durable concepts/frameworks for these sources (`[[frameworks/claude-managed-agents]]`, `[[frameworks/playwright]]`, `[[patterns/pattern-browser-automation-agent]]`, `[[frameworks/super-simple-software-factory]]`, `[[patterns/pattern-code-owns-control-plane]]`, `[[frameworks/langgraph]]`, `[[concepts/state-graph-checkpointing]]`, `[[frameworks/framework-open-swe]]`, `[[concepts/meta-harness]]`, `[[concepts/self-improving-harness]]`, `[[patterns/pattern-forward-deployed-engineering]]`, `[[patterns/pattern-minimal-context-setup]]`, and `[[concepts/context-window-bloat]]`). Refinery avoided duplicate atomic pages and added source-slug summaries instead.
+
+**Backlinks / index:** Updated `[[wiki/index]]` summary count 86→96 and synthesis count 45→46 to match actual files. Added inbound links from relevant existing framework/concept/pattern pages for each summary.
+
+**Conservative treatment:** Social/marketing sources remained low or medium confidence; no primary-source claims were promoted from social posts alone. Source-reported performance/benchmark claims were marked as such or `[UNVERIFIED]` in summaries.
+
+**Contradictions flagged:** None new.
+
+**State:** hashes recorded in `.night-shift/state/refinery-processed.json`.
+
+---
+
+## 2026-08-30 — morning-review-daily
+
+**Preflight:** RESULT clear (exit 0). API funded, KB web server healthy at :3002, `raw/` free of contact PII. WARN: worktree dirty from the 2026-08-29 Refinery run (13 modified, 10 untracked summaries) — committed at the end of this run.
+
+**Duplicate-runner finding (new):** two Morning Review processes were live simultaneously. `com.morningreview.daily` (launchd, `~/Library/LaunchAgents/com.morningreview.daily.plist`, StartCalendarInterval 06:00) had started at 06:00:03; this scheduled task launched a second at 06:03:58. The Cowork task and the launchd agent run the same pipeline. The task-launched process was killed at 06:04 before it wrote anything (it was still on Step 1/15); the launchd run was allowed to complete and is the canonical run for today. **Action needed from Jay:** disable one of the two schedulers, or the double-write failure mode recurs daily.
+
+**Morning Review:** completed — 21 notes, 15 links, 10 findings, auto-apply 6, needs-approval 2, errors 0. No AppleScript timeout (Apple Notes extracted 21 notes in 29s). Daily note written to `Daily Notes/2026-08-30.md` plus 8 wiki pages and 2 index pages.
+
+**Capture staging:** `sofie-watch-obsidian --once` → no new meeting notes. Apple Notes `KB Inbox` holds one note (`test-capture-2026-05-16`) already present in `raw/clippings/` **11 times** — the write-time hash drift described in the skill is confirmed and accumulating. Snipd folder empty. No new clippings; `ingest-dedup` not run. **Cleanup candidate:** 10 redundant `test-capture-2026-05-16` clippings (not deleted — additive-only guard).
+
+**COMPILE FAILED (exit 1, twice).** `scripts/compile-2source-gate.mjs --execute` reported `❌ KB API unreachable at http://localhost:3002 (UND_ERR_SOCKET)` on both the initial run and one retry. **Nothing was promoted.** The plan printed 35 PROMOTE / 7 GRADUATE on the first pass and 42 PROMOTE / 0 GRADUATE on the retry (the first `--execute` had already written `candidates.md`, consuming the graduations) — these are plan output only and were not applied.
+
+**Root cause identified — resolves the standing "Compile-Write Blockage" contradiction (flagged 2026-05-23, recurred 2026-05-27).** A direct `POST /api/compile` returns:
+
+```
+HTTP 401 — data: {"type":"error","message":"🔒 Compile requires a valid PIN."}
+```
+
+The 2026-05-23 attribution to a missing `KB_PIN` was **correct**. The 2026-05-27 note ("root cause likely separate; needs investigation") was misled by the gate script, which swallows a 401 on the SSE stream and re-reports it as `UND_ERR_SOCKET` / "Is the web server running?" — the server was listening the whole time (PID 2773, `/api/compile` answering 405 to GET). Two fixes follow: set `KB_PIN` in the scheduled-run environment, and make `compile-2source-gate.mjs` surface non-2xx HTTP status rather than collapsing it into a socket error. Logging this as a resolution, not a new contradiction.
+
+**Provenance edits: none, deliberately.** The tensions query re-reported the `agentmemory` provenance gap as unresolved. It is not — `concepts/reciprocal-rank-fusion` carries a `[PROVENANCE RESOLVED — 2026-06-10]` block closing it via Cormack/Clarke/Buettcher (SIGIR 2009) plus `[[summaries/siagian-agentic-engineer-roadmap-2026]]`, with confidence restored to `high`. `patterns/pattern-per-claim-confidence` is already `confidence: medium`. Re-flagging either would have regressed resolved work; the tensions query reads `log.md` without honoring later resolutions.
+
+**Leverage question — no new proposal filed.** The query returned the LoCoMo staleness question (Letta 74% / Mem0 68.5%) for the eighth logged occurrence. It was already escalated yesterday as **PROP-166 [STALLED_LEVERAGE_QUESTION]** with two concrete verification steps. Not restated, not duplicated. It remains unactioned.
+
+**Proposals:** `foundry-propose --execute --top 3` → 1 new, **PROP-167 [HEAVY_BACKLOG]** (210 deferred themes, threshold 50). Note that `candidates.md` grew 195 → 210 during this run purely from the gate's own defer pass, while the promote half applies nothing — the backlog detector is measuring a queue that has no drain. That drain is tracked as PROP-157 (no generator exists to turn a PROMOTE decision into a page).
+
+**Pages created:**
+- `[[syntheses/synthesis-forward-message-is-a-permissions-decision]]` — bridges `[[patterns/pattern-supervisor-worker]]` (Orchestration) to `[[patterns/pattern-minimal-permissions]]` and `[[concepts/tool-design]]` (Tool Use). Born `reviewed: false`, includes Counter-arguments & Gaps per Rule 11. Verified before drafting that no synthesis covered this pair; the two higher-ranked candidates were rejected on verification — Model Tiering ↔ Evaluation is already covered by `[[syntheses/synthesis-model-tier-eval-framework-matrix]]` (2026-05-24), and GSD Deviation Rules ↔ contradiction policy has one endpoint synthesized three days ago in `[[syntheses/synthesis-failure-escalation-as-mistake-log-trigger]]`.
+
+**Pages updated:** `[[wiki/index]]` (synthesis count 46→47, new row), `[[mocs/tool-use]]` (inbound link — no-orphan rule satisfied), `[[recently-added]]`.
+
+**Contradictions flagged:** None new. One legacy contradiction resolved (compile-write blockage, above).
+

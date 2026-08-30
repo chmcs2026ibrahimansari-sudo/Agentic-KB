@@ -38,5 +38,6 @@ Useful as a reference architecture for teams evaluating **cloud coding-agent con
 - Captured via a scouting note flagged for **evaluation of patterns, not direct adoption** — treat specifics as directional rather than a vetted recommendation.
 
 ## See Also
+- [Refinery summary: LangChain Open SWE](../summaries/langchain-ai-open-swe.md)
 - [Agent Layer Architecture](../concepts/agent-layer-architecture.md)
 - [Agent Loops](../concepts/agent-loops.md)

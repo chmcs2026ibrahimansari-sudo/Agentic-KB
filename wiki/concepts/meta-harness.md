@@ -31,6 +31,7 @@ This distinction matters because teams often conflate "adopting an orchestration
 A team running Claude, GPT, and an open-weight model across three different harnesses uses a meta-harness to enforce the same permission boundaries and logging everywhere, rather than re-implementing sandboxing three times. When they swap one model for another, the meta-harness layer doesn't need to change — only the underlying harness does.
 
 ## See Also
+- [Refinery summary: Daniel Rocha — Harness vs Meta-Harness vs Self-Improving Harness](../summaries/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md)
 - [Harness / Model / Context](agent-harness-model-context.md)
 - [Self-Improving Harness](self-improving-harness.md)
 - [Agent Layer Architecture](agent-layer-architecture.md)

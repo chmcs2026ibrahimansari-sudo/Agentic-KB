@@ -56,3 +56,14 @@ visibility: private
 - promote: 33 (ADVISORY — not applied; see PROP-157)
 - defer:    195
 - graduate: 0
+
+## 2026-08-30T13:09:45.589Z
+- promote: 35 (ADVISORY — not applied; see PROP-157)
+- defer:    210
+- graduate: 7
+- graduated: managed-agents, sandboxed-execution, agent-observability, human-in-the-loop, guardrails, deep-agents-harness, prompt-minimization
+
+## 2026-08-30T13:10:22.099Z
+- promote: 42 (ADVISORY — not applied; see PROP-157)
+- defer:    210
+- graduate: 0

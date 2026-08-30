@@ -39,6 +39,7 @@ A QA engineer needs to verify a checkout flow that changes markup frequently as 
 - [playwright](../frameworks/playwright.md) — the underlying execution framework.
 
 ## See Also
+- [Refinery summary: Playwright AI Agent Engineering Guide](../summaries/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio.md)
 - [agent-failure-modes](../concepts/agent-failure-modes.md)
 - [agent-evaluation](../concepts/agent-evaluation.md)
 - [agent-memory-architecture](../concepts/agent-memory-architecture.md)

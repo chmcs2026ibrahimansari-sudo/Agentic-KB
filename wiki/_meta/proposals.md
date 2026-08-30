@@ -1240,3 +1240,12 @@ purpose: Append-only ledger of actionable proposals surfaced by /foundry-propose
   (b) Strip the two percentages from `wiki/hot.md`'s Memory Systems Quick Guide, retaining only the qualitative finding ("tool complexity matters less than reliable retrieval"), which survives version drift.
 - recommendation: (b) is ~10 minutes and closes the flag; (a) is the durable fix. Do (b) now, track (a). Either resolves it — leaving it open is the only outcome that does not.
 - context: [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]]
+
+## 2026-08-30T13:11:25.750Z
+
+### PROP-167 [HEAVY_BACKLOG] backlog:2026-08-30T13:10:22.099Z
+
+- defer count: 210 (threshold 50)
+- run: 2026-08-30T13:10:22.099Z
+- recommendation: Latest compile deferred 210 themes (>50). Consider: (a) running /foundry-compile more often, (b) auditing candidates.md for low-value themes to drop, or (c) seeding 2nd sources for the highest-leverage themes.
+

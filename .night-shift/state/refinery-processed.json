@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "job": "agentic-kb-refinery-run",
-  "updated_at": "2026-08-27T03:15:52-07:00",
+  "updated_at": "2026-08-30T03:17:09-07:00",
   "processed": {
     "raw/framework-docs/mgechev-skills-best-practices.md": {
       "sha256": "18ada3a8eab879c132eeefafa0ea6fc23bba7258400cf50902f61add5a1a9210",
@@ -266,10 +266,110 @@
         "wiki/index.md",
         "wiki/log.md"
       ]
+    },
+    "raw/framework-docs/anthropic-com-engineering-managed-agents.md": {
+      "sha256": "a10312a6ba66f91659d55fce7969b05707e145b4ae472a57552bffe23e4bdeb0",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/anthropic-com-engineering-managed-agents.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/frameworks/claude-managed-agents.md"
+      ]
+    },
+    "raw/framework-docs/blume-codes.md": {
+      "sha256": "eaebc8052b25dce4c3eabdfb1e2e46760109a546b5b1264745141e813215b7a7",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/blume-codes.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/frameworks/blume-codes.md"
+      ]
+    },
+    "raw/framework-docs/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio.md": {
+      "sha256": "37d03c480c3c4f715f1cdf6701efd8dcb23337b088728375106e04f49cc4f52d",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/patterns/pattern-browser-automation-agent.md"
+      ]
+    },
+    "raw/framework-docs/disler-super-simple-software-factory.md": {
+      "sha256": "af66981f7bcdfa008ff386f10a6407e8061c330f15e5219b9d379b0b7ef76c99",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/disler-super-simple-software-factory.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/frameworks/super-simple-software-factory.md"
+      ]
+    },
+    "raw/framework-docs/handbook-vinodspattar-in-learn-modules-07-langgraph.md": {
+      "sha256": "6375c5915b887559e60f25479eb02fb47c46a0903e625c7008d32698b17a116e",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/handbook-vinodspattar-in-learn-modules-07-langgraph.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/frameworks/langgraph.md"
+      ]
+    },
+    "raw/framework-docs/langchain-ai-open-swe.md": {
+      "sha256": "58ff0f46a348055c7af7f4ae67c2ace87f9560efd0234d9e35150560689f3ee4",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/langchain-ai-open-swe.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/frameworks/framework-open-swe.md"
+      ]
+    },
+    "raw/framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md": {
+      "sha256": "a55cf2f26c7e60db9618e291c0d6974bce55a6f19420d5da07a20e0f4a39f376",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/concepts/meta-harness.md"
+      ]
+    },
+    "raw/framework-docs/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f.md": {
+      "sha256": "96bc8ed112ace3c3b633a2f8aa13902f41a311c78208c5c420bbfdaa6411260f",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/patterns/pattern-forward-deployed-engineering.md"
+      ]
+    },
+    "raw/framework-docs/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9.md": {
+      "sha256": "42c30095cdc156c16624c1cc1fe9aa53b3456f8ba3d4c1cc5bca99a7732b3eda",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/patterns/pattern-outcome-metrics-for-agent-adoption.md"
+      ]
+    },
+    "raw/framework-docs/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k.md": {
+      "sha256": "087176c0e29adb3eb540ad491c3c4ad325bea173555460e8384a66fbe4b5b820",
+      "processed_at": "2026-08-30T03:17:09-07:00",
+      "outputs": [
+        "wiki/summaries/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k.md",
+        "wiki/index.md",
+        "wiki/log.md",
+        "wiki/patterns/pattern-minimal-context-setup.md"
+      ]
     }
   },
   "last_run": {
-    "timestamp": "2026-08-27T03:15:52-07:00",
+    "timestamp": "2026-08-30T03:17:09-07:00",
     "result": "processed",
     "scanned": {
       "raw_inbox_files": [
@@ -286,16 +386,20 @@
     ],
     "processed_count": 10,
     "processed_files": [
-      "raw/framework-docs/opensandbox-group-OpenSandbox.md",
-      "raw/framework-docs/x-twitter-2089029054611837324.md",
-      "raw/framework-docs/lumay-ai.md",
-      "raw/framework-docs/docs-langchain-com-langsmith-python-managed-deep-agents-overview.md",
-      "raw/framework-docs/x-twitter-2087607558626582741.md",
-      "raw/framework-docs/huggingface-agent-intrusion-technical-timeline.md",
-      "raw/framework-docs/docs-langchain-com-oss-deepagents-code-overview.md",
-      "raw/framework-docs/x-twitter-2088713006095994930.md",
-      "raw/framework-docs/opensourceprojects-dev-post-simba.md",
-      "raw/framework-docs/deepseek-ai-deepseek-harness.md"
+      "raw/framework-docs/anthropic-com-engineering-managed-agents.md",
+      "raw/framework-docs/blume-codes.md",
+      "raw/framework-docs/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio.md",
+      "raw/framework-docs/disler-super-simple-software-factory.md",
+      "raw/framework-docs/handbook-vinodspattar-in-learn-modules-07-langgraph.md",
+      "raw/framework-docs/langchain-ai-open-swe.md",
+      "raw/framework-docs/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105.md",
+      "raw/framework-docs/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f.md",
+      "raw/framework-docs/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9.md",
+      "raw/framework-docs/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k.md"
+    ],
+    "notes": [
+      "Created source-slug summaries and linked them from wiki/index.md plus relevant existing framework/concept/pattern pages.",
+      "Several sources already had compiler-created atomic pages; Refinery avoided duplicate atomic pages and used summaries/backlinks for idempotent state closure."
     ]
   }
 }

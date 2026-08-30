@@ -3,7 +3,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 ---
 
 # Agentic Engineering KB — Master Index
-> Last updated: 2026-08-27 (editor run) | Maintained by LLM | Never edit manually
+> Last updated: 2026-08-30 (refinery run) | Maintained by LLM | Never edit manually
 
 ## Quick Navigation
 - [[wiki/home|Home]] — Visual front door: concept map, top 5 pages, KB roadmap
@@ -188,7 +188,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Summaries (86)
+## Summaries (96)
 
 | Page | Source | Date Ingested | Key Concepts |
 |------|--------|--------------|-------------|
@@ -253,6 +253,16 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 - [[summaries/x-twitter-2088713006095994930|Codez / 0xRafy — MCP 11-Step Guide Social Capture]] — Low-confidence MCP social-source lead; useful for production-security prompts but spec/adoption claims need primary-source verification.
 - [[summaries/opensourceprojects-dev-post-simba|Open-source Projects — Simba Eval-First Customer Service Assistant]] — Promotional writeup adding Simba architecture details: Python backend, Next.js dashboard, npm widget, modular RAG, Docker CPU/GPU setup, and eval-first positioning.
 - [[summaries/deepseek-ai-deepseek-harness|DeepSeek Harness — Everything Is a Plugin]] — DeepSeek's developer-preview plugin-first agent harness, with Cordis composition, durable session events, tool pipeline stages, capability seams, and typed remote contracts.
+- [[summaries/anthropic-com-engineering-managed-agents|Anthropic — Scaling Managed Agents]] — Official engineering writeup on session/harness/sandbox decoupling, durable event logs, credential vault/proxy patterns, and source-reported TTFT gains.
+- [[summaries/blume-codes|Blume Sidecar — Monitor and Improve Coding Agents]] — Local macOS coding-agent sidecar for multi-harness status, hidden rule/skill tracking, usage visibility, and human-approved improvement suggestions.
+- [[summaries/dev-to-himanshuai-playwright-ai-agent-the-complete-engineering-guide-to-autonomous-browser-automatio|Playwright AI Agent — Engineering Guide]] — Practitioner guide to browser-agent perception, structured actions, bounded loops, self-healing logs, independent verification, and cost controls.
+- [[summaries/disler-super-simple-software-factory|Disler — Super Simple Software Factory]] — Primary repo source for code-owned orchestration: ADW phases, typed envelopes, gates, SQLite trace, and placeholder-test caveats.
+- [[summaries/handbook-vinodspattar-in-learn-modules-07-langgraph|Principal AI Engineer Handbook — Module 7 LangGraph]] — Secondary LangGraph learning reference: control flow as state graph, reducers, checkpointing, HITL interrupts, and durable-state tradeoffs.
+- [[summaries/langchain-ai-open-swe|LangChain Open SWE — Asynchronous Coding Agent Framework]] — Primary repo/docs capture for Deep Agents + LangGraph internal coding-agent framework, sandboxes, Slack/Linear/GitHub triggers, dashboard, and security surfaces.
+- [[summaries/linkedin-com-posts-danielnrocha-harness-meta-harness-self-improving-harness-share-749404682264734105|Daniel Rocha — Harness vs Meta-Harness vs Self-Improving Harness]] — Social-source taxonomy for harness, meta-harness, and self-improving harness layers; benchmark claims remain unverified.
+- [[summaries/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f|Maryam Miradi — Forward Deployed Engineering for Production AI Agents]] — Social-source FDE roadmap: shared primitives first, configure-not-rebuild, outcome-backward workflow design, and production feedback loop.
+- [[summaries/linkedin-com-posts-reshmawithai-ai-isnt-failing-in-your-company-your-ai-share-7493986243802738688-w9|Reshma Sriraman — Warning Signs Your Company Is Stuck in AI Pilot Mode]] — Low-confidence market signal on demo-to-production failure modes: missing platform, late governance, weak integrations, manual handoffs, and late ROI definition.
+- [[summaries/linkedin-com-posts-ruben-hassid-stop-over-organizing-claude-it-slows-you-share-7493980931716939776-k|Ruben Hassid — Stop Over-Organizing Claude]] — Low-confidence context-hygiene heuristic: one about-me file, fresh task chats, self-critique, hard-task delegation, and pruning unused prompts/skills/connectors.
 
 ## Personal (17)s (6) (Jay's patterns)
 
@@ -290,7 +300,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (45)
+## Syntheses (47)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -334,6 +344,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-sandbox-safety-is-policy-not-place]] | Recent OpenSandbox, DeepAgents, and Hugging Face intrusion sources show that sandbox safety is the policy boundary around credentials, egress, approvals, and traces — not merely the place code runs. | 2026-08-27 |
 | [[syntheses/synthesis-proof-of-work-receipts-vs-trajectory-eval]] | Proof-of-work receipts and trajectory evaluation collect the same evidence and differ only in authorship — receipts catch omission, trajectory eval catches fabrication. Which one should run where? | 2026-08-28 |
 | [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]] | The hot cache's Letta-over-Mem0 default rests on a self-flagged-stale LoCoMo result, and no page defines the re-verification procedure its own caveat demands. | 2026-08-29 |
+| [[syntheses/synthesis-forward-message-is-a-permissions-decision]] | `forward_message` removes the only step where a worker's raw output is read before reaching the caller — an unscored permissions change filed as an orchestration fix. | 2026-08-30 |
 
 ---
 

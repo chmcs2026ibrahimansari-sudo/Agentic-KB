@@ -55,6 +55,7 @@ An operations leader wants faster incident resolution — not an explanation of 
 
 ## See Also
 
+- [Refinery summary: Maryam Miradi — Forward Deployed Engineering for Production AI Agents](../summaries/linkedin-com-posts-maryammiradi-forward-deployed-engineering-101-for-share-7491586783273603072-ov8f.md)
 - [Agent layer architecture](../concepts/agent-layer-architecture.md)
 - [Agent observability](../concepts/agent-observability.md)
 - [Agent evaluation](../concepts/agent-evaluation.md)

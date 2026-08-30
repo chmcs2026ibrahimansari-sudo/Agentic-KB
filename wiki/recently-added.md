@@ -9,6 +9,12 @@ type: meta
 
 ---
 
+## 2026-08-30 (morning-review-daily)
+
+- [[syntheses/synthesis-forward-message-is-a-permissions-decision|`forward_message` Is a Permissions Decision Wearing an Orchestration Costume]] — bridges the Orchestration MoC's [[patterns/pattern-supervisor-worker]] to the Tool Use MoC's [[patterns/pattern-minimal-permissions]] and [[concepts/tool-design]]: the Telephone Game bypass removes the only step where a worker's raw output is read before reaching the caller, which is a permissions change nobody has scored. Proposes a "forwarded unreviewed" provenance marker and names the trace study that would settle whether supervisor synthesis performs any review function at all.
+
+---
+
 ## 2026-08-28 (morning-review-daily)
 
 - [[syntheses/synthesis-proof-of-work-receipts-vs-trajectory-eval|Proof-of-Work Receipts Are Self-Reported Trajectories, and That Is Exactly Their Weakness]] — bridges the Orchestration MoC's [[patterns/pattern-agent-proof-of-work-loop]] to the Evaluation MoC's [[concepts/trajectory-evaluation]] and [[concepts/llm-as-judge]]: both collect the same evidence and differ only in who authors it, so receipts catch omission cheaply but are structurally blind to fabrication (hallucinated tool calls, silent refusals). Proposes a routing rule and one adversarial fixture that would test it.

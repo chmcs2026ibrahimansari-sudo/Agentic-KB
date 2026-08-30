@@ -50,6 +50,7 @@ This is a concrete implementation of the broader pattern described in [pattern: 
 - Not evaluated here against other orchestration frameworks (e.g. [[framework-crewai]], [[framework-autogen]]) — no direct comparison data captured
 
 ## See Also
+- [Refinery summary: Disler — Super Simple Software Factory](../summaries/disler-super-simple-software-factory.md)
 - [pattern: code owns the control plane](../patterns/pattern-code-owns-control-plane.md)
 - [agents/workers/gsd-executor/profile.md](../agents/workers/gsd-executor/profile.md)
 - [concepts/agent-loops.md](../concepts/agent-loops.md)

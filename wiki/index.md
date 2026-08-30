@@ -3,7 +3,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 ---
 
 # Agentic Engineering KB — Master Index
-> Last updated: 2026-08-30 (refinery run) | Maintained by LLM | Never edit manually
+> Last updated: 2026-08-30 (editor run) | Maintained by LLM | Never edit manually
 
 ## Quick Navigation
 - [[wiki/home|Home]] — Visual front door: concept map, top 5 pages, KB roadmap
@@ -300,7 +300,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 
 ---
 
-## Syntheses (47)
+## Syntheses (48)
 
 | Page | Question | Created |
 |------|----------|---------|
@@ -345,6 +345,7 @@ id: 01KNNVX2QWD5ABN97BE6A2B2MN
 | [[syntheses/synthesis-proof-of-work-receipts-vs-trajectory-eval]] | Proof-of-work receipts and trajectory evaluation collect the same evidence and differ only in authorship — receipts catch omission, trajectory eval catches fabrication. Which one should run where? | 2026-08-28 |
 | [[syntheses/synthesis-memory-selection-needs-a-benchmark-protocol]] | The hot cache's Letta-over-Mem0 default rests on a self-flagged-stale LoCoMo result, and no page defines the re-verification procedure its own caveat demands. | 2026-08-29 |
 | [[syntheses/synthesis-forward-message-is-a-permissions-decision]] | `forward_message` removes the only step where a worker's raw output is read before reaching the caller — an unscored permissions change filed as an orchestration fix. | 2026-08-30 |
+| [[syntheses/synthesis-durable-agent-state-is-not-prompt-context]] | Managed agents, LangGraph checkpoints, software-factory traces, Open SWE async tasks, and Playwright browser agents all point to the same rule: prompt context is a working view, not durable agent state. | 2026-08-30 |
 
 ---
 

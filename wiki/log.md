@@ -2227,13 +2227,23 @@ Pages affected: `personal/roofclaim-recovery-business-plan.md`
 
 **COMPILE FAILED (exit 1, twice).** `scripts/compile-2source-gate.mjs --execute` reported `❌ KB API unreachable at http://localhost:3002 (UND_ERR_SOCKET)` on both the initial run and one retry. **Nothing was promoted.** The plan printed 35 PROMOTE / 7 GRADUATE on the first pass and 42 PROMOTE / 0 GRADUATE on the retry (the first `--execute` had already written `candidates.md`, consuming the graduations) — these are plan output only and were not applied.
 
-**Root cause identified — resolves the standing "Compile-Write Blockage" contradiction (flagged 2026-05-23, recurred 2026-05-27).** A direct `POST /api/compile` returns:
+**Root cause — CORRECTED 2026-08-30 (later same day).** An earlier version of this entry claimed the blockage was a missing PIN and that the fix was to set `KB_PIN` and make the gate script surface HTTP status. **That was wrong on every point.** It was written from a single unauthenticated `curl`, which returns a clean 401 and looks like a tidy explanation. Recording the corrected finding, and the bad inference, because the 2026-05-27 entry made the same class of mistake and cost this run an hour.
 
-```
-HTTP 401 — data: {"type":"error","message":"🔒 Compile requires a valid PIN."}
-```
+Discriminating test against `POST /api/compile`:
 
-The 2026-05-23 attribution to a missing `KB_PIN` was **correct**. The 2026-05-27 note ("root cause likely separate; needs investigation") was misled by the gate script, which swallows a 401 on the SSE stream and re-reports it as `UND_ERR_SOCKET` / "Is the web server running?" — the server was listening the whole time (PID 2773, `/api/compile` answering 405 to GET). Two fixes follow: set `KB_PIN` in the scheduled-run environment, and make `compile-2source-gate.mjs` surface non-2xx HTTP status rather than collapsing it into a socket error. Logging this as a resolution, not a new contradiction.
+| Request | Result |
+|---|---|
+| no PIN header | `HTTP 401` — `{"type":"error","message":"🔒 Compile requires a valid PIN."}` (~4ms) |
+| wrong PIN (`0000`) | `HTTP 401`, same message (~4ms) |
+| **correct PIN from `.env`** | **`HTTP 000` — connection reset, no status line (~12ms)** |
+
+So: `PRIVATE_PIN` **is** correctly configured in `.env`, `cli/kb.js` **does** already pass it (line 182 defaults `opts.pin` to `PRIVATE_PIN`), the PIN check at `web/src/app/api/compile/route.ts:184` **passes**, and the route then resets the connection roughly 12ms later — before any HTTP status reaches the client. `UND_ERR_SOCKET` is therefore an accurate report of what undici saw, not a swallowed 401. The CLI is not at fault and needs no change; an edit adding a `PRIVATE_PIN` fallback to `compile()` was made and reverted after line 182 showed the fallback already exists.
+
+**Still unexplained — this is the open bug.** The failure is post-auth and pre-header-flush, in `route.ts` between the PIN check (line 184) and the first `send({type:'start'})` inside the `ReadableStream` — i.e. `resolveVaultRoot`, `resolveContentRoot`, `collectMd(rawRoot)`, or the stream construction itself. A synchronous throw there would normally yield a 500 from `next-server`, not a reset, so the mechanism is not yet identified. Ruled out: server crash (PID 2773 survives every attempt, `next-server v16.2.2`, up since 2026-08-29 10:06) and a stale build (`route.ts` last modified 2026-08-18, `.next/BUILD_ID` 2026-08-21 — the build is newer than the source).
+
+**Consequence:** the 2-source gate cannot promote anything until this is fixed, and has not been able to since at least 2026-05-23. `candidates.md` has grown to 210 deferred themes against a promote path that applies nothing. Next diagnostic step: run the compile route with server-side logging around lines 190–200, or call `resolveVaultRoot`/`collectMd` directly against the same vault root to see which one aborts.
+
+**Superseded:** the 2026-05-23 "missing `KB_PIN`" attribution and the 2026-05-27 "root cause likely separate" note are both closed — not because the cause is known, but because both were guesses. The cause is now narrowed to a 10-line window and remains open.
 
 **Provenance edits: none, deliberately.** The tensions query re-reported the `agentmemory` provenance gap as unresolved. It is not — `concepts/reciprocal-rank-fusion` carries a `[PROVENANCE RESOLVED — 2026-06-10]` block closing it via Cormack/Clarke/Buettcher (SIGIR 2009) plus `[[summaries/siagian-agentic-engineer-roadmap-2026]]`, with confidence restored to `high`. `patterns/pattern-per-claim-confidence` is already `confidence: medium`. Re-flagging either would have regressed resolved work; the tensions query reads `log.md` without honoring later resolutions.
 
@@ -2247,4 +2257,21 @@ The 2026-05-23 attribution to a missing `KB_PIN` was **correct**. The 2026-05-27
 **Pages updated:** `[[wiki/index]]` (synthesis count 46→47, new row), `[[mocs/tool-use]]` (inbound link — no-orphan rule satisfied), `[[recently-added]]`.
 
 **Contradictions flagged:** None new. One legacy contradiction resolved (compile-write blockage, above).
+
+
+---
+
+## 2026-08-30 — Agentic-KB Editor Run
+
+**Trigger:** Scheduled `agentic-kb-editor-run` at 06:26 PDT.
+
+**Pages considered:** 36 wiki files changed in the last 24 hours, including 10 new summaries from the Refinery run, one morning-review synthesis, relevant framework/pattern/concept updates, recent `wiki/log.md` entries, `wiki/index.md`, `wiki/lint-report.md`, and `.night-shift/state/editor-state.json`.
+
+**Synthesis created:** `[[syntheses/synthesis-durable-agent-state-is-not-prompt-context]]` — bridges Anthropic Managed Agents, LangGraph checkpointing, Disler's Super Simple Software Factory, LangChain Open SWE, and Playwright browser-agent guidance. The editorial position is that prompt context is a selected working view over durable state, not the authoritative state store. Durable state belongs in event logs, checkpoints, typed envelopes, trace rows, approvals, and deterministic gate results.
+
+**Backlinks / index:** `[[syntheses/synthesis-agentic-engineering-operating-model]]` now links to the new synthesis; `[[wiki/index]]` synthesis count updated 47→48.
+
+**Contradictions Jay should resolve:** no new Editor contradiction. Carry-forward unresolved friction remains `[[mocs/evaluation]]`'s `[FRICTION]` block contesting the "Promotion as Eval" framing via `[[syntheses/synthesis-promotion-scoring-without-a-judge]]`.
+
+**Briefing:** `briefings/2026-08-30.md`.
 

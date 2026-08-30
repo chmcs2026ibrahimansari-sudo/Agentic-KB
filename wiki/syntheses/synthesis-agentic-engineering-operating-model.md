@@ -16,7 +16,7 @@ sources:
 question: What operating model makes agentic engineering useful instead of performative?
 tags: [agentic, orchestration, multi-agent, human-in-the-loop, evaluation, context-management, observability]
 created: 2026-07-10
-updated: 2026-08-10
+updated: 2026-08-30
 confidence: medium
 ---
 
@@ -166,3 +166,4 @@ For product repos, use the same rule: agents should operate against the repo’s
 - [[patterns/pattern-agent-proof-of-work-loop]]
 - [[patterns/pattern-shared-agent-workspace]]
 - [[concepts/multi-agent-systems]]
+- [[syntheses/synthesis-durable-agent-state-is-not-prompt-context]]

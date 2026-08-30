@@ -2239,11 +2239,32 @@ Discriminating test against `POST /api/compile`:
 
 So: `PRIVATE_PIN` **is** correctly configured in `.env`, `cli/kb.js` **does** already pass it (line 182 defaults `opts.pin` to `PRIVATE_PIN`), the PIN check at `web/src/app/api/compile/route.ts:184` **passes**, and the route then resets the connection roughly 12ms later — before any HTTP status reaches the client. `UND_ERR_SOCKET` is therefore an accurate report of what undici saw, not a swallowed 401. The CLI is not at fault and needs no change; an edit adding a `PRIVATE_PIN` fallback to `compile()` was made and reverted after line 182 showed the fallback already exists.
 
-**Still unexplained — this is the open bug.** The failure is post-auth and pre-header-flush, in `route.ts` between the PIN check (line 184) and the first `send({type:'start'})` inside the `ReadableStream` — i.e. `resolveVaultRoot`, `resolveContentRoot`, `collectMd(rawRoot)`, or the stream construction itself. A synchronous throw there would normally yield a 500 from `next-server`, not a reset, so the mechanism is not yet identified. Ruled out: server crash (PID 2773 survives every attempt, `next-server v16.2.2`, up since 2026-08-29 10:06) and a stale build (`route.ts` last modified 2026-08-18, `.next/BUILD_ID` 2026-08-21 — the build is newer than the source).
+**RESOLVED — 2026-08-30, root cause found and fixed.** The discriminating test was `mode`: `mode=full` returned `HTTP 200` and streamed normally; only `mode=incremental` reset. That pointed at the zero-work branch, and the count confirms it — **183 raw docs, 183 entries in `raw/.compiled-log.json`**, so `toCompile.length === 0` on every incremental run.
 
-**Consequence:** the 2-source gate cannot promote anything until this is fixed, and has not been able to since at least 2026-05-23. `candidates.md` has grown to 210 deferred themes against a promote path that applies nothing. Next diagnostic step: run the compile route with server-side logging around lines 190–200, or call `resolveVaultRoot`/`collectMd` directly against the same vault root to see which one aborts.
+`logs/web-server-error.log` had been recording the exact fault the whole time:
 
-**Superseded:** the 2026-05-23 "missing `KB_PIN`" attribution and the 2026-05-27 "root cause likely separate" note are both closed — not because the cause is known, but because both were guesses. The cause is now narrowed to a 10-line window and remains open.
+```
+TypeError: Invalid state: Controller is already closed
+    at Object.start (...)
+⨯ Error: failed to pipe response  [cause: ERR_INVALID_STATE]
+```
+
+**Mechanism:** the zero-work branches lived *inside* `new ReadableStream({ start(controller) })` and called `controller.close()` synchronously during `start()`. Next tears the stream down before its headers flush, so the client gets a reset connection with no status line — undici surfaces that as `UND_ERR_SOCKET`, which reads exactly like a dead web server. The 401 branch never had this problem because it returns a *static* body, not a stream.
+
+**Fix** (`web/src/app/api/compile/route.ts`): hoisted `collectMd`, `loadLog` and the `toCompile` filter above the stream, and return a static SSE `done` response for both zero-work cases, mirroring the 401 branch. `mode=full` is untouched. Rebuilt (`next build`, clean) and restarted via `launchctl kickstart -k gui/501/com.jaywest.agentic-kb-web`.
+
+**Verified after fix:**
+
+| Check | Before | After |
+|---|---|---|
+| `POST /api/compile` incremental + valid PIN | `HTTP 000` (reset) | `HTTP 200`, `{"type":"done","message":"✅ All raw docs are already compiled…"}` |
+| no PIN (auth still enforced) | `HTTP 401` | `HTTP 401` |
+| `node cli/kb.js compile` | `❌ KB API unreachable` | `Done: ✅ All raw docs are already compiled.` exit 0 |
+| `scripts/compile-2source-gate.mjs --execute` | exit 1 | **exit 0** |
+
+**What this means for the backlog:** the pipeline was never blocked. Incremental compile genuinely had nothing to do, and the "failure" was a steady state misreporting itself. The 210 deferred themes in `candidates.md` are *not* a symptom of this bug — they are the separate, still-open PROP-157 gap: the gate's PROMOTE decisions are advisory and no generator turns them into pages. Fixing the reset does not drain the backlog and should not be read as having done so.
+
+**Superseded:** the 2026-05-23 "missing `KB_PIN`" attribution, the 2026-05-27 "root cause likely separate" note, and this entry's own earlier PIN theory are all wrong and now closed. Three investigations chased a phantom outage because the failure mode of "nothing to do" was indistinguishable from "server down" — and because nobody read `logs/web-server-error.log`, which named the fault precisely.
 
 **Provenance edits: none, deliberately.** The tensions query re-reported the `agentmemory` provenance gap as unresolved. It is not — `concepts/reciprocal-rank-fusion` carries a `[PROVENANCE RESOLVED — 2026-06-10]` block closing it via Cormack/Clarke/Buettcher (SIGIR 2009) plus `[[summaries/siagian-agentic-engineer-roadmap-2026]]`, with confidence restored to `high`. `patterns/pattern-per-claim-confidence` is already `confidence: medium`. Re-flagging either would have regressed resolved work; the tensions query reads `log.md` without honoring later resolutions.
 

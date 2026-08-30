@@ -193,32 +193,48 @@ export async function POST(request: NextRequest): Promise<Response> {
   const rawRoot = path.join(/* turbopackIgnore: true */ vaultRoot, 'raw')
   const encoder = new TextEncoder()
 
+  // Zero-work paths answer with a static SSE body instead of a stream.
+  //
+  // A ReadableStream that enqueues one event and closes synchronously inside
+  // start() is torn down before its headers flush: the client sees a reset
+  // connection with no status line (undici reports UND_ERR_SOCKET) rather than
+  // a 200 carrying a `done` event. That turned "everything is already
+  // compiled" — the normal steady state for mode=incremental, and true here
+  // with 183 of 183 raw docs in the ledger — into something indistinguishable
+  // from a dead web server. It sent three separate investigations (2026-05-23,
+  // 2026-05-27, 2026-08-30) after a phantom outage, and left the 2-source gate
+  // reporting a hard failure on every run since May.
+  //
+  // The 401 branch above returns a static body and has always worked. These
+  // two follow it. mode=full is unaffected: it has work to do, enqueues from
+  // an async context, and its headers flush normally.
+  const allRaw = collectMd(rawRoot)
+  const sseDone = (message: string) =>
+    new Response(encodeSSE({ type: 'done', message }), {
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+    })
+
+  if (allRaw.length === 0) {
+    return sseDone('No raw documents found. Add docs to raw/ first.')
+  }
+
+  const compiledLog = loadLog(vaultRoot)
+  const toCompile = mode === 'full'
+    ? allRaw
+    : allRaw.filter(f => !compiledLog[f])
+
+  if (toCompile.length === 0) {
+    return sseDone('✅ All raw docs are already compiled. Use mode=full to recompile.')
+  }
+
   const stream = new ReadableStream({
     async start(controller) {
       const send = (data: object) => controller.enqueue(encoder.encode(encodeSSE(data)))
 
       try {
         send({ type: 'start', mode, vault: path.basename(vaultRoot) })
-
-        // Collect raw docs
-        const allRaw = collectMd(rawRoot)
-        if (allRaw.length === 0) {
-          send({ type: 'done', message: 'No raw documents found. Add docs to raw/ first.' })
-          controller.close(); return
-        }
-
-        // Filter to uncompiled docs for incremental mode
-        const compiledLog = loadLog(vaultRoot)
-        const toCompile = mode === 'full'
-          ? allRaw
-          : allRaw.filter(f => !compiledLog[f])
-
         send({ type: 'progress', message: `Found ${allRaw.length} raw docs. Compiling ${toCompile.length} ${mode === 'incremental' ? '(new/uncompiled)' : '(all)'}.` })
-
-        if (toCompile.length === 0) {
-          send({ type: 'done', message: '✅ All raw docs are already compiled. Use mode=full to recompile.' })
-          controller.close(); return
-        }
 
         // Read wiki context
         const schema = readSchema(wikiRoot)

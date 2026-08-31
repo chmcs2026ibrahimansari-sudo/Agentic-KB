@@ -31,7 +31,7 @@ npm install
 cd web && npm install && npm run dev
 ```
 
-Open <http://localhost:3009> for Wikipedia-style search, article rendering,
+Open <http://localhost:3002> for Wikipedia-style search, article rendering,
 backlinks, and graph navigation.
 
 **Query it from the terminal**
@@ -48,7 +48,7 @@ The CLI talks to the web server. Its built-in default is
 the URL until [#13](https://github.com/jaydubya818/Agentic-KB/issues/13) lands:
 
 ```bash
-export KB_API_URL=http://localhost:3009
+export KB_API_URL=http://localhost:3002
 ```
 
 **Expose it to an agent runtime over MCP**
